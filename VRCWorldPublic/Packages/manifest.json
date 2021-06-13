@@ -1,6 +1,11 @@
 {
   "dependencies": {
+    "com.unity.cinemachine": "2.6.1",
     "com.unity.package-manager-ui": "2.0.8",
+    "com.unity.postprocessing": "3.0.3",
+    "com.unity.textmeshpro": "1.5.1",
+    "com.unity.xr.oculus.standalone": "1.38.4",
+    "com.unity.xr.openvr.standalone": "1.0.5",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.assetbundle": "1.0.0",
