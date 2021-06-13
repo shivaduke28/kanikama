@@ -91,3 +91,6 @@ Assets/Udon.meta
 
 # Other Libraries
 /Assets/Library/
+
+# HLSL Tools for VisualStudio
+/shadertoolsconfig.json
