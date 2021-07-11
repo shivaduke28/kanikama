@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 using KanikamaGI.EditorOnly;
 using UnityEditor;
 using System.IO;
+using VRC.Udon;
+using UdonSharp;
+using System.Linq;
+using Kanikama.Udon;
+using UdonSharpEditor;
 
 namespace Kanikama.Editor
 {
@@ -30,7 +35,7 @@ namespace Kanikama.Editor
             AssetUtil.CreateFolderIfNecessary(sceneDirPath, "Kanikama");
 
             // 2d array generator
-            var tex2dArrayGenerator = new Texture2DArrayConverter { fileName = "KanikamaMapArray-0" };
+            var texture2DArrayConverters = new List<Texture2DArrayConverter>();
             var bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
 
             // bake kanikama maps
@@ -42,42 +47,54 @@ namespace Kanikama.Editor
                 light.enabled = true;
                 Lightmapping.Bake();
 
-                var bakeLightmapPath = Path.Combine(bakedAssetsDirPath, "Lightmap-0_comp_light.exr");
-                var kanikamaMapPath = Path.Combine(kanikamaDirPath, $"Kanikama{i}-0.exr");
-                AssetDatabase.CopyAsset(bakeLightmapPath, kanikamaMapPath);
+                if (i == 0)
+                {
+                    texture2DArrayConverters = CreateTex2DArrayConverters(kanikamaDirPath, bakedAssetsDirPath);
+                }
 
-                var textureImporter = AssetImporter.GetAtPath(kanikamaMapPath) as TextureImporter;
-                textureImporter.isReadable = true;
-                textureImporter.SaveAndReimport();
+                for (var j = 0; j < texture2DArrayConverters.Count; j++)
+                {
+                    var bakeLightmapPath = Path.Combine(bakedAssetsDirPath, $"Lightmap-{j}_comp_light.exr");
+                    var kanikamaMapPath = Path.Combine(kanikamaDirPath, $"Kanikama-{j}-{i}.exr");
+                    AssetDatabase.CopyAsset(bakeLightmapPath, kanikamaMapPath);
 
-                var kanikamaMap = AssetDatabase.LoadAssetAtPath<Texture2D>(kanikamaMapPath);
-                tex2dArrayGenerator.textures.Add(kanikamaMap);
+                    var textureImporter = AssetImporter.GetAtPath(kanikamaMapPath) as TextureImporter;
+                    textureImporter.isReadable = true;
+                    textureImporter.SaveAndReimport();
+
+                    var kanikamaMap = AssetDatabase.LoadAssetAtPath<Texture2D>(kanikamaMapPath);
+                    texture2DArrayConverters[j].textures.Add(kanikamaMap);
+                }
 
                 light.enabled = false;
             }
 
 
-            AssetUtil.CreateOrReplaceAsset(ref tex2dArrayGenerator, Path.Combine(kanikamaDirPath, "tex2DArrayGenerator.asset"));
             AssetDatabase.Refresh();
 
-            var tex2dArray = tex2dArrayGenerator.Convert();
-            var shader = Shader.Find("Kanikama/LightmapComposite");
-            var mat = new Material(shader);
-            var matPath = Path.Combine(kanikamaDirPath, "KanikamaMapComposite-0.mat");
-            AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
-
-            mat.SetTexture("_Tex2DArray", tex2dArray);
-            mat.SetInt("_TexCount", sceneData.kanikamaLights.Count);
-
-            var sceneMapPath = Path.Combine(kanikamaDirPath, "KanikamaSceneMap.asset");
-            var sceneMap = new CustomRenderTexture(tex2dArray.width, tex2dArray.height, RenderTextureFormat.ARGB32)
+            for (var j = 0; j < texture2DArrayConverters.Count; j++)
             {
-                material = mat,
-                updateMode = CustomRenderTextureUpdateMode.Realtime,
-                initializationMode = CustomRenderTextureUpdateMode.OnLoad,
-                initializationColor = Color.black
-            };
-            AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+                var tex2dArray = texture2DArrayConverters[j].Convert();
+                var shader = Shader.Find("Kanikama/LightmapComposite");
+                var mat = new Material(shader);
+                var matPath = Path.Combine(kanikamaDirPath, $"KanikamaMapComposite-{j}.mat");
+                AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+
+                mat.SetTexture("_Tex2DArray", tex2dArray);
+                mat.SetInt("_TexCount", sceneData.kanikamaLights.Count);
+
+                var sceneMapPath = Path.Combine(kanikamaDirPath, $"KanikamaSceneMap-{j}.asset");
+                var sceneMap = new CustomRenderTexture(tex2dArray.width, tex2dArray.height, RenderTextureFormat.ARGB32)
+                {
+                    material = mat,
+                    updateMode = CustomRenderTextureUpdateMode.Realtime,
+                    initializationMode = CustomRenderTextureUpdateMode.OnLoad,
+                    initializationColor = Color.black
+                };
+                AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+            }
+
+
             AssetDatabase.Refresh();
 
 
@@ -92,15 +109,15 @@ namespace Kanikama.Editor
             var sceneData = new SceneKanikamaData();
 
             var allLights = Object.FindObjectsOfType<Light>();
-            var kanikamaReference = Object.FindObjectOfType<KanikamaLightReference>();
-
-
-            if (!kanikamaReference)
+            var kanikamaDescriptor = UdonUtil.FindUdonSharpOfType<KanikamaSceneDescriptor>();
+            if (kanikamaDescriptor is null)
             {
-                throw new System.Exception("SceneにKanikamaLightReferenceオブジェクトが存在しません");
+                throw new System.Exception($"Sceneに{typeof(KanikamaSceneDescriptor).Name}オブジェクトが存在しません");
+
             }
 
-            sceneData.kanikamaLights.AddRange(kanikamaReference.lights);
+            UdonSharpEditor.UdonSharpEditorUtility.CopyUdonToProxy(kanikamaDescriptor);
+            sceneData.kanikamaLights.AddRange(kanikamaDescriptor.Lights);
 
             var kanikamaLights = sceneData.kanikamaLights;
             foreach (var light in allLights)
@@ -131,6 +148,22 @@ namespace Kanikama.Editor
 
             sceneData.ambientIntensity = RenderSettings.ambientIntensity;
             return sceneData;
+        }
+
+        private static List<Texture2DArrayConverter> CreateTex2DArrayConverters(string dirPath, string bakedAssetsDirPath)
+        {
+            var list = new List<Texture2DArrayConverter>();
+            var i = 0;
+            while (AssetUtil.IsValidPath(Path.Combine(bakedAssetsDirPath, $"Lightmap-{i}_comp_light.exr")))
+            {
+                var converter = ScriptableObject.CreateInstance<Texture2DArrayConverter>();
+                converter.fileName = $"KanikamaMapArray-{i}";
+                AssetUtil.CreateOrReplaceAsset(ref converter, Path.Combine(dirPath, $"tex2DArrayGenerator-{i}.asset"));
+                list.Add(converter);
+                i++;
+            }
+            AssetDatabase.Refresh();
+            return list;
         }
 
         public class SceneKanikamaData
@@ -168,7 +201,7 @@ namespace Kanikama.Editor
                     light.enabled = true;
                 }
 
-                for(var i = 0; i < kanikamaLights.Count; i++)
+                for (var i = 0; i < kanikamaLights.Count; i++)
                 {
                     var light = kanikamaLights[i];
                     var data = kanikamaLightDatas[i];

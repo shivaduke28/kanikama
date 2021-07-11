@@ -4,7 +4,6 @@
     {
         _Tex2DArray("_Tex2DArray", 2DArray) = "" {}
         _TexCount("_TexCount", int) = 0
-            _Max("_Max", float) = 34.49
     }
     SubShader
     {

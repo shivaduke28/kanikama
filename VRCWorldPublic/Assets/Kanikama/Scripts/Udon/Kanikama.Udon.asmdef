@@ -1,0 +1,15 @@
+{
+    "name": "Kanikama.Udon",
+    "references": [
+        "UdonSharp.Runtime",
+        "VRC.Udon"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

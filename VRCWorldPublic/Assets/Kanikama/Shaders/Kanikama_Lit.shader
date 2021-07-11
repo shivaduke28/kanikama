@@ -5,7 +5,7 @@ Shader "Kanikama/Lit"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _KanikamaMap("Lightmap", 2D) = "black" {}
+        [PerRendererData]_KanikamaMap("Lightmap", 2D) = "black" {}
     }
     SubShader
     {

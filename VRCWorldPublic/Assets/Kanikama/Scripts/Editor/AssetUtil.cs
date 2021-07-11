@@ -6,6 +6,12 @@ namespace Kanikama.Editor
 {
     public static class AssetUtil
     {
+
+        public static bool IsValidPath(string path)
+        {
+            return AssetDatabase.LoadMainAssetAtPath(path) != null;
+        }
+
         public static bool TryLoadAsset<T>(string path, out T asset) where T : Object
         {
             asset = (T)AssetDatabase.LoadAssetAtPath(path, typeof(T));
