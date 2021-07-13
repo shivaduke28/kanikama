@@ -4,19 +4,29 @@ using System.IO;
 using System.Collections.Generic;
 namespace Kanikama.Editor
 {
-    [CreateAssetMenu(fileName = "texture2d_array_converter", menuName = "Kanikama/Texture2DArrayConverter")]
-    public class Texture2DArrayConverter : ScriptableObject
+    [CreateAssetMenu(fileName = "texture2d_array_converter", menuName = "Kanikama/Texture2DArrayGenerator")]
+    public class Texture2DArrayGenerator : ScriptableObject
     {
         public List<Texture2D> textures = new List<Texture2D>();
         public string fileName = "texture2d_array";
 
-        [ContextMenu("Convert")]
-        public Texture2DArray Convert()
+        [ContextMenu("Generate")]
+        public Texture2DArray Generate()
+        {
+            var texArray = Generate(textures);
+            var path = AssetDatabase.GetAssetPath(this);
+            var dir = Path.GetDirectoryName(path);
+            AssetUtil.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
+            AssetDatabase.Refresh();
+            return texArray;
+        }
+
+        public static Texture2DArray Generate(List<Texture2D> textures)
         {
             var count = textures.Count;
             if (count == 0)
             {
-                throw new System.Exception("テクスチャをセットしてください");
+                throw new System.Exception("テクスチャの配列が空です");
             }
 
             var map = textures[0];
@@ -33,11 +43,6 @@ namespace Kanikama.Editor
                 texArray.SetPixels(color, i);
             }
             texArray.Apply();
-
-            var path = AssetDatabase.GetAssetPath(this);
-            var dir = Path.GetDirectoryName(path);
-            AssetUtil.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
-            AssetDatabase.Refresh();
             return texArray;
         }
     }

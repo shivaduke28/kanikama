@@ -16,6 +16,7 @@
             CGPROGRAM
             #pragma vertex CustomRenderTextureVertexShader
             #pragma fragment frag
+            #include "UnityCustomRenderTexture.cginc"
             #include "LightmapComposite.hlsl"
             ENDCG
         }

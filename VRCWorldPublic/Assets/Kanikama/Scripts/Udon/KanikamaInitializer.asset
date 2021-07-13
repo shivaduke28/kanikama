@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: KanikamaRenderer
+  m_Name: KanikamaInitializer
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 7fe2861456782c345aa7e085a8d63c53,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 24c8aaa42e1fc444db024bfcd6257724,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: ddeed5fb2f1c9b744b4992ce9f0f2e34, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: b3509dfc64773554b8a8ce1d4a3dd16d, type: 3}
   behaviourSyncMode: 0
   behaviourIDHeapVarName: __refl_const_intnl_udonTypeID
   compileErrors: []
@@ -49,7 +49,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: kanikamaMaps
+      Data: lightMaps
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -76,10 +76,10 @@ MonoBehaviour:
       Data: UnityEngineTextureArray
     - Name: symbolOriginalName
       Entry: 1
-      Data: kanikamaMaps
+      Data: lightMaps
     - Name: symbolUniqueName
       Entry: 1
-      Data: kanikamaMaps
+      Data: lightMaps
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -118,7 +118,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: renderer
+      Data: receivers
     - Name: $v
       Entry: 7
       Data: 7|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -130,7 +130,7 @@ MonoBehaviour:
       Data: 9|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: UnityEngine.Renderer, UnityEngine.CoreModule
+      Data: UnityEngine.Renderer[], UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
@@ -142,13 +142,13 @@ MonoBehaviour:
       Data: 0
     - Name: symbolResolvedTypeName
       Entry: 1
-      Data: UnityEngineRenderer
+      Data: UnityEngineRendererArray
     - Name: symbolOriginalName
       Entry: 1
-      Data: renderer
+      Data: receivers
     - Name: symbolUniqueName
       Entry: 1
-      Data: renderer
+      Data: receivers
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

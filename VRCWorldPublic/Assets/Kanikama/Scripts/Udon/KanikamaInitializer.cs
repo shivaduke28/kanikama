@@ -6,13 +6,9 @@ using VRC.Udon;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaSceneDescriptor : UdonSharpBehaviour
+    public class KanikamaInitializer : UdonSharpBehaviour
     {
-        [SerializeField] private Light[] lights;
-        [SerializeField] private Renderer[] emissiveRenderers;
-        [Space]
         [SerializeField] private Texture[] lightMaps;
-        [Space]
         [SerializeField] private Renderer[] receivers;
 
         private void Start()
@@ -33,14 +29,5 @@ namespace Kanikama.Udon
                 }
             }
         }
-
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public Light[] Lights => lights;
-        public Renderer[] EmissiveReceivers => emissiveRenderers;
-        public Texture[] LightMaps => lightMaps;
-        public Renderer[] Receivers => receivers;
-
-
-#endif
     }
 }

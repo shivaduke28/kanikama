@@ -7,9 +7,9 @@ namespace Kanikama.Editor
 {
     public static class UdonUtil
     {
-        public static T FindUdonSharpOfType<T>() where T : UdonSharpBehaviour
+        public static T FindUdonSharpObjectOfType<T>() where T : UdonSharpBehaviour
         {
-            var udonBehaviours = GameObject.FindObjectsOfType<UdonBehaviour>();
+            var udonBehaviours = Object.FindObjectsOfType<UdonBehaviour>();
             foreach (var udon in udonBehaviours)
             {
                 if (!UdonSharpEditorUtility.IsUdonSharpBehaviour(udon)) continue;

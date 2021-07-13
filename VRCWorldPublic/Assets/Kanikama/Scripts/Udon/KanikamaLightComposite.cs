@@ -5,22 +5,22 @@ using UdonSharp;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaComposite : UdonSharpBehaviour
+    public class KanikamaLightComposite : UdonSharpBehaviour
     {
-        [SerializeField] private Material material;
+        [SerializeField] private Material[] materials;
         [SerializeField] private Light[] lights;
         private float[] intensities;
         private Color[] colors;
         private int lightCount;
 
-        private void Start()
+        void Start()
         {
             lightCount = lights.Length;
             intensities = new float[lightCount];
             colors = new Color[lightCount];
         }
 
-        private void Update()
+        void Update()
         {
             for (var i = 0; i < lightCount; i++)
             {
@@ -29,8 +29,11 @@ namespace Kanikama.Udon
                 intensities[i] = light.intensity;
             }
 
-            material.SetColorArray("_Colors", colors);
-            material.SetFloatArray("_Intensities", intensities);
+            foreach (var mat in materials)
+            {
+                mat.SetColorArray("_Colors", colors);
+                mat.SetFloatArray("_Intensities", intensities);
+            }
         }
     }
 }
