@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR && !COMPILER_UDONSHARP
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
@@ -10,3 +11,4 @@ namespace Kanikama.EditorOnly
         public List<KanikamaMonitor> kanikamaMonitors;
     }
 }
+#endif

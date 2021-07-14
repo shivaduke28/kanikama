@@ -3,49 +3,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 namespace Kanikama.EditorOnly
 {
     public class KanikamaMonitor : EditorOnlyBehaviour
     {
         public MeshRenderer renderer;
-        public Vector3 center;
-        public Vector3 size;
-        public Vector3 min;
-        public Vector3 max;
-        public Vector3 extents;
-
         public Transform anchor;
-
         public int horizontal;
         public int vertical;
         public List<Light> lights = new List<Light>();
+        public Camera captureCamera;
 
-        private void OnEnable()
-        {
-        }
-
-        [ContextMenu("update lights")]
+        [ContextMenu("Update Lights and Camera")]
         void UpdateLights()
         {
             UpdateBounds();
             CreateLights();
+            MoveCamera();
+
+            var currentScene = SceneManager.GetActiveScene();
+            EditorSceneManager.MarkSceneDirty(currentScene);
         }
 
         void UpdateBounds()
         {
             if (renderer is null) return;
-            var b = renderer.bounds;
-            center = b.center;
-            size = b.size;
-            min = b.min;
-            max = b.max;
-            extents = b.extents;
-
-            transform.position = renderer.transform.position;
-            transform.rotation = renderer.transform.rotation;
-            anchor.position = min;
+            transform.SetPositionAndRotation(renderer.transform.position, renderer.transform.rotation);
+            anchor.position = renderer.bounds.min;
         }
 
         void CreateLights()
@@ -57,6 +45,7 @@ namespace Kanikama.EditorOnly
 
             lights.Clear();
 
+            var size = renderer.bounds.size;
             var width = size.x;
             var height = size.y;
 
@@ -79,10 +68,33 @@ namespace Kanikama.EditorOnly
                     lights.Add(l);
                 }
             }
-
         }
 
+        [ContextMenu("UpdateCamere")]
+        void MoveCamera()
+        {
+            var cameraTrans = captureCamera.transform;
+            var rendererTrans = renderer.transform;
+            cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * 0.01f, rendererTrans.rotation);
+            captureCamera.nearClipPlane = 0;
+            captureCamera.farClipPlane = 0.02f;
+            (captureCamera.orthographicSize, captureCamera.rect) = CalculateCameraSizeAndRect(renderer.bounds.extents);
+        }
 
+        static (float, Rect) CalculateCameraSizeAndRect(Vector3 extents)
+        {
+            var x = extents.x;
+            var y = extents.y;
+
+            if (x >= y)
+            {
+                return (y, new Rect { width = 1, height = y / x });
+            }
+            else
+            {
+                return (x, new Rect { width = y / x, height = 1 });
+            }
+        }
     }
 }
 #endif

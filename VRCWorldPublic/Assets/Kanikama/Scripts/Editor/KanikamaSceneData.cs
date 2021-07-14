@@ -18,7 +18,7 @@ namespace Kanikama.Editor
         public void LoadActiveScene()
         {
             var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
-            var sceneDescriptor = UnityEngine.Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            sceneDescriptor = UnityEngine.Object.FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor is null)
             {
                 throw new System.Exception($"Sceneに{typeof(KanikamaSceneDescriptor).Name}オブジェクトが存在しません");
@@ -67,6 +67,17 @@ namespace Kanikama.Editor
             {
                 lightData.BeDefault();
                 lightData.Enabled = false;
+            }
+
+            foreach(var monitor in sceneDescriptor.kanikamaMonitors)
+            {
+                monitor.renderer.enabled = false;
+                foreach(var light in monitor.lights)
+                {
+                    light.intensity = 1;
+                    light.color = Color.white;
+                    light.enabled = false;
+                }
             }
         }
 
