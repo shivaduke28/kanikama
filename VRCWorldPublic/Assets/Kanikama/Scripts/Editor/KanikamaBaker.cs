@@ -33,8 +33,8 @@ namespace Kanikama.Editor
 
 
             var sceneDirPath = Path.GetDirectoryName(scene.path);
-            var kanikamaDirPath = Path.Combine(sceneDirPath, "Kanikama");
-            AssetUtil.CreateFolderIfNecessary(sceneDirPath, "Kanikama");
+            var kanikamaDirPath = Path.Combine(sceneDirPath, $"{scene.name}_Kanikama");
+            AssetUtil.CreateFolderIfNecessary(sceneDirPath, $"{scene.name}_Kanikama");
 
             // 2d array generator
             var bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
@@ -146,30 +146,33 @@ namespace Kanikama.Editor
                 }
             }
 
-            // generate tex2d arrays, composite materials, custom render textures
-            for (var lmInd = 0; lmInd < lightmapAtlasCount; lmInd++)
+            // generate tex2d arrays, composite materials, custom render textures per monitors
+            for (var m = 0; m < sceneData.sceneDescriptor.kanikamaMonitors.Count; m++)
             {
-
-                var texArr = Texture2DArrayGenerator.Generate(monitorMapsDic[0][lmInd]);
-                AssetUtil.CreateOrReplaceAsset(ref texArr, Path.Combine(kanikamaDirPath, $"KMonitorArr-{lmInd}.asset"));
-
-                var shader = Shader.Find("Kanikama/LightmapComposite");
-                var mat = new Material(shader);
-                var matPath = Path.Combine(kanikamaDirPath, $"KMonitorComposite-{lmInd}.mat");
-                AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
-
-                mat.SetInt("_TexCount", sceneData.sceneDescriptor.kanikamaMonitors[0].lights.Count);
-                mat.SetTexture("_Tex2DArray", texArr);
-
-                var sceneMapPath = Path.Combine(kanikamaDirPath, $"KMonitorComposite-{lmInd}.asset");
-                var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGB32)
+                for (var lmInd = 0; lmInd < lightmapAtlasCount; lmInd++)
                 {
-                    material = mat,
-                    updateMode = CustomRenderTextureUpdateMode.Realtime,
-                    initializationMode = CustomRenderTextureUpdateMode.OnLoad,
-                    initializationColor = Color.black
-                };
-                AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+
+                    var texArr = Texture2DArrayGenerator.Generate(monitorMapsDic[m][lmInd]);
+                    AssetUtil.CreateOrReplaceAsset(ref texArr, Path.Combine(kanikamaDirPath, $"KMonitorArr-{m}-{lmInd}.asset"));
+
+                    var shader = Shader.Find("Kanikama/LightmapComposite");
+                    var mat = new Material(shader);
+                    var matPath = Path.Combine(kanikamaDirPath, $"KMonitorComposite-{m}-{lmInd}.mat");
+                    AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+
+                    mat.SetInt("_TexCount", sceneData.sceneDescriptor.kanikamaMonitors[m].lights.Count);
+                    mat.SetTexture("_Tex2DArray", texArr);
+
+                    var crtPath = Path.Combine(kanikamaDirPath, $"KMonitorComposite-{m}-{lmInd}.asset");
+                    var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGB32)
+                    {
+                        material = mat,
+                        updateMode = CustomRenderTextureUpdateMode.Realtime,
+                        initializationMode = CustomRenderTextureUpdateMode.OnLoad,
+                        initializationColor = Color.black
+                    };
+                    AssetUtil.CreateOrReplaceAsset(ref sceneMap, crtPath);
+                }
             }
 
             AssetDatabase.Refresh();
