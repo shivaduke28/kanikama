@@ -95,4 +95,9 @@ Assets/Udon.meta
 # HLSL Tools for VisualStudio
 /shadertoolsconfig.json
 
-/Assets/Kanikama_Test
+# UdonRabbit
+/Assets/NatsunekoLaboratory/
+/Assets/NatsunekoLaboratory.meta
+
+/Assets/Kanikama_Test/
+/Assets/Kanikama_Test.meta
