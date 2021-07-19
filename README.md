@@ -1,10 +1,9 @@
-# vrchat-world-public
+# Kanikama
 
-A template of **public** Github repositories for VRChat World, Assets, and UnityPackages.
 
 #### requirement
 
-- Unity 2020.4.20.f1
+- Unity 2018.4.20.f1
 
 #### How to start
 
