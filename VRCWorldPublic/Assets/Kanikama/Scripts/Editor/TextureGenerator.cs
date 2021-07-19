@@ -4,15 +4,17 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 
-
-public class TextureGenerator
+namespace Kanikama.Editor
 {
-    [MenuItem("UdonGI/GenerateTexture")]
-    public static void GenerateTexture()
+    public class TextureGenerator
     {
-        var texture = new Texture2D(256, 256, TextureFormat.RGBA32, false, linear: true);
-        var bytes = texture.EncodeToPNG();
-        System.IO.File.WriteAllBytes("Assets/texture.png", bytes);
-        AssetDatabase.Refresh();
+        [MenuItem("Kanikama/GenerateTexture256")]
+        public static void GenerateTexture()
+        {
+            var texture = new Texture2D(256, 256, TextureFormat.RGBA32, false, linear: true);
+            var bytes = texture.EncodeToPNG();
+            System.IO.File.WriteAllBytes("Assets/texture.png", bytes);
+            AssetDatabase.Refresh();
+        }
     }
 }

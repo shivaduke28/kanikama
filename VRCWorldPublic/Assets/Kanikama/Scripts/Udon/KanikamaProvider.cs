@@ -6,9 +6,9 @@ using VRC.Udon;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaInitializer : UdonSharpBehaviour
+    public class KanikamaProvider : UdonSharpBehaviour
     {
-        [SerializeField] private Texture[] lightMaps;
+        [SerializeField] private Texture[] lightmaps;
         [SerializeField] private Renderer[] receivers;
 
         private void Start()
@@ -23,7 +23,7 @@ namespace Kanikama.Udon
                     if (mat.HasProperty("_KanikamaMap"))
                     {
                         var p = new MaterialPropertyBlock();
-                        p.SetTexture("_KanikamaMap", lightMaps[index]);
+                        p.SetTexture("_KanikamaMap", lightmaps[index]);
                         renderer.SetPropertyBlock(p, i);
                     }
                 }

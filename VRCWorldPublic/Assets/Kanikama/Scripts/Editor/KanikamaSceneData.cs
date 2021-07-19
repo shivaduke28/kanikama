@@ -6,6 +6,7 @@ using Kanikama.EditorOnly;
 
 namespace Kanikama.Editor
 {
+    [Serializable]
     public class KanikamaSceneData
     {
         public KanikamaSceneDescriptor sceneDescriptor;
@@ -71,13 +72,7 @@ namespace Kanikama.Editor
 
             foreach(var monitor in sceneDescriptor.kanikamaMonitors)
             {
-                monitor.renderer.enabled = false;
-                foreach(var light in monitor.lights)
-                {
-                    light.intensity = 1;
-                    light.color = Color.white;
-                    light.enabled = false;
-                }
+                monitor.OnPreBake();
             }
         }
 
@@ -92,6 +87,11 @@ namespace Kanikama.Editor
             foreach (var lightData in kanikamaLightData)
             {
                 lightData.Rollback();
+            }
+
+            foreach (var monitor in sceneDescriptor.kanikamaMonitors)
+            {
+                monitor.OnPostBake();
             }
         }
     }

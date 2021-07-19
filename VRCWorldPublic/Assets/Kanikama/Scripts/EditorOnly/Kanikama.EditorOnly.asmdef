@@ -3,7 +3,8 @@
     "references": [
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
-        "Kanikama.Udon"
+        "Kanikama.Udon",
+        "VRC.Udon"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

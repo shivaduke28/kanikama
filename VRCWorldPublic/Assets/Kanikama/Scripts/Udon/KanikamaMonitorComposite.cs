@@ -9,12 +9,11 @@ namespace Kanikama.Udon
     {
         [SerializeField] private Material[] materials;
         [SerializeField] private int lightCount;
+        [SerializeField] private Texture2D tex;
 
         private float[] intensities;
         private Color[] colors;
-
-
-        [SerializeField] private Texture2D tex;
+        public float intensity = 1f;
 
         void Start()
         {
@@ -22,26 +21,8 @@ namespace Kanikama.Udon
             colors = new Color[lightCount];
         }
 
-        void Update()
-        {
-            //var pix = texture.ReadPixels();
-            //for (var i = 0; i < lightCount; i++)
-            //{
-            //    var light = lights[i];
-            //    colors[i] = light.color;
-            //    intensities[i] = light.intensity;
-            //}
 
-            //foreach (var mat in materials)
-            //{
-            //    mat.SetColorArray("_Colors", colors);
-            //    mat.SetFloatArray("_Intensities", intensities);
-            //}
-        }
-
-        public float intensity = 1f;
-
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             tex.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
             tex.Apply();
