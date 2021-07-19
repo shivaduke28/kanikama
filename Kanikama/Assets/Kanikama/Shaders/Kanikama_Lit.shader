@@ -4,12 +4,12 @@ Shader "Kanikama/Lit"
 {
     Properties
     {
-        _MainTex ("Texture", 2D) = "white" {}
+        _MainTex("Texture", 2D) = "white" {}
         [PerRendererData]_KanikamaMap("Lightmap", 2D) = "black" {}
     }
-    SubShader
+        SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType" = "Opaque" }
         LOD 100
 
         Pass
@@ -42,7 +42,7 @@ Shader "Kanikama/Lit"
 
             sampler2D _KanikamaMap;
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -52,7 +52,7 @@ Shader "Kanikama/Lit"
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            fixed4 frag(v2f i) : SV_Target
             {
                 // sample the texture
                 fixed4 col = tex2D(_MainTex, i.uv);
@@ -61,8 +61,8 @@ Shader "Kanikama/Lit"
                 half3 lm = DecodeLightmapRGBM(lmtex, unity_Lightmap_HDR);
                 lm = DecodeLightmap(lmtex);
                 col.rgb = lm;
-            
-            
+
+
                 // apply fog
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;
