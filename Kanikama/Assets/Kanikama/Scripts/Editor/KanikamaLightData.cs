@@ -16,16 +16,20 @@ namespace Kanikama.Editor
             this.light = light;
         }
 
-        public void BeDefault()
+        public void OnPreBake()
         {
-            intensity = 1f;
-            color = Color.white;
+            intensity = light.intensity;
+            color = light.color;
+            light.color = Color.white;
+            light.intensity = 1f;
+            light.enabled = false;
         }
 
-        public void Rollback()
+        public void OnPostBake()
         {
             light.intensity = intensity;
             light.color = color;
+            light.enabled = true;
         }
     }
 }

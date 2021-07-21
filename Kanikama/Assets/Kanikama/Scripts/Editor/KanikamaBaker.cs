@@ -22,6 +22,7 @@ namespace Kanikama.Editor
         int lightmapAtlasCount;
         string bakedAssetsDirPath;
         string exportDirPath;
+        string tmpDirPath;
 
         /// <summary>
         /// key: lightmap index, value: baked kanikama lightmaps
@@ -35,6 +36,8 @@ namespace Kanikama.Editor
 
         static readonly Regex LightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
         const string ExportDirFormat = "{0}_Kanikama";
+        const string TmpDirName = "tmp";
+
         const string LightmapFormat = "Lightmap-{0}_comp_light.exr";
         const string KLmapFormat = "KL-{0}_{1}.exr";
 
@@ -60,9 +63,12 @@ namespace Kanikama.Editor
             sceneData.SetupForBake();
 
             var sceneDirPath = Path.GetDirectoryName(scene.path);
+            var exportDirName = string.Format(ExportDirFormat, scene.name);
 
-            exportDirPath = Path.Combine(sceneDirPath, string.Format(ExportDirFormat, scene.name));
-            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirPath);
+            exportDirPath = Path.Combine(sceneDirPath, exportDirName);
+            AssetUtil.CreateFolderIfNecessary(exportDirPath, TmpDirName);
+            tmpDirPath = Path.Combine(exportDirPath, TmpDirName);
+            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
 
             bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
 
@@ -72,10 +78,11 @@ namespace Kanikama.Editor
             CreateKanikamaMonitorAssets();
             AssetDatabase.Refresh();
 
-            sceneData.Rollback();
+            sceneData.RollbackNonKanikama();
 
             Debug.Log($"Baking Scene GI without Kanikama...");
             await BakeSceneGIAsync(token);
+            sceneData.RollbackKanikama();
 
             Debug.Log($"Done.");
         }
@@ -106,7 +113,7 @@ namespace Kanikama.Editor
             for (var mapIndex = 0; mapIndex < lightmapAtlasCount; mapIndex++)
             {
                 var bakedMapPath = Path.Combine(bakedAssetsDirPath, string.Format(LightmapFormat, mapIndex));
-                var copiedMapPath = Path.Combine(exportDirPath, string.Format(KLmapFormat, mapIndex, lightIndex));
+                var copiedMapPath = Path.Combine(tmpDirPath, string.Format(KLmapFormat, mapIndex, lightIndex));
                 AssetDatabase.CopyAsset(bakedMapPath, copiedMapPath);
 
                 var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
@@ -140,7 +147,7 @@ namespace Kanikama.Editor
                 mat.SetTexture(TexArrayPropertyId, texArr);
 
                 var sceneMapPath = Path.Combine(exportDirPath, string.Format(KLCompositeMapFormat, mapIndex));
-                var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGB32)
+                var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGBHalf)
                 {
                     material = mat,
                     updateMode = CustomRenderTextureUpdateMode.Realtime,
@@ -188,7 +195,7 @@ namespace Kanikama.Editor
             for (var mapIndex = 0; mapIndex < lightmapAtlasCount; mapIndex++)
             {
                 var bakedMapPath = Path.Combine(bakedAssetsDirPath, string.Format(LightmapFormat, mapIndex));
-                var copiedMapPath = Path.Combine(exportDirPath, string.Format(KMmapFormat, monitorIndex, mapIndex, lightIndex));
+                var copiedMapPath = Path.Combine(tmpDirPath, string.Format(KMmapFormat, monitorIndex, mapIndex, lightIndex));
                 AssetDatabase.CopyAsset(bakedMapPath, copiedMapPath);
 
                 var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
@@ -224,7 +231,7 @@ namespace Kanikama.Editor
                     mat.SetTexture(TexArrayPropertyId, texArr);
 
                     var crtPath = Path.Combine(exportDirPath, string.Format(KMCompositeMapFormat, m, mapIndex));
-                    var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGB32)
+                    var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGBHalf)
                     {
                         material = mat,
                         updateMode = CustomRenderTextureUpdateMode.Realtime,

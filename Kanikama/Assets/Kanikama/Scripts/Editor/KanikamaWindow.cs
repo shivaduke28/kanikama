@@ -35,7 +35,7 @@ namespace Kanikama.Editor
 
         void OnGUI()
         {
-            GUILayout.Label(scene.name, EditorStyles.boldLabel);
+            GUILayout.Label("Bake", EditorStyles.boldLabel);
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.TextField("Scene", scene.name);
             EditorGUI.EndDisabledGroup();
@@ -45,10 +45,18 @@ namespace Kanikama.Editor
             {
                 if (GUILayout.Button("Force Stop"))
                 {
-                    tokenSource.Cancel();
+                    if (tokenSource != null)
+                    {
+                        tokenSource.Cancel();
+                    }
+                    else
+                    {
+                        isRunning = false;
+                    }
+
                 }
             }
-            if (!isRunning)
+            if (sceneDescriptor != null && !isRunning)
             {
                 if (GUILayout.Button("Bake"))
                 {

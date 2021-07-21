@@ -23,6 +23,18 @@ namespace Kanikama.Editor
             return texArray;
         }
 
+        [ContextMenu("Generate (Linear)")]
+        public Texture2DArray GenerateLinear()
+        {
+            var texArray = Generate(textures, true);
+            var path = AssetDatabase.GetAssetPath(this);
+            var dir = Path.GetDirectoryName(path);
+            AssetUtil.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
+            AssetDatabase.Refresh();
+            return texArray;
+        }
+
+
         /// <summary>
         /// Texture2DArrayを作成する
         /// </summary>

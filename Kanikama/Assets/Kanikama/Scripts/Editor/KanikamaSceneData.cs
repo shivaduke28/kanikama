@@ -66,8 +66,7 @@ namespace Kanikama.Editor
 
             foreach (var lightData in kanikamaLightData)
             {
-                lightData.BeDefault();
-                lightData.Enabled = false;
+                lightData.OnPreBake();
             }
 
             foreach(var monitor in sceneDescriptor.kanikamaMonitors)
@@ -76,17 +75,21 @@ namespace Kanikama.Editor
             }
         }
 
-        public void Rollback()
+        public void RollbackNonKanikama()
         {
             RenderSettings.ambientIntensity = ambientIntensity;
             foreach (var light in nonKanikamaLights)
             {
                 light.enabled = true;
             }
+        }
+
+        public void RollbackKanikama()
+        {
 
             foreach (var lightData in kanikamaLightData)
             {
-                lightData.Rollback();
+                lightData.OnPostBake();
             }
 
             foreach (var monitor in sceneDescriptor.kanikamaMonitors)

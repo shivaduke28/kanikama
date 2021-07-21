@@ -16,6 +16,7 @@ namespace Kanikama.Udon
             foreach (var renderer in receivers)
             {
                 var index = renderer.lightmapIndex;
+                if (index < 0) continue;
                 var sharedMats = renderer.sharedMaterials;
                 for (var i = 0; i < sharedMats.Length; i++)
                 {
