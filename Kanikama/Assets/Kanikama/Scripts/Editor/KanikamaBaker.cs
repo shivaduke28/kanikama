@@ -51,40 +51,52 @@ namespace Kanikama.Editor
         const string KMCompositeMapFormat = "KM-comp-{0}-{1}.asset";
 
         const string CompositeShaderName = "Kanikama/LightmapComposite";
+        public const string DummyShaderName = "Kanikama/Dummy";
         static readonly int TexCountPropertyId = Shader.PropertyToID("_TexCount");
         static readonly int TexArrayPropertyId = Shader.PropertyToID("_Tex2DArray");
 
         public async Task BakeAsync(CancellationToken token = default)
         {
-            Debug.Log($"Start to Bake Kanikama.");
-            var scene = SceneManager.GetActiveScene();
-            sceneData = new KanikamaSceneData();
-            sceneData.LoadActiveScene();
-            sceneData.SetupForBake();
+            try
+            {
+                Debug.Log($"Start to Bake Kanikama.");
+                var scene = SceneManager.GetActiveScene();
+                sceneData = new KanikamaSceneData();
+                sceneData.LoadActiveScene();
+                sceneData.SetupForBake();
 
-            var sceneDirPath = Path.GetDirectoryName(scene.path);
-            var exportDirName = string.Format(ExportDirFormat, scene.name);
+                var sceneDirPath = Path.GetDirectoryName(scene.path);
+                var exportDirName = string.Format(ExportDirFormat, scene.name);
 
-            exportDirPath = Path.Combine(sceneDirPath, exportDirName);
-            AssetUtil.CreateFolderIfNecessary(exportDirPath, TmpDirName);
-            tmpDirPath = Path.Combine(exportDirPath, TmpDirName);
-            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+                exportDirPath = Path.Combine(sceneDirPath, exportDirName);
+                AssetUtil.CreateFolderIfNecessary(exportDirPath, TmpDirName);
+                tmpDirPath = Path.Combine(exportDirPath, TmpDirName);
+                AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
 
-            bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
+                bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
 
-            await BakeKanikamaLightsAsync(token);
-            await BakeKanikamaMonitorsAsync(token);
-            CreateKanikamaLightAssets();
-            CreateKanikamaMonitorAssets();
-            AssetDatabase.Refresh();
+                await BakeKanikamaLightsAsync(token);
+                await BakeKanikamaMonitorsAsync(token);
+                CreateKanikamaLightAssets();
+                CreateKanikamaMonitorAssets();
+                AssetDatabase.Refresh();
 
-            sceneData.RollbackNonKanikama();
+                sceneData.RollbackNonKanikama();
 
-            Debug.Log($"Baking Scene GI without Kanikama...");
-            await BakeSceneGIAsync(token);
-            sceneData.RollbackKanikama();
+                Debug.Log($"Baking Scene GI without Kanikama...");
+                await BakeSceneGIAsync(token);
+                sceneData.RollbackKanikama();
 
-            Debug.Log($"Done.");
+                Debug.Log($"Done.");
+            }
+            catch (TaskCanceledException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                sceneData?.Dispose();
+            }
         }
 
         async Task BakeKanikamaLightsAsync(CancellationToken token)

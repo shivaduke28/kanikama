@@ -1,20 +1,24 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
 using Kanikama.EditorOnly;
 
 namespace Kanikama.Editor
 {
     [Serializable]
-    public class KanikamaSceneData
+    public class KanikamaSceneData : IDisposable
     {
         public KanikamaSceneDescriptor sceneDescriptor;
         public List<KanikamaLightData> kanikamaLightData = new List<KanikamaLightData>();
         public List<Light> nonKanikamaLights = new List<Light>();
         public List<Renderer> nonKanikamaEmissiveRenderers = new List<Renderer>();
-        public Dictionary<GameObject, Material> materialMap = new Dictionary<GameObject, Material>();
+        Dictionary<GameObject, Material[]> materialMap = new Dictionary<GameObject, Material[]>();
         public float ambientIntensity;
+
+        private Material dummyMaterial;
 
         public void LoadActiveScene()
         {
@@ -22,8 +26,7 @@ namespace Kanikama.Editor
             sceneDescriptor = UnityEngine.Object.FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor is null)
             {
-                throw new System.Exception($"Sceneに{typeof(KanikamaSceneDescriptor).Name}オブジェクトが存在しません");
-
+                throw new Exception($"Sceneに{typeof(KanikamaSceneDescriptor).Name}オブジェクトが存在しません");
             }
 
             kanikamaLightData.AddRange(sceneDescriptor.kanikamaLights.Select(x => new KanikamaLightData(x)));
@@ -37,19 +40,26 @@ namespace Kanikama.Editor
 
             // TODO: Emissive Material
 
-            //var allRenderers = Object.FindObjectsOfType<Renderer>();
-            //foreach (var renderer in allRenderers)
-            //{
-            //    var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-            //    if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
-            //    {
-            //        var mat = renderer.sharedMaterial;
-            //        if (mat.IsKeywordEnabled("_EMISSION"))
-            //        {
-            //        }
-            //    }
+            if (dummyMaterial is null)
+            {
+                dummyMaterial = new Material(Shader.Find(KanikamaBaker.DummyShaderName));
+            }
 
-            //}
+            var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
+            foreach (var renderer in allRenderers)
+            {
+                var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
+                if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
+                {
+                    var sharedMaterials = renderer.sharedMaterials;
+
+                    if (sharedMaterials.Any(x => x.IsKeywordEnabled("_EMISSION")))
+                    {
+                        materialMap[renderer.gameObject] = sharedMaterials;
+                        renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
+                    }
+                }
+            }
 
 
 
@@ -69,7 +79,7 @@ namespace Kanikama.Editor
                 lightData.OnPreBake();
             }
 
-            foreach(var monitor in sceneDescriptor.kanikamaMonitors)
+            foreach (var monitor in sceneDescriptor.kanikamaMonitors)
             {
                 monitor.OnPreBake();
             }
@@ -81,6 +91,13 @@ namespace Kanikama.Editor
             foreach (var light in nonKanikamaLights)
             {
                 light.enabled = true;
+            }
+
+            foreach(var kvp in materialMap)
+            {
+                var go = kvp.Key;
+                var renderer = go.GetComponent<Renderer>();
+                renderer.sharedMaterials = kvp.Value;
             }
         }
 
@@ -95,6 +112,14 @@ namespace Kanikama.Editor
             foreach (var monitor in sceneDescriptor.kanikamaMonitors)
             {
                 monitor.OnPostBake();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (dummyMaterial != null)
+            {
+                UnityEngine.Object.DestroyImmediate(dummyMaterial);
             }
         }
     }
