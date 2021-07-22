@@ -9,15 +9,18 @@ namespace Kanikama.Udon
     {
         [SerializeField] private Material[] materials;
         [SerializeField] private Light[] lights;
+        [SerializeField] private Renderer[] renderers;
         private float[] intensities;
         private Color[] colors;
         private int lightCount;
+        int rendererCount;
 
         void Start()
         {
             lightCount = lights.Length;
-            intensities = new float[lightCount];
-            colors = new Color[lightCount];
+            rendererCount = renderers.Length;
+            intensities = new float[lightCount + rendererCount];
+            colors = new Color[lightCount + rendererCount];
         }
 
         void Update()
@@ -27,6 +30,14 @@ namespace Kanikama.Udon
                 var light = lights[i];
                 colors[i] = light.color;
                 intensities[i] = light.intensity;
+            }
+
+            for(var i = 0; i < rendererCount; i++)
+            {
+                var renderer = renderers[i];
+                var mat = renderer.sharedMaterial;
+                colors[lightCount + i] = mat.GetColor("_EmissionColor");
+                intensities[lightCount + i] = 1f;
             }
 
             foreach (var mat in materials)

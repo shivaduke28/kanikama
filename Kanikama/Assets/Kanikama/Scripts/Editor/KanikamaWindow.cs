@@ -72,7 +72,7 @@ namespace Kanikama.Editor
             isRunning = true;
             try
             {
-                await baker.BakeAsync(tokenSource.Token);
+                await baker.BakeAsync(sceneDescriptor, tokenSource.Token);
 
             }
             catch (TaskCanceledException)

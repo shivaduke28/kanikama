@@ -11,25 +11,29 @@ namespace Kanikama.Editor
     [Serializable]
     public class KanikamaSceneData : IDisposable
     {
-        public KanikamaSceneDescriptor sceneDescriptor;
-        public List<KanikamaLightData> kanikamaLightData = new List<KanikamaLightData>();
+        readonly KanikamaSceneDescriptor sceneDescriptor;
+        public List<KanikamaLightData> kanikamaLightDatas = new List<KanikamaLightData>();
+        public List<KanikamaRendererData> kanikamaRendererDatas = new List<KanikamaRendererData>();
+        public List<KanikamaMonitorSetup> kanikamaMonitors => sceneDescriptor.kanikamaMonitors;
         public List<Light> nonKanikamaLights = new List<Light>();
         public List<Renderer> nonKanikamaEmissiveRenderers = new List<Renderer>();
-        Dictionary<GameObject, Material[]> materialMap = new Dictionary<GameObject, Material[]>();
-        public float ambientIntensity;
+        Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
+        float ambientIntensity;
+        Material dummyMaterial;
 
-        private Material dummyMaterial;
+
+        public KanikamaSceneData(KanikamaSceneDescriptor sceneDescriptor)
+        {
+            this.sceneDescriptor = sceneDescriptor;
+        }
 
         public void LoadActiveScene()
         {
-            var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
-            sceneDescriptor = UnityEngine.Object.FindObjectOfType<KanikamaSceneDescriptor>();
-            if (sceneDescriptor is null)
-            {
-                throw new Exception($"Sceneに{typeof(KanikamaSceneDescriptor).Name}オブジェクトが存在しません");
-            }
+            // kanikama lights
+            kanikamaLightDatas.AddRange(sceneDescriptor.kanikamaLights.Select(x => new KanikamaLightData(x)));
 
-            kanikamaLightData.AddRange(sceneDescriptor.kanikamaLights.Select(x => new KanikamaLightData(x)));
+            // non kanikama lights
+            var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
             foreach (var light in allLights)
             {
                 if (light.enabled && light.lightmapBakeType != LightmapBakeType.Realtime && !sceneDescriptor.kanikamaLights.Contains(light))
@@ -38,35 +42,36 @@ namespace Kanikama.Editor
                 }
             }
 
-            // TODO: Emissive Material
+            // kanikama emissive renderers
+            kanikamaRendererDatas.AddRange(sceneDescriptor.kanikamaRenderers.Select(x => new KanikamaRendererData(x)));
 
             if (dummyMaterial is null)
             {
                 dummyMaterial = new Material(Shader.Find(KanikamaBaker.DummyShaderName));
             }
 
+            // non kanikama emissive renderers
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
+                if (sceneDescriptor.kanikamaRenderers.Contains(renderer)) continue;
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
                 {
                     var sharedMaterials = renderer.sharedMaterials;
 
-                    if (sharedMaterials.Any(x => x.IsKeywordEnabled("_EMISSION")))
+                    if (sharedMaterials.Any(x => x.IsKeywordEnabled(KanikamaEmissiveMaterialData.ShaderKeywordEmission)))
                     {
-                        materialMap[renderer.gameObject] = sharedMaterials;
+                        nonKanikamaMaterialMaps[renderer.gameObject] = sharedMaterials;
                         renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
                     }
                 }
             }
 
-
-
             ambientIntensity = RenderSettings.ambientIntensity;
         }
 
-        public void SetupForBake()
+        public void TurnOff()
         {
             RenderSettings.ambientIntensity = 0;
             foreach (var light in nonKanikamaLights)
@@ -74,14 +79,19 @@ namespace Kanikama.Editor
                 light.enabled = false;
             }
 
-            foreach (var lightData in kanikamaLightData)
+            foreach (var lightData in kanikamaLightDatas)
             {
-                lightData.OnPreBake();
+                lightData.TurnOff();
+            }
+
+            foreach (var rendererData in kanikamaRendererDatas)
+            {
+                rendererData.TurnOff();
             }
 
             foreach (var monitor in sceneDescriptor.kanikamaMonitors)
             {
-                monitor.OnPreBake();
+                monitor.TurnOff();
             }
         }
 
@@ -93,7 +103,7 @@ namespace Kanikama.Editor
                 light.enabled = true;
             }
 
-            foreach(var kvp in materialMap)
+            foreach (var kvp in nonKanikamaMaterialMaps)
             {
                 var go = kvp.Key;
                 var renderer = go.GetComponent<Renderer>();
@@ -103,15 +113,19 @@ namespace Kanikama.Editor
 
         public void RollbackKanikama()
         {
-
-            foreach (var lightData in kanikamaLightData)
+            foreach (var lightData in kanikamaLightDatas)
             {
-                lightData.OnPostBake();
+                lightData.RollBack();
             }
 
             foreach (var monitor in sceneDescriptor.kanikamaMonitors)
             {
-                monitor.OnPostBake();
+                monitor.RollBack();
+            }
+
+            foreach (var rendererData in kanikamaLightDatas)
+            {
+                rendererData.RollBack();
             }
         }
 

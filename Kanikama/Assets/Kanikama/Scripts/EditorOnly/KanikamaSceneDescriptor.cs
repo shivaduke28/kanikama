@@ -8,6 +8,7 @@ namespace Kanikama.EditorOnly
     public class KanikamaSceneDescriptor : EditorOnlyBehaviour
     {
         public List<Light> kanikamaLights;
+        public List<Renderer> kanikamaRenderers;
         public List<KanikamaMonitorSetup> kanikamaMonitors;
     }
 }

@@ -102,7 +102,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        public void OnPreBake()
+        public void TurnOff()
         {
             renderer.enabled = false;
             foreach (var light in lights)
@@ -113,7 +113,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        public void OnPostBake()
+        public void RollBack()
         {
             renderer.enabled = true;
         }
