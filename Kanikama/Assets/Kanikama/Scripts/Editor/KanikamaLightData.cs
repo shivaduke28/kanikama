@@ -63,14 +63,14 @@ namespace Kanikama.Editor
                 if (mat.IsKeywordEnabled(KanikamaEmissiveMaterialData.ShaderKeywordEmission))
                 {
                     tmp = UnityEngine.Object.Instantiate(mat);
+                    var matData = new KanikamaEmissiveMaterialData(tmp);
+                    EmissiveMaterialDatas.Add(matData);
                 }
                 else
                 {
                     tmp = mat;
                 }
                 tmpMaterials[i] = tmp;
-                var matData = new KanikamaEmissiveMaterialData(tmp);
-                EmissiveMaterialDatas.Add(matData);
             }
             renderer.sharedMaterials = tmpMaterials;
         }
@@ -83,7 +83,7 @@ namespace Kanikama.Editor
             }
         }
 
-        public void Rollback()
+        public void RollBack()
         {
             renderer.sharedMaterials = sharedMaterials;
             foreach (var matData in EmissiveMaterialDatas)

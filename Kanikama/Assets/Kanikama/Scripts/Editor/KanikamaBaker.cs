@@ -112,10 +112,10 @@ namespace Kanikama.Editor
             {
                 Debug.Log($"Baking Kanikama Light... ({i + 1}/{lightCount})");
                 var light = sceneData.kanikamaLightDatas[i];
-                light.Enabled = true;
+                light.OnBake();
                 // may throw TaskCancelledException
                 await BakeSceneGIAsync(token);
-                light.Enabled = false;
+                light.TurnOff();
                 MoveBakedKanikamaLights(i);
             }
         }

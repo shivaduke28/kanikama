@@ -142,7 +142,7 @@ namespace Kanikama.Editor
                 monitor.RollBack();
             }
 
-            foreach (var rendererData in kanikamaLightDatas)
+            foreach (var rendererData in kanikamaRendererDatas)
             {
                 rendererData.RollBack();
             }
