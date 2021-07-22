@@ -10,6 +10,7 @@ namespace Kanikama.EditorOnly
         public List<Light> kanikamaLights;
         public List<Renderer> kanikamaRenderers;
         public List<KanikamaMonitorSetup> kanikamaMonitors;
+        public bool kanikamaAmbientEnable;
     }
 }
 #endif

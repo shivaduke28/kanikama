@@ -41,6 +41,7 @@ namespace Kanikama.Editor
         const string LightmapFormat = "Lightmap-{0}_comp_light.exr";
         const string KLmapFormat = "KL-{0}_{1}.exr";
         const string KRmapFormat = "KR-{0}-{1}_{2}.exr";
+        const string KAmapFormat = "KA-{0}.exr";
 
         const string KLTexArrFormat = "KL-array-{0}.asset";
         const string KLCompositeMatFormat = "KL-comp-{0}.mat";
@@ -79,6 +80,7 @@ namespace Kanikama.Editor
                 await BakeKanikamaLightsAsync(token);
                 await BakeKanikamaRenderersAsync(token);
                 await BakeKanikamaMonitorsAsync(token);
+                await BakeKanikamaAmbient(token);
                 CreateKanikamaLightAssets();
                 CreateKanikamaMonitorAssets();
                 AssetDatabase.Refresh();
@@ -145,6 +147,10 @@ namespace Kanikama.Editor
         {
             if (!kanikamaLightDic.Any()) return;
 
+            var texCount = sceneData.kanikamaLightDatas.Count;
+            texCount += sceneData.kanikamaRendererDatas.SelectMany(x => x.EmissiveMaterialDatas).Count();
+            texCount += sceneData.IsKanikamaAmbientEnable ? 1 : 0;
+
             for (var mapIndex = 0; mapIndex < lightmapAtlasCount; mapIndex++)
             {
                 var texArr = Texture2DArrayGenerator.Generate(kanikamaLightDic[mapIndex]);
@@ -155,7 +161,7 @@ namespace Kanikama.Editor
                 var matPath = Path.Combine(exportDirPath, string.Format(KLCompositeMatFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
 
-                mat.SetInt(TexCountPropertyId, sceneData.kanikamaLightDatas.Count);
+                mat.SetInt(TexCountPropertyId, texCount);
                 mat.SetTexture(TexArrayPropertyId, texArr);
 
                 var sceneMapPath = Path.Combine(exportDirPath, string.Format(KLCompositeMapFormat, mapIndex));
@@ -304,6 +310,40 @@ namespace Kanikama.Editor
 
             AssetDatabase.Refresh();
         }
+
+
+
+        async Task BakeKanikamaAmbient(CancellationToken token)
+        {
+            if (!sceneData.IsKanikamaAmbientEnable) return;
+
+            Debug.Log($"Baking Kanikama Ambient...");
+
+            sceneData.OnAmbientBake();
+            await BakeSceneGIAsync(token);
+            sceneData.TurnOffAmbient();
+
+            if (lightmapAtlasCount == 0) lightmapAtlasCount = GetBakedLightmapCount(bakedAssetsDirPath);
+
+            for (var mapIndex = 0; mapIndex < lightmapAtlasCount; mapIndex++)
+            {
+                var bakedMapPath = Path.Combine(bakedAssetsDirPath, string.Format(LightmapFormat, mapIndex));
+                var copiedMapPath = Path.Combine(tmpDirPath, string.Format(KAmapFormat, mapIndex));
+                AssetDatabase.CopyAsset(bakedMapPath, copiedMapPath);
+
+                var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
+                textureImporter.isReadable = true;
+                textureImporter.SaveAndReimport();
+
+                if (!kanikamaLightDic.ContainsKey(mapIndex))
+                {
+                    kanikamaLightDic[mapIndex] = new List<Texture2D>();
+                }
+
+                kanikamaLightDic[mapIndex].Add(AssetDatabase.LoadAssetAtPath<Texture2D>(copiedMapPath));
+            }
+        }
+
 
         static async Task BakeSceneGIAsync(CancellationToken token)
         {

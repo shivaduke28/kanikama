@@ -15,12 +15,12 @@ namespace Kanikama.Editor
         public List<KanikamaLightData> kanikamaLightDatas = new List<KanikamaLightData>();
         public List<KanikamaRendererData> kanikamaRendererDatas = new List<KanikamaRendererData>();
         public List<KanikamaMonitorSetup> kanikamaMonitors => sceneDescriptor.kanikamaMonitors;
+        public bool IsKanikamaAmbientEnable => sceneDescriptor.kanikamaAmbientEnable;
         public List<Light> nonKanikamaLights = new List<Light>();
         public List<Renderer> nonKanikamaEmissiveRenderers = new List<Renderer>();
         Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
         float ambientIntensity;
         Material dummyMaterial;
-
 
         public KanikamaSceneData(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -68,12 +68,13 @@ namespace Kanikama.Editor
                 }
             }
 
+            // ambient
             ambientIntensity = RenderSettings.ambientIntensity;
         }
 
         public void TurnOff()
         {
-            RenderSettings.ambientIntensity = 0;
+            TurnOffAmbient();
             foreach (var light in nonKanikamaLights)
             {
                 light.enabled = false;
@@ -95,9 +96,22 @@ namespace Kanikama.Editor
             }
         }
 
+        public void OnAmbientBake()
+        {
+            RenderSettings.ambientIntensity = 1;
+        }
+
+        public void TurnOffAmbient()
+        {
+            RenderSettings.ambientIntensity = 0f;
+        }
+
         public void RollbackNonKanikama()
         {
-            RenderSettings.ambientIntensity = ambientIntensity;
+            if (!IsKanikamaAmbientEnable)
+            {
+                RenderSettings.ambientIntensity = ambientIntensity;
+            }
             foreach (var light in nonKanikamaLights)
             {
                 light.enabled = true;
@@ -113,6 +127,11 @@ namespace Kanikama.Editor
 
         public void RollbackKanikama()
         {
+            if (IsKanikamaAmbientEnable)
+            {
+                RenderSettings.ambientIntensity = ambientIntensity;
+            }
+
             foreach (var lightData in kanikamaLightDatas)
             {
                 lightData.RollBack();
