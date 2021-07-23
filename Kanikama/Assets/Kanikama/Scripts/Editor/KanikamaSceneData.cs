@@ -36,7 +36,10 @@ namespace Kanikama.Editor
             var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
             foreach (var light in allLights)
             {
-                if (light.enabled && light.lightmapBakeType != LightmapBakeType.Realtime && !sceneDescriptor.kanikamaLights.Contains(light))
+                if (light.enabled &&
+                    light.lightmapBakeType != LightmapBakeType.Realtime &&
+                    !sceneDescriptor.kanikamaLights.Contains(light) &&
+                    !sceneDescriptor.kanikamaMonitors.Any(x => x.Lights.Contains(light)))
                 {
                     nonKanikamaLights.Add(light);
                 }
@@ -55,6 +58,8 @@ namespace Kanikama.Editor
             foreach (var renderer in allRenderers)
             {
                 if (sceneDescriptor.kanikamaRenderers.Contains(renderer)) continue;
+                if (sceneDescriptor.kanikamaMonitors.Any(x => x.Renderer == renderer)) continue;
+
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
                 {

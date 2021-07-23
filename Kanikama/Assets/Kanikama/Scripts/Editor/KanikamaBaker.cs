@@ -70,10 +70,10 @@ namespace Kanikama.Editor
                 var sceneDirPath = Path.GetDirectoryName(scene.path);
                 var exportDirName = string.Format(ExportDirFormat, scene.name);
 
+                AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
                 exportDirPath = Path.Combine(sceneDirPath, exportDirName);
                 AssetUtil.CreateFolderIfNecessary(exportDirPath, TmpDirName);
                 tmpDirPath = Path.Combine(exportDirPath, TmpDirName);
-                AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
 
                 bakedAssetsDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
 
@@ -255,8 +255,11 @@ namespace Kanikama.Editor
         {
             if (lightmapAtlasCount == 0) lightmapAtlasCount = GetBakedLightmapCount(bakedAssetsDirPath);
 
-            var textureDic = new Dictionary<int, List<Texture2D>>();
-            kanikamaMonitorDic[monitorIndex] = textureDic;
+            if (!kanikamaMonitorDic.TryGetValue(monitorIndex, out var textureDic))
+            {
+                textureDic = new Dictionary<int, List<Texture2D>>();
+                kanikamaMonitorDic[monitorIndex] = textureDic;
+            }
 
             for (var mapIndex = 0; mapIndex < lightmapAtlasCount; mapIndex++)
             {

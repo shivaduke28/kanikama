@@ -75,10 +75,10 @@ namespace Kanikama.Udon
                         colors[6] = (pixels[6] + pixels[10]) * 0.5f;
                         colors[7] = (pixels[7] + pixels[11]) * 0.5f;
 
-                        colors[8] = pixels[8];
-                        colors[9] = pixels[9];
-                        colors[10] = pixels[10];
-                        colors[11] = pixels[11];
+                        colors[8] = pixels[12];
+                        colors[9] = pixels[13];
+                        colors[10] = pixels[14];
+                        colors[11] = pixels[15];
                         break;
                     default:
                         return;

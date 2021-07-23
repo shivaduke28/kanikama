@@ -18,6 +18,7 @@ namespace Kanikama.EditorOnly
         [SerializeField] List<Light> lights = new List<Light>();
 
         public List<Light> Lights => lights;
+        public Renderer Renderer => renderer;
 
         public void Setup()
         {

@@ -13,6 +13,7 @@ namespace Kanikama.Udon
 
         private void Start()
         {
+            if (kanikamaMaps.Length == 0) return;
             foreach (var renderer in receivers)
             {
                 var index = renderer.lightmapIndex;
