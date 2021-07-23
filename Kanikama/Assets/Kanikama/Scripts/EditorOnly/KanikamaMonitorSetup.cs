@@ -1,13 +1,10 @@
 ﻿#if UNITY_EDITOR && !COMPILER_UDONSHARP
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using VRC.Udon;
-using UdonSharpEditor;
 
 namespace Kanikama.EditorOnly
 {
@@ -17,25 +14,25 @@ namespace Kanikama.EditorOnly
         [SerializeField] Transform anchor;
         [Space]
         [SerializeField] Renderer renderer;
-        [SerializeField] int horizontal;
-        [SerializeField] int vertical;
+        [SerializeField] PartitionType partitionType;
         [SerializeField] List<Light> lights = new List<Light>();
 
-        public Renderer Renderer => renderer;
         public List<Light> Lights => lights;
 
-        [ContextMenu("Update Lights and Camera")]
-        void UpdateLights()
+        public void Setup()
         {
-            UpdateBounds();
-            CreateLights();
-            MoveCamera();
+            SetupTransform();
+            SetupLights();
+            SetupCamera();
 
-            var currentScene = SceneManager.GetActiveScene();
-            EditorSceneManager.MarkSceneDirty(currentScene);
+            if (!Application.isPlaying)
+            {
+                var currentScene = SceneManager.GetActiveScene();
+                EditorSceneManager.MarkSceneDirty(currentScene);
+            }
         }
 
-        void UpdateBounds()
+        void SetupTransform()
         {
             if (renderer is null) return;
             var t = renderer.transform;
@@ -43,7 +40,7 @@ namespace Kanikama.EditorOnly
             anchor.position = renderer.bounds.min;
         }
 
-        void CreateLights()
+        void SetupLights()
         {
             foreach (var l in lights)
             {
@@ -52,55 +49,105 @@ namespace Kanikama.EditorOnly
 
             lights.Clear();
 
-            var size = renderer.bounds.size;
-
-            var horizontalCount = Mathf.Max(horizontal, 1f);
-            var verticalCount = Mathf.Max(vertical, 1f);
-
-            var lightSizeX = size.x / horizontalCount;
-            var lightSizeY = size.y / verticalCount;
-
-            for (var j = 0; j < verticalCount; j++)
+            switch (partitionType)
             {
-                for (var i = 0; i < horizontalCount; i++)
+                case PartitionType.Grid1x1:
+                    SetupUniformGrid(1);
+                    break;
+                case PartitionType.Grid2x2:
+                    SetupUniformGrid(2);
+                    break;
+                case PartitionType.Grid2x3:
+                    SetupExpandInterior(2, 3);
+                    break;
+                case PartitionType.Grid3x3:
+                    SetupExpandInterior(3, 3);
+                    break;
+                case PartitionType.Grid3x4:
+                    SetupExpandInterior(3, 4, true, false);
+                    break;
+                case PartitionType.Grid4x4:
+                    SetupUniformGrid(4);
+                    return;
+            }
+        }
+
+        void SetupUniformGrid(int count)
+        {
+            var size = renderer.bounds.size;
+            var sizeX = size.x / count;
+            var sizeY = size.y / count;
+
+            for (var j = 0; j < count; j++)
+            {
+                for (var i = 0; i < count; i++)
                 {
-                    var light = new GameObject((i + j * horizontalCount).ToString()).AddComponent<Light>();
+                    var light = new GameObject((i + j * count).ToString()).AddComponent<Light>();
                     light.type = LightType.Area;
-                    light.areaSize = new Vector2(lightSizeX, lightSizeY);
+                    light.areaSize = new Vector2(sizeX, sizeY);
                     var lightTransform = light.transform;
                     lightTransform.SetParent(anchor);
                     lightTransform.localEulerAngles = new Vector3(0, 180, 0);
-                    lightTransform.localPosition = new Vector2(lightSizeX * (0.5f + (i % horizontalCount)), lightSizeY * (0.5f + (j % verticalCount)));
+                    lightTransform.localPosition = new Vector2(sizeX * (0.5f + (i % count)), sizeY * (0.5f + (j % count)));
                     lights.Add(light);
                 }
             }
         }
 
-        [ContextMenu("Move Camera")]
-        void MoveCamera()
+        void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
+        {
+            var size = renderer.bounds.size;
+
+            var sizeX = size.x / (countX + (countX % 2));
+            var sizeY = size.y / (countY + (countY % 2));
+
+            var position = Vector2.zero;
+            for (var j = 0; j < countY; j++)
+            {
+                position.x = 0;
+                var areaY = !expandY || (j == 0 || j == countY - 1) ? sizeY : sizeY * 2;
+                for (var i = 0; i < countX; i++)
+                {
+                    var light = new GameObject((i + j * countX).ToString()).AddComponent<Light>();
+                    light.type = LightType.Area;
+                    var areaX = !expandX || (i == 0 || i == countX - 1) ? sizeX : sizeX * 2;
+                    light.areaSize = new Vector2(areaX, areaY);
+                    var lightTransform = light.transform;
+                    lightTransform.SetParent(anchor);
+                    lightTransform.localEulerAngles = new Vector3(0, 180, 0);
+                    lightTransform.localPosition = position + new Vector2(areaX, areaY) * 0.5f;
+                    lights.Add(light);
+                    position += new Vector2(areaX, 0);
+                }
+
+                position.y += areaY;
+            }
+        }
+
+        void SetupCamera()
         {
             var cameraTrans = captureCamera.transform;
             var rendererTrans = renderer.transform;
             cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * 0.01f, rendererTrans.rotation);
             captureCamera.nearClipPlane = 0;
             captureCamera.farClipPlane = 0.02f;
-            (captureCamera.orthographicSize, captureCamera.rect) = CalculateCameraSizeAndRect(renderer.bounds.extents);
+            captureCamera.orthographicSize = Mathf.Min(renderer.bounds.extents.x, renderer.bounds.extents.y);
         }
 
-        static (float, Rect) CalculateCameraSizeAndRect(Vector3 extents)
-        {
-            var x = extents.x;
-            var y = extents.y;
+        //static (float, Rect) CalculateCameraSizeAndRect(Vector3 extents)
+        //{
+        //    var x = extents.x;
+        //    var y = extents.y;
 
-            if (x >= y)
-            {
-                return (y, new Rect { width = 1, height = y / x });
-            }
-            else
-            {
-                return (x, new Rect { width = y / x, height = 1 });
-            }
-        }
+        //    if (x >= y)
+        //    {
+        //        return (y, new Rect { width = 1, height = y / x });
+        //    }
+        //    else
+        //    {
+        //        return (x, new Rect { width = x / y, height = 1 });
+        //    }
+        //}
 
         public void TurnOff()
         {
@@ -116,6 +163,16 @@ namespace Kanikama.EditorOnly
         public void RollBack()
         {
             renderer.enabled = true;
+        }
+
+        public enum PartitionType
+        {
+            Grid1x1 = 11,
+            Grid2x2 = 22,
+            Grid2x3 = 23,
+            Grid3x3 = 33,
+            Grid3x4 = 34,
+            Grid4x4 = 44,
         }
     }
 }

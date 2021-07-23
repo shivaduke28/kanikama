@@ -8,7 +8,7 @@ namespace Kanikama.Udon
 {
     public class KanikamaProvider : UdonSharpBehaviour
     {
-        [SerializeField] private Texture[] lightmaps;
+        [SerializeField] private Texture[] kanikamaMaps;
         [SerializeField] private Renderer[] receivers;
 
         private void Start()
@@ -24,7 +24,7 @@ namespace Kanikama.Udon
                     if (mat.HasProperty("_KanikamaMap"))
                     {
                         var p = new MaterialPropertyBlock();
-                        p.SetTexture("_KanikamaMap", lightmaps[index]);
+                        p.SetTexture("_KanikamaMap", kanikamaMaps[index]);
                         renderer.SetPropertyBlock(p, i);
                     }
                 }
