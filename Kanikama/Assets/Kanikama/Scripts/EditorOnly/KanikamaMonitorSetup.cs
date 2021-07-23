@@ -38,7 +38,8 @@ namespace Kanikama.EditorOnly
             if (renderer is null) return;
             var t = renderer.transform;
             transform.SetPositionAndRotation(t.position, t.rotation);
-            anchor.position = renderer.bounds.min;
+            var extents = renderer.bounds.extents;
+            anchor.localPosition = new Vector3(-extents.x, -extents.y, 0);
         }
 
         void SetupLights()
