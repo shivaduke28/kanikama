@@ -12,7 +12,6 @@ namespace Kanikama.Udon
         [SerializeField] private Renderer[] renderers;
         [SerializeField] private bool isAmbientEnable;
         [SerializeField] [Range(0, 8)] private float ambientIntensity;
-        private float[] intensities;
         private Color[] colors;
         private int lightCount;
         private int texCount;
@@ -27,7 +26,6 @@ namespace Kanikama.Udon
             {
                 texCount += 1;
             }
-            intensities = new float[texCount];
             colors = new Color[texCount];
         }
 
@@ -36,8 +34,7 @@ namespace Kanikama.Udon
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
-                colors[i] = light.color;
-                intensities[i] = light.intensity;
+                colors[i] = light.color * light.intensity;
             }
 
             for(var i = 0; i < rendererCount; i++)
@@ -45,19 +42,16 @@ namespace Kanikama.Udon
                 var renderer = renderers[i];
                 var mat = renderer.sharedMaterial;
                 colors[lightCount + i] = mat.GetColor("_EmissionColor");
-                intensities[lightCount + i] = 1f;
             }
 
             if (isAmbientEnable)
             {
-                colors[texCount - 1] = Color.white;
-                intensities[texCount - 1] = ambientIntensity;
+                colors[texCount - 1] = Color.white * ambientIntensity;
             }
 
             foreach (var mat in materials)
             {
                 mat.SetColorArray("_Colors", colors);
-                mat.SetFloatArray("_Intensities", intensities);
             }
         }
     }

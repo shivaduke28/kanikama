@@ -16,14 +16,12 @@ namespace Kanikama.Udon
         int mipmapLevel;
         int countX;
         int countY;
-        float[] intensities;
         Color[] colors;
         bool isUniform;
 
         void Start()
         {
             Initialize();
-            intensities = new float[lightCount];
             colors = new Color[lightCount];
         }
 
@@ -33,68 +31,64 @@ namespace Kanikama.Udon
 
             tex.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
             tex.Apply();
+            var pixels = tex.GetPixels(mipmapLevel);
             if (isUniform)
             {
-                colors = tex.GetPixels(mipmapLevel);
+                for(var i = 0; i < lightCount; i++)
+                {
+                    colors[i] = pixels[i] * intensity;
+                }
             }
             else
             {
-                var pixels = tex.GetPixels(mipmapLevel);
                 switch (partitionType)
                 {
                     case 23:
-                        colors[0] = (pixels[0] + pixels[4]) * 0.5f;
-                        colors[1] = (pixels[1] + pixels[2] + pixels[5] + pixels[6]) * 0.25f;
-                        colors[2] = (pixels[3] + pixels[7]) * 0.5f;
+                        colors[0] = (pixels[0] + pixels[4]) * 0.5f * intensity;
+                        colors[1] = (pixels[1] + pixels[2] + pixels[5] + pixels[6]) * 0.25f * intensity;
+                        colors[2] = (pixels[3] + pixels[7]) * 0.5f * intensity;
 
-                        colors[3] = (pixels[8] + pixels[12]) * 0.5f;
-                        colors[4] = (pixels[9] + pixels[10] + pixels[13] + pixels[14]) * 0.25f;
-                        colors[5] = (pixels[11] + pixels[15]) * 0.5f;
+                        colors[3] = (pixels[8] + pixels[12]) * 0.5f * intensity;
+                        colors[4] = (pixels[9] + pixels[10] + pixels[13] + pixels[14]) * 0.25f * intensity;
+                        colors[5] = (pixels[11] + pixels[15]) * 0.5f * intensity;
                         break;
                     case 33:
-                        colors[0] = pixels[0];
-                        colors[1] = (pixels[1] + pixels[2]) * 0.5f;
-                        colors[2] = pixels[3];
+                        colors[0] = pixels[0] * intensity;
+                        colors[1] = (pixels[1] + pixels[2]) * 0.5f * intensity;
+                        colors[2] = pixels[3] * intensity;
 
-                        colors[3] = (pixels[4] + pixels[8]) * 0.5f;
-                        colors[4] = (pixels[5] + pixels[6] + pixels[9] + pixels[10]) * 0.25f;
-                        colors[5] = (pixels[7] + pixels[11]) * 0.5f;
+                        colors[3] = (pixels[4] + pixels[8]) * 0.5f * intensity;
+                        colors[4] = (pixels[5] + pixels[6] + pixels[9] + pixels[10]) * 0.25f * intensity;
+                        colors[5] = (pixels[7] + pixels[11]) * 0.5f * intensity;
 
-                        colors[6] = pixels[12];
-                        colors[7] = (pixels[13] + pixels[14]) * 0.5f;
-                        colors[8] = pixels[15];
+                        colors[6] = pixels[12] * intensity;
+                        colors[7] = (pixels[13] + pixels[14]) * 0.5f * intensity;
+                        colors[8] = pixels[15] * intensity;
                         break;
                     case 34:
-                        colors[0] = pixels[0];
-                        colors[1] = pixels[1];
-                        colors[2] = pixels[2];
-                        colors[3] = pixels[3];
+                        colors[0] = pixels[0] * intensity;
+                        colors[1] = pixels[1] * intensity;
+                        colors[2] = pixels[2] * intensity;
+                        colors[3] = pixels[3] * intensity;
 
-                        colors[4] = (pixels[4] + pixels[8]) * 0.5f;
-                        colors[5] = (pixels[5] + pixels[9]) * 0.5f;
-                        colors[6] = (pixels[6] + pixels[10]) * 0.5f;
-                        colors[7] = (pixels[7] + pixels[11]) * 0.5f;
+                        colors[4] = (pixels[4] + pixels[8]) * 0.5f * intensity;
+                        colors[5] = (pixels[5] + pixels[9]) * 0.5f * intensity;
+                        colors[6] = (pixels[6] + pixels[10]) * 0.5f * intensity;
+                        colors[7] = (pixels[7] + pixels[11]) * 0.5f * intensity;
 
-                        colors[8] = pixels[12];
-                        colors[9] = pixels[13];
-                        colors[10] = pixels[14];
-                        colors[11] = pixels[15];
+                        colors[8] = pixels[12] * intensity;
+                        colors[9] = pixels[13] * intensity;
+                        colors[10] = pixels[14] * intensity;
+                        colors[11] = pixels[15] * intensity;
                         break;
                     default:
                         return;
                 }
-
-            }
-
-            for (var i = 0; i < lightCount; i++)
-            {
-                intensities[i] = intensity;
             }
 
             foreach (var mat in materials)
             {
                 mat.SetColorArray("_Colors", colors);
-                mat.SetFloatArray("_Intensities", intensities);
             }
         }
 

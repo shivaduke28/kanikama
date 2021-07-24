@@ -28,7 +28,6 @@
             static const int MAX_COUNT = 10;
 
             float4 _Colors[MAX_COUNT];
-            float _Intensities[MAX_COUNT];
             int _TexCount;
 
             UNITY_DECLARE_TEX2DARRAY(_Tex2DArray);
@@ -42,7 +41,7 @@
 
                 for (int i = 0; i < _TexCount; i++)
                 {
-                    col += DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_Tex2DArray, float3(uv.x, uv.y, i)) * _Colors[i] * _Intensities[i]);
+                    col += DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_Tex2DArray, float3(uv.x, uv.y, i)) * _Colors[i]);
                 }
 
                 color.rgb = col;
