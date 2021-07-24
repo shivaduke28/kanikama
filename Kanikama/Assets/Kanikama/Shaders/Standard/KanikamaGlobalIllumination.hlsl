@@ -40,7 +40,6 @@
             
             // Apply Kanikama
             o_gi.indirect.diffuse += KanikamaColor(data.lightmapUV.xy);
-            //bakedColor += KanikamaColor(data.lightmapUV.xy);
 
             #ifdef DIRLIGHTMAP_COMBINED
                 fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);
