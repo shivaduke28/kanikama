@@ -1,4 +1,4 @@
-// A modification of UnityGlobalIllumination.cginc from
+// This is a modification of UnityGlobalIllumination.cginc from
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 #ifndef KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED

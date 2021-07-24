@@ -7,30 +7,43 @@ namespace Kanikama.Udon
 {
     public class KanikamaCompositor : UdonSharpBehaviour
     {
-        [SerializeField] private Material[] materials;
+        [SerializeField] private Material[] compositeMaterials;
         [SerializeField] private Light[] lights;
-        [SerializeField] private Renderer[] renderers;
-        [SerializeField] private KanikamaCaptureSampler monitorComposite;
+        [SerializeField] private Renderer[] emissiveRenderers;
+        [SerializeField] private KanikamaCaptureSampler[] captureSamplers;
         [SerializeField] private bool isAmbientEnable;
         [SerializeField] [Range(0, 8)] private float ambientIntensity;
         private Color[] colors;
         private int lightCount;
         private int texCount;
         private int rendererCount;
-        private int monitorLightCount;
-        private Color[] monitorColors;
+        private Color[][] monitorColors2;
+        private int[] monitorLightCounts;
+        private int monitorCount;
 
         private void Start()
         {
             lightCount = lights.Length;
-            rendererCount = renderers.Length;
+            rendererCount = emissiveRenderers.Length;
             texCount = lightCount + rendererCount;
-            if (monitorComposite != null)
+
+            monitorCount = captureSamplers.Length;
+            if (monitorCount > 0)
             {
-                monitorColors = monitorComposite.GetColors();
-                monitorLightCount = monitorColors.Length;
-                texCount += monitorLightCount;
+                monitorColors2 = new Color[monitorCount][];
+                monitorLightCounts = new int[monitorCount];
             }
+
+            for (var i = 0; i < monitorCount; i++)
+            {
+                var sampler = captureSamplers[i];
+                var cols = sampler.GetColors();
+                var colCount = cols.Length;
+                monitorColors2[i] = cols;
+                monitorLightCounts[i] = colCount;
+                texCount += colCount;
+            }
+
             if (isAmbientEnable)
             {
                 texCount += 1;
@@ -40,32 +53,41 @@ namespace Kanikama.Udon
 
         private void Update()
         {
+            var index = 0;
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
                 colors[i] = light.color * light.intensity;
             }
 
+            index += lightCount;
+
             for (var i = 0; i < rendererCount; i++)
             {
-                var renderer = renderers[i];
+                var renderer = emissiveRenderers[i];
                 var mat = renderer.material;
-                colors[lightCount + i] = mat.GetColor("_EmissionColor");
+                colors[index + i] = mat.GetColor("_EmissionColor");
             }
 
+            index += rendererCount;
 
-            for (var i = 0; i < monitorLightCount; i++)
+            for (var i = 0; i < monitorCount; i++)
             {
-                var col = monitorColors[i];
-                colors[lightCount + rendererCount + i] = col;
+                var cols = monitorColors2[i];
+                var count = monitorLightCounts[i];
+                for (var j = 0; j < count; j++)
+                {
+                    colors[index + j] = cols[j];
+                }
+                index += count;
             }
 
             if (isAmbientEnable)
             {
-                colors[texCount - 1] = Color.white * ambientIntensity;
+                colors[index] = Color.white * ambientIntensity;
             }
 
-            foreach (var mat in materials)
+            foreach (var mat in compositeMaterials)
             {
                 mat.SetColorArray("_Colors", colors);
             }

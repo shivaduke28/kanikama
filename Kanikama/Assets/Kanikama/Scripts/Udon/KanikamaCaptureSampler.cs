@@ -7,7 +7,6 @@ namespace Kanikama.Udon
 {
     public class KanikamaCaptureSampler : UdonSharpBehaviour
     {
-        [SerializeField] private Material[] materials;
         [SerializeField] private Texture2D tex;
         [SerializeField] private int partitionType;
         public float intensity = 1f;

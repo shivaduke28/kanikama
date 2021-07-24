@@ -1,4 +1,4 @@
-﻿// A modified version of Standard.shader from
+﻿// This is a modification of Standard.shader from
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 Shader "Kanikama/Standard"

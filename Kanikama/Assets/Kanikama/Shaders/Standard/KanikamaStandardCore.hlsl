@@ -1,4 +1,4 @@
-// A modification of UnityStandardCore.cginc from
+// This is a modification of UnityStandardCore.cginc from
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
 #ifndef KANIKAMA_STANDARD_CORE_INCLUDED
