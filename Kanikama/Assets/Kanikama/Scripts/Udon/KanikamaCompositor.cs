@@ -5,23 +5,32 @@ using UdonSharp;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaLightComposite : UdonSharpBehaviour
+    public class KanikamaCompositor : UdonSharpBehaviour
     {
         [SerializeField] private Material[] materials;
         [SerializeField] private Light[] lights;
         [SerializeField] private Renderer[] renderers;
+        [SerializeField] private KanikamaCaptureSampler monitorComposite;
         [SerializeField] private bool isAmbientEnable;
         [SerializeField] [Range(0, 8)] private float ambientIntensity;
         private Color[] colors;
         private int lightCount;
         private int texCount;
-        int rendererCount;
+        private int rendererCount;
+        private int monitorLightCount;
+        private Color[] monitorColors;
 
-        void Start()
+        private void Start()
         {
             lightCount = lights.Length;
             rendererCount = renderers.Length;
             texCount = lightCount + rendererCount;
+            if (monitorComposite != null)
+            {
+                monitorColors = monitorComposite.GetColors();
+                monitorLightCount = monitorColors.Length;
+                texCount += monitorLightCount;
+            }
             if (isAmbientEnable)
             {
                 texCount += 1;
@@ -29,7 +38,7 @@ namespace Kanikama.Udon
             colors = new Color[texCount];
         }
 
-        void Update()
+        private void Update()
         {
             for (var i = 0; i < lightCount; i++)
             {
@@ -37,11 +46,18 @@ namespace Kanikama.Udon
                 colors[i] = light.color * light.intensity;
             }
 
-            for(var i = 0; i < rendererCount; i++)
+            for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = renderers[i];
-                var mat = renderer.sharedMaterial;
+                var mat = renderer.material;
                 colors[lightCount + i] = mat.GetColor("_EmissionColor");
+            }
+
+
+            for (var i = 0; i < monitorLightCount; i++)
+            {
+                var col = monitorColors[i];
+                colors[lightCount + rendererCount + i] = col;
             }
 
             if (isAmbientEnable)

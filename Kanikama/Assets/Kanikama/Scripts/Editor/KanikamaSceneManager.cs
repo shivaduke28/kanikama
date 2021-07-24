@@ -8,21 +8,23 @@ using Kanikama.EditorOnly;
 
 namespace Kanikama.Editor
 {
-    [Serializable]
-    public class KanikamaSceneData : IDisposable
+    public class KanikamaSceneManager : IDisposable
     {
-        readonly KanikamaSceneDescriptor sceneDescriptor;
-        public List<KanikamaLightData> kanikamaLightDatas = new List<KanikamaLightData>();
-        public List<KanikamaRendererData> kanikamaRendererDatas = new List<KanikamaRendererData>();
-        public List<KanikamaMonitorSetup> kanikamaMonitors => sceneDescriptor.kanikamaMonitors;
-        public bool IsKanikamaAmbientEnable => sceneDescriptor.kanikamaAmbientEnable;
-        public List<Light> nonKanikamaLights = new List<Light>();
-        public List<Renderer> nonKanikamaEmissiveRenderers = new List<Renderer>();
-        Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
-        float ambientIntensity;
-        Material dummyMaterial;
+        private readonly KanikamaSceneDescriptor sceneDescriptor;
 
-        public KanikamaSceneData(KanikamaSceneDescriptor sceneDescriptor)
+        public List<KanikamaLight> KanikamaLights { get; } = new List<KanikamaLight>();
+        public List<KanikamaEmissiveRenderer> KanikamaEmissiveRenderers { get; } = new List<KanikamaEmissiveRenderer>();
+        public List<KanikamaMonitorSetup> KanikamaMonitors => sceneDescriptor.MonitorSetups;
+        public bool IsKanikamaAmbientEnable => sceneDescriptor.IsAmbientEnable;
+
+
+        private readonly List<Light> nonKanikamaLights = new List<Light>();
+        private readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
+
+        private float ambientIntensity;
+        private Material dummyMaterial;
+
+        public KanikamaSceneManager(KanikamaSceneDescriptor sceneDescriptor)
         {
             this.sceneDescriptor = sceneDescriptor;
         }
@@ -30,7 +32,7 @@ namespace Kanikama.Editor
         public void LoadActiveScene()
         {
             // kanikama lights
-            kanikamaLightDatas.AddRange(sceneDescriptor.kanikamaLights.Select(x => new KanikamaLightData(x)));
+            KanikamaLights.AddRange(sceneDescriptor.Lights.Select(x => new KanikamaLight(x)));
 
             // non kanikama lights
             var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
@@ -38,15 +40,15 @@ namespace Kanikama.Editor
             {
                 if (light.enabled &&
                     light.lightmapBakeType != LightmapBakeType.Realtime &&
-                    !sceneDescriptor.kanikamaLights.Contains(light) &&
-                    !sceneDescriptor.kanikamaMonitors.Any(x => x.Lights.Contains(light)))
+                    !sceneDescriptor.Lights.Contains(light) &&
+                    !sceneDescriptor.MonitorSetups.Any(x => x.Lights.Contains(light)))
                 {
                     nonKanikamaLights.Add(light);
                 }
             }
 
             // kanikama emissive renderers
-            kanikamaRendererDatas.AddRange(sceneDescriptor.kanikamaRenderers.Select(x => new KanikamaRendererData(x)));
+            KanikamaEmissiveRenderers.AddRange(sceneDescriptor.EmissiveRenderers.Select(x => new KanikamaEmissiveRenderer(x)));
 
             if (dummyMaterial is null)
             {
@@ -57,15 +59,15 @@ namespace Kanikama.Editor
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
-                if (sceneDescriptor.kanikamaRenderers.Contains(renderer)) continue;
-                if (sceneDescriptor.kanikamaMonitors.Any(x => x.Renderer == renderer)) continue;
+                if (sceneDescriptor.EmissiveRenderers.Contains(renderer)) continue;
+                if (sceneDescriptor.MonitorSetups.Any(x => x.Renderer == renderer)) continue;
 
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
                 {
                     var sharedMaterials = renderer.sharedMaterials;
 
-                    if (sharedMaterials.Any(x => x.IsKeywordEnabled(KanikamaEmissiveMaterialData.ShaderKeywordEmission)))
+                    if (sharedMaterials.Any(x => x.IsKeywordEnabled(KanikamaEmissiveMaterial.ShaderKeywordEmission)))
                     {
                         nonKanikamaMaterialMaps[renderer.gameObject] = sharedMaterials;
                         renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
@@ -85,17 +87,17 @@ namespace Kanikama.Editor
                 light.enabled = false;
             }
 
-            foreach (var lightData in kanikamaLightDatas)
+            foreach (var light in KanikamaLights)
             {
-                lightData.TurnOff();
+                light.TurnOff();
             }
 
-            foreach (var rendererData in kanikamaRendererDatas)
+            foreach (var renderer in KanikamaEmissiveRenderers)
             {
-                rendererData.TurnOff();
+                renderer.TurnOff();
             }
 
-            foreach (var monitor in sceneDescriptor.kanikamaMonitors)
+            foreach (var monitor in KanikamaMonitors)
             {
                 monitor.TurnOff();
             }
@@ -137,17 +139,17 @@ namespace Kanikama.Editor
                 RenderSettings.ambientIntensity = ambientIntensity;
             }
 
-            foreach (var lightData in kanikamaLightDatas)
+            foreach (var lightData in KanikamaLights)
             {
                 lightData.RollBack();
             }
 
-            foreach (var monitor in sceneDescriptor.kanikamaMonitors)
+            foreach (var monitor in sceneDescriptor.MonitorSetups)
             {
                 monitor.RollBack();
             }
 
-            foreach (var rendererData in kanikamaRendererDatas)
+            foreach (var rendererData in KanikamaEmissiveRenderers)
             {
                 rendererData.RollBack();
             }

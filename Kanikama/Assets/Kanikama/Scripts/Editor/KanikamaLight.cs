@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Kanikama.Editor
 {
-    public class KanikamaLightData
+    public class KanikamaLight
     {
         float intensity;
         Color color;
         Light light;
         public bool Enabled { get => light.enabled; set => light.enabled = value; }
 
-        public KanikamaLightData(Light light)
+        public KanikamaLight(Light light)
         {
             intensity = light.intensity;
             color = light.color;
@@ -41,14 +41,14 @@ namespace Kanikama.Editor
         }
     }
 
-    public class KanikamaRendererData
+    public class KanikamaEmissiveRenderer
     {
         readonly Renderer renderer;
         readonly Material[] sharedMaterials;
         readonly Material[] tmpMaterials;
-        public List<KanikamaEmissiveMaterialData> EmissiveMaterialDatas { get; } = new List<KanikamaEmissiveMaterialData>();
+        public List<KanikamaEmissiveMaterial> EmissiveMaterial { get; } = new List<KanikamaEmissiveMaterial>();
 
-        public KanikamaRendererData(Renderer renderer)
+        public KanikamaEmissiveRenderer(Renderer renderer)
         {
             this.renderer = renderer;
             sharedMaterials = renderer.sharedMaterials;
@@ -60,11 +60,11 @@ namespace Kanikama.Editor
             {
                 var mat = sharedMaterials[i];
                 Material tmp;
-                if (mat.IsKeywordEnabled(KanikamaEmissiveMaterialData.ShaderKeywordEmission))
+                if (mat.IsKeywordEnabled(KanikamaEmissiveMaterial.ShaderKeywordEmission))
                 {
                     tmp = UnityEngine.Object.Instantiate(mat);
-                    var matData = new KanikamaEmissiveMaterialData(tmp);
-                    EmissiveMaterialDatas.Add(matData);
+                    var matData = new KanikamaEmissiveMaterial(tmp);
+                    EmissiveMaterial.Add(matData);
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace Kanikama.Editor
 
         public void TurnOff()
         {
-            foreach(var matData in EmissiveMaterialDatas)
+            foreach(var matData in EmissiveMaterial)
             {
                 matData.TurnOff();
             }
@@ -86,22 +86,22 @@ namespace Kanikama.Editor
         public void RollBack()
         {
             renderer.sharedMaterials = sharedMaterials;
-            foreach (var matData in EmissiveMaterialDatas)
+            foreach (var matData in EmissiveMaterial)
             {
                 matData.Dispose();
             }
-            EmissiveMaterialDatas.Clear();
+            EmissiveMaterial.Clear();
         }
     }
 
-    public class KanikamaEmissiveMaterialData : IDisposable
+    public class KanikamaEmissiveMaterial : IDisposable
     {
         public static readonly string ShaderKeywordEmission = "_EMISSION";
         public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID("_EmissionColor");
 
         readonly Material material;
 
-        public KanikamaEmissiveMaterialData(Material material)
+        public KanikamaEmissiveMaterial(Material material)
         {
             this.material = material;
         }

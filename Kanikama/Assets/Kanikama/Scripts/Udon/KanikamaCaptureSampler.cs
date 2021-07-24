@@ -5,36 +5,41 @@ using UdonSharp;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaMonitorComposite : UdonSharpBehaviour
+    public class KanikamaCaptureSampler : UdonSharpBehaviour
     {
-        [SerializeField] Material[] materials;
-        [SerializeField] Texture2D tex;
-        [SerializeField] int partitionType;
+        [SerializeField] private Material[] materials;
+        [SerializeField] private Texture2D tex;
+        [SerializeField] private int partitionType;
         public float intensity = 1f;
 
-        int lightCount;
-        int mipmapLevel;
-        int countX;
-        int countY;
-        Color[] colors;
-        bool isUniform;
+        private int lightCount;
+        private int mipmapLevel;
+        private bool isUniform;
+        private bool isInitialized;
 
-        void Start()
+        private Color[] colors;
+
+        private void Start()
         {
+            if (!isInitialized) Initialize();
             Initialize();
-            colors = new Color[lightCount];
         }
 
 
-        void OnRenderImage(RenderTexture source, RenderTexture destination)
+        public Color[] GetColors()
         {
+            if (!isInitialized) Initialize();
+            return colors;
+        }
 
-            tex.ReadPixels(new Rect(0, 0, source.width, source.height), 0, 0);
+        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        {
+            tex.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
             tex.Apply();
             var pixels = tex.GetPixels(mipmapLevel);
             if (isUniform)
             {
-                for(var i = 0; i < lightCount; i++)
+                for (var i = 0; i < lightCount; i++)
                 {
                     colors[i] = pixels[i] * intensity;
                 }
@@ -85,44 +90,40 @@ namespace Kanikama.Udon
                         return;
                 }
             }
-
-            foreach (var mat in materials)
-            {
-                mat.SetColorArray("_Colors", colors);
-            }
         }
 
-        void Initialize()
+        private void Initialize()
         {
-            countX = partitionType % 10;
-            countY = Mathf.FloorToInt(partitionType / 10);
+            var countX = partitionType % 10;
+            var countY = Mathf.FloorToInt(partitionType / 10);
             lightCount = countX * countY;
+            colors = new Color[lightCount];
 
             switch (partitionType)
             {
                 case 11:
                     mipmapLevel = 8;
                     isUniform = true;
-                    return;
+                    break;
                 case 22:
                     mipmapLevel = 7;
                     isUniform = true;
-                    return;
+                    break;
                 case 44:
                     mipmapLevel = 6;
                     isUniform = true;
-                    return;
+                    break;
                 case 23:
                 case 33:
                 case 34:
                     mipmapLevel = 6;
                     isUniform = false;
-                    return;
+                    break;
                 default:
                     Debug.LogError("partionTypeの値が不正です。");
                     return;
             }
+            isInitialized = true;
         }
-
     }
 }

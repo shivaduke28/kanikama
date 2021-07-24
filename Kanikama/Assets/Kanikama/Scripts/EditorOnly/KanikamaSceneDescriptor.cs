@@ -1,16 +1,20 @@
 ﻿#if UNITY_EDITOR && !COMPILER_UDONSHARP
 using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
 
 namespace Kanikama.EditorOnly
 {
     public class KanikamaSceneDescriptor : EditorOnlyBehaviour
     {
-        public List<Light> kanikamaLights;
-        public List<Renderer> kanikamaRenderers;
-        public List<KanikamaMonitorSetup> kanikamaMonitors;
-        public bool kanikamaAmbientEnable;
+        [SerializeField] private List<Light> lights;
+        [SerializeField] private List<Renderer> emissiveRenderers;
+        [SerializeField] private List<KanikamaMonitorSetup> monitorSetups;
+        [SerializeField] private bool isAmbientEnable;
+
+        public List<Light> Lights => lights;
+        public List<Renderer> EmissiveRenderers => emissiveRenderers;
+        public List<KanikamaMonitorSetup> MonitorSetups => monitorSetups;
+        public bool IsAmbientEnable => isAmbientEnable;
     }
 }
 #endif

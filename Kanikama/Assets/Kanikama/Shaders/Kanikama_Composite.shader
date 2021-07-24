@@ -1,4 +1,4 @@
-﻿Shader "Kanikama/LightmapComposite"
+﻿Shader "Kanikama/Composite"
 {
     Properties
     {
@@ -25,7 +25,7 @@
             #pragma fragment frag
 
 
-            static const int MAX_COUNT = 10;
+            static const int MAX_COUNT = 100;
 
             float4 _Colors[MAX_COUNT];
             int _TexCount;

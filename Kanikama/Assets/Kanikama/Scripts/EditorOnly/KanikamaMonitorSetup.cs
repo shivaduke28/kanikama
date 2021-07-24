@@ -33,7 +33,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupTransform()
+        private void SetupTransform()
         {
             if (renderer is null) return;
             var t = renderer.transform;
@@ -42,7 +42,7 @@ namespace Kanikama.EditorOnly
             anchor.localPosition = new Vector3(-extents.x, -extents.y, 0);
         }
 
-        void SetupLights()
+        private void SetupLights()
         {
             foreach (var l in lights)
             {
@@ -74,7 +74,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupUniformGrid(int count)
+        private void SetupUniformGrid(int count)
         {
             var size = renderer.bounds.size;
             var sizeX = size.x / count;
@@ -96,7 +96,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
+        private void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
         {
             var size = renderer.bounds.size;
 
@@ -126,7 +126,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupCamera()
+        private void SetupCamera()
         {
             var cameraTrans = captureCamera.transform;
             var rendererTrans = renderer.transform;
@@ -134,22 +134,8 @@ namespace Kanikama.EditorOnly
             captureCamera.nearClipPlane = 0;
             captureCamera.farClipPlane = 0.02f;
             captureCamera.orthographicSize = Mathf.Min(renderer.bounds.extents.x, renderer.bounds.extents.y);
+
         }
-
-        //static (float, Rect) CalculateCameraSizeAndRect(Vector3 extents)
-        //{
-        //    var x = extents.x;
-        //    var y = extents.y;
-
-        //    if (x >= y)
-        //    {
-        //        return (y, new Rect { width = 1, height = y / x });
-        //    }
-        //    else
-        //    {
-        //        return (x, new Rect { width = x / y, height = 1 });
-        //    }
-        //}
 
         public void TurnOff()
         {
@@ -167,7 +153,7 @@ namespace Kanikama.EditorOnly
             renderer.enabled = true;
         }
 
-        public enum PartitionType
+        private enum PartitionType
         {
             Grid1x1 = 11,
             Grid2x2 = 22,

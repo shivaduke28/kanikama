@@ -34,13 +34,6 @@ namespace Kanikama.Editor
             return texArray;
         }
 
-
-        /// <summary>
-        /// Texture2DArrayを作成する
-        /// </summary>
-        /// <param name="textures">元となるTexture2Dの配列</param>
-        /// <param name="isLinear">色空間がリニアかどうか（UnityでベイクしたLightmapはsRGBなのでfalse）</param>
-        /// <returns></returns>
         public static Texture2DArray Generate(List<Texture2D> textures, bool isLinear = false)
         {
             var count = textures.Count;

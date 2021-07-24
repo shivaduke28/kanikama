@@ -13,13 +13,13 @@ namespace Kanikama.Editor
 {
     class KanikamaWindow : EditorWindow
     {
-        KanikamaSceneDescriptor sceneDescriptor;
-        Scene scene;
-        bool isRunning;
-        CancellationTokenSource tokenSource;
+        private KanikamaSceneDescriptor sceneDescriptor;
+        private Scene scene;
+        private bool isRunning;
+        private CancellationTokenSource tokenSource;
 
         [MenuItem("Window/Kanikama")]
-        static void Initialize()
+        private static void Initialize()
         {
             var window = GetWindow(typeof(KanikamaWindow));
             window.Show();
@@ -33,7 +33,7 @@ namespace Kanikama.Editor
         }
 
 
-        void OnGUI()
+        private void OnGUI()
         {
             GUILayout.Label("Bake", EditorStyles.boldLabel);
             EditorGUI.BeginDisabledGroup(true);
@@ -65,7 +65,7 @@ namespace Kanikama.Editor
             }
         }
 
-        async void BakeAsync()
+        private async void BakeAsync()
         {
             tokenSource = new CancellationTokenSource();
             var baker = new KanikamaBaker();
