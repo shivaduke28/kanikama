@@ -179,7 +179,7 @@ namespace Kanikama.Editor
                     Debug.Log($"- Baking Kanikama Renderer {i + 1} Material Light... ({i + 1}/{rendererCount})");
                     var material = renderer.EmissiveMaterial[j];
                     material.OnBake();
-                    // may throw TaskCancelledException
+                    Lightmapping.Clear();
                     await BakeSceneGIAsync(token);
                     material.TurnOff();
                     MoveBakedKanikamaRenderers(i, j);

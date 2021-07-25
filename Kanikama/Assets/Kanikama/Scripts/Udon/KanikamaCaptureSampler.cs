@@ -21,7 +21,6 @@ namespace Kanikama.Udon
         private void Start()
         {
             if (!isInitialized) Initialize();
-            Initialize();
         }
 
 
