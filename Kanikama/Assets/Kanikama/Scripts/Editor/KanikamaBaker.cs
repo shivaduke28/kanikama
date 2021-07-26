@@ -88,7 +88,9 @@ namespace Kanikama.Editor
             }
             finally
             {
+                sceneManager?.Rollback();
                 sceneManager?.Dispose();
+                AssetDatabase.Refresh();
             }
         }
 
@@ -295,11 +297,10 @@ namespace Kanikama.Editor
                 try
                 {
                     await Task.Delay(33, token);
-
                 }
                 catch (TaskCanceledException e)
                 {
-                    Lightmapping.ForceStop();
+                    Lightmapping.Cancel();
                     throw e;
                 }
             }

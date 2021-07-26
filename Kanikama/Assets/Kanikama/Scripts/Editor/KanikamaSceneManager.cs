@@ -113,6 +113,12 @@ namespace Kanikama.Editor
             RenderSettings.ambientIntensity = 0f;
         }
 
+        public void Rollback()
+        {
+            RollbackNonKanikama();
+            RollbackKanikama();
+        }
+
         public void RollbackNonKanikama()
         {
             if (!IsKanikamaAmbientEnable)
