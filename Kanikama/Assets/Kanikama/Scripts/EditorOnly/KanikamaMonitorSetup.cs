@@ -3,22 +3,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 using UnityEditor.SceneManagement;
+using System;
+using System.Linq;
 
 namespace Kanikama.EditorOnly
 {
     public class KanikamaMonitorSetup : EditorOnlyBehaviour
     {
-        [SerializeField] Camera captureCamera;
-        [SerializeField] Transform anchor;
+        [SerializeField] private Camera captureCamera;
+        [SerializeField] private Transform anchor;
         [Space]
-        [SerializeField] Renderer renderer;
-        [SerializeField] PartitionType partitionType;
-        [SerializeField] List<Light> lights = new List<Light>();
+        [SerializeField] private Renderer monitorRenderer;
+        [SerializeField] private PartitionType partitionType;
+        [SerializeField] private CameraDetailedSettings cameraDetailedSettings;
+        [SerializeField] private List<Light> lights = new List<Light>();
 
         public List<Light> Lights => lights;
-        public Renderer Renderer => renderer;
+        public Renderer Renderer => monitorRenderer;
 
         public void Setup()
         {
@@ -35,18 +37,19 @@ namespace Kanikama.EditorOnly
 
         private void SetupTransform()
         {
-            if (renderer is null) return;
-            var t = renderer.transform;
+            if (monitorRenderer is null) return;
+            var t = monitorRenderer.transform;
             transform.SetPositionAndRotation(t.position, t.rotation);
-            var extents = renderer.bounds.extents;
+            var extents = monitorRenderer.bounds.extents;
             anchor.localPosition = new Vector3(-extents.x, -extents.y, 0);
         }
 
         private void SetupLights()
         {
-            foreach (var l in lights)
+            var children = anchor.Cast<Transform>().ToArray();
+            foreach (var child in children)
             {
-                DestroyImmediate(l.gameObject);
+                DestroyImmediate(child.gameObject);
             }
 
             lights.Clear();
@@ -76,7 +79,7 @@ namespace Kanikama.EditorOnly
 
         private void SetupUniformGrid(int count)
         {
-            var size = renderer.bounds.size;
+            var size = monitorRenderer.bounds.size;
             var sizeX = size.x / count;
             var sizeY = size.y / count;
 
@@ -98,7 +101,7 @@ namespace Kanikama.EditorOnly
 
         private void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
         {
-            var size = renderer.bounds.size;
+            var size = monitorRenderer.bounds.size;
 
             var sizeX = size.x / (countX + (countX % 2));
             var sizeY = size.y / (countY + (countY % 2));
@@ -129,17 +132,17 @@ namespace Kanikama.EditorOnly
         private void SetupCamera()
         {
             var cameraTrans = captureCamera.transform;
-            var rendererTrans = renderer.transform;
-            cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * 0.01f, rendererTrans.rotation);
-            captureCamera.nearClipPlane = 0;
-            captureCamera.farClipPlane = 0.02f;
-            captureCamera.orthographicSize = Mathf.Min(renderer.bounds.extents.x, renderer.bounds.extents.y);
+            var rendererTrans = monitorRenderer.transform;
+            cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * cameraDetailedSettings.distance, rendererTrans.rotation);
+            captureCamera.nearClipPlane = cameraDetailedSettings.near;
+            captureCamera.farClipPlane = cameraDetailedSettings.far;
+            captureCamera.orthographicSize = Mathf.Min(monitorRenderer.bounds.extents.x, monitorRenderer.bounds.extents.y);
 
         }
 
         public void TurnOff()
         {
-            renderer.enabled = false;
+            monitorRenderer.enabled = false;
             foreach (var light in lights)
             {
                 light.intensity = 1;
@@ -150,7 +153,7 @@ namespace Kanikama.EditorOnly
 
         public void RollBack()
         {
-            renderer.enabled = true;
+            monitorRenderer.enabled = true;
         }
 
         private enum PartitionType
@@ -161,6 +164,14 @@ namespace Kanikama.EditorOnly
             Grid3x3 = 33,
             Grid3x4 = 34,
             Grid4x4 = 44,
+        }
+
+        [Serializable]
+        private class CameraDetailedSettings
+        {
+            public float near = 0f;
+            public float far = 0.2f;
+            public float distance = 0.1f;
         }
     }
 }

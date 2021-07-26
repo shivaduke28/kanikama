@@ -13,9 +13,14 @@ namespace Kanikama.Editor
         {
             base.OnInspectorGUI();
             var monitor = (KanikamaMonitorSetup)target;
-            if (GUILayout.Button("Setup Lights and Camera"))
+            if (monitor.Renderer != null)
             {
-                monitor.Setup();
+                EditorGUI.BeginDisabledGroup(Application.isPlaying);
+                if (GUILayout.Button("Setup Lights and Camera"))
+                {
+                    monitor.Setup();
+                }
+                EditorGUI.EndDisabledGroup();
             }
         }
     }
