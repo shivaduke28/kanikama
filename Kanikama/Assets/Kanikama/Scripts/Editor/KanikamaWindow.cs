@@ -18,6 +18,10 @@ namespace Kanikama.Editor
         private bool isRunning;
         private CancellationTokenSource tokenSource;
 
+        private TextureGenerator.Parameter texParam = new TextureGenerator.Parameter();
+        private bool showTextureParam;
+
+
         [MenuItem("Window/Kanikama")]
         private static void Initialize()
         {
@@ -32,13 +36,9 @@ namespace Kanikama.Editor
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
         }
 
-
         private void OnGUI()
         {
             GUILayout.Label("Bake", EditorStyles.boldLabel);
-            EditorGUI.BeginDisabledGroup(true);
-            EditorGUILayout.TextField("Scene", scene.name);
-            EditorGUI.EndDisabledGroup();
             sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
 
             if (isRunning)
@@ -61,6 +61,23 @@ namespace Kanikama.Editor
                 if (GUILayout.Button("Bake"))
                 {
                     BakeAsync();
+                }
+            }
+
+            GUILayout.Label("Utility", EditorStyles.boldLabel);
+
+            showTextureParam = EditorGUILayout.Foldout(showTextureParam, "Texture Generator");
+            if (showTextureParam)
+            {
+                texParam.width = EditorGUILayout.IntField("width", texParam.width);
+                texParam.height = EditorGUILayout.IntField("height", texParam.height);
+                texParam.format = (TextureFormat)EditorGUILayout.EnumPopup("format", texParam.format);
+                texParam.mipChain = EditorGUILayout.Toggle("mipChain", texParam.mipChain);
+                texParam.linear = EditorGUILayout.Toggle("linear", texParam.linear);
+                if (GUILayout.Button("Generate Texture"))
+                {
+                    var tex = TextureGenerator.GenerateTexture("Assets/tex.png", texParam);
+                    Selection.activeObject = tex;
                 }
             }
         }
