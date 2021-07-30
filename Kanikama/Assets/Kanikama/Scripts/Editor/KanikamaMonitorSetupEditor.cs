@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using Kanikama.EditorOnly;
+using UnityEngine.SceneManagement;
+using UnityEditor.SceneManagement;
 
 namespace Kanikama.Editor
 {
@@ -19,6 +19,8 @@ namespace Kanikama.Editor
                 if (GUILayout.Button("Setup Lights and Camera"))
                 {
                     monitor.Setup();
+                    var currentScene = SceneManager.GetActiveScene();
+                    EditorSceneManager.MarkSceneDirty(currentScene);
                 }
                 EditorGUI.EndDisabledGroup();
             }

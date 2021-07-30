@@ -2,8 +2,6 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
 using System;
 using System.Linq;
 
@@ -27,12 +25,6 @@ namespace Kanikama.EditorOnly
             SetupTransform();
             SetupLights();
             SetupCamera();
-
-            if (!Application.isPlaying)
-            {
-                var currentScene = SceneManager.GetActiveScene();
-                EditorSceneManager.MarkSceneDirty(currentScene);
-            }
         }
 
         private void SetupTransform()
