@@ -23,7 +23,6 @@ namespace Kanikama.Udon
             if (!isInitialized) Initialize();
         }
 
-
         public Color[] GetColors()
         {
             if (!isInitialized) Initialize();

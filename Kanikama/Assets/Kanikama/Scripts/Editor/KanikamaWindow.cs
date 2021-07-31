@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -21,6 +17,8 @@ namespace Kanikama.Editor
         TextureGenerator.Parameter texParam = new TextureGenerator.Parameter();
         bool showTextureParam;
 
+        [SerializeField] BakeRequest bakeRequest;
+        SerializedObject serializedObject;
 
 
 
@@ -31,17 +29,31 @@ namespace Kanikama.Editor
             window.Show();
         }
 
-        void Awake()
+        void OnEnable()
         {
             titleContent.text = "Kanikama";
             scene = SceneManager.GetActiveScene();
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
+            if (sceneDescriptor != null)
+            {
+                bakeRequest = new BakeRequest(sceneDescriptor);
+            }
+            serializedObject = new SerializedObject(this);
         }
 
         void OnGUI()
         {
+            serializedObject.Update();
             GUILayout.Label("Bake", EditorStyles.boldLabel);
             sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
+
+            if (sceneDescriptor != null && bakeRequest is null)
+            {
+                bakeRequest = new BakeRequest(sceneDescriptor);
+            }
+
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(bakeRequest)), true);
 
             if (isRunning)
             {
@@ -82,16 +94,18 @@ namespace Kanikama.Editor
                     Selection.activeObject = tex;
                 }
             }
+
+            serializedObject.ApplyModifiedProperties();
         }
 
         async void BakeAsync()
         {
             tokenSource = new CancellationTokenSource();
-            var baker = new KanikamaBaker();
+            var baker = new Baker(bakeRequest);
             isRunning = true;
             try
             {
-                await baker.BakeAsync(sceneDescriptor, tokenSource.Token);
+                await baker.BakeAsync(tokenSource.Token);
 
             }
             catch (TaskCanceledException)
@@ -103,8 +117,5 @@ namespace Kanikama.Editor
                 isRunning = false;
             }
         }
-
-
-
     }
 }

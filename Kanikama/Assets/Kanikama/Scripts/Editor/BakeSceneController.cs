@@ -8,7 +8,7 @@ using Kanikama.EditorOnly;
 
 namespace Kanikama.Editor
 {
-    public class KanikamaSceneManager : IDisposable
+    public class BakeSceneController : IDisposable
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
 
@@ -24,12 +24,12 @@ namespace Kanikama.Editor
         float ambientIntensity;
         Material dummyMaterial;
 
-        public KanikamaSceneManager(KanikamaSceneDescriptor sceneDescriptor)
+        public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
         {
             this.sceneDescriptor = sceneDescriptor;
         }
 
-        public void LoadActiveScene()
+        public void Initialize()
         {
             // kanikama lights
             KanikamaLights.AddRange(sceneDescriptor.Lights.Select(x => new KanikamaLight(x)));
@@ -52,7 +52,7 @@ namespace Kanikama.Editor
 
             if (dummyMaterial is null)
             {
-                dummyMaterial = new Material(Shader.Find(KanikamaBaker.DummyShaderName));
+                dummyMaterial = new Material(Shader.Find(Baker.DummyShaderName));
             }
 
             // non kanikama emissive renderers
