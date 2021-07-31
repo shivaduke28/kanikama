@@ -10,7 +10,7 @@ namespace Kanikama.Editor
 {
     public class KanikamaSceneManager : IDisposable
     {
-        private readonly KanikamaSceneDescriptor sceneDescriptor;
+        readonly KanikamaSceneDescriptor sceneDescriptor;
 
         public List<KanikamaLight> KanikamaLights { get; } = new List<KanikamaLight>();
         public List<KanikamaEmissiveRenderer> KanikamaEmissiveRenderers { get; } = new List<KanikamaEmissiveRenderer>();
@@ -18,11 +18,11 @@ namespace Kanikama.Editor
         public bool IsKanikamaAmbientEnable => sceneDescriptor.IsAmbientEnable;
 
 
-        private readonly List<Light> nonKanikamaLights = new List<Light>();
-        private readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
+        readonly List<Light> nonKanikamaLights = new List<Light>();
+        readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
 
-        private float ambientIntensity;
-        private Material dummyMaterial;
+        float ambientIntensity;
+        Material dummyMaterial;
 
         public KanikamaSceneManager(KanikamaSceneDescriptor sceneDescriptor)
         {

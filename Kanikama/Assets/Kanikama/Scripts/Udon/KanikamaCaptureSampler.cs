@@ -7,18 +7,18 @@ namespace Kanikama.Udon
 {
     public class KanikamaCaptureSampler : UdonSharpBehaviour
     {
-        [SerializeField] private Texture2D tex;
-        [SerializeField] private int partitionType;
+        [SerializeField] Texture2D tex;
+        [SerializeField] int partitionType;
         public float intensity = 1f;
 
-        private int lightCount;
-        private int mipmapLevel;
-        private bool isUniform;
-        private bool isInitialized;
+        int lightCount;
+        int mipmapLevel;
+        bool isUniform;
+        bool isInitialized;
 
-        private Color[] colors;
+        Color[] colors;
 
-        private void Start()
+        void Start()
         {
             if (!isInitialized) Initialize();
         }
@@ -30,7 +30,7 @@ namespace Kanikama.Udon
             return colors;
         }
 
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
             tex.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
             tex.Apply();
@@ -90,7 +90,7 @@ namespace Kanikama.Udon
             }
         }
 
-        private void Initialize()
+        void Initialize()
         {
             var countX = partitionType % 10;
             var countY = Mathf.FloorToInt(partitionType / 10);

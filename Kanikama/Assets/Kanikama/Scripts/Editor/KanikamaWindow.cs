@@ -13,30 +13,32 @@ namespace Kanikama.Editor
 {
     class KanikamaWindow : EditorWindow
     {
-        private KanikamaSceneDescriptor sceneDescriptor;
-        private Scene scene;
-        private bool isRunning;
-        private CancellationTokenSource tokenSource;
+        KanikamaSceneDescriptor sceneDescriptor;
+        Scene scene;
+        bool isRunning;
+        CancellationTokenSource tokenSource;
 
-        private TextureGenerator.Parameter texParam = new TextureGenerator.Parameter();
-        private bool showTextureParam;
+        TextureGenerator.Parameter texParam = new TextureGenerator.Parameter();
+        bool showTextureParam;
+
+
 
 
         [MenuItem("Window/Kanikama")]
-        private static void Initialize()
+        static void Initialize()
         {
             var window = GetWindow(typeof(KanikamaWindow));
             window.Show();
         }
 
-        private void Awake()
+        void Awake()
         {
             titleContent.text = "Kanikama";
             scene = SceneManager.GetActiveScene();
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
         }
 
-        private void OnGUI()
+        void OnGUI()
         {
             GUILayout.Label("Bake", EditorStyles.boldLabel);
             sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
@@ -82,7 +84,7 @@ namespace Kanikama.Editor
             }
         }
 
-        private async void BakeAsync()
+        async void BakeAsync()
         {
             tokenSource = new CancellationTokenSource();
             var baker = new KanikamaBaker();
@@ -101,6 +103,8 @@ namespace Kanikama.Editor
                 isRunning = false;
             }
         }
+
+
 
     }
 }

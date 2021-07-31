@@ -9,13 +9,13 @@ namespace Kanikama.EditorOnly
 {
     public class KanikamaMonitorSetup : EditorOnlyBehaviour
     {
-        [SerializeField] private Camera captureCamera;
-        [SerializeField] private Transform anchor;
+        [SerializeField] Camera captureCamera;
+        [SerializeField] Transform anchor;
         [Space]
-        [SerializeField] private Renderer monitorRenderer;
-        [SerializeField] private PartitionType partitionType;
-        [SerializeField] private CameraDetailedSettings cameraDetailedSettings;
-        [SerializeField] private List<Light> lights = new List<Light>();
+        [SerializeField] Renderer monitorRenderer;
+        [SerializeField] PartitionType partitionType;
+        [SerializeField] CameraDetailedSettings cameraDetailedSettings;
+        [SerializeField] List<Light> lights = new List<Light>();
 
         public List<Light> Lights => lights;
         public Renderer Renderer => monitorRenderer;
@@ -27,7 +27,7 @@ namespace Kanikama.EditorOnly
             SetupCamera();
         }
 
-        private void SetupTransform()
+        void SetupTransform()
         {
             if (monitorRenderer is null) return;
             var t = monitorRenderer.transform;
@@ -36,7 +36,7 @@ namespace Kanikama.EditorOnly
             anchor.localPosition = new Vector3(-extents.x, -extents.y, 0);
         }
 
-        private void SetupLights()
+        void SetupLights()
         {
             var children = anchor.Cast<Transform>().ToArray();
             foreach (var child in children)
@@ -69,7 +69,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        private void SetupUniformGrid(int count)
+        void SetupUniformGrid(int count)
         {
             var size = monitorRenderer.bounds.size;
             var sizeX = size.x / count;
@@ -91,7 +91,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        private void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
+        void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
         {
             var size = monitorRenderer.bounds.size;
 
@@ -121,7 +121,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        private void SetupCamera()
+        void SetupCamera()
         {
             var cameraTrans = captureCamera.transform;
             var rendererTrans = monitorRenderer.transform;
@@ -148,7 +148,7 @@ namespace Kanikama.EditorOnly
             monitorRenderer.enabled = true;
         }
 
-        private enum PartitionType
+        enum PartitionType
         {
             Grid1x1 = 11,
             Grid2x2 = 22,
@@ -159,7 +159,7 @@ namespace Kanikama.EditorOnly
         }
 
         [Serializable]
-        private class CameraDetailedSettings
+        class CameraDetailedSettings
         {
             public float near = 0f;
             public float far = 0.2f;
