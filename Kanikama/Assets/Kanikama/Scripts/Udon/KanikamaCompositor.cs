@@ -12,21 +12,54 @@ namespace Kanikama.Udon
         [SerializeField] Renderer[] emissiveRenderers;
         [SerializeField] KanikamaCaptureSampler[] captureSamplers;
         [SerializeField] bool isAmbientEnable;
-        [SerializeField] [Range(0, 8)] float ambientIntensity;
+        [ColorUsage(false, true), SerializeField] Color ambientColor;
+
+        int size;
         Color[] colors;
+
         int lightCount;
-        int texCount;
+
         int rendererCount;
-        Color[][] monitorColors2;
-        bool[][] materialEmissiveFlags;
         int[] materialCounts;
-        int[] monitorLightCounts;
+        bool[][] materialEmissiveFlags;
+
         int monitorCount;
+        Color[][] monitorColors;
+        int[] monitorLightCounts;
 
         void Start()
         {
-            lightCount = lights.Length;
+            size = 0;
 
+            // A
+            if (isAmbientEnable)
+            {
+                size += 1;
+            }
+
+            // L
+            lightCount = lights.Length;
+            size += lightCount;
+
+            // M
+            monitorCount = captureSamplers.Length;
+            if (monitorCount > 0)
+            {
+                monitorColors = new Color[monitorCount][];
+                monitorLightCounts = new int[monitorCount];
+            }
+
+            for (var i = 0; i < monitorCount; i++)
+            {
+                var sampler = captureSamplers[i];
+                var cols = sampler.GetColors();
+                var colCount = cols.Length;
+                monitorColors[i] = cols;
+                monitorLightCounts[i] = colCount;
+                size += colCount;
+            }
+
+            // R
             rendererCount = emissiveRenderers.Length;
             if (rendererCount > 0)
             {
@@ -47,39 +80,29 @@ namespace Kanikama.Udon
                     flags[j] = isEmissive;
                     if (isEmissive)
                     {
-                        texCount++;
+                        size++;
                     }
                 }
                 materialEmissiveFlags[i] = flags;
             }
 
-            monitorCount = captureSamplers.Length;
-            if (monitorCount > 0)
-            {
-                monitorColors2 = new Color[monitorCount][];
-                monitorLightCounts = new int[monitorCount];
-            }
 
-            for (var i = 0; i < monitorCount; i++)
-            {
-                var sampler = captureSamplers[i];
-                var cols = sampler.GetColors();
-                var colCount = cols.Length;
-                monitorColors2[i] = cols;
-                monitorLightCounts[i] = colCount;
-                texCount += colCount;
-            }
-
-            if (isAmbientEnable)
-            {
-                texCount += 1;
-            }
-            colors = new Color[texCount];
+            colors = new Color[size];
         }
 
         void Update()
         {
             var index = 0;
+
+            // A
+            if (isAmbientEnable)
+            {
+                // HDR is linear
+                colors[index] = ambientColor.gamma;
+                index++;
+            }
+
+            // L
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
@@ -87,13 +110,26 @@ namespace Kanikama.Udon
                 index++;
             }
 
+            // M
+            for (var i = 0; i < monitorCount; i++)
+            {
+                var cols = monitorColors[i];
+                var count = monitorLightCounts[i];
+                for (var j = 0; j < count; j++)
+                {
+                    colors[index] = cols[j];
+                    index++;
+                }
+            }
+
+            // R
             for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = emissiveRenderers[i];
                 var mats = renderer.materials;
                 var count = materialCounts[i];
                 var emissiveFlags = materialEmissiveFlags[i];
-                for(var j = 0; j < count; j++)
+                for (var j = 0; j < count; j++)
                 {
                     if (emissiveFlags[j])
                     {
@@ -101,22 +137,6 @@ namespace Kanikama.Udon
                         index++;
                     }
                 }
-            }
-
-            for (var i = 0; i < monitorCount; i++)
-            {
-                var cols = monitorColors2[i];
-                var count = monitorLightCounts[i];
-                for (var j = 0; j < count; j++)
-                {
-                    colors[index + j] = cols[j];
-                }
-                index += count;
-            }
-
-            if (isAmbientEnable)
-            {
-                colors[index] = Color.white * ambientIntensity;
             }
 
             foreach (var mat in compositeMaterials)
