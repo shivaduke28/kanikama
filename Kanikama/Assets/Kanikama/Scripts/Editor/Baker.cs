@@ -224,7 +224,7 @@ namespace Kanikama.Editor
 
         void CreateKanikamaAssets()
         {
-            if (!request.generateAssets) return;
+            if (!request.isGenerateAssets) return;
             var lightMapCount = GetBakedLightmapPaths(bakedAssetsDirPath).Count;
             for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
             {
