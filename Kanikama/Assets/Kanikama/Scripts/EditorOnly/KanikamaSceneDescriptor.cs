@@ -6,10 +6,10 @@ namespace Kanikama.EditorOnly
 {
     public class KanikamaSceneDescriptor : EditorOnlyBehaviour
     {
-        [SerializeField] private List<Light> lights;
-        [SerializeField] private List<Renderer> emissiveRenderers;
-        [SerializeField] private List<KanikamaMonitorSetup> monitorSetups;
-        [SerializeField] private bool isAmbientEnable;
+        [SerializeField] List<Light> lights;
+        [SerializeField] List<Renderer> emissiveRenderers;
+        [SerializeField] List<KanikamaMonitorSetup> monitorSetups;
+        [SerializeField] bool isAmbientEnable;
 
         public List<Light> Lights => lights;
         public List<Renderer> EmissiveRenderers => emissiveRenderers;

@@ -10,6 +10,7 @@ namespace Kanikama.Editor
         Color color;
         Light light;
         public bool Enabled { get => light.enabled; set => light.enabled = value; }
+        public string Name => light.name;
 
         public KanikamaLight(Light light)
         {
@@ -47,6 +48,7 @@ namespace Kanikama.Editor
         readonly Material[] sharedMaterials;
         readonly Material[] tmpMaterials;
         public List<KanikamaEmissiveMaterial> EmissiveMaterial { get; } = new List<KanikamaEmissiveMaterial>();
+        public string Name => renderer.name;
 
         public KanikamaEmissiveRenderer(Renderer renderer)
         {
@@ -77,7 +79,7 @@ namespace Kanikama.Editor
 
         public void TurnOff()
         {
-            foreach(var matData in EmissiveMaterial)
+            foreach (var matData in EmissiveMaterial)
             {
                 matData.TurnOff();
             }
@@ -100,6 +102,7 @@ namespace Kanikama.Editor
         public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID("_EmissionColor");
 
         readonly Material material;
+        public string Name => material.name;
 
         public KanikamaEmissiveMaterial(Material material)
         {

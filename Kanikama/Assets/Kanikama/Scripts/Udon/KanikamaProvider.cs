@@ -6,10 +6,10 @@ namespace Kanikama.Udon
 {
     public class KanikamaProvider : UdonSharpBehaviour
     {
-        [SerializeField] private Texture[] kanikamaMaps;
-        [SerializeField] private Renderer[] receivers;
+        [SerializeField] Texture[] kanikamaMaps;
+        [SerializeField] Renderer[] receivers;
 
-        private void Start()
+        void Start()
         {
             if (kanikamaMaps.Length == 0) return;
             foreach (var renderer in receivers)

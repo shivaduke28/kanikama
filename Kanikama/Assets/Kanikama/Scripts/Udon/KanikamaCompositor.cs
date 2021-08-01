@@ -7,21 +7,21 @@ namespace Kanikama.Udon
 {
     public class KanikamaCompositor : UdonSharpBehaviour
     {
-        [SerializeField] private Material[] compositeMaterials;
-        [SerializeField] private Light[] lights;
-        [SerializeField] private Renderer[] emissiveRenderers;
-        [SerializeField] private KanikamaCaptureSampler[] captureSamplers;
-        [SerializeField] private bool isAmbientEnable;
-        [SerializeField] [Range(0, 8)] private float ambientIntensity;
-        private Color[] colors;
-        private int lightCount;
-        private int texCount;
-        private int rendererCount;
-        private Color[][] monitorColors2;
-        private int[] monitorLightCounts;
-        private int monitorCount;
+        [SerializeField] Material[] compositeMaterials;
+        [SerializeField] Light[] lights;
+        [SerializeField] Renderer[] emissiveRenderers;
+        [SerializeField] KanikamaCaptureSampler[] captureSamplers;
+        [SerializeField] bool isAmbientEnable;
+        [SerializeField] [Range(0, 8)] float ambientIntensity;
+        Color[] colors;
+        int lightCount;
+        int texCount;
+        int rendererCount;
+        Color[][] monitorColors2;
+        int[] monitorLightCounts;
+        int monitorCount;
 
-        private void Start()
+        void Start()
         {
             lightCount = lights.Length;
             rendererCount = emissiveRenderers.Length;
@@ -51,7 +51,7 @@ namespace Kanikama.Udon
             colors = new Color[texCount];
         }
 
-        private void Update()
+        void Update()
         {
             var index = 0;
             for (var i = 0; i < lightCount; i++)
