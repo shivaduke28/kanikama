@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 using Kanikama.EditorOnly;
+using UnityEngine.SceneManagement;
+using System.IO;
 
 namespace Kanikama.Editor
 {
@@ -43,7 +45,6 @@ namespace Kanikama.Editor
             GUILayout.Label("Bake", EditorStyles.boldLabel);
             sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
 
-
             if (sceneDescriptor != null)
             {
                 if (GUILayout.Button("Reload") || bakeRequest is null)
@@ -52,6 +53,7 @@ namespace Kanikama.Editor
                 }
                 DrawBakeRequest();
             }
+
 
             EditorGUI.EndDisabledGroup();
 
@@ -76,6 +78,19 @@ namespace Kanikama.Editor
                     BakeAsync();
                 }
             }
+
+
+            GUILayout.Label("Baked Assets", EditorStyles.boldLabel);
+
+            if (GUILayout.Button("Open Assets Directory"))
+            {
+                var scene = SceneManager.GetActiveScene();
+                var sceneDirPath = Path.GetDirectoryName(scene.path);
+                var exportDirName = string.Format(Baker.ExportDirFormat, scene.name);
+                AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+                AssetUtil.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
+            }
+
             EditorGUILayout.EndScrollView();
         }
 

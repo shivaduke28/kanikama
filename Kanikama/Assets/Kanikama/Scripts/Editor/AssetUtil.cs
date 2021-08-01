@@ -1,6 +1,8 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using System.IO;
+using System;
+using System.Reflection;
 
 namespace Kanikama.Editor
 {
@@ -12,13 +14,13 @@ namespace Kanikama.Editor
             return AssetDatabase.LoadMainAssetAtPath(path) != null;
         }
 
-        public static bool TryLoadAsset<T>(string path, out T asset) where T : Object
+        public static bool TryLoadAsset<T>(string path, out T asset) where T : UnityEngine.Object
         {
             asset = (T)AssetDatabase.LoadAssetAtPath(path, typeof(T));
             return asset is null;
         }
 
-        public static void CreateOrReplaceAsset<T>(ref T asset, string path) where T : Object
+        public static void CreateOrReplaceAsset<T>(ref T asset, string path) where T : UnityEngine.Object
         {
             var existingAsset = AssetDatabase.LoadAssetAtPath<T>(path);
 
@@ -39,6 +41,16 @@ namespace Kanikama.Editor
             {
                 AssetDatabase.CreateFolder(dirPath, folderName);
             }
+        }
+
+        // https://answers.unity.com/questions/1415405/how-to-open-assets-directory-in-project-window.html
+        public static void OpenDirectory(string assetPath)
+        {
+            var asset = AssetDatabase.LoadMainAssetAtPath(assetPath);
+            var pt = Type.GetType("UnityEditor.ProjectBrowser,UnityEditor");
+            var ins = pt.GetField("s_LastInteractedProjectBrowser", BindingFlags.Static | BindingFlags.Public).GetValue(null);
+            var showDirMeth = pt.GetMethod("ShowFolderContents", BindingFlags.NonPublic | BindingFlags.Instance);
+            showDirMeth.Invoke(ins, new object[] { asset.GetInstanceID(), true });
         }
     }
 }

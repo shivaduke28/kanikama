@@ -13,7 +13,7 @@ namespace Kanikama.Editor
 {
     public class Baker
     {
-        const string ExportDirFormat = "{0}_Kanikama";
+        public const string ExportDirFormat = "{0}_Kanikama";
         const string TmpDirName = "tmp";
 
         // const string KLmapFormat = "KL-{0}_{1}.exr";
