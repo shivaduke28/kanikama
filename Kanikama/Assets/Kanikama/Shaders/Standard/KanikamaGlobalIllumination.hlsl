@@ -5,11 +5,11 @@
     #define KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED
     #include "UnityGlobalIllumination.cginc"
 
-    sampler2D _KanikamaMap;
+    sampler2D _Lightmap;
 
     inline half3 KanikamaColor(float2 lightmapUV)
     {
-        half4 kanikamaColorTex = tex2D(_KanikamaMap, lightmapUV);
+        half4 kanikamaColorTex = tex2D(_Lightmap, lightmapUV);
         return DecodeLightmap(kanikamaColorTex);
     }
 
