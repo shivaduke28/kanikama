@@ -54,14 +54,14 @@ namespace Kanikama.EditorOnly
                 case PartitionType.Grid2x2:
                     SetupUniformGrid(2);
                     break;
-                case PartitionType.Grid2x3:
-                    SetupExpandInterior(2, 3);
+                case PartitionType.Grid3x2:
+                    SetupExpandInterior(3, 2);
                     break;
                 case PartitionType.Grid3x3:
                     SetupExpandInterior(3, 3);
                     break;
-                case PartitionType.Grid3x4:
-                    SetupExpandInterior(3, 4, true, false);
+                case PartitionType.Grid4x3:
+                    SetupExpandInterior(4, 3, false, true);
                     break;
                 case PartitionType.Grid4x4:
                     SetupUniformGrid(4);
@@ -91,7 +91,7 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupExpandInterior(int countY, int countX, bool expandY = true, bool expandX = true)
+        void SetupExpandInterior(int countX, int countY, bool expandX = true, bool expandY = true)
         {
             var size = monitorRenderer.bounds.size;
 
@@ -152,9 +152,9 @@ namespace Kanikama.EditorOnly
         {
             Grid1x1 = 11,
             Grid2x2 = 22,
-            Grid2x3 = 23,
+            Grid3x2 = 32,
             Grid3x3 = 33,
-            Grid3x4 = 34,
+            Grid4x3 = 43,
             Grid4x4 = 44,
         }
 

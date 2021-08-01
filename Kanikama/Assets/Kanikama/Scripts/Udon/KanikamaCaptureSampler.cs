@@ -45,7 +45,7 @@ namespace Kanikama.Udon
             {
                 switch (partitionType)
                 {
-                    case 23:
+                    case 32:
                         colors[0] = (pixels[0] + pixels[4]) * 0.5f * intensity;
                         colors[1] = (pixels[1] + pixels[2] + pixels[5] + pixels[6]) * 0.25f * intensity;
                         colors[2] = (pixels[3] + pixels[7]) * 0.5f * intensity;
@@ -67,7 +67,7 @@ namespace Kanikama.Udon
                         colors[7] = (pixels[13] + pixels[14]) * 0.5f * intensity;
                         colors[8] = pixels[15] * intensity;
                         break;
-                    case 34:
+                    case 43:
                         colors[0] = pixels[0] * intensity;
                         colors[1] = pixels[1] * intensity;
                         colors[2] = pixels[2] * intensity;
@@ -110,9 +110,9 @@ namespace Kanikama.Udon
                     mipmapLevel = 6;
                     isUniform = true;
                     break;
-                case 23:
+                case 32:
                 case 33:
-                case 34:
+                case 43:
                     mipmapLevel = 6;
                     isUniform = false;
                     break;
