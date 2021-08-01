@@ -18,14 +18,40 @@ namespace Kanikama.Udon
         int texCount;
         int rendererCount;
         Color[][] monitorColors2;
+        bool[][] materialEmissiveFlags;
+        int[] materialCounts;
         int[] monitorLightCounts;
         int monitorCount;
 
         void Start()
         {
             lightCount = lights.Length;
+
             rendererCount = emissiveRenderers.Length;
-            texCount = lightCount + rendererCount;
+            if (rendererCount > 0)
+            {
+                materialCounts = new int[rendererCount];
+                materialEmissiveFlags = new bool[rendererCount][];
+            }
+
+            for (var i = 0; i < rendererCount; i++)
+            {
+                var renderer = emissiveRenderers[i];
+                var mats = renderer.sharedMaterials;
+                var count = mats.Length;
+                var flags = new bool[count];
+                materialCounts[i] = count;
+                for (var j = 0; j < count; j++)
+                {
+                    var isEmissive = mats[j].IsKeywordEnabled("_EMISSION");
+                    flags[j] = isEmissive;
+                    if (isEmissive)
+                    {
+                        texCount++;
+                    }
+                }
+                materialEmissiveFlags[i] = flags;
+            }
 
             monitorCount = captureSamplers.Length;
             if (monitorCount > 0)
@@ -57,19 +83,25 @@ namespace Kanikama.Udon
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
-                colors[i] = light.color * light.intensity;
+                colors[index] = light.color * light.intensity;
+                index++;
             }
-
-            index += lightCount;
 
             for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = emissiveRenderers[i];
-                var mat = renderer.material;
-                colors[index + i] = mat.GetColor("_EmissionColor");
+                var mats = renderer.materials;
+                var count = materialCounts[i];
+                var emissiveFlags = materialEmissiveFlags[i];
+                for(var j = 0; j < count; j++)
+                {
+                    if (emissiveFlags[j])
+                    {
+                        colors[index] = mats[j].GetColor("_EmissionColor");
+                        index++;
+                    }
+                }
             }
-
-            index += rendererCount;
 
             for (var i = 0; i < monitorCount; i++)
             {
