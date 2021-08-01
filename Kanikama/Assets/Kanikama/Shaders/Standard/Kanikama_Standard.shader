@@ -5,7 +5,7 @@ Shader "Kanikama/Standard"
 {
     Properties
     {
-        [PerRendererData] _KanikamaMap("KanikamaMap", 2D) = "black" {}
+        [PerRendererData] _Lightmap("Lightmap", 2D) = "black" {}
 
         _Color("Color", Color) = (1,1,1,1)
         _MainTex("Albedo", 2D) = "white" {}

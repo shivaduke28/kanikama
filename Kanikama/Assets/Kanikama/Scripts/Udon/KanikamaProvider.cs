@@ -20,10 +20,10 @@ namespace Kanikama.Udon
                 for (var i = 0; i < sharedMats.Length; i++)
                 {
                     var mat = sharedMats[i];
-                    if (mat.HasProperty("_KanikamaMap"))
+                    if (mat.HasProperty("_Lightmap"))
                     {
                         var p = new MaterialPropertyBlock();
-                        p.SetTexture("_KanikamaMap", kanikamaMaps[index]);
+                        p.SetTexture("_Lightmap", kanikamaMaps[index]);
                         renderer.SetPropertyBlock(p, i);
                     }
                 }

@@ -16,14 +16,15 @@ namespace Kanikama.Editor
         public const string ExportDirFormat = "{0}_Kanikama";
         const string TmpDirName = "tmp";
 
+        //const string LightmapFormat = "Lightmap-{0}_comp_light.exr";
         // const string KLmapFormat = "KL-{0}_{1}.exr";
         // const string KRmapFormat = "KR-{0}-{1}_{2}.exr";
         // const string KAmapFormat = "KA-{0}.exr";
         // const string KMmapFormat = "KM-{0}-{1}_{2}.exr";
 
-        const string KLTexArrFormat = "KL-array-{0}.asset";
-        const string KLCompositeMatFormat = "KL-mat-comp-{0}.mat";
-        const string KLCompositeMapFormat = "KL-comp-{0}.asset";
+        const string KLTexArrFormat = "KanikamaTexArray-{0}.asset";
+        const string KLCompositeMatFormat = "KanikamaComposite-{0}.mat";
+        const string KLCompositeMapFormat = "KanikamaMap-{0}.asset";
 
         public const string CompositeShaderName = "Kanikama/Composite";
         public const string DummyShaderName = "Kanikama/Dummy";
@@ -34,14 +35,12 @@ namespace Kanikama.Editor
             public static readonly int TexArray = Shader.PropertyToID("_Tex2DArray");
         }
 
-        static string LightFormat(int lightIndex) => $"KL-{{0}}_{lightIndex}.exr";
-        static string RendererFormat(int rendererIndex, int materialIndex) => $"KM-{{0}}_{rendererIndex}_{materialIndex}.exr";
         static string AmbientFormat() => $"KA-{{0}}.exr";
+        static string LightFormat(int lightIndex) => $"KL-{{0}}_{lightIndex}.exr";
         static string MonitorFormat(int monitorIndex, int lightIndex) => $"KM-{{0}}_{monitorIndex}_{lightIndex}.exr";
+        static string RendererFormat(int rendererIndex, int materialIndex) => $"KR-{{0}}_{rendererIndex}_{materialIndex}.exr";
         static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]+-{lightmapIndex}");
         static readonly Regex LightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
-        //const string LightmapFormat = "Lightmap-{0}_comp_light.exr";
-
 
         readonly BakeSceneController sceneController;
         readonly BakeRequest request;
