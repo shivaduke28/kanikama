@@ -47,7 +47,7 @@ namespace Kanikama.Editor
         readonly Renderer renderer;
         readonly Material[] sharedMaterials;
         readonly Material[] tmpMaterials;
-        public List<KanikamaEmissiveMaterial> EmissiveMaterial { get; } = new List<KanikamaEmissiveMaterial>();
+        public List<KanikamaEmissiveMaterial> EmissiveMaterials { get; } = new List<KanikamaEmissiveMaterial>();
         public string Name => renderer.name;
 
         public KanikamaEmissiveRenderer(Renderer renderer)
@@ -66,7 +66,7 @@ namespace Kanikama.Editor
                 {
                     tmp = UnityEngine.Object.Instantiate(mat);
                     var matData = new KanikamaEmissiveMaterial(tmp);
-                    EmissiveMaterial.Add(matData);
+                    EmissiveMaterials.Add(matData);
                 }
                 else
                 {
@@ -79,7 +79,7 @@ namespace Kanikama.Editor
 
         public void TurnOff()
         {
-            foreach (var matData in EmissiveMaterial)
+            foreach (var matData in EmissiveMaterials)
             {
                 matData.TurnOff();
             }
@@ -88,11 +88,11 @@ namespace Kanikama.Editor
         public void RollBack()
         {
             renderer.sharedMaterials = sharedMaterials;
-            foreach (var matData in EmissiveMaterial)
+            foreach (var matData in EmissiveMaterials)
             {
                 matData.Dispose();
             }
-            EmissiveMaterial.Clear();
+            EmissiveMaterials.Clear();
         }
     }
 
