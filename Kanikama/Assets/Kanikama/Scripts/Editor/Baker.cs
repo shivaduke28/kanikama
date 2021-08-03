@@ -35,11 +35,11 @@ namespace Kanikama.Editor
             public static readonly int TexArray = Shader.PropertyToID("_Tex2DArray");
         }
 
-        static string AmbientFormat() => $"KA-{{0}}.exr";
-        static string LightFormat(int lightIndex) => $"KL-{{0}}_{lightIndex}.exr";
-        static string MonitorFormat(int monitorIndex, int lightIndex) => $"KM-{{0}}_{monitorIndex}_{lightIndex}.exr";
-        static string RendererFormat(int rendererIndex, int materialIndex) => $"KR-{{0}}_{rendererIndex}_{materialIndex}.exr";
-        static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]+-{lightmapIndex}");
+        static string AmbientFormat() => $"A_{{0}}.exr";
+        static string LightFormat(int lightIndex) => $"L_{{0}}_{lightIndex}.exr";
+        static string MonitorFormat(int monitorIndex, int lightIndex) => $"M_{{0}}_{monitorIndex}_{lightIndex}.exr";
+        static string RendererFormat(int rendererIndex, int materialIndex) => $"R_{{0}}_{rendererIndex}_{materialIndex}.exr";
+        static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]+_{lightmapIndex}");
         static readonly Regex LightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
 
         readonly BakeSceneController sceneController;
@@ -67,8 +67,8 @@ namespace Kanikama.Editor
                 await BakeEmissiveRenderersAsync(token);
                 await BakeMonitorsAsync(token);
                 await BakeAmbientAsync(token);
-                CreateKanikamaAssets();
                 await BakeWithoutKanikamaAsync(token);
+                CreateKanikamaAssets();
 
                 Debug.Log($"v..v Done v..v");
             }
@@ -131,10 +131,10 @@ namespace Kanikama.Editor
             var renderer = sceneController.KanikamaEmissiveRenderers[rendererIndex];
             Debug.Log($"Baking Renderer {renderer.Name}");
 
-            var matCount = renderer.EmissiveMaterial.Count;
+            var matCount = renderer.EmissiveMaterials.Count;
             for (var j = 0; j < matCount; j++)
             {
-                var material = renderer.EmissiveMaterial[j];
+                var material = renderer.EmissiveMaterials[j];
                 Debug.Log($"- Baking Renderer {renderer.Name}'s material {material.Name}");
                 material.OnBake();
                 Lightmapping.Clear();
@@ -221,9 +221,81 @@ namespace Kanikama.Editor
             }
         }
 
+        void DeleteUnusedTextures()
+        {
+            var lightmapCount = GetBakedLightmapPaths(bakedAssetsDirPath).Count;
+            var regex = new Regex("^[A-Z]_[0-9]");
+            var allTexturePaths = Directory.GetFiles(tmpDirPath, "*.exr")
+                .Where(x => regex.IsMatch(Path.GetFileNameWithoutExtension(x)))
+                .Select(x => new TexturePathData(x))
+                .ToList();
+
+            var descriptor = request.SceneDescriptor;
+
+            foreach (var data in allTexturePaths)
+            {
+                if (data.lightmapIndex >= lightmapCount || !sceneController.VaidateTexturePath(data))
+                {
+                    Debug.Log($"Delete Unused Texture: {data.fileName}");
+                    AssetDatabase.DeleteAsset(data.path);
+                }
+            }
+            AssetDatabase.Refresh();
+        }
+
+        public class TexturePathData
+        {
+            public BakeTargetType type;
+            public int lightmapIndex;
+            public int objectIndex;
+            public int subIndex;
+            public string path;
+            public string fileName;
+
+            public TexturePathData(string path)
+            {
+                fileName = Path.GetFileNameWithoutExtension(path);
+                this.path = path;
+                var list = fileName.Split("_".ToCharArray());
+                var typeText = list[0];
+                lightmapIndex = int.Parse(list[1]);
+                switch (typeText)
+                {
+                    case "A":
+                        type = BakeTargetType.Ambient;
+                        break;
+                    case "L":
+                        type = BakeTargetType.Light;
+                        objectIndex = int.Parse(list[2]);
+                        break;
+                    case "M":
+                        type = BakeTargetType.Moitor;
+                        objectIndex = int.Parse(list[2]);
+                        subIndex = int.Parse(list[3]);
+                        break;
+                    case "R":
+                        type = BakeTargetType.Renderer;
+                        objectIndex = int.Parse(list[2]);
+                        subIndex = int.Parse(list[3]);
+                        break;
+                    default:
+                        throw new System.ArgumentOutOfRangeException();
+                }
+            }
+        }
+
+        public enum BakeTargetType
+        {
+            Ambient = 1,
+            Light = 2,
+            Moitor = 3,
+            Renderer = 4,
+        }
+
         void CreateKanikamaAssets()
         {
             if (!request.isGenerateAssets) return;
+            DeleteUnusedTextures();
             var lightMapCount = GetBakedLightmapPaths(bakedAssetsDirPath).Count;
             for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
             {

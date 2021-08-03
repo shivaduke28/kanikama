@@ -161,6 +161,27 @@ namespace Kanikama.Editor
             }
         }
 
+        public bool VaidateTexturePath(Baker.TexturePathData pathData)
+        {
+            switch (pathData.type)
+            {
+                case Baker.BakeTargetType.Ambient:
+                    return sceneDescriptor.IsAmbientEnable;
+                case Baker.BakeTargetType.Light:
+                    return pathData.objectIndex < sceneDescriptor.Lights.Count;
+                case Baker.BakeTargetType.Moitor:
+                    if (pathData.objectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
+                    var setUp = sceneDescriptor.MonitorSetups[pathData.objectIndex];
+                    return pathData.subIndex < setUp.Lights.Count;
+                case Baker.BakeTargetType.Renderer:
+                    if (pathData.objectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
+                    var renderer = KanikamaEmissiveRenderers[pathData.objectIndex];
+                    return pathData.subIndex < renderer.EmissiveMaterials.Count;
+                default:
+                    return false;
+            }
+        }
+
         public void Dispose()
         {
             if (dummyMaterial != null)
