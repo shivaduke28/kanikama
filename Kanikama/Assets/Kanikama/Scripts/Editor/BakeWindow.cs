@@ -86,7 +86,7 @@ namespace Kanikama.Editor
             {
                 var scene = SceneManager.GetActiveScene();
                 var sceneDirPath = Path.GetDirectoryName(scene.path);
-                var exportDirName = string.Format(Baker.ExportDirFormat, scene.name);
+                var exportDirName = string.Format(BakePath.ExportDirFormat, scene.name);
                 AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
                 AssetUtil.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
             }

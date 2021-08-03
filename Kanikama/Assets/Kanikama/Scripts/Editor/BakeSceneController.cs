@@ -52,7 +52,7 @@ namespace Kanikama.Editor
 
             if (dummyMaterial is null)
             {
-                dummyMaterial = new Material(Shader.Find(Baker.DummyShaderName));
+                dummyMaterial = new Material(Shader.Find(Baker.ShaderName.Dummy));
             }
 
             // non kanikama emissive renderers
@@ -161,22 +161,22 @@ namespace Kanikama.Editor
             }
         }
 
-        public bool VaidateTexturePath(Baker.TexturePathData pathData)
+        public bool VaidateTexturePath(BakePath.TempTexturePath pathData)
         {
-            switch (pathData.type)
+            switch (pathData.Type)
             {
-                case Baker.BakeTargetType.Ambient:
+                case BakePath.BakeTargetType.Ambient:
                     return sceneDescriptor.IsAmbientEnable;
-                case Baker.BakeTargetType.Light:
-                    return pathData.objectIndex < sceneDescriptor.Lights.Count;
-                case Baker.BakeTargetType.Moitor:
-                    if (pathData.objectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
-                    var setUp = sceneDescriptor.MonitorSetups[pathData.objectIndex];
-                    return pathData.subIndex < setUp.Lights.Count;
-                case Baker.BakeTargetType.Renderer:
-                    if (pathData.objectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
-                    var renderer = KanikamaEmissiveRenderers[pathData.objectIndex];
-                    return pathData.subIndex < renderer.EmissiveMaterials.Count;
+                case BakePath.BakeTargetType.Light:
+                    return pathData.ObjectIndex < sceneDescriptor.Lights.Count;
+                case BakePath.BakeTargetType.Moitor:
+                    if (pathData.ObjectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
+                    var setUp = sceneDescriptor.MonitorSetups[pathData.ObjectIndex];
+                    return pathData.SubIndex < setUp.Lights.Count;
+                case BakePath.BakeTargetType.Renderer:
+                    if (pathData.ObjectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
+                    var renderer = KanikamaEmissiveRenderers[pathData.ObjectIndex];
+                    return pathData.SubIndex < renderer.EmissiveMaterials.Count;
                 default:
                     return false;
             }
