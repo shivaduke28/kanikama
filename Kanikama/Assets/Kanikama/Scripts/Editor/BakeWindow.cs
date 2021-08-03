@@ -145,9 +145,8 @@ namespace Kanikama.Editor
                 EditorGUI.BeginDisabledGroup(!bakeRequest.SceneDescriptor.IsAmbientEnable);
                 bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
                 EditorGUI.EndDisabledGroup();
-
+                bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
                 bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
-                bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Without Kanikama", bakeRequest.isBakeWithouKanikama);
                 EditorGUI.indentLevel--;
 
                 EditorGUI.EndDisabledGroup();
