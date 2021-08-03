@@ -16,9 +16,9 @@ namespace Kanikama.Editor
         public const string ExportDirFormat = "{0}_Kanikama";
         public const string TmpDirName = "tmp";
 
-        public const string TexArrFormat = "KanikamaTexArray-{0}.asset";
-        public const string CompositeMaterialFormat = "KanikamaComposite-{0}.mat";
-        public const string KanikamaMapFormat = "KanikamaMap-{0}.asset";
+        public const string TexArrFormat = "KanikamaTexArray_{0}.asset";
+        public const string CompositeMaterialFormat = "KanikamaComposite_{0}.mat";
+        public const string KanikamaMapFormat = "KanikamaMap_{0}.asset";
 
         public static string AmbientFormat() => $"A_{{0}}.exr";
         public static string LightFormat(int lightIndex) => $"L_{{0}}_{lightIndex}.exr";
@@ -28,6 +28,7 @@ namespace Kanikama.Editor
         public static readonly Regex UnityLightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
         public static readonly Regex TempTextureRegex = new Regex("^[A-Z]_[0-9]");
         public static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]+_{lightmapIndex}");
+        public static readonly Regex KanikamaAssetRegex = new Regex("KanikamaTexArray_[0-9]+.asset|KanikamaComposite_[0-9]+.mat|KanikamaMap_[0-9]+.asset");
         public string UnityLightmapDirPath { get; }
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
@@ -49,6 +50,7 @@ namespace Kanikama.Editor
         {
             return AssetDatabase.FindAssets("t:Texture", new string[1] { UnityLightmapDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                .Where(x => Path.GetDirectoryName(x) == UnityLightmapDirPath)
                 .Where(x => UnityLightMapRegex.IsMatch(x)).ToList();
         }
 
@@ -56,6 +58,7 @@ namespace Kanikama.Editor
         {
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
                 .Where(x => TempTextureRegex.IsMatch(Path.GetFileNameWithoutExtension(x)))
                 .Select(x => new TempTexturePath(x))
                 .ToList();
@@ -66,9 +69,20 @@ namespace Kanikama.Editor
             var regex = KanikamaRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
                 .Where(x => regex.IsMatch(Path.GetFileName(x)))
                 .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x))
                 .ToList();
+        }
+
+        public List<KanikamaAssetPath> GetAllKanikamaAssetPaths()
+        {
+            return AssetDatabase.FindAssets("t:Object", new string[1] { ExportDirPath })
+                  .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                  .Where(x => Path.GetDirectoryName(x) == ExportDirPath)
+                  .Where(x => KanikamaAssetRegex.IsMatch(Path.GetFileName(x)))
+                  .Select(x => new KanikamaAssetPath(x))
+                  .ToList();
         }
 
         public class TempTexturePath
@@ -83,7 +97,7 @@ namespace Kanikama.Editor
             public TempTexturePath(string path)
             {
                 FileName = System.IO.Path.GetFileNameWithoutExtension(path);
-                this.Path = path;
+                Path = path;
                 var list = FileName.Split("_".ToCharArray());
                 var typeText = list[0];
                 LightmapIndex = int.Parse(list[1]);
@@ -109,6 +123,19 @@ namespace Kanikama.Editor
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            }
+        }
+
+        public class KanikamaAssetPath
+        {
+            public string Path { get; }
+            public int LightmapIndex { get; }
+            public KanikamaAssetPath(string path)
+            {
+                Path = path;
+                var fileName = System.IO.Path.GetFileNameWithoutExtension(path);
+                var list = fileName.Split("_".ToCharArray());
+                LightmapIndex = int.Parse(list[1]);
             }
         }
 

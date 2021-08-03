@@ -193,14 +193,26 @@ namespace Kanikama.Editor
             var lightmapCount = bakePath.GetUnityLightmapPaths().Count;
             var allTexturePaths = bakePath.GetAllTempTexturePaths();
 
-            foreach (var data in allTexturePaths)
+            foreach (var path in allTexturePaths)
             {
-                if (data.LightmapIndex >= lightmapCount || !sceneController.VaidateTexturePath(data))
+                if (path.LightmapIndex >= lightmapCount || !sceneController.VaidateTexturePath(path))
                 {
-                    Debug.Log($"Delete Unused Texture: {data.FileName}");
-                    AssetDatabase.DeleteAsset(data.Path);
+                    Debug.Log($"Delete Unused Texture: {path.Path}");
+                    AssetDatabase.DeleteAsset(path.Path);
                 }
             }
+
+
+            var allKanikamaPaths = bakePath.GetAllKanikamaAssetPaths();
+            foreach(var path in allKanikamaPaths)
+            {
+                if (path.LightmapIndex >= lightmapCount)
+                {
+                    Debug.Log($"Delete Unused Asset: {path.Path}");
+                    AssetDatabase.DeleteAsset(path.Path);
+                }
+            }
+
             AssetDatabase.Refresh();
         }
 
