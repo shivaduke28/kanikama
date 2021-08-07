@@ -63,7 +63,7 @@ namespace Kanikama.Editor
                 if (sceneDescriptor.MonitorSetups.Any(x => x.Renderer == renderer)) continue;
 
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-                if (flag.HasFlag(StaticEditorFlags.LightmapStatic))
+                if (flag.HasFlag(StaticEditorFlags.ContributeGI))
                 {
                     var sharedMaterials = renderer.sharedMaterials;
 
