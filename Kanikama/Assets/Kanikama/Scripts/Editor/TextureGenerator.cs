@@ -16,12 +16,10 @@ namespace Kanikama.Editor
             var bytes = texture.EncodeToEXR();
             File.WriteAllBytes(path, bytes);
             AssetDatabase.Refresh();
-            if (parameter.readWrite)
-            {
-                var textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
-                textureImporter.isReadable = true;
-                textureImporter.SaveAndReimport();
-            }
+            var textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+            textureImporter.isReadable = parameter.isReadable;
+            textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
+            textureImporter.SaveAndReimport();
             Debug.Log($"{path} has been generated.");
             return texture;
         }
@@ -39,7 +37,7 @@ namespace Kanikama.Editor
             public bool mipChain = true;
             public bool linear = true;
             public TextureExtension extension = TextureExtension.Exr;
-            public bool readWrite;
+            public bool isReadable = true;
         }
 
         public enum TextureExtension

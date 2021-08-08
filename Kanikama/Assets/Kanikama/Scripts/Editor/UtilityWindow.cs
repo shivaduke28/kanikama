@@ -34,7 +34,7 @@ namespace Kanikama.Editor
                 texParam.extension = (TextureGenerator.TextureExtension)EditorGUILayout.EnumPopup("ext", texParam.extension);
                 texParam.mipChain = EditorGUILayout.Toggle("mipChain", texParam.mipChain);
                 texParam.linear = EditorGUILayout.Toggle("linear", texParam.linear);
-                texParam.readWrite = EditorGUILayout.Toggle("read/write", texParam.readWrite);
+                texParam.isReadable = EditorGUILayout.Toggle("is readable", texParam.isReadable);
                 if (GUILayout.Button("Generate Texture"))
                 {
                     var tex = TextureGenerator.GenerateTexture("Assets", "texture", texParam);
