@@ -14,9 +14,9 @@ namespace Kanikama.Udon
         [SerializeField] bool isAmbientEnable;
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
-        int size;
-        Color[] colors; // linear
+        [ColorUsage(false, true), SerializeField] Color[] colors; // linear
 
+        int size;
         int lightCount;
 
         int rendererCount;

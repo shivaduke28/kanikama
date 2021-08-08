@@ -10,13 +10,12 @@ namespace Kanikama.Udon
         [SerializeField] Texture2D readingTexture;
         [SerializeField] int partitionType;
         public float intensity = 1f;
+        [ColorUsage(false, true), SerializeField] Color[] colors;
 
         int lightCount;
         int mipmapLevel;
         bool isUniform;
         bool isInitialized;
-
-        Color[] colors;
 
         void Start()
         {
