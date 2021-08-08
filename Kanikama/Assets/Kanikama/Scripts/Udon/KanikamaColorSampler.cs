@@ -5,18 +5,17 @@ using UdonSharp;
 
 namespace Kanikama.Udon
 {
-    public class KanikamaCaptureSampler : UdonSharpBehaviour
+    public class KanikamaColorSampler : UdonSharpBehaviour
     {
-        [SerializeField] Texture2D tex;
+        [SerializeField] Texture2D readingTexture;
         [SerializeField] int partitionType;
         public float intensity = 1f;
+        [ColorUsage(false, true), SerializeField] Color[] colors;
 
         int lightCount;
         int mipmapLevel;
         bool isUniform;
         bool isInitialized;
-
-        Color[] colors;
 
         void Start()
         {
@@ -31,9 +30,13 @@ namespace Kanikama.Udon
 
         void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            tex.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
-            tex.Apply();
-            var pixels = tex.GetPixels(mipmapLevel);
+            // NOTE:
+            // pixel colors are linear if so is the source render texture (maybe)
+            // and HDR if so is the reading texture
+            readingTexture.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
+            readingTexture.Apply();
+
+            var pixels = readingTexture.GetPixels(mipmapLevel);
             if (isUniform)
             {
                 for (var i = 0; i < lightCount; i++)

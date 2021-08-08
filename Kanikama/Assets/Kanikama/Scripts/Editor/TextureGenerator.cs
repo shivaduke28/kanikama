@@ -8,28 +8,50 @@ namespace Kanikama.Editor
 {
     public class TextureGenerator
     {
-        public static Texture2D GenerateTexture(string path, Parameter parameter)
+        public static Texture2D GenerateTexture(string dirPath, string name, Parameter parameter)
         {
-            return GenerateTexture(path, parameter.width, parameter.height, parameter.format, parameter.mipChain, parameter.linear);
-        }
-
-        public static Texture2D GenerateTexture(string path, int width, int height, TextureFormat format, bool mipChain, bool linear)
-        {
-            var texture = new Texture2D(width, height, format, mipChain, linear);
-            var bytes = texture.EncodeToPNG();
+            var texture = GenerateTexture(parameter);
+            var ext = parameter.extension == TextureExtension.Png ? "png" : "exr";
+            var path = Path.Combine(dirPath, $"{name}.{ext}");
+            var bytes = texture.EncodeToEXR();
             File.WriteAllBytes(path, bytes);
             AssetDatabase.Refresh();
+            var textureImporter = AssetImporter.GetAtPath(path) as TextureImporter;
+            textureImporter.isReadable = parameter.isReadable;
+            textureImporter.textureCompression = TextureImporterCompression.Uncompressed;
+            textureImporter.SaveAndReimport();
             Debug.Log($"{path} has been generated.");
             return texture;
+        }
+
+        public static Texture2D GenerateTexture(Parameter parameter)
+        {
+            return new Texture2D(parameter.width, parameter.height, parameter.format, parameter.mipChain, parameter.linear);
+        }
+
+        public static RenderTexture GenerateRenderTexture(string dirPath, string name, RenderTextureDescriptor parameter)
+        {
+            var rt = new RenderTexture(parameter);
+            var path = Path.Combine(dirPath, $"{name}.renderTexture");
+            AssetUtil.CreateOrReplaceAsset<RenderTexture>(ref rt, path);
+            return rt;
         }
 
         public class Parameter
         {
             public int width = 256;
             public int height = 256;
-            public TextureFormat format = TextureFormat.RGBA32;
+            public TextureFormat format = TextureFormat.RGBAHalf;
             public bool mipChain = true;
             public bool linear = true;
+            public TextureExtension extension = TextureExtension.Exr;
+            public bool isReadable = true;
+        }
+
+        public enum TextureExtension
+        {
+            Png = 0,
+            Exr = 1,
         }
     }
 }

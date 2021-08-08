@@ -10,6 +10,7 @@ namespace Kanikama.Editor
 {
     class BakeWindow : EditorWindow
     {
+        SceneAsset sceneAsset;
         KanikamaSceneDescriptor sceneDescriptor;
         BakeRequest bakeRequest;
 
@@ -28,6 +29,20 @@ namespace Kanikama.Editor
         void OnEnable()
         {
             titleContent.text = "Kanikama Bake";
+            LoadSceneAsset();
+        }
+
+        void LoadSceneAsset()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            if (!string.IsNullOrEmpty(activeScene.path))
+            {
+                sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(activeScene.path);
+            }
+            else
+            {
+                sceneAsset = null;
+            }
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor != null)
             {
@@ -37,119 +52,128 @@ namespace Kanikama.Editor
 
         void OnGUI()
         {
-
-            scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
-
-            EditorGUI.BeginDisabledGroup(isRunning);
-
-            GUILayout.Label("Bake", EditorStyles.boldLabel);
-            sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
-
-            if (sceneDescriptor != null)
+            using (new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
-                if (GUILayout.Button("Reload") || bakeRequest is null)
+                using (new EditorGUI.DisabledGroupScope(isRunning))
                 {
-                    bakeRequest = new BakeRequest(sceneDescriptor);
+                    DrawBakeTarget();
+                    EditorGUILayout.Space();
+                    DrawBakeRequest();
                 }
-                DrawBakeRequest();
-            }
 
-
-            EditorGUI.EndDisabledGroup();
-
-            if (isRunning)
-            {
-                if (GUILayout.Button("Force Stop"))
+                if (isRunning)
                 {
-                    if (tokenSource != null)
+                    if (GUILayout.Button("Force Stop"))
                     {
-                        tokenSource.Cancel();
-                    }
-                    else
-                    {
-                        isRunning = false;
+                        Stop();
                     }
                 }
-            }
-            if (sceneDescriptor != null && !isRunning)
-            {
-                if (GUILayout.Button("Bake"))
+                else if (sceneAsset is null)
                 {
-                    BakeAsync();
+                    EditorGUILayout.HelpBox("Scene is not saved as an asset.", MessageType.Warning);
+                }
+                else if (sceneDescriptor is null)
+                {
+                    EditorGUILayout.HelpBox("Kanikama Scene Descriptor is not selected.", MessageType.Warning);
+                }
+                else
+                {
+                    if (GUILayout.Button("Bake"))
+                    {
+                        BakeAsync();
+                    }
+                }
+
+                EditorGUILayout.Space();
+                GUILayout.Label("Baked Assets", EditorStyles.boldLabel);
+
+                if (GUILayout.Button("Open Assets Directory"))
+                {
+                    var scene = SceneManager.GetActiveScene();
+                    if (!string.IsNullOrEmpty(scene.path))
+                    {
+                        var sceneDirPath = Path.GetDirectoryName(scene.path);
+                        var exportDirName = string.Format(BakePath.ExportDirFormat, scene.name);
+                        AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+                        AssetUtil.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
+                    }
                 }
             }
-
-
-            GUILayout.Label("Baked Assets", EditorStyles.boldLabel);
-
-            if (GUILayout.Button("Open Assets Directory"))
-            {
-                var scene = SceneManager.GetActiveScene();
-                var sceneDirPath = Path.GetDirectoryName(scene.path);
-                var exportDirName = string.Format(BakePath.ExportDirFormat, scene.name);
-                AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
-                AssetUtil.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
-            }
-
-            EditorGUILayout.EndScrollView();
         }
 
+        void DrawBakeTarget()
+        {
+            GUILayout.Label("Bake Target", EditorStyles.boldLabel);
+            using (new EditorGUI.DisabledGroupScope(true))
+            {
+                sceneAsset = (SceneAsset)EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
+            }
+            sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
+
+            if (GUILayout.Button("Load Active Scene"))
+            {
+                LoadSceneAsset();
+            }
+        }
 
         void DrawBakeRequest()
         {
-            GUILayout.Label("Bake Commands", EditorStyles.boldLabel);
-            bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
+            if (bakeRequest is null) return;
 
+            GUILayout.Label("Bake Commands", EditorStyles.boldLabel);
+
+            bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
             showRequestDetail = EditorGUILayout.Foldout(showRequestDetail, "Bake Parts");
 
             if (showRequestDetail)
             {
-                EditorGUI.BeginDisabledGroup(bakeRequest.isBakeAll);
-
-                EditorGUI.indentLevel++;
-
-                EditorGUILayout.LabelField("Lights");
-                EditorGUI.indentLevel++;
-                var lightRequests = bakeRequest.lightRequests;
-                var lights = bakeRequest.SceneDescriptor.Lights;
-                var lightCount = Mathf.Min(lightRequests.Count, lights.Count);
-                for (var i = 0; i < lightCount; i++)
+                using (new EditorGUI.DisabledGroupScope(bakeRequest.isBakeAll))
                 {
-                    lightRequests[i] = EditorGUILayout.Toggle(lights[i].name, lightRequests[i]);
+                    using (new EditorGUI.IndentLevelScope(EditorGUI.indentLevel++))
+                    {
+                        var indentLevel = EditorGUI.indentLevel + 1;
+                        EditorGUILayout.LabelField("Lights");
+                        using (new EditorGUI.IndentLevelScope(indentLevel))
+                        {
+                            var lightRequests = bakeRequest.lightRequests;
+                            var lights = bakeRequest.SceneDescriptor.Lights;
+                            var lightCount = Mathf.Min(lightRequests.Count, lights.Count);
+                            for (var i = 0; i < lightCount; i++)
+                            {
+                                lightRequests[i] = EditorGUILayout.Toggle(lights[i].name, lightRequests[i]);
+                            }
+                        }
+
+                        EditorGUILayout.LabelField("Emissive Renderers");
+                        using (new EditorGUI.IndentLevelScope(indentLevel))
+                        {
+                            var rendererRequests = bakeRequest.rendererRequests;
+                            var renderers = bakeRequest.SceneDescriptor.EmissiveRenderers;
+                            var rendererCount = Mathf.Min(rendererRequests.Count, renderers.Count);
+                            for (var i = 0; i < rendererCount; i++)
+                            {
+                                rendererRequests[i] = EditorGUILayout.Toggle(renderers[i].name, rendererRequests[i]);
+                            }
+                        }
+                        EditorGUILayout.LabelField("Monitors");
+                        using (new EditorGUI.IndentLevelScope(indentLevel))
+                        {
+                            var monitorRequests = bakeRequest.monitorRequests;
+                            var monitors = bakeRequest.SceneDescriptor.MonitorSetups;
+                            var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
+                            for (var i = 0; i < monitorCount; i++)
+                            {
+                                monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].Renderer.name, monitorRequests[i]);
+                            }
+                        }
+                        using (new EditorGUI.DisabledScope(!bakeRequest.SceneDescriptor.IsAmbientEnable))
+                        {
+                            bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
+                        }
+                        bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
+                        bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
+                    }
                 }
-                EditorGUI.indentLevel--;
-
-
-                EditorGUILayout.LabelField("Emissive Renderers");
-                EditorGUI.indentLevel++;
-                var rendererRequests = bakeRequest.rendererRequests;
-                var renderers = bakeRequest.SceneDescriptor.EmissiveRenderers;
-                var rendererCount = Mathf.Min(rendererRequests.Count, renderers.Count);
-                for (var i = 0; i < rendererCount; i++)
-                {
-                    rendererRequests[i] = EditorGUILayout.Toggle(renderers[i].name, rendererRequests[i]);
-                }
-                EditorGUI.indentLevel--;
-
-                EditorGUILayout.LabelField("Monitors");
-                EditorGUI.indentLevel++;
-                var monitorRequests = bakeRequest.monitorRequests;
-                var monitors = bakeRequest.SceneDescriptor.MonitorSetups;
-                var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
-                for (var i = 0; i < monitorCount; i++)
-                {
-                    monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].Renderer.name, monitorRequests[i]);
-                }
-                EditorGUI.indentLevel--;
-
-                EditorGUI.BeginDisabledGroup(!bakeRequest.SceneDescriptor.IsAmbientEnable);
-                bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
-                EditorGUI.EndDisabledGroup();
-                bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
-                bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
-                EditorGUI.indentLevel--;
-
-                EditorGUI.EndDisabledGroup();
             }
         }
 
@@ -168,6 +192,18 @@ namespace Kanikama.Editor
                 Debug.Log("キャンセルされました");
             }
             finally
+            {
+                isRunning = false;
+            }
+        }
+
+        void Stop()
+        {
+            if (tokenSource != null)
+            {
+                tokenSource.Cancel();
+            }
+            else
             {
                 isRunning = false;
             }
