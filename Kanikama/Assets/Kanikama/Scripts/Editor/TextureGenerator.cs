@@ -29,6 +29,14 @@ namespace Kanikama.Editor
             return new Texture2D(parameter.width, parameter.height, parameter.format, parameter.mipChain, parameter.linear);
         }
 
+        public static RenderTexture GenerateRenderTexture(string dirPath, string name, RenderTextureDescriptor parameter)
+        {
+            var rt = new RenderTexture(parameter);
+            var path = Path.Combine(dirPath, $"{name}.renderTexture");
+            AssetUtil.CreateOrReplaceAsset<RenderTexture>(ref rt, path);
+            return rt;
+        }
+
         public class Parameter
         {
             public int width = 256;
