@@ -41,7 +41,7 @@ namespace Kanikama.Editor
             AssetUtil.CreateFolderIfNecessary(ExportDirPath, TmpDirName);
             TmpDirPath = Path.Combine(ExportDirPath, TmpDirName);
 
-            UnityLightmapDirPath = Path.Combine(sceneDirPath, scene.name.ToLower());
+            UnityLightmapDirPath = Path.Combine(sceneDirPath, scene.name);
         }
 
         public List<string> GetUnityLightmapPaths()
