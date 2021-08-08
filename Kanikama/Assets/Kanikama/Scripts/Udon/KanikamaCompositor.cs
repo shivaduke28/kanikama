@@ -10,12 +10,12 @@ namespace Kanikama.Udon
         [SerializeField] Material[] compositeMaterials;
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
-        [SerializeField] KanikamaCaptureSampler[] captureSamplers;
+        [SerializeField] KanikamaColorSampler[] captureSamplers;
         [SerializeField] bool isAmbientEnable;
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
         int size;
-        Color[] colors;
+        Color[] colors; // linear
 
         int lightCount;
 
@@ -31,17 +31,17 @@ namespace Kanikama.Udon
         {
             size = 0;
 
-            // A
+            // Ambient
             if (isAmbientEnable)
             {
                 size += 1;
             }
 
-            // L
+            // Light
             lightCount = lights.Length;
             size += lightCount;
 
-            // M
+            // Monitor
             monitorCount = captureSamplers.Length;
             if (monitorCount > 0)
             {
@@ -59,7 +59,7 @@ namespace Kanikama.Udon
                 size += colCount;
             }
 
-            // R
+            // Renderer
             rendererCount = emissiveRenderers.Length;
             if (rendererCount > 0)
             {
@@ -94,35 +94,37 @@ namespace Kanikama.Udon
         {
             var index = 0;
 
-            // A
+            // Ambient
             if (isAmbientEnable)
             {
-                // HDR is linear
-                colors[index] = ambientColor.gamma;
+                // HDR (linear)
+                colors[index] = ambientColor;
                 index++;
             }
 
-            // L
+            // Light
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
-                colors[index] = light.color * light.intensity;
+                // NOTE: depends on GraphicsSettings.lightsUseLinearIntensity
+                colors[index] = light.color.linear * light.intensity;
                 index++;
             }
 
-            // M
+            // Monitor
             for (var i = 0; i < monitorCount; i++)
             {
                 var cols = monitorColors[i];
                 var count = monitorLightCounts[i];
                 for (var j = 0; j < count; j++)
                 {
+                    // monitorColors should be linear
                     colors[index] = cols[j];
                     index++;
                 }
             }
 
-            // R
+            // Renderer
             for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = emissiveRenderers[i];
@@ -133,6 +135,7 @@ namespace Kanikama.Udon
                 {
                     if (emissiveFlags[j])
                     {
+                        // HDR (linear)
                         colors[index] = mats[j].GetColor("_EmissionColor");
                         index++;
                     }
@@ -141,6 +144,7 @@ namespace Kanikama.Udon
 
             foreach (var mat in compositeMaterials)
             {
+                // No sRGB-linear conversion
                 mat.SetColorArray("_Colors", colors);
             }
         }

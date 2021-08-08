@@ -269,7 +269,7 @@ MonoBehaviour:
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaCaptureSampler[], Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaColorSampler[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
