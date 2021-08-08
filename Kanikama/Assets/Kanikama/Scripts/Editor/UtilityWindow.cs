@@ -30,7 +30,6 @@ namespace Kanikama.Editor
         public void Initialize()
         {
             titleContent.text = "Kanikama Utility";
-            texParam = new TextureGenerator.Parameter();
             rtDescriptor = new RenderTextureDescriptor(256, 256);
             Show();
         }
@@ -41,6 +40,10 @@ namespace Kanikama.Editor
             var indentLevel = EditorGUI.indentLevel;
             using (new EditorGUI.IndentLevelScope(indentLevel + 1))
             {
+                if (texParam is null)
+                {
+                    texParam = new TextureGenerator.Parameter();
+                }
                 texParam.width = EditorGUILayout.IntField("width", texParam.width);
                 texParam.height = EditorGUILayout.IntField("height", texParam.height);
                 texParam.format = (TextureFormat)EditorGUILayout.EnumPopup("format", texParam.format);
