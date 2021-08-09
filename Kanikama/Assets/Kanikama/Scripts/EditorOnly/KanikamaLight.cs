@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kanikama.Editor
+namespace Kanikama.EditorOnly
 {
     public class KanikamaLight
     {
@@ -123,6 +123,59 @@ namespace Kanikama.Editor
         public void Dispose()
         {
             UnityEngine.Object.DestroyImmediate(material);
+        }
+    }
+
+
+    public class KanikamaMonitor
+    {
+        readonly KanikamaMonitorSetup setup;
+        public List<KanikamaEmissiveMaterial> EmissiveMaterials { get; } = new List<KanikamaEmissiveMaterial>();
+        readonly Material[] sharedMaterials;
+        public string Name => setup.Renderer.name;
+
+        public KanikamaMonitor(KanikamaMonitorSetup setup)
+        {
+            this.setup = setup;
+
+            var count = setup.GridRenderers.Count;
+            sharedMaterials = new Material[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                var gridRenderer = setup.GridRenderers[i];
+                sharedMaterials[i] = gridRenderer.sharedMaterial;
+                var tmp = UnityEngine.Object.Instantiate(gridRenderer.sharedMaterial);
+                gridRenderer.sharedMaterial = tmp;
+                var matData = new KanikamaEmissiveMaterial(tmp);
+                EmissiveMaterials.Add(matData);
+            }
+        }
+        public void TurnOff()
+        {
+            setup.TurnOff();
+            foreach (var matData in EmissiveMaterials)
+            {
+                matData.TurnOff();
+            }
+        }
+        public void OnBake()
+        {
+            setup.OnBake();
+        }
+
+        public void RollBack()
+        {
+            setup.RollBack();
+            for (var i = 0; i < sharedMaterials.Length; i++)
+            {
+                setup.GridRenderers[i].sharedMaterial = sharedMaterials[i];
+            }
+            foreach (var matData in EmissiveMaterials)
+            {
+                matData.Dispose();
+            }
+            EmissiveMaterials.Clear();
         }
     }
 }

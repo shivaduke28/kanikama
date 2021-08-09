@@ -1,24 +1,26 @@
 ﻿#if UNITY_EDITOR && !COMPILER_UDONSHARP
 
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Kanikama.EditorOnly
 {
     public class KanikamaMonitorSetup : EditorOnlyBehaviour
     {
         [SerializeField] Camera captureCamera;
-        [SerializeField] Transform anchor;
+        [SerializeField] Renderer gridRendererPrefab;
         [Space]
         [SerializeField] Renderer monitorRenderer;
         [SerializeField] PartitionType partitionType;
         [SerializeField] CameraDetailedSettings cameraDetailedSettings;
-        [SerializeField] List<Light> lights = new List<Light>();
+        [SerializeField] List<Renderer> gridRenderers;
 
-        public List<Light> Lights => lights;
+        public List<Renderer> GridRenderers => gridRenderers;
         public Renderer Renderer => monitorRenderer;
+
+        Bounds bounds;
 
         public void Setup()
         {
@@ -32,19 +34,21 @@ namespace Kanikama.EditorOnly
             if (monitorRenderer is null) return;
             var t = monitorRenderer.transform;
             transform.SetPositionAndRotation(t.position, t.rotation);
-            var extents = monitorRenderer.bounds.extents;
-            anchor.localPosition = new Vector3(-extents.x, -extents.y, 0);
         }
 
         void SetupLights()
         {
-            var children = anchor.Cast<Transform>().ToArray();
+            var rotation = monitorRenderer.transform.rotation;
+            monitorRenderer.transform.rotation = Quaternion.identity;
+            bounds = monitorRenderer.bounds;
+            monitorRenderer.transform.rotation = rotation;
+            var children = transform.Cast<Transform>().ToArray();
             foreach (var child in children)
             {
                 DestroyImmediate(child.gameObject);
             }
 
-            lights.Clear();
+            gridRenderers.Clear();
 
             switch (partitionType)
             {
@@ -71,50 +75,49 @@ namespace Kanikama.EditorOnly
 
         void SetupUniformGrid(int count)
         {
-            var size = monitorRenderer.bounds.size;
+            var size = bounds.size;
             var sizeX = size.x / count;
             var sizeY = size.y / count;
+            var anchor = new Vector3(-bounds.extents.x, -bounds.extents.y, 0);
 
             for (var j = 0; j < count; j++)
             {
                 for (var i = 0; i < count; i++)
                 {
-                    var light = new GameObject((i + j * count).ToString()).AddComponent<Light>();
-                    light.type = LightType.Area;
-                    light.areaSize = new Vector2(sizeX, sizeY);
-                    var lightTransform = light.transform;
-                    lightTransform.SetParent(anchor);
-                    lightTransform.localEulerAngles = new Vector3(0, 180, 0);
-                    lightTransform.localPosition = new Vector2(sizeX * (0.5f + (i % count)), sizeY * (0.5f + (j % count)));
-                    lights.Add(light);
+                    var item = Instantiate(gridRendererPrefab, transform, false);
+                    item.gameObject.name = (i + j * count).ToString();
+                    item.transform.localScale = new Vector3(sizeX, sizeY, 1);
+                    item.transform.localPosition = anchor + new Vector3(sizeX * (0.5f + (i % count)), sizeY * (0.5f + (j % count)), 0);
+                    item.enabled = false;
+                    gridRenderers.Add(item);
                 }
             }
         }
 
         void SetupExpandInterior(int countX, int countY, bool expandX = true, bool expandY = true)
         {
-            var size = monitorRenderer.bounds.size;
+            var size = bounds.size;
 
             var sizeX = size.x / (countX + (countX % 2));
             var sizeY = size.y / (countY + (countY % 2));
+            var anchor = new Vector3(-bounds.extents.x, -bounds.extents.y, 0);
 
-            var position = Vector2.zero;
+            var position = Vector3.zero;
             for (var j = 0; j < countY; j++)
             {
                 position.x = 0;
                 var areaY = !expandY || (j == 0 || j == countY - 1) ? sizeY : sizeY * 2;
                 for (var i = 0; i < countX; i++)
                 {
-                    var light = new GameObject((i + j * countX).ToString()).AddComponent<Light>();
-                    light.type = LightType.Area;
                     var areaX = !expandX || (i == 0 || i == countX - 1) ? sizeX : sizeX * 2;
-                    light.areaSize = new Vector2(areaX, areaY);
-                    var lightTransform = light.transform;
-                    lightTransform.SetParent(anchor);
-                    lightTransform.localEulerAngles = new Vector3(0, 180, 0);
-                    lightTransform.localPosition = position + new Vector2(areaX, areaY) * 0.5f;
-                    lights.Add(light);
-                    position += new Vector2(areaX, 0);
+                    var item = Instantiate(gridRendererPrefab, transform, false);
+                    item.gameObject.name = (i + j * countX).ToString();
+                    item.transform.localScale = new Vector3(sizeX, sizeY, 1);
+                    item.transform.localPosition = anchor + position + new Vector3(areaX, areaY, 0) * 0.5f;
+                    item.transform.localScale = new Vector3(areaX, areaY, 1);
+                    item.enabled = false;
+                    gridRenderers.Add(item);
+                    position += new Vector3(areaX, 0, 0);
                 }
 
                 position.y += areaY;
@@ -128,24 +131,34 @@ namespace Kanikama.EditorOnly
             cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * cameraDetailedSettings.distance, rendererTrans.rotation);
             captureCamera.nearClipPlane = cameraDetailedSettings.near;
             captureCamera.farClipPlane = cameraDetailedSettings.far;
-            captureCamera.orthographicSize = Mathf.Min(monitorRenderer.bounds.extents.x, monitorRenderer.bounds.extents.y);
+            captureCamera.orthographicSize = Mathf.Min(bounds.extents.x, bounds.extents.y);
 
         }
 
         public void TurnOff()
         {
             monitorRenderer.enabled = false;
-            foreach (var light in lights)
+            foreach (var renderer in gridRenderers)
             {
-                light.intensity = 1;
-                light.color = Color.white;
-                light.enabled = false;
+                renderer.enabled = false;
+            }
+        }
+
+        public void OnBake()
+        {
+            foreach (var renderer in gridRenderers)
+            {
+                renderer.enabled = true;
             }
         }
 
         public void RollBack()
         {
             monitorRenderer.enabled = true;
+            foreach (var renderer in gridRenderers)
+            {
+                renderer.enabled = false;
+            }
         }
 
         enum PartitionType

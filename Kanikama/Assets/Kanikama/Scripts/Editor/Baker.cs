@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEditor;
 
 namespace Kanikama.Editor
 {
@@ -111,15 +111,18 @@ namespace Kanikama.Editor
         async Task BakeMonitorAsync(int monitorIndex, CancellationToken token)
         {
             var monitor = sceneController.KanikamaMonitors[monitorIndex];
-            Debug.Log($"Baking Monitor {monitor.Renderer.name}");
-            var lightCount = monitor.Lights.Count;
-            for (var i = 0; i < lightCount; i++)
+            monitor.OnBake();
+
+            Debug.Log($"Baking Monitor {monitor.Name}");
+            var gridCount = monitor.EmissiveMaterials.Count;
+            for (var i = 0; i < gridCount; i++)
             {
-                Debug.Log($"- Baking Monitor {monitor.Renderer.name}'s {i}-th Light");
-                var light = monitor.Lights[i];
-                light.enabled = true;
+                Debug.Log($"- Baking Monitor {monitor.Name}'s {i}-th Light");
+                var material = monitor.EmissiveMaterials[i];
+                material.OnBake();
+                Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
-                light.enabled = false;
+                material.TurnOff();
                 MoveBakedLightmaps(BakePath.MonitorFormat(monitorIndex, i));
             }
         }
@@ -201,7 +204,7 @@ namespace Kanikama.Editor
 
 
             var allKanikamaPaths = bakePath.GetAllKanikamaAssetPaths();
-            foreach(var path in allKanikamaPaths)
+            foreach (var path in allKanikamaPaths)
             {
                 if (path.LightmapIndex >= lightmapCount)
                 {
