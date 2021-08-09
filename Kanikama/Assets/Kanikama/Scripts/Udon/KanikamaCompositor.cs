@@ -10,7 +10,7 @@ namespace Kanikama.Udon
         [SerializeField] Material[] compositeMaterials;
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
-        [SerializeField] KanikamaColorSampler[] captureSamplers;
+        [SerializeField] KanikamaColorSampler[] colorSamplers;
         [SerializeField] bool isAmbientEnable;
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
@@ -42,7 +42,7 @@ namespace Kanikama.Udon
             size += lightCount;
 
             // Monitor
-            monitorCount = captureSamplers.Length;
+            monitorCount = colorSamplers.Length;
             if (monitorCount > 0)
             {
                 monitorColors = new Color[monitorCount][];
@@ -51,7 +51,7 @@ namespace Kanikama.Udon
 
             for (var i = 0; i < monitorCount; i++)
             {
-                var sampler = captureSamplers[i];
+                var sampler = colorSamplers[i];
                 var cols = sampler.GetColors();
                 var colCount = cols.Length;
                 monitorColors[i] = cols;
