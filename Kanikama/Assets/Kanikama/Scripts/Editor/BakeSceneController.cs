@@ -161,7 +161,7 @@ namespace Kanikama.Editor
             }
         }
 
-        public bool VaidateTexturePath(BakePath.TempTexturePath pathData)
+        public bool ValidateTexturePath(BakePath.TempTexturePath pathData)
         {
             switch (pathData.Type)
             {

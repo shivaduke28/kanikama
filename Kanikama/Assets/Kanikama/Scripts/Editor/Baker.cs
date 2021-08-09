@@ -192,7 +192,7 @@ namespace Kanikama.Editor
 
             foreach (var path in allTexturePaths)
             {
-                if (path.LightmapIndex >= lightmapCount || !sceneController.VaidateTexturePath(path))
+                if (path.LightmapIndex >= lightmapCount || !sceneController.ValidateTexturePath(path))
                 {
                     Debug.Log($"Delete Unused Texture: {path.Path}");
                     AssetDatabase.DeleteAsset(path.Path);
