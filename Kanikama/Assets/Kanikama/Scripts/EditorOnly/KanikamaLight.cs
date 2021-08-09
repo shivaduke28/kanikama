@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_EDITOR && !COMPILER_UDONSHARP
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -179,3 +181,5 @@ namespace Kanikama.EditorOnly
         }
     }
 }
+
+#endif
