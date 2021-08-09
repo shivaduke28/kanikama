@@ -33,8 +33,7 @@ namespace Kanikama.Udon
             // NOTE:
             // pixel colors are linear if so is the source render texture (maybe)
             // and HDR if so is the reading texture
-            readingTexture.ReadPixels(new Rect(0, 0, 256, 256), 0, 0);
-            readingTexture.Apply();
+            readingTexture.ReadPixels(new Rect(0,0, 256,256), 0, 0, true);
 
             var pixels = readingTexture.GetPixels(mipmapLevel);
             if (isUniform)
