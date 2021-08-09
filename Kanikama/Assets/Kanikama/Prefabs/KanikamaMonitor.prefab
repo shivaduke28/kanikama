@@ -312,14 +312,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   captureCamera: {fileID: 7339001103156796580}
-  anchor: {fileID: 7339001102791051706}
+  gridRendererPrefab: {fileID: 8980632914921211949, guid: c83edb39890ec1144b83de405462cb05,
+    type: 3}
   monitorRenderer: {fileID: 0}
   partitionType: 11
   cameraDetailedSettings:
     near: 0
-    far: 0.2
-    distance: 0.1
-  lights: []
+    far: 0.02
+    distance: 0.01
+  gridRenderers: []
 --- !u!1 &8480297041665630581
 GameObject:
   m_ObjectHideFlags: 0

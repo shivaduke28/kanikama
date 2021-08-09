@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using Kanikama.EditorOnly;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using UnityEditor;
-using Kanikama.EditorOnly;
+using UnityEngine;
 
 namespace Kanikama.Editor
 {
@@ -14,7 +13,7 @@ namespace Kanikama.Editor
 
         public List<KanikamaLight> KanikamaLights { get; } = new List<KanikamaLight>();
         public List<KanikamaEmissiveRenderer> KanikamaEmissiveRenderers { get; } = new List<KanikamaEmissiveRenderer>();
-        public List<KanikamaMonitorSetup> KanikamaMonitors => sceneDescriptor.MonitorSetups;
+        public List<KanikamaMonitor> KanikamaMonitors { get; } = new List<KanikamaMonitor>();
         public bool IsKanikamaAmbientEnable => sceneDescriptor.IsAmbientEnable;
 
 
@@ -40,8 +39,7 @@ namespace Kanikama.Editor
             {
                 if (light.enabled &&
                     light.lightmapBakeType != LightmapBakeType.Realtime &&
-                    !sceneDescriptor.Lights.Contains(light) &&
-                    !sceneDescriptor.MonitorSetups.Any(x => x.Lights.Contains(light)))
+                    !sceneDescriptor.Lights.Contains(light))
                 {
                     nonKanikamaLights.Add(light);
                 }
@@ -55,12 +53,15 @@ namespace Kanikama.Editor
                 dummyMaterial = new Material(Shader.Find(Baker.ShaderName.Dummy));
             }
 
+            // kanikama monitors
+            KanikamaMonitors.AddRange(sceneDescriptor.MonitorSetups.Select(x => new KanikamaMonitor(x)));
+
             // non kanikama emissive renderers
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
                 if (sceneDescriptor.EmissiveRenderers.Contains(renderer)) continue;
-                if (sceneDescriptor.MonitorSetups.Any(x => x.Renderer == renderer)) continue;
+                if (sceneDescriptor.MonitorSetups.Any(x => x.Renderer == renderer || x.GridRenderers.Contains(renderer))) continue;
 
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.ContributeGI))
@@ -150,7 +151,7 @@ namespace Kanikama.Editor
                 lightData.RollBack();
             }
 
-            foreach (var monitor in sceneDescriptor.MonitorSetups)
+            foreach (var monitor in KanikamaMonitors)
             {
                 monitor.RollBack();
             }
@@ -172,7 +173,7 @@ namespace Kanikama.Editor
                 case BakePath.BakeTargetType.Moitor:
                     if (pathData.ObjectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
                     var setUp = sceneDescriptor.MonitorSetups[pathData.ObjectIndex];
-                    return pathData.SubIndex < setUp.Lights.Count;
+                    return pathData.SubIndex < setUp.GridRenderers.Count;
                 case BakePath.BakeTargetType.Renderer:
                     if (pathData.ObjectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
                     var renderer = KanikamaEmissiveRenderers[pathData.ObjectIndex];
