@@ -2,7 +2,7 @@
 
 KanikamaGIはVRChatでの使用を想定した、ライトマップをランタイムで更新する仕組みです。
 
-![KanikamaGI](https://gyazo.com/5bf6d995804a54a2985559b0261ab7c1/raw)
+[![Kanikama1](https://i.gyazo.com/5bbd65b932e19e91408ce1673651c52c.gif)](https://gyazo.com/5bbd65b932e19e91408ce1673651c52c) [![Image from Gyazo](https://i.gyazo.com/56f1b1a12ef98c8d50b79b992e2e1985.gif)](https://gyazo.com/56f1b1a12ef98c8d50b79b992e2e1985)
 
 動作環境
 - Unity2019.4.29f1
