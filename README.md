@@ -73,5 +73,5 @@ KanikamaGIはVRChatでの使用を想定した、ライトマップをランタ�
 Links
 
 - [KanikamaGI Dicord](https://discord.gg/eQQuR7Rq)
-- [my twitter](https://twitter.com/shiva_duke28)
+- [https://twitter.com/shiva_duke28 (my twitter)](https://twitter.com/shiva_duke28)
 - pull requests will be very wellcomed <3
