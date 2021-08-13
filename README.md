@@ -67,6 +67,11 @@ KanikamaGIはVRChatでの使用を想定した、ライトマップをランタ�
 - [CyanLaser/CyanEmu](https://github.com/CyanLaser/CyanEmu)
 - [TopazChat Player 3.0 - よしたかのBOOTH](https://booth.pm/ja/items/1752066)
 
+---
+
+LICENSE
+
+MIT
 
 ---
 
