@@ -35,6 +35,11 @@ namespace Kanikama.Udon
             // and HDR if so is the reading texture
             readingTexture.ReadPixels(new Rect(0,0, 256,256), 0, 0, true);
 
+            // NOTE: call Apply() here if you want update readingTexture,
+            //       is useful for debugging mipmapped textures in Editor.
+
+            // readingTexture.Apply();
+
             var pixels = readingTexture.GetPixels(mipmapLevel);
             if (isUniform)
             {
