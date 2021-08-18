@@ -230,6 +230,8 @@ namespace Kanikama.Editor
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
 
+                if (!request.isGenerateCustomRenderTexture) continue;
+
                 var shader = Shader.Find(ShaderName.Composite);
                 var mat = new Material(shader);
                 var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CompositeMaterialFormat, mapIndex));

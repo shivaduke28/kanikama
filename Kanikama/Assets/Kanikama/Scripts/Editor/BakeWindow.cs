@@ -172,6 +172,12 @@ namespace Kanikama.Editor
                         }
                         bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
                         bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
+
+                        using (new EditorGUI.DisabledGroupScope(!bakeRequest.isGenerateAssets))
+                        using (new EditorGUI.IndentLevelScope(indentLevel))
+                        {
+                            bakeRequest.isGenerateCustomRenderTexture = EditorGUILayout.Toggle("Use CustomRenderTexture", bakeRequest.isGenerateCustomRenderTexture);
+                        }
                     }
                 }
             }

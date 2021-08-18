@@ -17,6 +17,7 @@ namespace Kanikama.Editor
         public bool isBakeAmbient = true;
         public bool isGenerateAssets = true;
         public bool isBakeWithouKanikama = true;
+        public bool isGenerateCustomRenderTexture = false;
 
         public bool IsLightRequested(int index) => isBakeAll || lightRequests[index];
         public bool IsRendererRequested(int index) => isBakeAll || rendererRequests[index];
