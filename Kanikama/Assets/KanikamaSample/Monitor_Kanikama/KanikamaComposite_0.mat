@@ -19,10 +19,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _Tex2DArray:
-        m_Texture: {fileID: 18700000, guid: a8c0164139fa3d74ca2b00cae5690b26, type: 2}
+    - _LightmapArray:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _TexCount: 6
+    - _LightmapCount: 0
     m_Colors: []
