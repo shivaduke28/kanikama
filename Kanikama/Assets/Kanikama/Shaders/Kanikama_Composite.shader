@@ -15,7 +15,6 @@
 
             CGPROGRAM
 
-            #include "UnityCG.cginc"
             #include "UnityCustomRenderTexture.cginc"
             #include "./CGIncludes/KanikamaComposite.hlsl"
 
