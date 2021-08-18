@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UdonSharp;
 using UnityEngine;
-using UdonSharp;
 
 namespace Kanikama.Udon
 {
