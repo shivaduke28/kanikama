@@ -1,9 +1,6 @@
-﻿
+﻿using Kanikama.Udon;
 using UdonSharp;
 using UnityEngine;
-using VRC.SDKBase;
-using VRC.Udon;
-using Kanikama.Udon;
 using UnityEngine.UI;
 
 namespace Kanikama.Sample
