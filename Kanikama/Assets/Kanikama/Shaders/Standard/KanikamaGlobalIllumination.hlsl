@@ -6,8 +6,6 @@
     #include "UnityGlobalIllumination.cginc"
     #include "../CGIncludes/KanikamaComposite.hlsl"
 
-    sampler2D _Lightmap;
-
     inline UnityGI KanikamaGI_Base(UnityGIInput data, half occlusion, half3 normalWorld)
     {
         UnityGI o_gi;
