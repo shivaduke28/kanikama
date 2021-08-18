@@ -7,6 +7,7 @@
         _Partition("Partition", Range(1, 10)) = 2
         _Rotation("Rotation", float) = 0
         _Emission("Emission", Range(0,10)) = 1
+        _Random("Random", Range(0,1)) = 1
     }
     SubShader
     {
@@ -38,6 +39,7 @@
             float _Partition;
             float _Emission;
             float _Rotation;
+            float _Random;
 
             v2f vert (appdata v)
             {
@@ -71,6 +73,11 @@
                 return float2(cos(t) * uv.x - sin(t) * uv.y, sin(t) * uv.x + cos(t) * uv.y);
             }
 
+            float random(float2 st)
+            {
+                return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
+            }
+
             fixed4 frag(v2f i) : SV_Target
             {
                 fixed3 col;
@@ -82,6 +89,9 @@
 
                 col = hsv2rgb(float3(hue, 1, 1));
                 col *= _Emission;
+
+                col *= step(_Random, random(float2(_Time.y, 0.5)).x);
+
                 return fixed4(col, 1);
             }
 

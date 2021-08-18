@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UdonSharp;
 using UnityEngine;
-using UdonSharp;
 
 namespace Kanikama.Udon
 {
@@ -145,7 +143,7 @@ namespace Kanikama.Udon
             foreach (var mat in compositeMaterials)
             {
                 // No sRGB-linear conversion
-                mat.SetColorArray("_Colors", colors);
+                mat.SetColorArray("_LightmapColors", colors);
             }
         }
     }

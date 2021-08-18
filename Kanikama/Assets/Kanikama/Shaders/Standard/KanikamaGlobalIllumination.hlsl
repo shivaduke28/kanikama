@@ -4,14 +4,7 @@
 #ifndef KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED
     #define KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED
     #include "UnityGlobalIllumination.cginc"
-
-    sampler2D _Lightmap;
-
-    inline half3 KanikamaColor(float2 lightmapUV)
-    {
-        half4 kanikamaColorTex = tex2D(_Lightmap, lightmapUV);
-        return DecodeLightmap(kanikamaColorTex);
-    }
+    #include "../CGIncludes/KanikamaComposite.hlsl"
 
     inline UnityGI KanikamaGI_Base(UnityGIInput data, half occlusion, half3 normalWorld)
     {
@@ -38,8 +31,8 @@
             half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, data.lightmapUV.xy);
             half3 bakedColor = DecodeLightmap(bakedColorTex);
             
-            // Apply Kanikama
-            o_gi.indirect.diffuse += KanikamaColor(data.lightmapUV.xy);
+            // custom lightmap array
+            o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
 
             #ifdef DIRLIGHTMAP_COMBINED
                 fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);

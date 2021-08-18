@@ -20,8 +20,9 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Emission: 1.5
+    - _Emission: 10
     - _Partition: 2
+    - _Random: 0.37
     - _Rotation: 140
     - _Scale: 0.2
     - _Speed: 0.2

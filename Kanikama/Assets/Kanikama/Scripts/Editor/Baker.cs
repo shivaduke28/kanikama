@@ -18,8 +18,8 @@ namespace Kanikama.Editor
 
         public static class ShaderProperties
         {
-            public static readonly int TexCount = Shader.PropertyToID("_TexCount");
-            public static readonly int TexArray = Shader.PropertyToID("_Tex2DArray");
+            public static readonly int TexCount = Shader.PropertyToID("_LightmapCount");
+            public static readonly int TexArray = Shader.PropertyToID("_LightmapArray");
         }
 
         readonly BakeSceneController sceneController;
