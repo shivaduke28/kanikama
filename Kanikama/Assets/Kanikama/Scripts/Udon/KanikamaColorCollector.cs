@@ -4,14 +4,8 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
-    [RequireComponent(typeof(Camera))]
-    public class KanikamaProvider : UdonSharpBehaviour
+    public class KanikamaColorCollector : UdonSharpBehaviour
     {
-        [SerializeField] Texture[] lightmapArrays;
-        [SerializeField] Texture[] directionalLightmapArrays;
-        [SerializeField] int lightmapCount;
-        [SerializeField] Renderer[] receivers;
-        [Space]
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
         [SerializeField] KanikamaColorSampler[] colorSamplers;
@@ -20,6 +14,18 @@ namespace Kanikama.Udon
 
         [Space]
         [ColorUsage(false, true), SerializeField] Vector4[] colors; // linear
+
+        public Vector4[] GetColors()
+        {
+            if (!isInitialized)
+            {
+                Initialize();
+            }
+            return colors;
+        }
+
+        bool isInitialized;
+        int frameCount;
 
         int size;
         int lightCount;
@@ -32,26 +38,8 @@ namespace Kanikama.Udon
         Color[][] monitorColors;
         int[] monitorLightCounts;
 
-        MaterialPropertyBlock block;
-
-        void Start()
+        void Initialize()
         {
-            block = new MaterialPropertyBlock();
-            var directionalMapCount = directionalLightmapArrays == null ? -1 : directionalLightmapArrays.Length - 1;
-            foreach (var renderer in receivers)
-            {
-                var index = renderer.lightmapIndex;
-                if (index < 0) continue;
-                renderer.GetPropertyBlock(block);
-                block.SetTexture("_LightmapArray", lightmapArrays[index]);
-                if (index <= directionalMapCount)
-                {
-                    block.SetTexture("_DirectionalLightmapArray", directionalLightmapArrays[index]);
-                }
-                block.SetInt("_LightmapCount", lightmapCount);
-                renderer.SetPropertyBlock(block);
-            }
-
             size = 0;
 
             // Ambient
@@ -107,11 +95,14 @@ namespace Kanikama.Udon
             }
 
             colors = new Vector4[size];
-            block = new MaterialPropertyBlock();
+            isInitialized = true;
         }
 
-        void OnPreCull()
+        public void Collect()
         {
+            if (frameCount >= Time.frameCount) return;
+            frameCount = Time.frameCount;
+
             var index = 0;
 
             // Ambient
@@ -160,14 +151,6 @@ namespace Kanikama.Udon
                         index++;
                     }
                 }
-            }
-
-            // update renderers
-            foreach (var renderer in receivers)
-            {
-                renderer.GetPropertyBlock(block);
-                block.SetVectorArray("_LightmapColors", colors);
-                renderer.SetPropertyBlock(block);
             }
         }
     }
