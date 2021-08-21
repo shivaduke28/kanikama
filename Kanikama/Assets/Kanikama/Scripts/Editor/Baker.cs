@@ -243,16 +243,15 @@ namespace Kanikama.Editor
             for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
             {
                 var textures = bakePath.LoadKanikamaMaps(mapIndex);
-                var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
                 if (!textures.Any()) continue;
                 var texArr = Texture2DArrayGenerator.Generate(textures);
                 var texArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.TexArrFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
 
-
                 if (request.isDirectionalMode)
                 {
+                    var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
                     var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
                     var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
                     AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
