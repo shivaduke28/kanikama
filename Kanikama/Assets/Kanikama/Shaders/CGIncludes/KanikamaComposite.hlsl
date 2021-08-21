@@ -16,11 +16,28 @@ inline half3 SampleLightmapArray(float2 lightmapUV)
     half3 col = 0;
     for (int i = 0; i < _LightmapCount; i++)
     {
-        col += DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * _LightmapColors[i];
+        col += DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * _LightmapColors[i].rgb;
     }
 
     return col;
 }
+
+#if defined(_KANIKAMA_DIRECTIONAL)
+UNITY_DECLARE_TEX2DARRAY(_DirectionalLightmapArray);
+
+inline half3 SampleDirectionalLightmapArray(float2 lightmapUV, float3 normalWorld)
+{
+    half3 col = 0;
+    for (int i = 0; i < _LightmapCount; i++)
+    {
+        half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * _LightmapColors[i].rgb;
+        fixed4 bakedDirTex = UNITY_SAMPLE_TEX2DARRAY(_DirectionalLightmapArray, float3(lightmapUV.x, lightmapUV.y, i));
+        col += DecodeDirectionalLightmap(bakedColor, bakedDirTex, normalWorld);
+    }
+
+    return col;
+}
+#endif
 
 #endif
 #endif

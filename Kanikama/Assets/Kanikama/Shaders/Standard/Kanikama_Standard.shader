@@ -6,6 +6,7 @@ Shader "Kanikama/Standard"
     Properties
     {
         [PerRendererData] _Lightmap("Lightmap", 2D) = "black" {}
+        [ToggleOff] _KanikamaDirectional("Kanikama Directional", Float) = 1.0
 
         _Color("Color", Color) = (1,1,1,1)
         _MainTex("Albedo", 2D) = "white" {}
@@ -84,6 +85,8 @@ Shader "Kanikama/Standard"
             #pragma shader_feature _ _SPECULARHIGHLIGHTS_OFF
             #pragma shader_feature _ _GLOSSYREFLECTIONS_OFF
             #pragma shader_feature _PARALLAXMAP
+
+            #pragma shader_feature _KANIKAMA_DIRECTIONAL
 
             #pragma multi_compile_fwdbase
             #pragma multi_compile_fog
@@ -347,5 +350,5 @@ Shader "Kanikama/Standard"
 
 
     FallBack "VertexLit"
-    CustomEditor "StandardShaderGUI"
+    CustomEditor "Kanikama.Editor.StandardShaderGUI"
 }

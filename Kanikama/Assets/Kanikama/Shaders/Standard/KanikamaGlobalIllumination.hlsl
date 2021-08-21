@@ -31,8 +31,6 @@
             half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, data.lightmapUV.xy);
             half3 bakedColor = DecodeLightmap(bakedColorTex);
             
-            // custom lightmap array
-            o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
 
             #ifdef DIRLIGHTMAP_COMBINED
                 fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);
@@ -65,6 +63,13 @@
             #else
                 o_gi.indirect.diffuse += realtimeColor;
             #endif
+        #endif
+    
+        // custom lightmap array
+        #ifdef _KANIKAMA_DIRECTIONAL
+            o_gi.indirect.diffuse += SampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
+        #else
+            o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
         #endif
 
         o_gi.indirect.diffuse *= occlusion;
