@@ -12,12 +12,11 @@ namespace Kanikama.Sample
 
         Color[] colors;
 
-        private void Start()
+        void Start()
         {
             colors = colorSampler.GetColors();
         }
-
-        private void Update()
+        void LateUpdate()
         {
             for (var i = 0; i < colors.Length; i++)
             {
