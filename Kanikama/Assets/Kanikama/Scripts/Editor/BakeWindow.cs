@@ -123,6 +123,7 @@ namespace Kanikama.Editor
             GUILayout.Label("Bake Commands", EditorStyles.boldLabel);
 
             bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
+
             showRequestDetail = EditorGUILayout.Foldout(showRequestDetail, "Bake Parts");
 
             if (showRequestDetail)
@@ -171,8 +172,8 @@ namespace Kanikama.Editor
                             bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
                         }
                         bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
-                        bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
 
+                        bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
                         using (new EditorGUI.DisabledGroupScope(!bakeRequest.isGenerateAssets))
                         using (new EditorGUI.IndentLevelScope(indentLevel))
                         {
@@ -180,6 +181,12 @@ namespace Kanikama.Editor
                         }
                     }
                 }
+            }
+
+            EditorGUILayout.Space();
+            using (new EditorGUI.DisabledGroupScope(LightmapEditorSettings.lightmapsMode == LightmapsMode.NonDirectional))
+            {
+                bakeRequest.isDirectionalMode = EditorGUILayout.Toggle("Directional Mode", bakeRequest.isDirectionalMode);
             }
         }
 

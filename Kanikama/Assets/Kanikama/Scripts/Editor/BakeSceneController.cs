@@ -22,6 +22,8 @@ namespace Kanikama.Editor
 
         float ambientIntensity;
         Material dummyMaterial;
+        LightmapsMode lightmapsMode;
+
 
         public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -78,6 +80,9 @@ namespace Kanikama.Editor
 
             // ambient
             ambientIntensity = RenderSettings.ambientIntensity;
+
+            // directional mode
+            lightmapsMode = LightmapEditorSettings.lightmapsMode;
         }
 
         public void TurnOff()
@@ -114,10 +119,23 @@ namespace Kanikama.Editor
             RenderSettings.ambientIntensity = 0f;
         }
 
+        public void SetLightmapSettings(bool isDirectional)
+        {
+            if (isDirectional)
+            {
+                LightmapEditorSettings.lightmapsMode = LightmapsMode.CombinedDirectional;
+            }
+            else
+            {
+                LightmapEditorSettings.lightmapsMode = LightmapsMode.NonDirectional;
+            }
+        }
+
         public void Rollback()
         {
             RollbackNonKanikama();
             RollbackKanikama();
+            RollbackLightmapSettings();
         }
 
         public void RollbackNonKanikama()
@@ -137,6 +155,11 @@ namespace Kanikama.Editor
                 var renderer = go.GetComponent<Renderer>();
                 renderer.sharedMaterials = kvp.Value;
             }
+        }
+
+        public void RollbackLightmapSettings()
+        {
+            LightmapEditorSettings.lightmapsMode = lightmapsMode;
         }
 
         public void RollbackKanikama()

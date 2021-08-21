@@ -12,7 +12,8 @@ namespace Kanikama.Editor
     {
         public static class ShaderName
         {
-            public const string Composite = "Kanikama/Composite";
+            public const string CompositeCRT = "Kanikama/Composite/CRT";
+            public const string CompositeUnlit = "Kanikama/Composite/Unlit";
             public const string Dummy = "Kanikama/Dummy";
         }
 
@@ -41,6 +42,7 @@ namespace Kanikama.Editor
 
                 sceneController.Initialize();
                 sceneController.TurnOff();
+                sceneController.SetLightmapSettings(request.isDirectionalMode);
                 await BakeLightsAsync(token);
                 await BakeEmissiveRenderersAsync(token);
                 await BakeMonitorsAsync(token);
@@ -152,6 +154,7 @@ namespace Kanikama.Editor
         {
             if (!request.IsBakeWithouKanikama()) return;
             sceneController.RollbackNonKanikama();
+            sceneController.RollbackLightmapSettings();
             Debug.Log($"Baking Scene GI without Kanikama...");
             await BakeSceneGIAsync(token);
         }
@@ -162,12 +165,28 @@ namespace Kanikama.Editor
             for (var mapIndex = 0; mapIndex < bakedLightmapPaths.Count; mapIndex++)
             {
                 var bakedMapPath = bakedLightmapPaths[mapIndex];
-                var copiedMapPath = Path.Combine(bakePath.TmpDirPath, string.Format(format, mapIndex));
+                var copiedFileName = string.Format(format, mapIndex);
+                var copiedMapPath = Path.Combine(bakePath.TmpDirPath, copiedFileName);
                 AssetDatabase.CopyAsset(bakedMapPath, copiedMapPath);
 
                 var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
                 textureImporter.isReadable = true;
                 textureImporter.SaveAndReimport();
+            }
+
+            if (request.isDirectionalMode)
+            {
+                var bakedDirectionalLightmapPaths = bakePath.GetUnityDirectionalLightmapPaths();
+                for (var mapIndex = 0; mapIndex < bakedLightmapPaths.Count; mapIndex++)
+                {
+                    var bakedDirMapPath = bakedDirectionalLightmapPaths[mapIndex];
+                    var dirFileName = $"{BakePath.DirectionalPrefix}{Path.GetFileNameWithoutExtension(string.Format(format, mapIndex))}.png";
+                    var copiedDirMapPath = Path.Combine(bakePath.TmpDirPath, dirFileName);
+                    AssetDatabase.CopyAsset(bakedDirMapPath, copiedDirMapPath);
+                    var textureImporter = AssetImporter.GetAtPath(copiedDirMapPath) as TextureImporter;
+                    textureImporter.isReadable = true;
+                    textureImporter.SaveAndReimport();
+                }
             }
         }
 
@@ -230,9 +249,18 @@ namespace Kanikama.Editor
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
 
+                if (request.isDirectionalMode)
+                {
+                    var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
+                    var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
+                    var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
+                    AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
+                    Debug.Log($"Create {dirTexArrPath}");
+                }
+
                 if (!request.isGenerateCustomRenderTexture) continue;
 
-                var shader = Shader.Find(ShaderName.Composite);
+                var shader = Shader.Find(ShaderName.CompositeCRT);
                 var mat = new Material(shader);
                 var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CompositeMaterialFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref mat, matPath);

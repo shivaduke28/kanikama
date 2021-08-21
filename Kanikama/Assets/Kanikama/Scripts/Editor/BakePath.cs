@@ -15,6 +15,7 @@ namespace Kanikama.Editor
         public const string TmpDirName = "tmp";
 
         public const string TexArrFormat = "KanikamaTexArray_{0}.asset";
+        public const string DirTexArrFormat = "KanikamaDirTexArray_{0}.asset";
         public const string CompositeMaterialFormat = "KanikamaComposite_{0}.mat";
         public const string KanikamaMapFormat = "KanikamaMap_{0}.asset";
 
@@ -23,9 +24,13 @@ namespace Kanikama.Editor
         public static string MonitorFormat(int monitorIndex, int lightIndex) => $"M_{{0}}_{monitorIndex}_{lightIndex}.exr";
         public static string RendererFormat(int rendererIndex, int materialIndex) => $"R_{{0}}_{rendererIndex}_{materialIndex}.exr";
 
+        public const string DirectionalPrefix = "Dir-";
+
         public static readonly Regex UnityLightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
-        public static readonly Regex TempTextureRegex = new Regex("^[A-Z]_[0-9]");
-        public static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]+_{lightmapIndex}");
+        public static readonly Regex UnityDirectionalLightMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
+        public static readonly Regex TempTextureRegex = new Regex($"^[A-Z]_[0-9]|^{DirectionalPrefix}[A-Z]_[0-9]");
+        public static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]_{lightmapIndex}");
+        public static Regex KanikamaDirectionalRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]_{lightmapIndex}");
         public static readonly Regex KanikamaAssetRegex = new Regex("KanikamaTexArray_[0-9]+.asset|KanikamaComposite_[0-9]+.mat|KanikamaMap_[0-9]+.asset");
         public string UnityLightmapDirPath { get; }
         public string ExportDirPath { get; }
@@ -52,6 +57,14 @@ namespace Kanikama.Editor
                 .Where(x => UnityLightMapRegex.IsMatch(x)).ToList();
         }
 
+        public List<string> GetUnityDirectionalLightmapPaths()
+        {
+            return AssetDatabase.FindAssets("t:Texture", new string[1] { UnityLightmapDirPath })
+                .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                .Where(x => Path.GetDirectoryName(x) == UnityLightmapDirPath)
+                .Where(x => UnityDirectionalLightMapRegex.IsMatch(x)).ToList();
+        }
+
         public List<TempTexturePath> GetAllTempTexturePaths()
         {
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
@@ -65,6 +78,17 @@ namespace Kanikama.Editor
         public List<Texture2D> LoadKanikamaMaps(int lightmapIndex)
         {
             var regex = KanikamaRegex(lightmapIndex);
+            return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
+                .Select(x => AssetDatabase.GUIDToAssetPath(x))
+                .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
+                .Where(x => regex.IsMatch(Path.GetFileName(x)))
+                .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x))
+                .ToList();
+        }
+
+        public List<Texture2D> LoadKanikamaDirectionalMaps(int lightmapIndex)
+        {
+            var regex = KanikamaDirectionalRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
@@ -91,6 +115,7 @@ namespace Kanikama.Editor
             public int SubIndex { get; }
             public string Path { get; }
             public string FileName { get; }
+            public bool IsDirectional { get; }
 
             public TempTexturePath(string path)
             {
@@ -98,6 +123,13 @@ namespace Kanikama.Editor
                 Path = path;
                 var list = FileName.Split("_".ToCharArray());
                 var typeText = list[0];
+
+                if (typeText.StartsWith(DirectionalPrefix))
+                {
+                    IsDirectional = true;
+                    typeText = typeText.Split("-".ToCharArray())[1];
+                }
+
                 LightmapIndex = int.Parse(list[1]);
                 switch (typeText)
                 {
