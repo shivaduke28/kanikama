@@ -30,7 +30,6 @@
             // Baked lightmaps
             half4 bakedColorTex = UNITY_SAMPLE_TEX2D(unity_Lightmap, data.lightmapUV.xy);
             half3 bakedColor = DecodeLightmap(bakedColorTex);
-            
 
             #ifdef DIRLIGHTMAP_COMBINED
                 fixed4 bakedDirTex = UNITY_SAMPLE_TEX2D_SAMPLER (unity_LightmapInd, unity_Lightmap, data.lightmapUV.xy);
