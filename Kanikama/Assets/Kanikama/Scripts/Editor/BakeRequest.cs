@@ -1,7 +1,8 @@
 ﻿using Kanikama.EditorOnly;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.Editor
 {
@@ -18,13 +19,13 @@ namespace Kanikama.Editor
         public bool isGenerateAssets = true;
         public bool isBakeWithouKanikama = true;
         public bool isGenerateCustomRenderTexture = false;
+        public bool isDirectionalMode = false;
 
         public bool IsLightRequested(int index) => isBakeAll || lightRequests[index];
         public bool IsRendererRequested(int index) => isBakeAll || rendererRequests[index];
         public bool IsMonitorRequested(int index) => isBakeAll || monitorRequests[index];
         public bool IsBakeAmbient() => isBakeAll || isBakeAmbient;
         public bool IsBakeWithouKanikama() => isBakeAll || isBakeWithouKanikama;
-
 
         public BakeRequest(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -33,6 +34,7 @@ namespace Kanikama.Editor
             rendererRequests = Enumerable.Repeat(true, sceneDescriptor.EmissiveRenderers.Count).ToList();
             monitorRequests = Enumerable.Repeat(true, sceneDescriptor.MonitorSetups.Count).ToList();
             isBakeAmbient = sceneDescriptor.IsAmbientEnable;
+            isDirectionalMode = LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional;
         }
     }
 }
