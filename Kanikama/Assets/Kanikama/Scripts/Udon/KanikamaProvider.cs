@@ -8,6 +8,7 @@ namespace Kanikama.Udon
     public class KanikamaProvider : UdonSharpBehaviour
     {
         [SerializeField] Texture[] lightmapArrays;
+        [SerializeField] Texture[] directionalLightmapArrays;
         [SerializeField] int lightmapCount;
         [SerializeField] Renderer[] receivers;
         [Space]
@@ -36,12 +37,17 @@ namespace Kanikama.Udon
         void Start()
         {
             block = new MaterialPropertyBlock();
+            var directionalMapCount = directionalLightmapArrays == null ? -1 : directionalLightmapArrays.Length - 1;
             foreach (var renderer in receivers)
             {
                 var index = renderer.lightmapIndex;
                 if (index < 0) continue;
                 renderer.GetPropertyBlock(block);
                 block.SetTexture("_LightmapArray", lightmapArrays[index]);
+                if (index <= directionalMapCount)
+                {
+                    block.SetTexture("_DirectionalLightmapArray", directionalLightmapArrays[index]);
+                }
                 block.SetInt("_LightmapCount", lightmapCount);
                 renderer.SetPropertyBlock(block);
             }
