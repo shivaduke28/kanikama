@@ -20,12 +20,12 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Emission: 10
-    - _Partition: 2
-    - _Random: 0.37
-    - _Rotation: 140
-    - _Scale: 0.2
-    - _Speed: 0.2
+    - _Emission: 4
+    - _Partition: 1
+    - _Random: 0
+    - _Rotation: -175.5
+    - _Scale: 0.297
+    - _Speed: 0.25
     m_Colors:
     - _Color: {r: 0.26701567, g: 0.26701567, b: 0.26701567, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
