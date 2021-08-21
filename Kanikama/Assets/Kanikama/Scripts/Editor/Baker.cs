@@ -12,7 +12,8 @@ namespace Kanikama.Editor
     {
         public static class ShaderName
         {
-            public const string Composite = "Kanikama/Composite";
+            public const string CompositeCRT = "Kanikama/Composite/CRT";
+            public const string CompositeUnlit = "Kanikama/Composite/Unlit";
             public const string Dummy = "Kanikama/Dummy";
         }
 
@@ -260,7 +261,7 @@ namespace Kanikama.Editor
 
                 if (!request.isGenerateCustomRenderTexture) continue;
 
-                var shader = Shader.Find(ShaderName.Composite);
+                var shader = Shader.Find(ShaderName.CompositeCRT);
                 var mat = new Material(shader);
                 var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CompositeMaterialFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref mat, matPath);

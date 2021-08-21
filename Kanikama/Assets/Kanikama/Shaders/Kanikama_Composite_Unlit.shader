@@ -1,6 +1,10 @@
-﻿Shader "Kanikama/LightmapDebug"
+﻿Shader "Kanikama/Composite/Unlit"
 {
-    Properties { }
+    Properties
+    {
+        [NoScaleOffset] _LightmapArray("_LightmapArray", 2DArray) = "" {}
+        _LightmapCount("_LightmapCount", int) = 0
+    }
     SubShader
     {
         Tags { "RenderType" = "Opaque" }
@@ -40,7 +44,7 @@
 
             fixed4 frag(v2f i) : SV_Target
             {
-                float4 color = 1;                
+                float4 color;
                 color.rgb = SampleLightmapArray(i.uv);
                 color.a = 1;
                 return color;

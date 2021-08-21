@@ -1,8 +1,8 @@
-﻿Shader "Kanikama/Composite"
+﻿Shader "Kanikama/Composite/CRT"
 {
     Properties
     {
-        _LightmapArray("_LightmapArray", 2DArray) = "" {}
+        [NoScaleOffset] _LightmapArray("_LightmapArray", 2DArray) = "" {}
         _LightmapCount("_LightmapCount", int) = 0
     }
     SubShader
