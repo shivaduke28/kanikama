@@ -31,6 +31,13 @@ namespace Kanikama.Editor
             AlbedoAlpha,
         }
 
+        public enum KanikamaMode
+        {
+            Single,
+            Array,
+            Directional,
+        }
+
         private static class Styles
         {
             public static GUIContent uvSetLabel = EditorGUIUtility.TrTextContent("UV Set");
@@ -60,7 +67,7 @@ namespace Kanikama.Editor
             public static readonly string[] blendNames = Enum.GetNames(typeof(BlendMode));
 
             public static string kanikamaText = "Kanikama";
-            public static GUIContent kanikamaDirectionalText = EditorGUIUtility.TrTextContent("Directional Mode", "Directional Mode");
+            public static GUIContent kanikamaModeText = EditorGUIUtility.TrTextContent("Kanikama Mode", "Kanikama Mode");
         }
 
         MaterialProperty blendMode = null;
@@ -90,7 +97,7 @@ namespace Kanikama.Editor
         MaterialProperty detailNormalMap = null;
         MaterialProperty uvSetSecondary = null;
 
-        MaterialProperty kanikamaDirectional = null;
+        MaterialProperty kanikamaMode = null;
 
         MaterialEditor m_MaterialEditor;
         WorkflowMode m_WorkflowMode = WorkflowMode.Specular;
@@ -132,7 +139,7 @@ namespace Kanikama.Editor
             detailNormalMap = FindProperty("_DetailNormalMap", props);
             uvSetSecondary = FindProperty("_UVSec", props);
 
-            kanikamaDirectional = FindProperty("_KanikamaDirectional", props, false);
+            kanikamaMode = FindProperty("_Kanikama_Mode", props);
         }
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
@@ -169,7 +176,7 @@ namespace Kanikama.Editor
 
                 // Kanikama properties
                 GUILayout.Label(Styles.kanikamaText, EditorStyles.boldLabel);
-                DoKanikamaArea(material);
+                DoKanikamaArea();
 
                 EditorGUILayout.Space();
 
@@ -451,8 +458,6 @@ namespace Kanikama.Editor
             {
                 SetKeyword(material, "_SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A", GetSmoothnessMapChannel(material) == SmoothnessMapChannel.AlbedoAlpha);
             }
-
-            SetKeyword(material, "_KANIKAMA_DIRECTIONAL", material.GetFloat("_KanikamaDirectional") > 0);
         }
 
         static void MaterialChanged(Material material, WorkflowMode workflowMode, bool overrideRenderQueue)
@@ -470,9 +475,9 @@ namespace Kanikama.Editor
                 m.DisableKeyword(keyword);
         }
 
-        void DoKanikamaArea(Material m)
+        void DoKanikamaArea()
         {
-            m_MaterialEditor.ShaderProperty(kanikamaDirectional, Styles.kanikamaDirectionalText);
+            m_MaterialEditor.ShaderProperty(kanikamaMode, Styles.kanikamaModeText);
         }
     }
 } // namespace Kanikama.Editor
