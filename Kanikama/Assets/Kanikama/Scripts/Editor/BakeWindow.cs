@@ -122,71 +122,70 @@ namespace Kanikama.Editor
 
             GUILayout.Label("Bake Commands", EditorStyles.boldLabel);
 
-            bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
-
-            showRequestDetail = EditorGUILayout.Foldout(showRequestDetail, "Bake Parts");
-
-            if (showRequestDetail)
+            bakeRequest.compositeMode = (CompositeMode)EditorGUILayout.EnumPopup("Composite Mode", bakeRequest.compositeMode);
+            if (bakeRequest.compositeMode == CompositeMode.Renderer)
             {
-                using (new EditorGUI.DisabledGroupScope(bakeRequest.isBakeAll))
+                using (new EditorGUI.DisabledGroupScope(LightmapEditorSettings.lightmapsMode == LightmapsMode.NonDirectional))
                 {
-                    using (new EditorGUI.IndentLevelScope(EditorGUI.indentLevel++))
-                    {
-                        var indentLevel = EditorGUI.indentLevel + 1;
-                        EditorGUILayout.LabelField("Lights");
-                        using (new EditorGUI.IndentLevelScope(indentLevel))
-                        {
-                            var lightRequests = bakeRequest.lightRequests;
-                            var lights = bakeRequest.SceneDescriptor.Lights;
-                            var lightCount = Mathf.Min(lightRequests.Count, lights.Count);
-                            for (var i = 0; i < lightCount; i++)
-                            {
-                                lightRequests[i] = EditorGUILayout.Toggle(lights[i].name, lightRequests[i]);
-                            }
-                        }
-
-                        EditorGUILayout.LabelField("Emissive Renderers");
-                        using (new EditorGUI.IndentLevelScope(indentLevel))
-                        {
-                            var rendererRequests = bakeRequest.rendererRequests;
-                            var renderers = bakeRequest.SceneDescriptor.EmissiveRenderers;
-                            var rendererCount = Mathf.Min(rendererRequests.Count, renderers.Count);
-                            for (var i = 0; i < rendererCount; i++)
-                            {
-                                rendererRequests[i] = EditorGUILayout.Toggle(renderers[i].name, rendererRequests[i]);
-                            }
-                        }
-                        EditorGUILayout.LabelField("Monitors");
-                        using (new EditorGUI.IndentLevelScope(indentLevel))
-                        {
-                            var monitorRequests = bakeRequest.monitorRequests;
-                            var monitors = bakeRequest.SceneDescriptor.MonitorSetups;
-                            var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
-                            for (var i = 0; i < monitorCount; i++)
-                            {
-                                monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].Renderer.name, monitorRequests[i]);
-                            }
-                        }
-                        using (new EditorGUI.DisabledScope(!bakeRequest.SceneDescriptor.IsAmbientEnable))
-                        {
-                            bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
-                        }
-                        bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
-
-                        bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
-                        using (new EditorGUI.DisabledGroupScope(!bakeRequest.isGenerateAssets))
-                        using (new EditorGUI.IndentLevelScope(indentLevel))
-                        {
-                            bakeRequest.isGenerateCustomRenderTexture = EditorGUILayout.Toggle("Use CustomRenderTexture", bakeRequest.isGenerateCustomRenderTexture);
-                        }
-                    }
+                    bakeRequest.isDirectionalMode = EditorGUILayout.Toggle("Directional Mode", bakeRequest.isDirectionalMode);
                 }
+            }
+            else
+            {
+                bakeRequest.isDirectionalMode = false;
             }
 
             EditorGUILayout.Space();
-            using (new EditorGUI.DisabledGroupScope(LightmapEditorSettings.lightmapsMode == LightmapsMode.NonDirectional))
+
+            bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
+
+            using (new EditorGUI.DisabledGroupScope(bakeRequest.isBakeAll))
             {
-                bakeRequest.isDirectionalMode = EditorGUILayout.Toggle("Directional Mode", bakeRequest.isDirectionalMode);
+                using (new EditorGUI.IndentLevelScope(EditorGUI.indentLevel++))
+                {
+                    var indentLevel = EditorGUI.indentLevel + 1;
+                    EditorGUILayout.LabelField("Lights");
+                    using (new EditorGUI.IndentLevelScope(indentLevel))
+                    {
+                        var lightRequests = bakeRequest.lightRequests;
+                        var lights = bakeRequest.SceneDescriptor.Lights;
+                        var lightCount = Mathf.Min(lightRequests.Count, lights.Count);
+                        for (var i = 0; i < lightCount; i++)
+                        {
+                            lightRequests[i] = EditorGUILayout.Toggle(lights[i].name, lightRequests[i]);
+                        }
+                    }
+
+                    EditorGUILayout.LabelField("Emissive Renderers");
+                    using (new EditorGUI.IndentLevelScope(indentLevel))
+                    {
+                        var rendererRequests = bakeRequest.rendererRequests;
+                        var renderers = bakeRequest.SceneDescriptor.EmissiveRenderers;
+                        var rendererCount = Mathf.Min(rendererRequests.Count, renderers.Count);
+                        for (var i = 0; i < rendererCount; i++)
+                        {
+                            rendererRequests[i] = EditorGUILayout.Toggle(renderers[i].name, rendererRequests[i]);
+                        }
+                    }
+                    EditorGUILayout.LabelField("Monitors");
+                    using (new EditorGUI.IndentLevelScope(indentLevel))
+                    {
+                        var monitorRequests = bakeRequest.monitorRequests;
+                        var monitors = bakeRequest.SceneDescriptor.MonitorSetups;
+                        var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
+                        for (var i = 0; i < monitorCount; i++)
+                        {
+                            monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].Renderer.name, monitorRequests[i]);
+                        }
+                    }
+                    using (new EditorGUI.DisabledScope(!bakeRequest.SceneDescriptor.IsAmbientEnable))
+                    {
+                        bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
+                    }
+                    bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
+
+                    bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
+                }
             }
         }
 

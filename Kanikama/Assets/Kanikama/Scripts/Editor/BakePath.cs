@@ -16,8 +16,10 @@ namespace Kanikama.Editor
 
         public const string TexArrFormat = "KanikamaTexArray_{0}.asset";
         public const string DirTexArrFormat = "KanikamaDirTexArray_{0}.asset";
-        public const string CompositeMaterialFormat = "KanikamaComposite_{0}.mat";
-        public const string KanikamaMapFormat = "KanikamaMap_{0}.asset";
+        public const string CustomRenderTextureMaterialFormat = "KanikamaCRTComposite_{0}.mat";
+        public const string RenderTextureMaterialFormat = "KanikamaRTComposite_{0}.mat";
+        public const string CustomRenderTextureFormat = "KanikamaCRT_{0}.asset";
+        public const string RenderTextureFormat = "KanikamaRT_{0}.renderTexture";
 
         public static string AmbientFormat() => $"A_{{0}}.exr";
         public static string LightFormat(int lightIndex) => $"L_{{0}}_{lightIndex}.exr";

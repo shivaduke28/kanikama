@@ -18,7 +18,7 @@ namespace Kanikama.Editor
         public bool isBakeAmbient = true;
         public bool isGenerateAssets = true;
         public bool isBakeWithouKanikama = true;
-        public bool isGenerateCustomRenderTexture = false;
+        public CompositeMode compositeMode = CompositeMode.RenderTexture;
         public bool isDirectionalMode = false;
 
         public bool IsLightRequested(int index) => isBakeAll || lightRequests[index];

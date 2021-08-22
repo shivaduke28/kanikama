@@ -19,8 +19,9 @@ namespace Kanikama.Editor
 
         public static class ShaderProperties
         {
-            public static readonly int TexCount = Shader.PropertyToID("_LightmapCount");
-            public static readonly int TexArray = Shader.PropertyToID("_LightmapArray");
+            public static readonly int LighmapCount = Shader.PropertyToID("_LightmapCount");
+            public static readonly int LightmapArray = Shader.PropertyToID("_LightmapArray");
+            public static readonly int Lightmap = Shader.PropertyToID("_Lightmap");
         }
 
         readonly BakeSceneController sceneController;
@@ -249,39 +250,77 @@ namespace Kanikama.Editor
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
 
-                if (request.isDirectionalMode)
+
+                switch (request.compositeMode)
                 {
-                    var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
-                    var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
-                    var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
-                    AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
-                    Debug.Log($"Create {dirTexArrPath}");
+                    case CompositeMode.RenderTexture:
+                        CreateRTAssets(mapIndex, texArr);
+                        break;
+                    case CompositeMode.CustomRenderTexture:
+                        CreateCRTAssets(mapIndex, texArr);
+                        break;
+                    case CompositeMode.Renderer:
+                        if (request.isDirectionalMode)
+                        {
+                            CreateDirectionalMapArray(mapIndex);
+                        }
+                        break;
                 }
-
-                if (!request.isGenerateCustomRenderTexture) continue;
-
-                var shader = Shader.Find(ShaderName.CompositeCRT);
-                var mat = new Material(shader);
-                var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CompositeMaterialFormat, mapIndex));
-                AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
-                Debug.Log($"Create {matPath}");
-
-                mat.SetInt(ShaderProperties.TexCount, textures.Count);
-                mat.SetTexture(ShaderProperties.TexArray, texArr);
-
-                var sceneMapPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.KanikamaMapFormat, mapIndex));
-                var sceneMap = new CustomRenderTexture(texArr.width, texArr.height, RenderTextureFormat.ARGBHalf)
-                {
-                    material = mat,
-                    updateMode = CustomRenderTextureUpdateMode.Realtime,
-                    initializationMode = CustomRenderTextureUpdateMode.OnLoad,
-                    initializationColor = Color.black
-                };
-                AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
-                Debug.Log($"Create {sceneMapPath}");
-
             }
             AssetDatabase.Refresh();
+        }
+
+        void CreateDirectionalMapArray(int mapIndex)
+        {
+            var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
+            var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
+            var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
+            AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
+            Debug.Log($"Create {dirTexArrPath}");
+        }
+
+        void CreateCRTAssets(int mapIndex, Texture2DArray texture2DArray)
+        {
+            var shader = Shader.Find(ShaderName.CompositeCRT);
+            var mat = new Material(shader);
+            var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CustomRenderTextureMaterialFormat, mapIndex));
+            AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+            Debug.Log($"Create {matPath}");
+
+            mat.SetInt(ShaderProperties.LighmapCount, texture2DArray.depth);
+            mat.SetTexture(ShaderProperties.LightmapArray, texture2DArray);
+
+            var sceneMapPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CustomRenderTextureFormat, mapIndex));
+            var sceneMap = new CustomRenderTexture(texture2DArray.width, texture2DArray.height, RenderTextureFormat.ARGBHalf)
+            {
+                useMipMap = true,
+                material = mat,
+                updateMode = CustomRenderTextureUpdateMode.Realtime,
+                initializationMode = CustomRenderTextureUpdateMode.OnLoad,
+                initializationColor = Color.black
+            };
+            AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+            Debug.Log($"Create {sceneMapPath}");
+        }
+
+        void CreateRTAssets(int mapIndex, Texture2DArray texture2DArray)
+        {
+            var shader = Shader.Find(ShaderName.CompositeUnlit);
+            var mat = new Material(shader);
+            var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.RenderTextureMaterialFormat, mapIndex));
+            AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+            Debug.Log($"Create {matPath}");
+
+            mat.SetInt(ShaderProperties.LighmapCount, texture2DArray.depth);
+            mat.SetTexture(ShaderProperties.LightmapArray, texture2DArray);
+
+            var sceneMapPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.RenderTextureFormat, mapIndex));
+            var sceneMap = new RenderTexture(texture2DArray.width, texture2DArray.height, 0, RenderTextureFormat.ARGBHalf)
+            {
+                useMipMap = true
+            };
+            AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+            Debug.Log($"Create {sceneMapPath}");
         }
     }
 }
