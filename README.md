@@ -77,6 +77,6 @@ MIT
 
 Links
 
-- [KanikamaGI Dicord](https://discord.gg/eQQuR7Rq)
+- [KanikamaGI Discord](https://discord.gg/ze7dq8nGhW)
 - [https://twitter.com/shiva_duke28 (my twitter)](https://twitter.com/shiva_duke28)
 - pull requests will be very wellcomed <3
