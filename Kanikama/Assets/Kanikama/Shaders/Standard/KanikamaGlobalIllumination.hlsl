@@ -1,6 +1,5 @@
 // This is a modification of UnityGlobalIllumination.cginc from
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
-
 #ifndef KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED
     #define KANIKAMA_GLOBAL_ILLUMINATION_INCLUDED
     #include "UnityGlobalIllumination.cginc"
@@ -65,10 +64,12 @@
         #endif
     
         // custom lightmap array
-        #ifdef _KANIKAMA_DIRECTIONAL
-            o_gi.indirect.diffuse += SampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
-        #else
+        #if defined(_KANIKAMA_MODE_SINGLE)
+            o_gi.indirect.diffuse += SampleLightmap(data.lightmapUV.xy);
+        #elif defined(_KANIKAMA_MODE_ARRAY)
             o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
+        #elif defined(_KANIKAMA_MODE_DIRECTIONAL)
+            o_gi.indirect.diffuse += SampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
         #endif
 
         o_gi.indirect.diffuse *= occlusion;
