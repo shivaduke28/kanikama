@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: BG
   m_Shader: {fileID: 4800000, guid: 613fb6b242a059c40be003a3f0ec5826, type: 3}
-  m_ShaderKeywords: _KANIKAMA_DIRECTIONAL
+  m_ShaderKeywords: _KANIKAMA_DIRECTIONAL _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: f9fcbccebded4074ba6db5146e65d1d2, type: 3}
+        m_Texture: {fileID: 2800000, guid: b0f1c0e43e9ab43478f9dcdef50cded5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -56,22 +56,22 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 2c1ff4404fc3dd94e96cf689c712a17d, type: 3}
+        m_Texture: {fileID: 2800000, guid: ce953b2b21e59c04588572ef87a4f056, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _BumpScale: 2
+    - _BumpScale: 1.64
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.706
+    - _Glossiness: 0.52
     - _GlossyReflections: 1
     - _KanikamaDirectional: 1
-    - _Metallic: 0.82
+    - _Metallic: 0.443
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _Parallax: 0.08
+    - _Parallax: 0.0483
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
