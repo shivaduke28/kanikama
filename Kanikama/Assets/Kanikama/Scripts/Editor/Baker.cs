@@ -117,11 +117,11 @@ namespace Kanikama.Editor
             monitor.OnBake();
 
             Debug.Log($"Baking Monitor {monitor.Name}");
-            var gridCount = monitor.EmissiveMaterials.Count;
+            var gridCount = monitor.MaterialGroups.Count;
             for (var i = 0; i < gridCount; i++)
             {
                 Debug.Log($"- Baking Monitor {monitor.Name}'s {i}-th Light");
-                var material = monitor.EmissiveMaterials[i];
+                var material = monitor.MaterialGroups[i];
                 material.OnBake();
                 Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
@@ -208,48 +208,49 @@ namespace Kanikama.Editor
             }
         }
 
-        void DeleteUnusedTextures()
-        {
-            var lightmapCount = bakePath.GetUnityLightmapPaths().Count;
-            var allTexturePaths = bakePath.GetAllTempTexturePaths();
+        //void DeleteUnusedTextures()
+        //{
+        //    var lightmapCount = bakePath.GetUnityLightmapPaths().Count;
+        //    var allTexturePaths = bakePath.GetAllTempTexturePaths();
 
-            foreach (var path in allTexturePaths)
-            {
-                if (path.LightmapIndex >= lightmapCount || !sceneController.ValidateTexturePath(path))
-                {
-                    Debug.Log($"Delete Unused Texture: {path.Path}");
-                    AssetDatabase.DeleteAsset(path.Path);
-                }
-            }
+        //    foreach (var path in allTexturePaths)
+        //    {
+        //        if (path.LightmapIndex >= lightmapCount || !sceneController.ValidateTexturePath(path))
+        //        {
+        //            Debug.Log($"Delete Unused Texture: {path.Path}");
+        //            AssetDatabase.DeleteAsset(path.Path);
+        //        }
+        //    }
 
+        //    var allKanikamaPaths = bakePath.GetAllKanikamaAssetPaths();
+        //    foreach (var path in allKanikamaPaths)
+        //    {
+        //        if (path.LightmapIndex >= lightmapCount)
+        //        {
+        //            Debug.Log($"Delete Unused Asset: {path.Path}");
+        //            AssetDatabase.DeleteAsset(path.Path);
+        //        }
+        //    }
 
-            var allKanikamaPaths = bakePath.GetAllKanikamaAssetPaths();
-            foreach (var path in allKanikamaPaths)
-            {
-                if (path.LightmapIndex >= lightmapCount)
-                {
-                    Debug.Log($"Delete Unused Asset: {path.Path}");
-                    AssetDatabase.DeleteAsset(path.Path);
-                }
-            }
-
-            AssetDatabase.Refresh();
-        }
+        //    AssetDatabase.Refresh();
+        //}
 
         void CreateKanikamaAssets()
         {
             if (!request.isGenerateAssets) return;
-            DeleteUnusedTextures();
+
             var lightMapCount = bakePath.GetUnityLightmapPaths().Count;
             for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
             {
-                var textures = bakePath.LoadKanikamaMaps(mapIndex);
+                var textures = bakePath.GetKanikamaMapPaths(mapIndex)
+                    .Where(path => sceneController.ValidateTexturePath(path))
+                    .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
+                    .ToList();
                 if (!textures.Any()) continue;
                 var texArr = Texture2DArrayGenerator.Generate(textures);
                 var texArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.TexArrFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
-
 
                 switch (request.compositeMode)
                 {
@@ -272,7 +273,10 @@ namespace Kanikama.Editor
 
         void CreateDirectionalMapArray(int mapIndex)
         {
-            var dirTextures = bakePath.LoadKanikamaDirectionalMaps(mapIndex);
+            var dirTextures = bakePath.GetKanikamaDirectionalMapPaths(mapIndex)
+                .Where(x => sceneController.ValidateTexturePath(x))
+                .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
+                .ToList();
             var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
             var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
             AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);

@@ -1,8 +1,7 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
-using UnityEngine.Experimental.Rendering;
+using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.Editor
 {

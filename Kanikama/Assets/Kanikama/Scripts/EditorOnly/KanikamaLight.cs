@@ -128,39 +128,72 @@ namespace Kanikama.EditorOnly
         }
     }
 
+    public class EmissiveMaterialGroup : IDisposable
+    {
+        public List<KanikamaEmissiveMaterial> EmissiveMaterials { get; } = new List<KanikamaEmissiveMaterial>();
 
-    public class KanikamaMonitor
+        public void OnBake()
+        {
+            foreach (var mat in EmissiveMaterials)
+            {
+                mat.OnBake();
+            }
+        }
+
+        public void TurnOff()
+        {
+            foreach (var mat in EmissiveMaterials)
+            {
+                mat.TurnOff();
+            }
+        }
+
+        public void Dispose()
+        {
+            foreach (var mat in EmissiveMaterials)
+            {
+                mat.Dispose();
+            }
+        }
+    }
+
+
+    public class KanikamaMonitorData
     {
         readonly KanikamaMonitorSetup setup;
-        public List<KanikamaEmissiveMaterial> EmissiveMaterials { get; } = new List<KanikamaEmissiveMaterial>();
-        readonly Material[] sharedMaterials;
-        public string Name => setup.Renderer.name;
+        readonly Material cachedMaterial;
+        public List<EmissiveMaterialGroup> MaterialGroups { get; } = new List<EmissiveMaterialGroup>();
+        public string Name => setup.MainMonitor.name;
 
-        public KanikamaMonitor(KanikamaMonitorSetup setup)
+        public KanikamaMonitorData(KanikamaMonitorSetup setup)
         {
             this.setup = setup;
-
-            var count = setup.GridRenderers.Count;
-            sharedMaterials = new Material[count];
+            var count = setup.MainMonitor.gridRenderers.Count;
+            cachedMaterial = setup.MainMonitor.gridRenderers[0].sharedMaterial;
 
             for (var i = 0; i < count; i++)
             {
-                var gridRenderer = setup.GridRenderers[i];
-                sharedMaterials[i] = gridRenderer.sharedMaterial;
-                var tmp = UnityEngine.Object.Instantiate(gridRenderer.sharedMaterial);
-                gridRenderer.sharedMaterial = tmp;
-                var matData = new KanikamaEmissiveMaterial(tmp);
-                EmissiveMaterials.Add(matData);
+                var materialGroup = new EmissiveMaterialGroup();
+                foreach (var monitor in setup.Monitors)
+                {
+                    var gridRenderer = monitor.gridRenderers[i];
+                    var tmp = UnityEngine.Object.Instantiate(gridRenderer.sharedMaterial);
+                    gridRenderer.sharedMaterial = tmp;
+                    materialGroup.EmissiveMaterials.Add(new KanikamaEmissiveMaterial(tmp));
+                }
+                MaterialGroups.Add(materialGroup);
             }
         }
+
         public void TurnOff()
         {
             setup.TurnOff();
-            foreach (var matData in EmissiveMaterials)
+            foreach (var matData in MaterialGroups)
             {
                 matData.TurnOff();
             }
         }
+
         public void OnBake()
         {
             setup.OnBake();
@@ -169,15 +202,18 @@ namespace Kanikama.EditorOnly
         public void RollBack()
         {
             setup.RollBack();
-            for (var i = 0; i < sharedMaterials.Length; i++)
+            foreach(var monitor in setup.Monitors)
             {
-                setup.GridRenderers[i].sharedMaterial = sharedMaterials[i];
+                foreach(var renderer in monitor.gridRenderers)
+                {
+                    renderer.sharedMaterial = cachedMaterial;
+                }
             }
-            foreach (var matData in EmissiveMaterials)
+            foreach (var matData in MaterialGroups)
             {
                 matData.Dispose();
             }
-            EmissiveMaterials.Clear();
+            MaterialGroups.Clear();
         }
     }
 }
