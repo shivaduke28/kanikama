@@ -1,8 +1,6 @@
-﻿using UnityEngine;
+﻿using Kanikama.EditorOnly;
 using UnityEditor;
-using Kanikama.EditorOnly;
-using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
+using UnityEngine;
 
 namespace Kanikama.Editor
 {
@@ -13,14 +11,14 @@ namespace Kanikama.Editor
         {
             base.OnInspectorGUI();
             var monitor = (KanikamaMonitorSetup)target;
-            if (monitor.Renderer != null)
+            if (monitor.Monitors.Count != 0)
             {
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 if (GUILayout.Button("Setup Lights and Camera"))
                 {
+                    var tagets = monitor.Monitors;
+                    Undo.RecordObjects(tagets.ToArray(), "Setup");
                     monitor.Setup();
-                    var currentScene = SceneManager.GetActiveScene();
-                    EditorSceneManager.MarkSceneDirty(currentScene);
                 }
                 EditorGUI.EndDisabledGroup();
             }

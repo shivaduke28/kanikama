@@ -1,10 +1,10 @@
-﻿using System.Threading;
+﻿using Kanikama.EditorOnly;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using Kanikama.EditorOnly;
 using UnityEngine.SceneManagement;
-using System.IO;
 
 namespace Kanikama.Editor
 {
@@ -16,7 +16,6 @@ namespace Kanikama.Editor
 
         CancellationTokenSource tokenSource;
         bool isRunning;
-        bool showRequestDetail;
         Vector2 scrollPosition = new Vector2(0, 0);
 
         [MenuItem("Window/Kanikama/Bake")]
@@ -47,6 +46,10 @@ namespace Kanikama.Editor
             if (sceneDescriptor != null)
             {
                 bakeRequest = new BakeRequest(sceneDescriptor);
+            }
+            else
+            {
+                bakeRequest = null;
             }
         }
 
@@ -175,7 +178,10 @@ namespace Kanikama.Editor
                         var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
                         for (var i = 0; i < monitorCount; i++)
                         {
-                            monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].Renderer.name, monitorRequests[i]);
+                            if (monitors[i].MainMonitor != null)
+                            {
+                                monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].MainMonitor?.name, monitorRequests[i]);
+                            }
                         }
                     }
                     using (new EditorGUI.DisabledScope(!bakeRequest.SceneDescriptor.IsAmbientEnable))

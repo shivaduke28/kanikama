@@ -13,7 +13,7 @@ namespace Kanikama.Editor
 
         public List<KanikamaLight> KanikamaLights { get; } = new List<KanikamaLight>();
         public List<KanikamaEmissiveRenderer> KanikamaEmissiveRenderers { get; } = new List<KanikamaEmissiveRenderer>();
-        public List<KanikamaMonitor> KanikamaMonitors { get; } = new List<KanikamaMonitor>();
+        public List<KanikamaMonitorData> KanikamaMonitors { get; } = new List<KanikamaMonitorData>();
         public bool IsKanikamaAmbientEnable => sceneDescriptor.IsAmbientEnable;
 
 
@@ -56,14 +56,14 @@ namespace Kanikama.Editor
             }
 
             // kanikama monitors
-            KanikamaMonitors.AddRange(sceneDescriptor.MonitorSetups.Select(x => new KanikamaMonitor(x)));
+            KanikamaMonitors.AddRange(sceneDescriptor.MonitorSetups.Select(x => new KanikamaMonitorData(x)));
 
             // non kanikama emissive renderers
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
                 if (sceneDescriptor.EmissiveRenderers.Contains(renderer)) continue;
-                if (sceneDescriptor.MonitorSetups.Any(x => x.Renderer == renderer || x.GridRenderers.Contains(renderer))) continue;
+                if (sceneDescriptor.MonitorSetups.Any(x => x.Contains(renderer))) continue;
 
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.ContributeGI))
@@ -196,7 +196,7 @@ namespace Kanikama.Editor
                 case BakePath.BakeTargetType.Moitor:
                     if (pathData.ObjectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
                     var setUp = sceneDescriptor.MonitorSetups[pathData.ObjectIndex];
-                    return pathData.SubIndex < setUp.GridRenderers.Count;
+                    return pathData.SubIndex < setUp.MainMonitor.gridRenderers.Count;
                 case BakePath.BakeTargetType.Renderer:
                     if (pathData.ObjectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
                     var renderer = KanikamaEmissiveRenderers[pathData.ObjectIndex];

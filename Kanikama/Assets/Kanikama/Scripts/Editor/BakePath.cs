@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor
@@ -77,25 +76,25 @@ namespace Kanikama.Editor
                 .ToList();
         }
 
-        public List<Texture2D> LoadKanikamaMaps(int lightmapIndex)
+        public List<TempTexturePath> GetKanikamaMapPaths(int lightmapIndex)
         {
             var regex = KanikamaRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
                 .Where(x => regex.IsMatch(Path.GetFileName(x)))
-                .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x))
+                .Select(x => new TempTexturePath(x))
                 .ToList();
         }
 
-        public List<Texture2D> LoadKanikamaDirectionalMaps(int lightmapIndex)
+        public List<TempTexturePath> GetKanikamaDirectionalMapPaths(int lightmapIndex)
         {
             var regex = KanikamaDirectionalRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
                 .Where(x => regex.IsMatch(Path.GetFileName(x)))
-                .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x))
+                .Select(x => new TempTexturePath(x))
                 .ToList();
         }
 
