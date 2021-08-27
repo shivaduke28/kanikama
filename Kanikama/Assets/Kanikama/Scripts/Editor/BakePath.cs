@@ -37,6 +37,15 @@ namespace Kanikama.Editor
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
 
+        public static string KanikamaAssetDirPath(SceneAsset scene)
+        {
+            var scenePath = AssetDatabase.GetAssetPath(scene);
+            var sceneDirPath = Path.GetDirectoryName(scenePath);
+            var exportDirName = string.Format(ExportDirFormat, scene.name);
+            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+            return Path.Combine(sceneDirPath, exportDirName);
+        }
+
 
         public BakePath(Scene scene)
         {
