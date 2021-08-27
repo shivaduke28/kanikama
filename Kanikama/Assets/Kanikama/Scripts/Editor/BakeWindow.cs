@@ -14,6 +14,8 @@ namespace Kanikama.Editor
         KanikamaSceneDescriptor sceneDescriptor;
         BakeRequest bakeRequest;
 
+        KanikamaSettings settings;
+
         CancellationTokenSource tokenSource;
         bool isRunning;
         Vector2 scrollPosition = new Vector2(0, 0);
@@ -31,6 +33,33 @@ namespace Kanikama.Editor
             LoadSceneAsset();
         }
 
+        public static KanikamaSettings FindOrCreateSettings(SceneAsset sceneAsset)
+        {
+            var settings = FindSettings(sceneAsset);
+
+            if (settings != null) return settings;
+
+            settings = CreateInstance<KanikamaSettings>();
+            settings.Initialize(sceneAsset, LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional);
+            var dirPath = BakePath.KanikamaAssetDirPath(sceneAsset);
+            AssetDatabase.CreateAsset(settings, Path.Combine(dirPath, "KanikamaSettings.asset"));
+            AssetDatabase.Refresh();
+            return settings;
+        }
+
+        static KanikamaSettings FindSettings(SceneAsset sceneAsset)
+        {
+            var assets = AssetDatabase.FindAssets($"t:{typeof(KanikamaSettings)}");
+            foreach (var asset in assets)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(asset);
+                var settings = AssetDatabase.LoadAssetAtPath<KanikamaSettings>(path);
+                if (settings.SceneAsset == sceneAsset) return settings;
+            }
+            return null;
+        }
+
+
         void LoadSceneAsset()
         {
             var activeScene = SceneManager.GetActiveScene();
@@ -42,6 +71,11 @@ namespace Kanikama.Editor
             {
                 sceneAsset = null;
             }
+
+            if (sceneAsset == null) return;
+
+            settings = FindSettings(sceneAsset);
+
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor != null)
             {
@@ -53,13 +87,19 @@ namespace Kanikama.Editor
             }
         }
 
+        void LoadOrCreateSettings()
+        {
+            settings = FindOrCreateSettings(sceneAsset);
+        }
+
         void OnGUI()
         {
-            using (new EditorGUILayout.ScrollViewScope(scrollPosition))
+            using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
+                scrollPosition = scroll.scrollPosition;
                 using (new EditorGUI.DisabledGroupScope(isRunning))
                 {
-                    DrawBakeTarget();
+                    DrawSceneData();
                     EditorGUILayout.Space();
                     DrawBakeRequest();
                 }
@@ -71,13 +111,17 @@ namespace Kanikama.Editor
                         Stop();
                     }
                 }
-                else if (sceneAsset is null)
+                else if (sceneAsset == null)
                 {
                     EditorGUILayout.HelpBox("Scene is not saved as an asset.", MessageType.Warning);
                 }
-                else if (sceneDescriptor is null)
+                else if (sceneDescriptor == null)
                 {
                     EditorGUILayout.HelpBox("Kanikama Scene Descriptor is not selected.", MessageType.Warning);
+                }
+                else if (settings == null)
+                {
+                    EditorGUILayout.HelpBox("Load or Create Kanikama Settings Asset.", MessageType.Warning);
                 }
                 else
                 {
@@ -86,6 +130,9 @@ namespace Kanikama.Editor
                         BakeAsync();
                     }
                 }
+
+                EditorGUILayout.Space();
+                DrawAssetCreation();
 
                 EditorGUILayout.Space();
                 GUILayout.Label("Baked Assets", EditorStyles.boldLabel);
@@ -104,39 +151,50 @@ namespace Kanikama.Editor
             }
         }
 
-        void DrawBakeTarget()
+        void DrawSceneData()
         {
-            GUILayout.Label("Bake Target", EditorStyles.boldLabel);
+            GUILayout.Label("Scene", EditorStyles.boldLabel);
             using (new EditorGUI.DisabledGroupScope(true))
             {
                 sceneAsset = (SceneAsset)EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
             sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
+            settings = (KanikamaSettings)EditorGUILayout.ObjectField("Settings", settings, typeof(KanikamaSettings), false);
 
             if (GUILayout.Button("Load Active Scene"))
             {
                 LoadSceneAsset();
             }
+
+            if (settings == null)
+            {
+                if (GUILayout.Button("Load/Create Settings Asset"))
+                {
+                    LoadOrCreateSettings();
+                }
+            }
         }
 
         void DrawBakeRequest()
         {
-            if (bakeRequest is null) return;
+            if (bakeRequest == null || settings == null) return;
 
-            GUILayout.Label("Bake Commands", EditorStyles.boldLabel);
+            GUILayout.Label("Bake", EditorStyles.boldLabel);
 
-            bakeRequest.compositeMode = (CompositeMode)EditorGUILayout.EnumPopup("Composite Mode", bakeRequest.compositeMode);
-            if (bakeRequest.compositeMode == CompositeMode.Renderer)
+
+            if (LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional)
             {
-                using (new EditorGUI.DisabledGroupScope(LightmapEditorSettings.lightmapsMode == LightmapsMode.NonDirectional))
-                {
-                    bakeRequest.isDirectionalMode = EditorGUILayout.Toggle("Directional Mode", bakeRequest.isDirectionalMode);
-                }
+                settings.directionalMode = EditorGUILayout.Toggle("Directional Mode", settings.directionalMode);
             }
             else
             {
-                bakeRequest.isDirectionalMode = false;
+                using (new EditorGUI.DisabledGroupScope(true))
+                {
+                    settings.directionalMode = false;
+                    settings.directionalMode = EditorGUILayout.Toggle("Directional Mode", settings.directionalMode);
+                }
             }
+
 
             EditorGUILayout.Space();
 
@@ -188,15 +246,26 @@ namespace Kanikama.Editor
                     {
                         bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
                     }
-                    bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama Lightings", bakeRequest.isBakeWithouKanikama);
+                    bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama GI", bakeRequest.isBakeWithouKanikama);
 
-                    bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Generate Assets", bakeRequest.isGenerateAssets);
+                    bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Create Assets", bakeRequest.isGenerateAssets);
                 }
             }
         }
 
+        void DrawAssetCreation()
+        {
+            if (settings == null) return;
+            GUILayout.Label("Asset Creation", EditorStyles.boldLabel);
+            settings.createRenderTexture = EditorGUILayout.Toggle("RenderTexture", settings.createRenderTexture);
+            settings.createCustomRenderTexture = EditorGUILayout.Toggle("CustomRenderTexture", settings.createCustomRenderTexture);
+        }
+
         async void BakeAsync()
         {
+            bakeRequest.isDirectionalMode = settings.directionalMode;
+            bakeRequest.createRenderTexture = settings.createRenderTexture;
+            bakeRequest.createCustomRenderTexture = settings.createCustomRenderTexture;
             tokenSource = new CancellationTokenSource();
             var baker = new Baker(bakeRequest);
             isRunning = true;

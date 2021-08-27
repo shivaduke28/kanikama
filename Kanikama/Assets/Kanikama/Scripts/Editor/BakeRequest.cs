@@ -18,8 +18,9 @@ namespace Kanikama.Editor
         public bool isBakeAmbient = true;
         public bool isGenerateAssets = true;
         public bool isBakeWithouKanikama = true;
-        public CompositeMode compositeMode = CompositeMode.RenderTexture;
         public bool isDirectionalMode = false;
+        public bool createRenderTexture;
+        public bool createCustomRenderTexture;
 
         public bool IsLightRequested(int index) => isBakeAll || lightRequests[index];
         public bool IsRendererRequested(int index) => isBakeAll || rendererRequests[index];
@@ -34,7 +35,6 @@ namespace Kanikama.Editor
             rendererRequests = Enumerable.Repeat(true, sceneDescriptor.EmissiveRenderers.Count).ToList();
             monitorRequests = Enumerable.Repeat(true, sceneDescriptor.MonitorSetups.Count).ToList();
             isBakeAmbient = sceneDescriptor.IsAmbientEnable;
-            isDirectionalMode = LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional;
         }
     }
 }

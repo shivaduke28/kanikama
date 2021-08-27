@@ -252,20 +252,17 @@ namespace Kanikama.Editor
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"Create {texArrPath}");
 
-                switch (request.compositeMode)
+                if (request.createRenderTexture)
                 {
-                    case CompositeMode.RenderTexture:
-                        CreateRTAssets(mapIndex, texArr);
-                        break;
-                    case CompositeMode.CustomRenderTexture:
-                        CreateCRTAssets(mapIndex, texArr);
-                        break;
-                    case CompositeMode.Renderer:
-                        if (request.isDirectionalMode)
-                        {
-                            CreateDirectionalMapArray(mapIndex);
-                        }
-                        break;
+                    CreateRTAssets(mapIndex, texArr);
+                }
+                if (request.createCustomRenderTexture)
+                {
+                    CreateCRTAssets(mapIndex, texArr);
+                }
+                if (request.isDirectionalMode)
+                {
+                    CreateDirectionalMapArray(mapIndex);
                 }
             }
             AssetDatabase.Refresh();
