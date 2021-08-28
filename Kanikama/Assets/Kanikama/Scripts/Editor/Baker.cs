@@ -79,6 +79,7 @@ namespace Kanikama.Editor
             var light = sceneController.KanikamaLights[index];
             Debug.Log($"Baking Light {light.Name}");
             light.OnBake();
+            Lightmapping.Clear();
             await BakeSceneGIAsync(token);
             light.TurnOff();
             MoveBakedLightmaps(BakePath.LightFormat(index));
@@ -146,6 +147,7 @@ namespace Kanikama.Editor
 
             Debug.Log($"Baking Ambient...");
             sceneController.OnAmbientBake();
+            Lightmapping.Clear();
             await BakeSceneGIAsync(token);
             sceneController.TurnOffAmbient();
             MoveBakedLightmaps(BakePath.AmbientFormat());
