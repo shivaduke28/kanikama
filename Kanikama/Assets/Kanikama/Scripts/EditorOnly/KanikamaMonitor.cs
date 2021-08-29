@@ -9,7 +9,7 @@ namespace Kanikama.EditorOnly
     public class KanikamaMonitor : EditorOnlyBehaviour
     {
         public Renderer monitorRenderer;
-        public List<Renderer> gridRenderers;
+        [ReadOnly] public List<Renderer> gridRenderers;
 
         public Bounds Bounds { get; private set; }
 
