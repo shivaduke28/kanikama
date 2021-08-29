@@ -11,7 +11,7 @@ namespace Kanikama.EditorOnly
         float intensity;
         Color color;
         Light light;
-        public bool Enabled { get => light.enabled; set => light.enabled = value; }
+        bool enabled;
         public string Name => light.name;
 
         public KanikamaLight(Light light)
@@ -19,6 +19,7 @@ namespace Kanikama.EditorOnly
             intensity = light.intensity;
             color = light.color;
             this.light = light;
+            enabled = light.enabled;
         }
 
         public void TurnOff()
@@ -40,7 +41,7 @@ namespace Kanikama.EditorOnly
         {
             light.intensity = intensity;
             light.color = color;
-            light.enabled = true;
+            light.enabled = enabled;
         }
     }
 
