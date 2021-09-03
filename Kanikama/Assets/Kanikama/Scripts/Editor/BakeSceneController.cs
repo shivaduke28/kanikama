@@ -70,7 +70,7 @@ namespace Kanikama.Editor
                 {
                     var sharedMaterials = renderer.sharedMaterials;
 
-                    if (sharedMaterials.Any(x => x.IsKeywordEnabled(KanikamaEmissiveMaterial.ShaderKeywordEmission)))
+                    if (sharedMaterials.Any(x => !(x is null) && x.IsKeywordEnabled(KanikamaEmissiveMaterial.ShaderKeywordEmission)))
                     {
                         nonKanikamaMaterialMaps[renderer.gameObject] = sharedMaterials;
                         renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
