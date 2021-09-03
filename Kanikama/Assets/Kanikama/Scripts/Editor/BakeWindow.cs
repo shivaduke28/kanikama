@@ -276,7 +276,7 @@ namespace Kanikama.Editor
             }
             catch (TaskCanceledException)
             {
-                Debug.Log("キャンセルされました");
+                Debug.Log("[Kanikama] Bake canceled");
             }
             finally
             {
