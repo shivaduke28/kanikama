@@ -39,7 +39,7 @@ namespace Kanikama.EditorOnly
             captureCamera.nearClipPlane = cameraDetailedSettings.near;
             captureCamera.farClipPlane = cameraDetailedSettings.far;
             var bounds = mainMonitor.Bounds;
-            captureCamera.orthographicSize = Mathf.Min(bounds.extents.x, bounds.extents.y);
+            captureCamera.orthographicSize = bounds.extents.y;
         }
 
         public void TurnOff()
