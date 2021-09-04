@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using UdonSharp;
 using UnityEngine;
-using UdonSharp;
 
 namespace Kanikama.Udon
 {
+    [RequireComponent(typeof(Camera))]
     public class KanikamaColorSampler : UdonSharpBehaviour
     {
         [SerializeField] Texture2D readingTexture;
         [SerializeField] int partitionType;
+        [SerializeField] Camera camera;
+        [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
         [ColorUsage(false, true), SerializeField] Color[] colors;
 
@@ -28,12 +29,12 @@ namespace Kanikama.Udon
             return colors;
         }
 
-        void OnRenderImage(RenderTexture source, RenderTexture destination)
+        void OnPostRender()
         {
             // NOTE:
             // pixel colors are linear if so is the source render texture (maybe)
             // and HDR if so is the reading texture
-            readingTexture.ReadPixels(new Rect(0,0, 256,256), 0, 0, true);
+            readingTexture.ReadPixels(new Rect(0, 0, 256, 256), 0, 0, true);
 
             // NOTE: call Apply() here if you want update readingTexture,
             //       is useful for debugging mipmapped textures in Editor.
@@ -98,6 +99,7 @@ namespace Kanikama.Udon
 
         void Initialize()
         {
+            camera.aspect = aspectRatio;
             var countX = partitionType % 10;
             var countY = Mathf.FloorToInt(partitionType / 10);
             lightCount = countX * countY;

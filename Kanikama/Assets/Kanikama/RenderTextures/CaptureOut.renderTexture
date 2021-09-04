@@ -6,7 +6,7 @@ RenderTexture:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SamplerOut
+  m_Name: CaptureOut
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
@@ -19,7 +19,7 @@ RenderTexture:
   m_MipCount: -1
   m_DepthFormat: 1
   m_ColorFormat: 48
-  m_MipMap: 0
+  m_MipMap: 1
   m_GenerateMips: 1
   m_SRGB: 0
   m_UseDynamicScale: 0
