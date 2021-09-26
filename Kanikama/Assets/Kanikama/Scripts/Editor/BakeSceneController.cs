@@ -19,8 +19,14 @@ namespace Kanikama.Editor
 
         readonly List<Light> nonKanikamaLights = new List<Light>();
         readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
+        readonly List<ReflectionProbe> reflectionProbes = new List<ReflectionProbe>();
+        readonly List<LightProbeGroup> lightProbeGroups = new List<LightProbeGroup>();
 
         float ambientIntensity;
+        Color ambientLight;
+        Color ambientSkyColor;
+        Color ambientGroundColor;
+        Color ambientEquatorColor;
         Material dummyMaterial;
         LightmapsMode lightmapsMode;
 
@@ -78,8 +84,17 @@ namespace Kanikama.Editor
                 }
             }
 
+            // reflection probes
+            reflectionProbes.AddRange(UnityEngine.Object.FindObjectsOfType<ReflectionProbe>().Where(x => x.gameObject.activeInHierarchy && x.enabled));
+            // light probes
+            lightProbeGroups.AddRange(UnityEngine.Object.FindObjectsOfType<LightProbeGroup>().Where(x => x.gameObject.activeInHierarchy && x.enabled));
+
             // ambient
             ambientIntensity = RenderSettings.ambientIntensity;
+            ambientLight = RenderSettings.ambientLight;
+            ambientSkyColor = RenderSettings.ambientSkyColor;
+            ambientEquatorColor = RenderSettings.ambientEquatorColor;
+            ambientGroundColor = RenderSettings.ambientGroundColor;
 
             // directional mode
             lightmapsMode = LightmapEditorSettings.lightmapsMode;
@@ -107,16 +122,43 @@ namespace Kanikama.Editor
             {
                 monitor.TurnOff();
             }
+
+            foreach (var probe in reflectionProbes)
+            {
+                probe.enabled = false;
+            }
+
+            foreach (var probe in lightProbeGroups)
+            {
+                probe.enabled = false;
+            }
         }
 
         public void OnAmbientBake()
         {
             RenderSettings.ambientIntensity = 1;
+            RenderSettings.ambientLight = ambientLight;
+            RenderSettings.ambientSkyColor = ambientSkyColor;
+            RenderSettings.ambientEquatorColor = ambientEquatorColor;
+            RenderSettings.ambientGroundColor = ambientGroundColor;
         }
 
         public void TurnOffAmbient()
         {
             RenderSettings.ambientIntensity = 0f;
+            RenderSettings.ambientLight = Color.black;
+            RenderSettings.ambientSkyColor = Color.black;
+            RenderSettings.ambientEquatorColor = Color.black;
+            RenderSettings.ambientGroundColor = Color.black;
+        }
+
+        void RollbackAmbient()
+        {
+            RenderSettings.ambientIntensity = ambientIntensity;
+            RenderSettings.ambientLight = ambientLight;
+            RenderSettings.ambientSkyColor = ambientSkyColor;
+            RenderSettings.ambientEquatorColor = ambientEquatorColor;
+            RenderSettings.ambientGroundColor = ambientGroundColor;
         }
 
         public void SetLightmapSettings(bool isDirectional)
@@ -142,7 +184,7 @@ namespace Kanikama.Editor
         {
             if (!IsKanikamaAmbientEnable)
             {
-                RenderSettings.ambientIntensity = ambientIntensity;
+                RollbackAmbient();
             }
             foreach (var light in nonKanikamaLights)
             {
@@ -155,6 +197,16 @@ namespace Kanikama.Editor
                 var renderer = go.GetComponent<Renderer>();
                 renderer.sharedMaterials = kvp.Value;
             }
+
+            foreach (var probe in reflectionProbes)
+            {
+                probe.enabled = true;
+            }
+
+            foreach (var probe in lightProbeGroups)
+            {
+                probe.enabled = true;
+            }
         }
 
         public void RollbackLightmapSettings()
@@ -166,7 +218,7 @@ namespace Kanikama.Editor
         {
             if (IsKanikamaAmbientEnable)
             {
-                RenderSettings.ambientIntensity = ambientIntensity;
+                RollbackAmbient();
             }
 
             foreach (var lightData in KanikamaLights)

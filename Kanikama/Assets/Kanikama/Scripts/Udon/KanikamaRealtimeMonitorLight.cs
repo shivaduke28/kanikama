@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Kanikama.Udon
 {
     // should be attached to KanikamaProvider GameObject.
+    [RequireComponent(typeof(Camera))]
     public class KanikamaRealtimeMonitorLight : UdonSharpBehaviour
     {
         [SerializeField] KanikamaColorSampler monitorColorSampler;
@@ -24,9 +25,7 @@ namespace Kanikama.Udon
         }
 
         // Note:
-        // OnPreRender is called after OnPreCull and
-        // colorCollector.Collect() will be called in OnPreCull of KanikamaProvider,
-        // so it is skippped here for optimization.
+        // Colors are updated by KanikamaColorCollector on OnPreCull.
         void OnPreRender()
         {
             var color = Color.black;

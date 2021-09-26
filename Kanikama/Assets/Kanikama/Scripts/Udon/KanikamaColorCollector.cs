@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
+    [RequireComponent(typeof(Camera))]
     public class KanikamaColorCollector : UdonSharpBehaviour
     {
         [SerializeField] Light[] lights;
@@ -98,7 +99,10 @@ namespace Kanikama.Udon
             isInitialized = true;
         }
 
-        public void Collect()
+        // Note:
+        // Colors are updated on OnPreCull in every frame,
+        // KanikamaProviders (and other scripts) attached to the same GameObject should use them on or after OnPreRender.
+        void OnPreCull()
         {
             if (frameCount >= Time.frameCount) return;
             frameCount = Time.frameCount;

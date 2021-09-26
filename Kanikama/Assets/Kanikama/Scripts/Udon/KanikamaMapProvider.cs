@@ -31,11 +31,11 @@ namespace Kanikama.Udon
             colors = colorCollector.GetColors();
         }
 
-        void OnPreCull()
+        // Note:
+        // Colors are updated by KanikamaColorCollector on OnPreCull,
+        // then provided on OnPreRender.
+        void OnPreRender()
         {
-            // collect current colors
-            colorCollector.Collect();
-
             // update materials
             foreach (var mat in compositeMaterials)
             {
