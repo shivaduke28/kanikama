@@ -159,6 +159,7 @@ namespace Kanikama.Editor
             sceneController.RollbackNonKanikama();
             sceneController.RollbackLightmapSettings();
             Debug.Log($"[Kanikama] Baking Scene GI without Kanikama...");
+            Lightmapping.Clear();
             await BakeSceneGIAsync(token);
         }
 
