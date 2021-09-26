@@ -24,9 +24,7 @@ namespace Kanikama.Udon
         }
 
         // Note:
-        // OnPreRender is called after OnPreCull and
-        // colorCollector.Collect() will be called in OnPreCull of KanikamaProvider,
-        // so it is skippped here for optimization.
+        // Colors are updated by KanikamaColorCollector on OnPreCull.
         void OnPreRender()
         {
             var color = Color.black;
