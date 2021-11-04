@@ -426,6 +426,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 2
   serializedProgramAsset: {fileID: 11400000, guid: 0512e682062cd1f46a3fa031f8b0a3a2,
     type: 2}
   programSource: {fileID: 11400000, guid: 02b70516f43604e459a4a4234f9eb484, type: 2}
@@ -952,6 +953,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 2
   serializedProgramAsset: {fileID: 11400000, guid: 60cdc02cb72a73c458fa466d8bd9dcc7,
     type: 2}
   programSource: {fileID: 11400000, guid: c233dcfed06ee394da22f366db070c01, type: 2}
@@ -4052,6 +4054,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 2
   serializedProgramAsset: {fileID: 11400000, guid: 6507f2ba3e498174a9840b37c8b04dc1,
     type: 2}
   programSource: {fileID: 11400000, guid: 3d18317902f0f43408364b7182701b5c, type: 2}
