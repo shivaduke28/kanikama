@@ -4,6 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Kanikama.Udon;
+using VRC.Udon;
+using UdonSharpEditor;
+using UnityEditor;
 
 namespace Kanikama.EditorOnly
 {
@@ -21,13 +25,14 @@ namespace Kanikama.EditorOnly
 
         public void Setup()
         {
-            if (!monitors.Any()) return;
+            if (monitors.Count == 0) return;
 
             foreach (var monitor in monitors)
             {
                 monitor.SetupLights(partitionType, gridRendererPrefab);
             }
             SetupCamera();
+            SetupUdon();
         }
 
         void SetupCamera()
@@ -40,6 +45,30 @@ namespace Kanikama.EditorOnly
             captureCamera.farClipPlane = cameraDetailedSettings.far;
             var bounds = mainMonitor.Bounds;
             captureCamera.orthographicSize = bounds.extents.y;
+        }
+
+        void SetupUdon()
+        {
+            var colorSampler = captureCamera.GetComponent<UdonBehaviour>();
+            if (colorSampler == null)
+            {
+                Debug.LogError($"[Kanikama] {nameof(KanikamaColorSampler)} component is not attached to Camera");
+                return;
+            }
+            var type = UdonSharpEditorUtility.GetUdonSharpBehaviourType(colorSampler);
+            if (type != typeof(KanikamaColorSampler))
+            {
+                Debug.LogError($"[Kanikama] the type of ColorSampler is not {nameof(KanikamaColorSampler)}");
+                return;
+            }
+            var proxy = (KanikamaColorSampler)UdonSharpEditorUtility.GetProxyBehaviour(colorSampler);
+            UdonSharpEditorUtility.CopyUdonToProxy(proxy);
+            var mainMonitor = monitors[0];
+            var bounds = mainMonitor.Bounds;
+            var aspectRatio = bounds.size.x / bounds.size.y;
+            proxy.SetAspectRatioAndPartitionType(aspectRatio, (int)partitionType);
+            UdonSharpEditorUtility.CopyProxyToUdon(proxy);
+            EditorUtility.SetDirty(proxy.gameObject);
         }
 
         public void TurnOff()

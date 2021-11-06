@@ -14,6 +14,7 @@ namespace Kanikama.Editor
             if (monitor.Monitors.Count != 0)
             {
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
+                EditorGUILayout.Space();
                 if (GUILayout.Button("Setup Lights and Camera"))
                 {
                     var tagets = monitor.Monitors;
