@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Kanikama.Udon
 {
     // should be attached to KanikamaProvider GameObject.
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaRealtimeSceneLight : UdonSharpBehaviour
     {
         [SerializeField] KanikamaColorCollector colorCollector;

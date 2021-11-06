@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaColorSampler : UdonSharpBehaviour
     {
         [SerializeField] Texture2D readingTexture;

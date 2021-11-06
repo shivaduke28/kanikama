@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaMapArrayProvider : UdonSharpBehaviour
     {
         [SerializeField] Texture[] lightmapArrays;
