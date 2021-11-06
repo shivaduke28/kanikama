@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7b05b93c7e3b164ea3227fd55336821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  captureCamera: {fileID: 0}
+  captureCamera: {fileID: 8740642146226451693}
   gridRendererPrefab: {fileID: 8980632914921211949, guid: c83edb39890ec1144b83de405462cb05,
     type: 3}
   monitors:
