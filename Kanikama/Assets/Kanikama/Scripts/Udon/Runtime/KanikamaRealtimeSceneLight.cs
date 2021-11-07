@@ -10,6 +10,8 @@ namespace Kanikama.Udon
         [SerializeField] KanikamaColorCollector colorCollector;
         [SerializeField] Light light;
         [SerializeField] float intensity = 1;
+        [SerializeField] bool weightEnable = false;
+        [SerializeField] float[] weights;
 
         Vector4[] colors;
         int count;
@@ -29,11 +31,14 @@ namespace Kanikama.Udon
         void OnPreRender()
         {
             var color = Color.black;
+            var totalWeight = 0f;
             for (var i = 0; i < count; i++)
             {
-                color += (Color)colors[i];
+                var weight = weightEnable ? weights[i] : 1f;
+                color += (Color)colors[i] * weight;
+                totalWeight += weight;
             }
-            color /= count;
+            color /= totalWeight;
             var max = color.maxColorComponent;
 
             light.color = color / max;
