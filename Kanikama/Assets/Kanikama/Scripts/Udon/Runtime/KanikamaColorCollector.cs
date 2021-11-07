@@ -14,7 +14,7 @@ namespace Kanikama.Udon
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
         [Space]
-        [ColorUsage(false, true), SerializeField] Vector4[] colors; // linear
+        [SerializeField, HideInInspector] Vector4[] colors; // linear
 
         public Vector4[] GetColors()
         {

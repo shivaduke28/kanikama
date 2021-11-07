@@ -2,6 +2,7 @@
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
+using Kanikama.Editor;
 
 namespace Kanikama.Udon.Editor
 {
@@ -11,13 +12,15 @@ namespace Kanikama.Udon.Editor
         KanikamaCamera proxy;
         SerializedProperty aspectRatioProperty;
         SerializedProperty partitionTypeProperty;
-
+        SerializedProperty colorsProperty;
+        bool colorsFold;
         void OnEnable()
         {
             if (target == null) return;
             proxy = (KanikamaCamera)target;
             aspectRatioProperty = serializedObject.FindProperty("aspectRatio");
             partitionTypeProperty = serializedObject.FindProperty("partitionType");
+            colorsProperty = serializedObject.FindProperty("colors");
         }
 
         public override void OnInspectorGUI()
@@ -25,12 +28,14 @@ namespace Kanikama.Udon.Editor
             if (UdonSharpEditorUtility.IsProxyBehaviour(proxy))
             {
                 base.OnInspectorGUI();
+                colorsFold = KanikamaEditorGUI.ArrayField(colorsProperty, colorsFold, true);
+
                 EditorGUILayout.Space();
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 EditorGUILayout.Space();
-                if (GUILayout.Button("Apply Setup"))
+                if (GUILayout.Button($"Setup with {nameof(KanikamaMonitorSetup)}"))
                 {
-                    ApplySetup();
+                    Setup();
                 }
                 EditorGUI.EndDisabledGroup();
             }
@@ -43,7 +48,12 @@ namespace Kanikama.Udon.Editor
             }
         }
 
-        void ApplySetup()
+        public override bool RequiresConstantRepaint()
+        {
+            return Application.isPlaying && colorsFold;
+        }
+
+        void Setup()
         {
             var parent = proxy.transform.parent;
             if (parent == null)

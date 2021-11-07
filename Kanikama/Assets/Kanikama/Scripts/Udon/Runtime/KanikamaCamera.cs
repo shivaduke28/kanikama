@@ -11,7 +11,7 @@ namespace Kanikama.Udon
         [SerializeField] Camera camera;
         [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
-        [ColorUsage(false, true), SerializeField] Color[] colors;
+        [ColorUsage(false, true), SerializeField, HideInInspector] Color[] colors;
 
         int lightCount;
         int mipmapLevel;

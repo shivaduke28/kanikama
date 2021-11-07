@@ -16,6 +16,7 @@ namespace Kanikama.EditorOnly
         [SerializeField] KanikamaMonitor.PartitionType partitionType;
         [SerializeField] CameraDetailedSettings cameraDetailedSettings;
 
+        public Camera Camera => captureCamera;
         public List<KanikamaMonitor> Monitors => monitors;
         public KanikamaMonitor MainMonitor => monitors.FirstOrDefault();
         public KanikamaMonitor.PartitionType PartitionType => partitionType;
