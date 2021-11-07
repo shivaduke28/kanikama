@@ -49,19 +49,19 @@ namespace Kanikama.EditorOnly
 
         void SetupUdon()
         {
-            var colorSampler = captureCamera.GetComponent<UdonBehaviour>();
-            if (colorSampler == null)
+            var kanikamaCamera = captureCamera.GetComponent<UdonBehaviour>();
+            if (kanikamaCamera == null)
             {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaColorSampler)} component is not attached to Camera");
+                Debug.LogError($"[Kanikama] {nameof(KanikamaCamera)} component is not attached to Camera");
                 return;
             }
-            var type = UdonSharpEditorUtility.GetUdonSharpBehaviourType(colorSampler);
-            if (type != typeof(KanikamaColorSampler))
+            var type = UdonSharpEditorUtility.GetUdonSharpBehaviourType(kanikamaCamera);
+            if (type != typeof(KanikamaCamera))
             {
-                Debug.LogError($"[Kanikama] the type of ColorSampler is not {nameof(KanikamaColorSampler)}");
+                Debug.LogError($"[Kanikama] the type of KanikamaCamera is not {nameof(KanikamaCamera)}");
                 return;
             }
-            var proxy = (KanikamaColorSampler)UdonSharpEditorUtility.GetProxyBehaviour(colorSampler);
+            var proxy = (KanikamaCamera)UdonSharpEditorUtility.GetProxyBehaviour(kanikamaCamera);
             UdonSharpEditorUtility.CopyUdonToProxy(proxy);
             var mainMonitor = monitors[0];
             var bounds = mainMonitor.Bounds;

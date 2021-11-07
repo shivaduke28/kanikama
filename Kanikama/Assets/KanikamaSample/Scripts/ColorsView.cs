@@ -7,14 +7,14 @@ namespace Kanikama.Sample
 {
     public class ColorsView : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaColorSampler colorSampler;
+        [SerializeField] KanikamaCamera kanikamaCamera;
         [SerializeField] RawImage[] rawImages;
 
         Color[] colors;
 
         void Start()
         {
-            colors = colorSampler.GetColors();
+            colors = kanikamaCamera.GetColors();
         }
         void LateUpdate()
         {

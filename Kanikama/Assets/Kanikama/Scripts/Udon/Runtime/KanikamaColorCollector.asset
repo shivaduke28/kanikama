@@ -188,7 +188,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: $v
       Entry: 7
       Data: 12|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -200,7 +200,7 @@ MonoBehaviour:
       Data: 14|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaColorSampler[], Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaCamera[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
@@ -215,10 +215,10 @@ MonoBehaviour:
       Data: UnityEngineComponentArray
     - Name: symbolOriginalName
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: symbolUniqueName
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
