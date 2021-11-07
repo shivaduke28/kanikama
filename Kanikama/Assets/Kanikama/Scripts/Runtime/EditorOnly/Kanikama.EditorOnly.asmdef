@@ -2,9 +2,7 @@
     "name": "Kanikama.EditorOnly",
     "references": [
         "UdonSharp.Runtime",
-        "UdonSharp.Editor",
-        "Kanikama.Udon",
-        "VRC.Udon"
+        "UdonSharp.Editor"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

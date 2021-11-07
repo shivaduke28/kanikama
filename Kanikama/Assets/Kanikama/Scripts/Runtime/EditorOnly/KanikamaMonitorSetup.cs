@@ -4,10 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Kanikama.Udon;
-using VRC.Udon;
-using UdonSharpEditor;
-using UnityEditor;
 
 namespace Kanikama.EditorOnly
 {
@@ -22,6 +18,7 @@ namespace Kanikama.EditorOnly
 
         public List<KanikamaMonitor> Monitors => monitors;
         public KanikamaMonitor MainMonitor => monitors.FirstOrDefault();
+        public KanikamaMonitor.PartitionType PartitionType => partitionType;
 
         public void Setup()
         {
@@ -32,7 +29,6 @@ namespace Kanikama.EditorOnly
                 monitor.SetupLights(partitionType, gridRendererPrefab);
             }
             SetupCamera();
-            SetupUdon();
         }
 
         void SetupCamera()
@@ -45,30 +41,6 @@ namespace Kanikama.EditorOnly
             captureCamera.farClipPlane = cameraDetailedSettings.far;
             var bounds = mainMonitor.Bounds;
             captureCamera.orthographicSize = bounds.extents.y;
-        }
-
-        void SetupUdon()
-        {
-            var kanikamaCamera = captureCamera.GetComponent<UdonBehaviour>();
-            if (kanikamaCamera == null)
-            {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaCamera)} component is not attached to Camera");
-                return;
-            }
-            var type = UdonSharpEditorUtility.GetUdonSharpBehaviourType(kanikamaCamera);
-            if (type != typeof(KanikamaCamera))
-            {
-                Debug.LogError($"[Kanikama] the type of KanikamaCamera is not {nameof(KanikamaCamera)}");
-                return;
-            }
-            var proxy = (KanikamaCamera)UdonSharpEditorUtility.GetProxyBehaviour(kanikamaCamera);
-            UdonSharpEditorUtility.CopyUdonToProxy(proxy);
-            var mainMonitor = monitors[0];
-            var bounds = mainMonitor.Bounds;
-            var aspectRatio = bounds.size.x / bounds.size.y;
-            proxy.SetAspectRatioAndPartitionType(aspectRatio, (int)partitionType);
-            UdonSharpEditorUtility.CopyProxyToUdon(proxy);
-            EditorUtility.SetDirty(proxy.gameObject);
         }
 
         public void TurnOff()

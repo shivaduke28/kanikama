@@ -131,13 +131,5 @@ namespace Kanikama.Udon
             }
             isInitialized = true;
         }
-
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public void SetAspectRatioAndPartitionType(float aspectRatio, int partitionType)
-        {
-            this.aspectRatio = aspectRatio;
-            this.partitionType = partitionType;
-        }
-#endif
     }
 }
