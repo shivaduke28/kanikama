@@ -14,6 +14,7 @@ namespace Kanikama.Udon
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
         [Space]
+        [Range(0, 20f)] public float intensity = 1f;
         [SerializeField, HideInInspector] Vector4[] colors; // linear
 
         public Vector4[] GetColors()
@@ -113,7 +114,7 @@ namespace Kanikama.Udon
             if (isAmbientEnable)
             {
                 // HDR (linear)
-                colors[index] = ambientColor;
+                colors[index] = ambientColor * intensity;
                 index++;
             }
 
@@ -122,7 +123,7 @@ namespace Kanikama.Udon
             {
                 var light = lights[i];
                 // NOTE: depends on GraphicsSettings.lightsUseLinearIntensity
-                colors[index] = light.color.linear * light.intensity;
+                colors[index] = light.color.linear * light.intensity * intensity;
                 index++;
             }
 
@@ -134,7 +135,7 @@ namespace Kanikama.Udon
                 for (var j = 0; j < count; j++)
                 {
                     // monitorColors should be linear
-                    colors[index] = cols[j];
+                    colors[index] = cols[j] * intensity;
                     index++;
                 }
             }
@@ -151,7 +152,7 @@ namespace Kanikama.Udon
                     if (emissiveFlags[j])
                     {
                         // HDR (linear)
-                        colors[index] = mats[j].GetColor("_EmissionColor");
+                        colors[index] = mats[j].GetColor("_EmissionColor") * intensity;
                         index++;
                     }
                 }
