@@ -35,7 +35,7 @@ namespace Kanikama.Udon
             for (var i = 0; i < count; i++)
             {
                 var weight = weightEnable ? weights[i] : 1f;
-                color += (Color)colors[i] * weight;
+                color += colors[i] * weight;
                 totalWeight += weight;
             }
             color /= totalWeight;
