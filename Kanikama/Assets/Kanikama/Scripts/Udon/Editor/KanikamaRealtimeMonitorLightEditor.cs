@@ -1,6 +1,4 @@
-﻿using Kanikama.Editor;
-using Kanikama.EditorOnly;
-using System.Linq;
+﻿using Kanikama.EditorOnly;
 using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
