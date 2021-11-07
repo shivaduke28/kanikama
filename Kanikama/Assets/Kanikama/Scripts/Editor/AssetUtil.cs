@@ -1,13 +1,18 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using System;
 using System.IO;
-using System;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor
 {
     public static class AssetUtil
     {
+        public static SceneAsset GetActiveSceneAsset()
+        {
+            var scene = SceneManager.GetActiveScene();
+            return string.IsNullOrEmpty(scene.path) ? null : AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
+        }
 
         public static bool IsValidPath(string path)
         {

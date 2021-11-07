@@ -3,13 +3,14 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 using Kanikama.Editor;
+using UdonSharp;
 
 namespace Kanikama.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaCamera))]
     public class KanikamaCameraEditor : UnityEditor.Editor
     {
-        KanikamaCamera proxy;
+        UdonSharpBehaviour proxy;
         SerializedProperty aspectRatioProperty;
         SerializedProperty partitionTypeProperty;
         SerializedProperty colorsProperty;
@@ -17,7 +18,7 @@ namespace Kanikama.Udon.Editor
         void OnEnable()
         {
             if (target == null) return;
-            proxy = (KanikamaCamera)target;
+            proxy = (UdonSharpBehaviour)target;
             aspectRatioProperty = serializedObject.FindProperty("aspectRatio");
             partitionTypeProperty = serializedObject.FindProperty("partitionType");
             colorsProperty = serializedObject.FindProperty("colors");
@@ -33,7 +34,7 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 EditorGUILayout.Space();
-                if (GUILayout.Button($"Setup with {nameof(KanikamaMonitorSetup)}"))
+                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorSetup)}"))
                 {
                     Setup();
                 }

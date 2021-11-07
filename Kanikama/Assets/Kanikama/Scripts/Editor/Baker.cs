@@ -27,12 +27,14 @@ namespace Kanikama.Editor
         readonly BakeSceneController sceneController;
         readonly BakeRequest request;
         readonly BakePath bakePath;
+        public BakedAsset BakedAsset { get; }
 
         public Baker(BakeRequest request)
         {
             this.request = request;
             sceneController = new BakeSceneController(request.SceneDescriptor);
             bakePath = new BakePath(SceneManager.GetActiveScene());
+            BakedAsset = new BakedAsset();
         }
 
         public async Task BakeAsync(CancellationToken token)
@@ -256,24 +258,30 @@ namespace Kanikama.Editor
                 var texArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.TexArrFormat, mapIndex));
                 AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"[Kanikama] Created {texArrPath}");
+                BakedAsset.kanikamaMapArrays.Add(texArr);
 
                 if (request.createRenderTexture)
                 {
-                    CreateRTAssets(mapIndex, texArr);
+                    var (mat, rt) = CreateRTAssets(mapIndex, texArr);
+                    BakedAsset.renderTextureMaterials.Add(mat);
+                    BakedAsset.renderTextures.Add(rt);
                 }
                 if (request.createCustomRenderTexture)
                 {
-                    CreateCRTAssets(mapIndex, texArr);
+                    var (mat, crt) = CreateCRTAssets(mapIndex, texArr);
+                    BakedAsset.customRenderTextureMaterials.Add(mat);
+                    BakedAsset.customRenderTextures.Add(crt);
                 }
                 if (request.isDirectionalMode)
                 {
-                    CreateDirectionalMapArray(mapIndex);
+                    var dirMapArray = CreateDirectionalMapArray(mapIndex);
+                    BakedAsset.kanikamaDirectionalMapArrays.Add(dirMapArray);
                 }
             }
             AssetDatabase.Refresh();
         }
 
-        void CreateDirectionalMapArray(int mapIndex)
+        Texture2DArray CreateDirectionalMapArray(int mapIndex)
         {
             var dirTextures = bakePath.GetKanikamaDirectionalMapPaths(mapIndex)
                 .Where(x => sceneController.ValidateTexturePath(x))
@@ -283,9 +291,10 @@ namespace Kanikama.Editor
             var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
             AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
             Debug.Log($"[Kanikama] Created {dirTexArrPath}");
+            return dirTexArr;
         }
 
-        void CreateCRTAssets(int mapIndex, Texture2DArray texture2DArray)
+        (Material, CustomRenderTexture) CreateCRTAssets(int mapIndex, Texture2DArray texture2DArray)
         {
             var shader = Shader.Find(ShaderName.CompositeCRT);
             var mat = new Material(shader);
@@ -307,9 +316,10 @@ namespace Kanikama.Editor
             };
             AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
+            return (mat, sceneMap);
         }
 
-        void CreateRTAssets(int mapIndex, Texture2DArray texture2DArray)
+        (Material material, RenderTexture renderTexture) CreateRTAssets(int mapIndex, Texture2DArray texture2DArray)
         {
             var shader = Shader.Find(ShaderName.CompositeUnlit);
             var mat = new Material(shader);
@@ -327,6 +337,7 @@ namespace Kanikama.Editor
             };
             AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
+            return (mat, sceneMap);
         }
     }
 }

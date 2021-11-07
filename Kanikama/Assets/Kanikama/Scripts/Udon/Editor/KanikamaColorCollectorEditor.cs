@@ -1,5 +1,6 @@
 ﻿using Kanikama.EditorOnly;
 using System.Linq;
+using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace Kanikama.Udon.Editor
     [CustomEditor(typeof(KanikamaColorCollector))]
     public class KanikamaColorCollectorEditor : UnityEditor.Editor
     {
-        KanikamaColorCollector proxy;
+        UdonSharpBehaviour proxy;
         SerializedProperty lightsProperty;
         SerializedProperty emissiveRenderersProperty;
         SerializedProperty kanikamaCamerasProperty;
@@ -21,7 +22,7 @@ namespace Kanikama.Udon.Editor
         void OnEnable()
         {
             if (target == null) return;
-            proxy = (KanikamaColorCollector)target;
+            proxy = (UdonSharpBehaviour)target;
             lightsProperty = serializedObject.FindProperty("lights");
             emissiveRenderersProperty = serializedObject.FindProperty("emissiveRenderers");
             kanikamaCamerasProperty = serializedObject.FindProperty("kanikamaCameras");
@@ -59,7 +60,7 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 using (new EditorGUI.DisabledGroupScope(Application.isPlaying))
                 {
-                    if (GUILayout.Button($"Setup with {nameof(KanikamaSceneDescriptor)}"))
+                    if (GUILayout.Button($"Setup by {nameof(KanikamaSceneDescriptor)}"))
                     {
                         Setup();
                     }
