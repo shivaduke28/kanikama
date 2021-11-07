@@ -11,7 +11,7 @@ namespace Kanikama.EditorOnly
         public Renderer monitorRenderer;
         [ReadOnly] public List<Renderer> gridRenderers;
 
-        public Bounds Bounds { get; private set; }
+        public Bounds Bounds { get => monitorRenderer.bounds; }
 
         Renderer gridRendererPrefab;
 
@@ -24,7 +24,6 @@ namespace Kanikama.EditorOnly
             this.gridRendererPrefab = gridRendererPrefab;
             var rotation = monitorRenderer.transform.rotation;
             monitorRenderer.transform.rotation = Quaternion.identity;
-            Bounds = monitorRenderer.bounds;
             monitorRenderer.transform.rotation = rotation;
             var children = transform.Cast<Transform>().ToArray();
             foreach (var child in children)

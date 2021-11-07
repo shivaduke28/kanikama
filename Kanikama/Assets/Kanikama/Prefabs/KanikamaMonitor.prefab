@@ -121,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7b05b93c7e3b164ea3227fd55336821, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  captureCamera: {fileID: 0}
+  captureCamera: {fileID: 8740642146226451693}
   gridRendererPrefab: {fileID: 8980632914921211949, guid: c83edb39890ec1144b83de405462cb05,
     type: 3}
   monitors:
@@ -172,7 +172,7 @@ Camera:
   m_GameObject: {fileID: 8480297041665630581}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 4
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -194,16 +194,16 @@ Camera:
   m_Depth: -2
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 33554432
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 41c95cfabfcdca241b2e6a6b952a62fe, type: 2}
   m_TargetDisplay: 0
-  m_TargetEye: 3
+  m_TargetEye: 0
   m_HDR: 1
   m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!114 &4754116350111167427
@@ -225,6 +225,7 @@ MonoBehaviour:
   SynchronizePosition: 0
   AllowCollisionOwnershipTransfer: 0
   Reliable: 0
+  _syncMethod: 2
   serializedProgramAsset: {fileID: 11400000, guid: 6507f2ba3e498174a9840b37c8b04dc1,
     type: 2}
   programSource: {fileID: 11400000, guid: 3d18317902f0f43408364b7182701b5c, type: 2}

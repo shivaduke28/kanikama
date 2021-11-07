@@ -17,7 +17,7 @@ MonoBehaviour:
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 28addd43541785942a5553970ab321b7, type: 3}
-  behaviourSyncMode: 0
+  behaviourSyncMode: 2
   behaviourIDHeapVarName: __refl_const_intnl_udonTypeID
   compileErrors: []
   hasInteractEvent: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: $v
       Entry: 7
       Data: 12|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -200,7 +200,7 @@ MonoBehaviour:
       Data: 14|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaColorSampler[], Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaCamera[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
@@ -215,10 +215,10 @@ MonoBehaviour:
       Data: UnityEngineComponentArray
     - Name: symbolOriginalName
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: symbolUniqueName
       Entry: 1
-      Data: colorSamplers
+      Data: kanikamaCameras
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -473,31 +473,13 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 33|UnityEngine.ColorUsageAttribute, UnityEngine.CoreModule
-    - Name: showAlpha
-      Entry: 5
-      Data: false
-    - Name: hdr
-      Entry: 5
-      Data: true
-    - Name: minBrightness
-      Entry: 4
-      Data: 0
-    - Name: maxBrightness
-      Entry: 4
-      Data: 8
-    - Name: minExposureValue
-      Entry: 4
-      Data: 0.125
-    - Name: maxExposureValue
-      Entry: 4
-      Data: 3
+      Data: 33|UnityEngine.SerializeField, UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: 34|UnityEngine.SerializeField, UnityEngine.CoreModule
+      Data: 34|UnityEngine.HideInInspector, UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 

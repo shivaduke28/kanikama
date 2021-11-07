@@ -33,48 +33,13 @@ namespace Kanikama.Editor
             LoadSceneAsset();
         }
 
-        public static KanikamaSettings FindOrCreateSettings(SceneAsset sceneAsset)
-        {
-            var settings = FindSettings(sceneAsset);
-
-            if (settings != null) return settings;
-
-            settings = CreateInstance<KanikamaSettings>();
-            settings.Initialize(sceneAsset, LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional);
-            var dirPath = BakePath.KanikamaAssetDirPath(sceneAsset);
-            AssetDatabase.CreateAsset(settings, Path.Combine(dirPath, "KanikamaSettings.asset"));
-            AssetDatabase.Refresh();
-            return settings;
-        }
-
-        static KanikamaSettings FindSettings(SceneAsset sceneAsset)
-        {
-            var assets = AssetDatabase.FindAssets($"t:{typeof(KanikamaSettings)}");
-            foreach (var asset in assets)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(asset);
-                var settings = AssetDatabase.LoadAssetAtPath<KanikamaSettings>(path);
-                if (settings.SceneAsset == sceneAsset) return settings;
-            }
-            return null;
-        }
-
-
         void LoadSceneAsset()
         {
-            var activeScene = SceneManager.GetActiveScene();
-            if (!string.IsNullOrEmpty(activeScene.path))
-            {
-                sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(activeScene.path);
-            }
-            else
-            {
-                sceneAsset = null;
-            }
+            sceneAsset = AssetUtil.GetActiveSceneAsset();
 
             if (sceneAsset == null) return;
 
-            settings = FindSettings(sceneAsset);
+            settings = KanikamaSettings.FindSettings(sceneAsset);
 
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor != null)
@@ -89,7 +54,7 @@ namespace Kanikama.Editor
 
         void LoadOrCreateSettings()
         {
-            settings = FindOrCreateSettings(sceneAsset);
+            settings = KanikamaSettings.FindOrCreateSettings(sceneAsset);
         }
 
         void OnGUI()
@@ -272,7 +237,7 @@ namespace Kanikama.Editor
             try
             {
                 await baker.BakeAsync(tokenSource.Token);
-
+                settings.UpdateAsset(baker.BakedAsset);
             }
             catch (TaskCanceledException)
             {

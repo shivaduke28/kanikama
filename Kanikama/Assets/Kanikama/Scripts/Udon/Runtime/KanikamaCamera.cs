@@ -3,15 +3,15 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
-    [RequireComponent(typeof(Camera))]
-    public class KanikamaColorSampler : UdonSharpBehaviour
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    public class KanikamaCamera : UdonSharpBehaviour
     {
         [SerializeField] Texture2D readingTexture;
         [SerializeField] int partitionType;
         [SerializeField] Camera camera;
         [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
-        [ColorUsage(false, true), SerializeField] Color[] colors;
+        [ColorUsage(false, true), SerializeField, HideInInspector] Color[] colors;
 
         int lightCount;
         int mipmapLevel;

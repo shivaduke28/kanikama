@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace Kanikama.Udon
 {
-    [RequireComponent(typeof(Camera))]
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaColorCollector : UdonSharpBehaviour
     {
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
-        [SerializeField] KanikamaColorSampler[] colorSamplers;
+        [SerializeField] KanikamaCamera[] kanikamaCameras;
         [SerializeField] bool isAmbientEnable;
         [ColorUsage(false, true), SerializeField] Color ambientColor;
 
         [Space]
-        [ColorUsage(false, true), SerializeField] Vector4[] colors; // linear
+        [SerializeField, HideInInspector] Vector4[] colors; // linear
 
         public Vector4[] GetColors()
         {
@@ -51,7 +51,7 @@ namespace Kanikama.Udon
             size += lightCount;
 
             // Monitor
-            monitorCount = colorSamplers == null ? 0 : colorSamplers.Length;
+            monitorCount = kanikamaCameras == null ? 0 : kanikamaCameras.Length;
             if (monitorCount > 0)
             {
                 monitorColors = new Color[monitorCount][];
@@ -60,8 +60,8 @@ namespace Kanikama.Udon
 
             for (var i = 0; i < monitorCount; i++)
             {
-                var sampler = colorSamplers[i];
-                var cols = sampler.GetColors();
+                var kanikamaCamera = kanikamaCameras[i];
+                var cols = kanikamaCamera.GetColors();
                 var colCount = cols.Length;
                 monitorColors[i] = cols;
                 monitorLightCounts[i] = colCount;

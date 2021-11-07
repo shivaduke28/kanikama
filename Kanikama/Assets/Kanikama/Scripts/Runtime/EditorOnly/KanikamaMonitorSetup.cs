@@ -16,12 +16,14 @@ namespace Kanikama.EditorOnly
         [SerializeField] KanikamaMonitor.PartitionType partitionType;
         [SerializeField] CameraDetailedSettings cameraDetailedSettings;
 
+        public Camera Camera => captureCamera;
         public List<KanikamaMonitor> Monitors => monitors;
         public KanikamaMonitor MainMonitor => monitors.FirstOrDefault();
+        public KanikamaMonitor.PartitionType PartitionType => partitionType;
 
         public void Setup()
         {
-            if (!monitors.Any()) return;
+            if (monitors.Count == 0) return;
 
             foreach (var monitor in monitors)
             {

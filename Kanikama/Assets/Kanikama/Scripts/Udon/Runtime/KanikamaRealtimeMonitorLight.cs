@@ -4,18 +4,19 @@ using UnityEngine;
 namespace Kanikama.Udon
 {
     // should be attached to KanikamaProvider GameObject.
-    public class KanikamaRealtimeSceneLight : UdonSharpBehaviour
+    [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    public class KanikamaRealtimeMonitorLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaColorCollector colorCollector;
+        [SerializeField] KanikamaCamera kanikamaCamera;
         [SerializeField] Light light;
         [SerializeField] float intensity = 1;
 
-        Vector4[] colors;
+        Color[] colors;
         int count;
 
         void OnEnable()
         {
-            colors = colorCollector.GetColors();
+            colors = kanikamaCamera.GetColors();
             count = colors.Length;
             if (count == 0)
             {
@@ -30,7 +31,7 @@ namespace Kanikama.Udon
             var color = Color.black;
             for (var i = 0; i < count; i++)
             {
-                color += (Color)colors[i];
+                color += colors[i];
             }
             color /= count;
             var max = color.maxColorComponent;

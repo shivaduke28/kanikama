@@ -17,7 +17,7 @@ MonoBehaviour:
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 866045a8a9df70d43872c601ac65bd82, type: 3}
-  behaviourSyncMode: 0
+  behaviourSyncMode: 2
   behaviourIDHeapVarName: __refl_const_intnl_udonTypeID
   compileErrors: []
   hasInteractEvent: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: monitorColorSampler
+      Data: kanikamaCamera
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaColorSampler, Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaCamera, Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
@@ -77,10 +77,10 @@ MonoBehaviour:
       Data: VRCUdonUdonBehaviour
     - Name: symbolOriginalName
       Entry: 1
-      Data: monitorColorSampler
+      Data: kanikamaCamera
     - Name: symbolUniqueName
       Entry: 1
-      Data: monitorColorSampler
+      Data: kanikamaCamera
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
