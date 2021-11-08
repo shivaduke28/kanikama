@@ -6,7 +6,7 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaMapProvider : UdonSharpBehaviour
     {
-        [SerializeField] Texture[] compsiteTextures;
+        [SerializeField] Texture[] compositeTextures;
         [SerializeField] Material[] compositeMaterials;
         [SerializeField] KanikamaColorCollector colorCollector;
         [Space]
@@ -24,7 +24,7 @@ namespace Kanikama.Udon
                 var index = renderer.lightmapIndex;
                 if (index < 0) continue;
                 renderer.GetPropertyBlock(block);
-                block.SetTexture("_Lightmap", compsiteTextures[index]);
+                block.SetTexture("_Lightmap", compositeTextures[index]);
                 renderer.SetPropertyBlock(block);
             }
 

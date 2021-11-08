@@ -238,6 +238,7 @@ namespace Kanikama.Editor
             {
                 await baker.BakeAsync(tokenSource.Token);
                 settings.UpdateAsset(baker.BakedAsset);
+                EditorUtility.SetDirty(settings);
             }
             catch (TaskCanceledException)
             {
