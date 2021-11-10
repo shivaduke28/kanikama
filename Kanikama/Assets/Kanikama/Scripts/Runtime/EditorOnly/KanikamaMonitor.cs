@@ -11,7 +11,14 @@ namespace Kanikama.EditorOnly
         public Renderer monitorRenderer;
         [ReadOnly] public List<Renderer> gridRenderers;
 
-        public Bounds Bounds { get => monitorRenderer.bounds; }
+        public Bounds GetUnrotatedBounds()
+        {
+            var rotation = monitorRenderer.transform.rotation;
+            monitorRenderer.transform.rotation = Quaternion.identity;
+            var bounds = monitorRenderer.bounds;
+            monitorRenderer.transform.rotation = rotation;
+            return bounds;
+        }
 
         Renderer gridRendererPrefab;
 
@@ -22,9 +29,7 @@ namespace Kanikama.EditorOnly
             transform.SetPositionAndRotation(t.position, t.rotation);
 
             this.gridRendererPrefab = gridRendererPrefab;
-            var rotation = monitorRenderer.transform.rotation;
-            monitorRenderer.transform.rotation = Quaternion.identity;
-            monitorRenderer.transform.rotation = rotation;
+            var bounds = GetUnrotatedBounds();
             var children = transform.Cast<Transform>().ToArray();
             foreach (var child in children)
             {
@@ -36,32 +41,32 @@ namespace Kanikama.EditorOnly
             switch (partitionType)
             {
                 case PartitionType.Grid1x1:
-                    SetupUniformGrid(1);
+                    SetupUniformGrid(bounds, 1);
                     break;
                 case PartitionType.Grid2x2:
-                    SetupUniformGrid(2);
+                    SetupUniformGrid(bounds, 2);
                     break;
                 case PartitionType.Grid3x2:
-                    SetupExpandInterior(3, 2);
+                    SetupExpandInterior(bounds, 3, 2);
                     break;
                 case PartitionType.Grid3x3:
-                    SetupExpandInterior(3, 3);
+                    SetupExpandInterior(bounds, 3, 3);
                     break;
                 case PartitionType.Grid4x3:
-                    SetupExpandInterior(4, 3, false, true);
+                    SetupExpandInterior(bounds, 4, 3, false, true);
                     break;
                 case PartitionType.Grid4x4:
-                    SetupUniformGrid(4);
+                    SetupUniformGrid(bounds, 4);
                     break;
             }
         }
 
-        void SetupUniformGrid(int count)
+        void SetupUniformGrid(Bounds bounds, int count)
         {
-            var size = Bounds.size;
+            var size = bounds.size;
             var sizeX = size.x / count;
             var sizeY = size.y / count;
-            var anchor = new Vector3(-Bounds.extents.x, -Bounds.extents.y, 0);
+            var anchor = new Vector3(-bounds.extents.x, -bounds.extents.y, 0);
 
             for (var j = 0; j < count; j++)
             {
@@ -77,13 +82,13 @@ namespace Kanikama.EditorOnly
             }
         }
 
-        void SetupExpandInterior(int countX, int countY, bool expandX = true, bool expandY = true)
+        void SetupExpandInterior(Bounds bounds, int countX, int countY, bool expandX = true, bool expandY = true)
         {
-            var size = Bounds.size;
+            var size = bounds.size;
 
             var sizeX = size.x / (countX + (countX % 2));
             var sizeY = size.y / (countY + (countY % 2));
-            var anchor = new Vector3(-Bounds.extents.x, -Bounds.extents.y, 0);
+            var anchor = new Vector3(-bounds.extents.x, -bounds.extents.y, 0);
 
             var position = Vector3.zero;
             for (var j = 0; j < countY; j++)
