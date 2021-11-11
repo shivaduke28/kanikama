@@ -40,7 +40,7 @@ namespace Kanikama.EditorOnly
             cameraTrans.SetPositionAndRotation(rendererTrans.position - rendererTrans.forward * cameraDetailedSettings.distance, rendererTrans.rotation);
             captureCamera.nearClipPlane = cameraDetailedSettings.near;
             captureCamera.farClipPlane = cameraDetailedSettings.far;
-            var bounds = mainMonitor.Bounds;
+            var bounds = mainMonitor.GetUnrotatedBounds();
             captureCamera.orthographicSize = bounds.extents.y;
         }
 

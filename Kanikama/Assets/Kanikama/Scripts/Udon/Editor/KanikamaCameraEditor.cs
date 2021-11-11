@@ -75,7 +75,7 @@ namespace Kanikama.Udon.Editor
                 Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorSetup)} object has no monitors.");
                 return;
             }
-            var size = mainMonitor.Bounds.size;
+            var size = mainMonitor.GetUnrotatedBounds().size;
 
             partitionTypeProperty.intValue = partitionType;
             aspectRatioProperty.floatValue = size.x / size.y;
