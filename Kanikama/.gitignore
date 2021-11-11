@@ -106,3 +106,12 @@ Assets/Udon.meta
 # Temp folder
 /Assets/Temp/
 /Assets/Temp.meta
+
+# Bakery
+/Assets/Bakery/
+/Assets/Bakery.meta
+/Assets/Editor/x64/Bakery/
+/Assets/Editor/x64/Bakery.meta
+/Assets/Settings/BakeryProjectSettings.asset
+/Assets/Settings/BakeryProjectSettings.asset.meta
+/bakery_times.log
