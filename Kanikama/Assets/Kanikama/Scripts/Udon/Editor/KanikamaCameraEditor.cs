@@ -1,4 +1,4 @@
-﻿using Kanikama.EditorOnly;
+﻿using Kanikama;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
@@ -34,7 +34,7 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 EditorGUILayout.Space();
-                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorSetup)}"))
+                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorControl)}"))
                 {
                     Setup();
                 }
@@ -56,23 +56,17 @@ namespace Kanikama.Udon.Editor
 
         void Setup()
         {
-            var parent = proxy.transform.parent;
-            if (parent == null)
+            var monitorControl = proxy.GetComponent<KanikamaMonitorControl>();
+            if (monitorControl == null)
             {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaCamera)} and {nameof(KanikamaMonitorSetup)} objects should have a common parent.");
+                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorControl)} object is not found.");
                 return;
             }
-            var setup = parent.GetComponentInChildren<KanikamaMonitorSetup>();
-            if (setup == null)
-            {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaCamera)} and {nameof(KanikamaMonitorSetup)} objects should have a common parent.");
-                return;
-            }
-            var partitionType = (int)setup.PartitionType;
-            var mainMonitor = setup.MainMonitor;
+            var partitionType = (int)monitorControl.PartitionType;
+            var mainMonitor = monitorControl.MainMonitor;
             if (mainMonitor == null)
             {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorSetup)} object has no monitors.");
+                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorControl)} object has no main monitor.");
                 return;
             }
             var size = mainMonitor.GetUnrotatedBounds().size;

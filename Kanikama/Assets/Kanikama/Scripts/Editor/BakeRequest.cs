@@ -1,5 +1,4 @@
-﻿using Kanikama.EditorOnly;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -11,9 +10,8 @@ namespace Kanikama.Editor
         public KanikamaSceneDescriptor SceneDescriptor { get; }
         public bool isBakeAll = true;
 
-        public List<bool> lightRequests;
-        public List<bool> rendererRequests;
-        public List<bool> monitorRequests;
+        public List<bool> lightSourceFrags;
+        public List<bool> lightSourceGroupFrags;
 
         public bool isBakeAmbient = true;
         public bool isGenerateAssets = true;
@@ -22,19 +20,16 @@ namespace Kanikama.Editor
         public bool createRenderTexture;
         public bool createCustomRenderTexture;
 
-        public bool IsLightRequested(int index) => isBakeAll || lightRequests[index];
-        public bool IsRendererRequested(int index) => isBakeAll || rendererRequests[index];
-        public bool IsMonitorRequested(int index) => isBakeAll || monitorRequests[index];
-        public bool IsBakeAmbient() => isBakeAll || isBakeAmbient;
+        public bool IsBakeLightSource(int index) => isBakeAll || lightSourceFrags[index];
+        public bool IsBakeLightSourceGroup(int index) => isBakeAll || lightSourceGroupFrags[index];
+        //public bool IsBakeAmbient() => isBakeAll || isBakeAmbient;
         public bool IsBakeWithouKanikama() => isBakeAll || isBakeWithouKanikama;
 
         public BakeRequest(KanikamaSceneDescriptor sceneDescriptor)
         {
             SceneDescriptor = sceneDescriptor;
-            lightRequests = Enumerable.Repeat(true, sceneDescriptor.Lights.Count).ToList();
-            rendererRequests = Enumerable.Repeat(true, sceneDescriptor.EmissiveRenderers.Count).ToList();
-            monitorRequests = Enumerable.Repeat(true, sceneDescriptor.MonitorSetups.Count).ToList();
-            isBakeAmbient = sceneDescriptor.IsAmbientEnable;
+            lightSourceFrags = Enumerable.Repeat(true, sceneDescriptor.GetLightSources().Count).ToList();
+            lightSourceGroupFrags = Enumerable.Repeat(true, sceneDescriptor.GetLightSourceGroups().Count).ToList();
         }
     }
 }

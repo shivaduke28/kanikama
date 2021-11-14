@@ -13,26 +13,28 @@ namespace Kanikama.Editor
         public const string ExportDirFormat = "{0}_Kanikama";
         public const string TmpDirName = "tmp";
 
+        // Kanikama
         public const string TexArrFormat = "KanikamaTexArray_{0}.asset";
         public const string DirTexArrFormat = "KanikamaDirTexArray_{0}.asset";
         public const string CustomRenderTextureMaterialFormat = "KanikamaCRTComposite_{0}.mat";
         public const string RenderTextureMaterialFormat = "KanikamaRTComposite_{0}.mat";
         public const string CustomRenderTextureFormat = "KanikamaCRT_{0}.asset";
         public const string RenderTextureFormat = "KanikamaRT_{0}.renderTexture";
+        public static readonly Regex KanikamaAssetRegex = new Regex("KanikamaTexArray_[0-9]+.asset|KanikamaComposite_[0-9]+.mat|KanikamaMap_[0-9]+.asset");
 
-        public static string AmbientFormat() => $"A_{{0}}.exr";
-        public static string LightFormat(int lightIndex) => $"L_{{0}}_{lightIndex}.exr";
-        public static string MonitorFormat(int monitorIndex, int lightIndex) => $"M_{{0}}_{monitorIndex}_{lightIndex}.exr";
-        public static string RendererFormat(int rendererIndex, int materialIndex) => $"R_{{0}}_{rendererIndex}_{materialIndex}.exr";
-
-        public const string DirectionalPrefix = "Dir-";
-
+        // Unity
         public static readonly Regex UnityLightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
         public static readonly Regex UnityDirectionalLightMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
-        public static readonly Regex TempTextureRegex = new Regex($"^[A-Z]_[0-9]|^{DirectionalPrefix}[A-Z]_[0-9]");
-        public static Regex KanikamaRegex(int lightmapIndex) => new Regex($"^[A-Z]_{lightmapIndex}");
-        public static Regex KanikamaDirectionalRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]_{lightmapIndex}");
-        public static readonly Regex KanikamaAssetRegex = new Regex("KanikamaTexArray_[0-9]+.asset|KanikamaComposite_[0-9]+.mat|KanikamaMap_[0-9]+.asset");
+
+
+        // Temp
+        public static string LightSourceFormat(int sourceIndex) => $"L_{{0}}_{sourceIndex}.exr";
+        public static string LightSourceGroupFormat(int groupIndex, int sourceIndex) => $"LG_{{0}}_{groupIndex}_{sourceIndex}.exr";
+        public const string DirectionalPrefix = "Dir-";
+        public static Regex TempLightmapRegex(int lightmapIndex) => new Regex($"^[A-Z]+_{lightmapIndex}");
+        public static Regex TempDirectionalMapRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]_{lightmapIndex}");
+
+
         public string UnityLightmapDirPath { get; }
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
@@ -45,7 +47,6 @@ namespace Kanikama.Editor
             AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
             return Path.Combine(sceneDirPath, exportDirName);
         }
-
 
         public BakePath(Scene scene)
         {
@@ -75,19 +76,9 @@ namespace Kanikama.Editor
                 .Where(x => UnityDirectionalLightMapRegex.IsMatch(x)).ToList();
         }
 
-        public List<TempTexturePath> GetAllTempTexturePaths()
+        public List<TempTexturePath> GetTempLightmapPaths(int lightmapIndex)
         {
-            return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
-                .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
-                .Where(x => TempTextureRegex.IsMatch(Path.GetFileNameWithoutExtension(x)))
-                .Select(x => new TempTexturePath(x))
-                .ToList();
-        }
-
-        public List<TempTexturePath> GetKanikamaMapPaths(int lightmapIndex)
-        {
-            var regex = KanikamaRegex(lightmapIndex);
+            var regex = TempLightmapRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
@@ -96,9 +87,9 @@ namespace Kanikama.Editor
                 .ToList();
         }
 
-        public List<TempTexturePath> GetKanikamaDirectionalMapPaths(int lightmapIndex)
+        public List<TempTexturePath> GetTempDirctionalMapPaths(int lightmapIndex)
         {
-            var regex = KanikamaDirectionalRegex(lightmapIndex);
+            var regex = TempDirectionalMapRegex(lightmapIndex);
             return AssetDatabase.FindAssets("t:Texture", new string[1] { TmpDirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => Path.GetDirectoryName(x) == TmpDirPath)
@@ -119,7 +110,7 @@ namespace Kanikama.Editor
 
         public class TempTexturePath
         {
-            public BakeTargetType Type { get; }
+            public BakeTargetType Type;
             public int LightmapIndex { get; }
             public int ObjectIndex { get; }
             public int SubIndex { get; }
@@ -143,20 +134,11 @@ namespace Kanikama.Editor
                 LightmapIndex = int.Parse(list[1]);
                 switch (typeText)
                 {
-                    case "A":
-                        Type = BakeTargetType.Ambient;
-                        break;
                     case "L":
-                        Type = BakeTargetType.Light;
-                        ObjectIndex = int.Parse(list[2]);
+                        Type = BakeTargetType.LightSource;
                         break;
-                    case "M":
-                        Type = BakeTargetType.Moitor;
-                        ObjectIndex = int.Parse(list[2]);
-                        SubIndex = int.Parse(list[3]);
-                        break;
-                    case "R":
-                        Type = BakeTargetType.Renderer;
+                    case "LG":
+                        Type = BakeTargetType.LightSourceGroup;
                         ObjectIndex = int.Parse(list[2]);
                         SubIndex = int.Parse(list[3]);
                         break;
@@ -181,10 +163,8 @@ namespace Kanikama.Editor
 
         public enum BakeTargetType
         {
-            Ambient = 1,
-            Light = 2,
-            Moitor = 3,
-            Renderer = 4,
+            LightSource = 1,
+            LightSourceGroup = 2,
         }
     }
 }

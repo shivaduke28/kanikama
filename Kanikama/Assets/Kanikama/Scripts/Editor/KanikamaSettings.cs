@@ -1,6 +1,5 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using Kanikama.EditorOnly;
 using System.Collections.Generic;
 using System.IO;
 
@@ -9,7 +8,7 @@ namespace Kanikama.Editor
     [CreateAssetMenu(menuName = "Kanikama/Settings", fileName = "KanikamaSettings")]
     public class KanikamaSettings : ScriptableObject
     {
-        [ReadOnly] [SerializeField] private SceneAsset sceneAsset;
+        [SerializeField] private SceneAsset sceneAsset;
         public bool directionalMode;
         public bool createRenderTexture;
         public bool createCustomRenderTexture;

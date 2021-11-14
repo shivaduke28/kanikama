@@ -1,5 +1,4 @@
-﻿using Kanikama.EditorOnly;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -10,26 +9,17 @@ namespace Kanikama.Editor
     public class BakeSceneController : IDisposable
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
-
-        public List<KanikamaLight> KanikamaLights { get; } = new List<KanikamaLight>();
-        public List<KanikamaEmissiveRenderer> KanikamaEmissiveRenderers { get; } = new List<KanikamaEmissiveRenderer>();
-        public List<KanikamaMonitorData> KanikamaMonitors { get; } = new List<KanikamaMonitorData>();
-        public bool IsKanikamaAmbientEnable => sceneDescriptor.IsAmbientEnable;
-
-
+        public IReadOnlyList<IKanikamaLightSource> LightSources { get; private set; }
+        public IReadOnlyList<IKanikamaLightSourceGroup> LightSourceGroups { get; private set; }
         readonly List<Light> nonKanikamaLights = new List<Light>();
         readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
         readonly List<ReflectionProbe> reflectionProbes = new List<ReflectionProbe>();
         readonly List<LightProbeGroup> lightProbeGroups = new List<LightProbeGroup>();
 
-        float ambientIntensity;
-        Color ambientLight;
-        Color ambientSkyColor;
-        Color ambientGroundColor;
-        Color ambientEquatorColor;
         Material dummyMaterial;
         LightmapsMode lightmapsMode;
-
+        bool isKanikamaAmbientEnable;
+        KanikamaAmbientLight tempAmbientLight;
 
         public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -38,8 +28,18 @@ namespace Kanikama.Editor
 
         public void Initialize()
         {
-            // kanikama lights
-            KanikamaLights.AddRange(sceneDescriptor.Lights.Select(x => new KanikamaLight(x)));
+            LightSources = sceneDescriptor.GetLightSources();
+            LightSourceGroups = sceneDescriptor.GetLightSourceGroups();
+            foreach (var group in LightSourceGroups)
+            {
+                group.OnBakeSceneStart();
+            }
+
+            isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);
+            if (!isKanikamaAmbientEnable)
+            {
+                tempAmbientLight = new GameObject("TempAmbientLight").AddComponent<KanikamaAmbientLight>();
+            }
 
             // non kanikama lights
             var allLights = UnityEngine.Object.FindObjectsOfType<Light>();
@@ -47,36 +47,29 @@ namespace Kanikama.Editor
             {
                 if (light.enabled &&
                     light.lightmapBakeType != LightmapBakeType.Realtime &&
-                    !sceneDescriptor.Lights.Contains(light))
+                    !IsKanikama(light))
                 {
                     nonKanikamaLights.Add(light);
                 }
             }
 
-            // kanikama emissive renderers
-            KanikamaEmissiveRenderers.AddRange(sceneDescriptor.EmissiveRenderers.Select(x => new KanikamaEmissiveRenderer(x)));
-
-            if (dummyMaterial is null)
+            if (dummyMaterial == null)
             {
                 dummyMaterial = new Material(Shader.Find(Baker.ShaderName.Dummy));
             }
-
-            // kanikama monitors
-            KanikamaMonitors.AddRange(sceneDescriptor.MonitorSetups.Select(x => new KanikamaMonitorData(x)));
 
             // non kanikama emissive renderers
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
-                if (sceneDescriptor.EmissiveRenderers.Contains(renderer)) continue;
-                if (sceneDescriptor.MonitorSetups.Any(x => x.Contains(renderer))) continue;
+                if (IsKanikama(renderer)) continue;
 
                 var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
                 if (flag.HasFlag(StaticEditorFlags.ContributeGI))
                 {
                     var sharedMaterials = renderer.sharedMaterials;
 
-                    if (sharedMaterials.Any(x => !(x is null) && x.IsKeywordEnabled(KanikamaEmissiveMaterial.ShaderKeywordEmission)))
+                    if (sharedMaterials.Any(x => !(x is null) && KanikamaLightMaterial.IsTarget(x)))
                     {
                         nonKanikamaMaterialMaps[renderer.gameObject] = sharedMaterials;
                         renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
@@ -89,38 +82,28 @@ namespace Kanikama.Editor
             // light probes
             lightProbeGroups.AddRange(UnityEngine.Object.FindObjectsOfType<LightProbeGroup>().Where(x => x.gameObject.activeInHierarchy && x.enabled));
 
-            // ambient
-            ambientIntensity = RenderSettings.ambientIntensity;
-            ambientLight = RenderSettings.ambientLight;
-            ambientSkyColor = RenderSettings.ambientSkyColor;
-            ambientEquatorColor = RenderSettings.ambientEquatorColor;
-            ambientGroundColor = RenderSettings.ambientGroundColor;
-
             // directional mode
             lightmapsMode = LightmapEditorSettings.lightmapsMode;
         }
 
         public void TurnOff()
         {
-            TurnOffAmbient();
             foreach (var light in nonKanikamaLights)
             {
                 light.enabled = false;
             }
 
-            foreach (var light in KanikamaLights)
+            foreach (var lightSource in LightSources)
             {
-                light.TurnOff();
+                lightSource.TurnOff();
             }
 
-            foreach (var renderer in KanikamaEmissiveRenderers)
+            foreach (var group in LightSourceGroups)
             {
-                renderer.TurnOff();
-            }
-
-            foreach (var monitor in KanikamaMonitors)
-            {
-                monitor.TurnOff();
+                foreach (var source in group.GetLightSources())
+                {
+                    source.TurnOff();
+                }
             }
 
             foreach (var probe in reflectionProbes)
@@ -132,33 +115,17 @@ namespace Kanikama.Editor
             {
                 probe.enabled = false;
             }
+
+            if (!isKanikamaAmbientEnable)
+            {
+                tempAmbientLight.TurnOff();
+            }
         }
 
-        public void OnAmbientBake()
+        bool IsKanikama(object obj)
         {
-            RenderSettings.ambientIntensity = 1;
-            RenderSettings.ambientLight = ambientLight;
-            RenderSettings.ambientSkyColor = ambientSkyColor;
-            RenderSettings.ambientEquatorColor = ambientEquatorColor;
-            RenderSettings.ambientGroundColor = ambientGroundColor;
-        }
-
-        public void TurnOffAmbient()
-        {
-            RenderSettings.ambientIntensity = 0f;
-            RenderSettings.ambientLight = Color.black;
-            RenderSettings.ambientSkyColor = Color.black;
-            RenderSettings.ambientEquatorColor = Color.black;
-            RenderSettings.ambientGroundColor = Color.black;
-        }
-
-        void RollbackAmbient()
-        {
-            RenderSettings.ambientIntensity = ambientIntensity;
-            RenderSettings.ambientLight = ambientLight;
-            RenderSettings.ambientSkyColor = ambientSkyColor;
-            RenderSettings.ambientEquatorColor = ambientEquatorColor;
-            RenderSettings.ambientGroundColor = ambientGroundColor;
+            return LightSources.Any(x => x.Contains(obj)) ||
+                LightSourceGroups.Any(x => x.Contains(obj) || x.GetLightSources().Any(y => y.Contains(obj)));
         }
 
         public void SetLightmapSettings(bool isDirectional)
@@ -182,9 +149,9 @@ namespace Kanikama.Editor
 
         public void RollbackNonKanikama()
         {
-            if (!IsKanikamaAmbientEnable)
+            if (!isKanikamaAmbientEnable)
             {
-                RollbackAmbient();
+                tempAmbientLight.Rollback();
             }
             foreach (var light in nonKanikamaLights)
             {
@@ -216,24 +183,18 @@ namespace Kanikama.Editor
 
         public void RollbackKanikama()
         {
-            if (IsKanikamaAmbientEnable)
+            foreach (var source in LightSources)
             {
-                RollbackAmbient();
+                source.Rollback();
             }
 
-            foreach (var lightData in KanikamaLights)
+            foreach (var group in LightSourceGroups)
             {
-                lightData.RollBack();
-            }
-
-            foreach (var monitor in KanikamaMonitors)
-            {
-                monitor.RollBack();
-            }
-
-            foreach (var rendererData in KanikamaEmissiveRenderers)
-            {
-                rendererData.RollBack();
+                foreach (var source in group.GetLightSources())
+                {
+                    source.Rollback();
+                }
+                group.Rollback();
             }
         }
 
@@ -241,18 +202,13 @@ namespace Kanikama.Editor
         {
             switch (pathData.Type)
             {
-                case BakePath.BakeTargetType.Ambient:
-                    return sceneDescriptor.IsAmbientEnable;
-                case BakePath.BakeTargetType.Light:
-                    return pathData.ObjectIndex < sceneDescriptor.Lights.Count;
-                case BakePath.BakeTargetType.Moitor:
-                    if (pathData.ObjectIndex >= sceneDescriptor.MonitorSetups.Count) return false;
-                    var setUp = sceneDescriptor.MonitorSetups[pathData.ObjectIndex];
-                    return pathData.SubIndex < setUp.MainMonitor.gridRenderers.Count;
-                case BakePath.BakeTargetType.Renderer:
-                    if (pathData.ObjectIndex >= sceneDescriptor.EmissiveRenderers.Count) return false;
-                    var renderer = KanikamaEmissiveRenderers[pathData.ObjectIndex];
-                    return pathData.SubIndex < renderer.EmissiveMaterials.Count;
+                case BakePath.BakeTargetType.LightSource:
+                    return pathData.ObjectIndex < sceneDescriptor.GetLightSources().Count;
+                case BakePath.BakeTargetType.LightSourceGroup:
+                    var sourceGroups = sceneDescriptor.GetLightSourceGroups();
+                    if (pathData.ObjectIndex >= sourceGroups.Count) return false;
+                    var group = sourceGroups[pathData.ObjectIndex];
+                    return pathData.SubIndex < group.GetLightSources().Count;
                 default:
                     return false;
             }
@@ -263,6 +219,10 @@ namespace Kanikama.Editor
             if (dummyMaterial != null)
             {
                 UnityEngine.Object.DestroyImmediate(dummyMaterial);
+            }
+            if (tempAmbientLight != null)
+            {
+                UnityEngine.Object.DestroyImmediate(tempAmbientLight.gameObject);
             }
         }
     }

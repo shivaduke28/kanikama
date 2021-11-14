@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,10 +47,8 @@ namespace Kanikama.Editor
                 sceneController.Initialize();
                 sceneController.TurnOff();
                 sceneController.SetLightmapSettings(request.isDirectionalMode);
-                await BakeLightsAsync(token);
-                await BakeEmissiveRenderersAsync(token);
-                await BakeMonitorsAsync(token);
-                await BakeAmbientAsync(token);
+                await BakeLightSourcesAsync(token);
+                await BakeLightSourceGroupsAsync(token);
                 await BakeWithoutKanikamaAsync(token);
                 CreateKanikamaAssets();
 
@@ -67,92 +66,55 @@ namespace Kanikama.Editor
             }
         }
 
-        async Task BakeLightsAsync(CancellationToken token)
+        async Task BakeLightSourcesAsync(CancellationToken token)
         {
-            for (var i = 0; i < sceneController.KanikamaLights.Count; i++)
+            for (var i = 0; i < sceneController.LightSources.Count; i++)
             {
-                if (!request.IsLightRequested(i)) continue;
-                await BakeLightAsync(i, token);
+                if (!request.IsBakeLightSource(i)) continue;
+                await BakeLightSourceAsync(i, token);
             }
         }
-
-        async Task BakeLightAsync(int index, CancellationToken token)
+        async Task BakeLightSourceAsync(int index, CancellationToken token)
         {
-            var light = sceneController.KanikamaLights[index];
-            Debug.Log($"[Kanikama] Baking Light {light.Name}");
-            light.OnBake();
+            var source = sceneController.LightSources[index];
+            var name = GetName(source);
+            Debug.Log($"[Kanikama] Baking LightSource: {name}");
+            source.OnBake();
             Lightmapping.Clear();
             await BakeSceneGIAsync(token);
-            light.TurnOff();
-            MoveBakedLightmaps(BakePath.LightFormat(index));
+            source.TurnOff();
+            MoveBakedLightmaps(BakePath.LightSourceFormat(index));
         }
 
-        async Task BakeEmissiveRenderersAsync(CancellationToken token)
+        async Task BakeLightSourceGroupsAsync(CancellationToken token)
         {
-            for (var i = 0; i < sceneController.KanikamaEmissiveRenderers.Count; i++)
+            for (var i = 0; i < sceneController.LightSourceGroups.Count; i++)
             {
-                if (!request.IsRendererRequested(i)) continue;
-                await BakeEmissiveRendererAsync(i, token);
+                if (!request.IsBakeLightSourceGroup(i)) continue;
+                await BakeLightSourceGroupAsync(i, token);
             }
         }
 
-        async Task BakeEmissiveRendererAsync(int rendererIndex, CancellationToken token)
+        async Task BakeLightSourceGroupAsync(int index, CancellationToken token)
         {
-            var renderer = sceneController.KanikamaEmissiveRenderers[rendererIndex];
-            Debug.Log($"[Kanikama] Baking Renderer {renderer.Name}");
+            var group = sceneController.LightSourceGroups[index];
+            var name = GetName(group);
 
-            var matCount = renderer.EmissiveMaterials.Count;
-            for (var i = 0; i < matCount; i++)
+            Debug.Log($"[Kanikama] Baking LightSourceGroup: {name}");
+
+            var sources = group.GetLightSources();
+
+            var sourceCount = sources.Count;
+            for (var i = 0; i < sourceCount; i++)
             {
-                var material = renderer.EmissiveMaterials[i];
-                Debug.Log($"[Kanikama] - Baking Renderer {renderer.Name}'s material {material.Name}");
-                material.OnBake();
+                var source = sources[i];
+                Debug.Log($"[Kanikama] - Baking {i}th LightSource {GetName(source)}");
+                source.OnBake();
                 Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
-                material.TurnOff();
-                MoveBakedLightmaps(BakePath.RendererFormat(rendererIndex, i));
+                source.TurnOff();
+                MoveBakedLightmaps(BakePath.LightSourceGroupFormat(index, i));
             }
-        }
-
-        async Task BakeMonitorAsync(int monitorIndex, CancellationToken token)
-        {
-            var monitor = sceneController.KanikamaMonitors[monitorIndex];
-            monitor.OnBake();
-
-            Debug.Log($"[Kanikama] Baking Monitor {monitor.Name}");
-            var gridCount = monitor.MaterialGroups.Count;
-            for (var i = 0; i < gridCount; i++)
-            {
-                Debug.Log($"[Kanikama] - Baking Monitor {monitor.Name}'s {i}-th Light");
-                var material = monitor.MaterialGroups[i];
-                material.OnBake();
-                Lightmapping.Clear();
-                await BakeSceneGIAsync(token);
-                material.TurnOff();
-                MoveBakedLightmaps(BakePath.MonitorFormat(monitorIndex, i));
-            }
-        }
-
-        async Task BakeMonitorsAsync(CancellationToken token)
-        {
-            for (var i = 0; i < sceneController.KanikamaMonitors.Count; i++)
-            {
-                if (!request.IsMonitorRequested(i)) continue;
-                await BakeMonitorAsync(i, token);
-            }
-        }
-
-        async Task BakeAmbientAsync(CancellationToken token)
-        {
-            if (!sceneController.IsKanikamaAmbientEnable) return;
-            if (!request.IsBakeAmbient()) return;
-
-            Debug.Log($"[Kanikama] Baking Ambient...");
-            sceneController.OnAmbientBake();
-            Lightmapping.Clear();
-            await BakeSceneGIAsync(token);
-            sceneController.TurnOffAmbient();
-            MoveBakedLightmaps(BakePath.AmbientFormat());
         }
 
         async Task BakeWithoutKanikamaAsync(CancellationToken token)
@@ -249,7 +211,7 @@ namespace Kanikama.Editor
             var lightMapCount = bakePath.GetUnityLightmapPaths().Count;
             for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
             {
-                var textures = bakePath.GetKanikamaMapPaths(mapIndex)
+                var textures = bakePath.GetTempLightmapPaths(mapIndex)
                     .Where(path => sceneController.ValidateTexturePath(path))
                     .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                     .ToList();
@@ -283,7 +245,7 @@ namespace Kanikama.Editor
 
         Texture2DArray CreateDirectionalMapArray(int mapIndex)
         {
-            var dirTextures = bakePath.GetKanikamaDirectionalMapPaths(mapIndex)
+            var dirTextures = bakePath.GetTempDirctionalMapPaths(mapIndex)
                 .Where(x => sceneController.ValidateTexturePath(x))
                 .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                 .ToList();
@@ -338,6 +300,15 @@ namespace Kanikama.Editor
             AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
             return (mat, sceneMap);
+        }
+
+        string GetName(IKanikamaLightSource source)
+        {
+            return source is Object ob ? ob.name : source.GetType().Name;
+        }
+        string GetName(IKanikamaLightSourceGroup source)
+        {
+            return source is Object ob ? ob.name : source.GetType().Name;
         }
     }
 }

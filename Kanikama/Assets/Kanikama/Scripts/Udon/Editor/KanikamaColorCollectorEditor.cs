@@ -1,5 +1,4 @@
-﻿using Kanikama.EditorOnly;
-using System.Linq;
+﻿using System.Linq;
 using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
@@ -85,25 +84,25 @@ namespace Kanikama.Udon.Editor
                 return;
             }
 
-            var lights = sceneDescriptor.Lights;
+            var lights = sceneDescriptor.KanikamaLights;
             lightsProperty.ClearArray();
             lightsProperty.arraySize = lights.Count;
             for (var i = 0; i < lights.Count; i++)
             {
                 var prop = lightsProperty.GetArrayElementAtIndex(i);
-                prop.objectReferenceValue = lights[i];
+                prop.objectReferenceValue = lights[i].GetSource();
             }
 
-            var emissiveRenderers = sceneDescriptor.EmissiveRenderers;
+            var rendererGroups = sceneDescriptor.KanikamaRendererGroups;
             emissiveRenderersProperty.ClearArray();
-            emissiveRenderersProperty.arraySize = emissiveRenderers.Count;
-            for (var i = 0; i < emissiveRenderers.Count; i++)
+            emissiveRenderersProperty.arraySize = rendererGroups.Count;
+            for (var i = 0; i < rendererGroups.Count; i++)
             {
                 var prop = emissiveRenderersProperty.GetArrayElementAtIndex(i);
-                prop.objectReferenceValue = emissiveRenderers[i];
+                prop.objectReferenceValue = rendererGroups[i].GetSource();
             }
 
-            var kanikamaCameras = sceneDescriptor.MonitorSetups.Select(x => x.Camera.GetComponent<KanikamaCamera>()).ToArray();
+            var kanikamaCameras = sceneDescriptor.KanikamaMonitorControls.Select(x => x.Camera.GetComponent<KanikamaCamera>()).ToArray();
             kanikamaCamerasProperty.ClearArray();
             kanikamaCamerasProperty.arraySize = kanikamaCameras.Length;
             for (var i = 0; i < kanikamaCameras.Length; i++)
@@ -112,7 +111,7 @@ namespace Kanikama.Udon.Editor
                 prop.objectReferenceValue = kanikamaCameras[i];
             }
 
-            isAmbientEnableProperty.boolValue = sceneDescriptor.IsAmbientEnable;
+            isAmbientEnableProperty.boolValue = sceneDescriptor.KanikamaAmbientLight != null;
 
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(proxy);

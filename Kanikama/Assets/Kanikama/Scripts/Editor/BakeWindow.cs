@@ -1,4 +1,4 @@
-﻿using Kanikama.EditorOnly;
+﻿using Kanikama;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -169,50 +169,32 @@ namespace Kanikama.Editor
             {
                 using (new EditorGUI.IndentLevelScope(EditorGUI.indentLevel++))
                 {
-                    var indentLevel = EditorGUI.indentLevel + 1;
-                    EditorGUILayout.LabelField("Lights");
+                    var indentLevel = EditorGUI.indentLevel;
+                    EditorGUILayout.LabelField("Light Source");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var lightRequests = bakeRequest.lightRequests;
-                        var lights = bakeRequest.SceneDescriptor.Lights;
-                        var lightCount = Mathf.Min(lightRequests.Count, lights.Count);
+                        var sourceFrags = bakeRequest.lightSourceFrags;
+                        var source = bakeRequest.SceneDescriptor.GetLightSources();
+                        var lightCount = Mathf.Min(sourceFrags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
                         {
-                            lightRequests[i] = EditorGUILayout.Toggle(lights[i].name, lightRequests[i]);
+                            sourceFrags[i] = EditorGUILayout.Toggle(source[i].GetType().Name, sourceFrags[i]);
                         }
                     }
 
-                    EditorGUILayout.LabelField("Emissive Renderers");
+                    EditorGUILayout.LabelField("Light Source Group");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var rendererRequests = bakeRequest.rendererRequests;
-                        var renderers = bakeRequest.SceneDescriptor.EmissiveRenderers;
-                        var rendererCount = Mathf.Min(rendererRequests.Count, renderers.Count);
-                        for (var i = 0; i < rendererCount; i++)
+                        var groupFrags = bakeRequest.lightSourceGroupFrags;
+                        var group = bakeRequest.SceneDescriptor.GetLightSourceGroups();
+                        var groupCount = Mathf.Min(groupFrags.Count, group.Count);
+                        for (var i = 0; i < groupCount; i++)
                         {
-                            rendererRequests[i] = EditorGUILayout.Toggle(renderers[i].name, rendererRequests[i]);
+                            groupFrags[i] = EditorGUILayout.Toggle(group[i].GetType().Name, groupFrags[i]);
                         }
                     }
-                    EditorGUILayout.LabelField("Monitors");
-                    using (new EditorGUI.IndentLevelScope(indentLevel))
-                    {
-                        var monitorRequests = bakeRequest.monitorRequests;
-                        var monitors = bakeRequest.SceneDescriptor.MonitorSetups;
-                        var monitorCount = Mathf.Min(monitorRequests.Count, monitors.Count);
-                        for (var i = 0; i < monitorCount; i++)
-                        {
-                            if (monitors[i].MainMonitor != null)
-                            {
-                                monitorRequests[i] = EditorGUILayout.Toggle(monitors[i].MainMonitor?.name, monitorRequests[i]);
-                            }
-                        }
-                    }
-                    using (new EditorGUI.DisabledScope(!bakeRequest.SceneDescriptor.IsAmbientEnable))
-                    {
-                        bakeRequest.isBakeAmbient = EditorGUILayout.Toggle("Ambient", bakeRequest.isBakeAmbient);
-                    }
+
                     bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama GI", bakeRequest.isBakeWithouKanikama);
-
                     bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Create Assets", bakeRequest.isGenerateAssets);
                 }
             }

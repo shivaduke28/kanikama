@@ -1,11 +1,9 @@
 {
-    "name": "Kanikama.Editor",
+    "name": "Kanikama.Runtime",
     "references": [
-        "Kanikama.Runtime"
+        "GUID:99835874ee819da44948776e0df4ff1d"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
