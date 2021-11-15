@@ -173,24 +173,24 @@ namespace Kanikama.Editor
                     EditorGUILayout.LabelField("Light Source");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var sourceFrags = bakeRequest.lightSourceFrags;
+                        var sourceFlags = bakeRequest.lightSourceFlags;
                         var source = bakeRequest.SceneDescriptor.GetLightSources();
-                        var lightCount = Mathf.Min(sourceFrags.Count, source.Count);
+                        var lightCount = Mathf.Min(sourceFlags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
                         {
-                            sourceFrags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(source[i]), sourceFrags[i]);
+                            sourceFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(source[i]), sourceFlags[i]);
                         }
                     }
 
                     EditorGUILayout.LabelField("Light Source Group");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var groupFrags = bakeRequest.lightSourceGroupFrags;
+                        var groupFlags = bakeRequest.lightSourceGroupFlags;
                         var group = bakeRequest.SceneDescriptor.GetLightSourceGroups();
-                        var groupCount = Mathf.Min(groupFrags.Count, group.Count);
+                        var groupCount = Mathf.Min(groupFlags.Count, group.Count);
                         for (var i = 0; i < groupCount; i++)
                         {
-                            groupFrags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(group[i]), groupFrags[i]);
+                            groupFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(group[i]), groupFlags[i]);
                         }
                     }
 
