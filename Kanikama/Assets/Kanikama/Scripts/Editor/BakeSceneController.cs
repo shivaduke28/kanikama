@@ -203,11 +203,10 @@ namespace Kanikama.Editor
             switch (pathData.Type)
             {
                 case BakePath.BakeTargetType.LightSource:
-                    return pathData.ObjectIndex < sceneDescriptor.GetLightSources().Count;
+                    return pathData.ObjectIndex < LightSources.Count;
                 case BakePath.BakeTargetType.LightSourceGroup:
-                    var sourceGroups = sceneDescriptor.GetLightSourceGroups();
-                    if (pathData.ObjectIndex >= sourceGroups.Count) return false;
-                    var group = sourceGroups[pathData.ObjectIndex];
+                    if (pathData.ObjectIndex >= LightSourceGroups.Count) return false;
+                    var group = LightSourceGroups[pathData.ObjectIndex];
                     return pathData.SubIndex < group.GetLightSources().Count;
                 default:
                     return false;
