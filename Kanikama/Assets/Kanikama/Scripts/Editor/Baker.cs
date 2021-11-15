@@ -77,7 +77,7 @@ namespace Kanikama.Editor
         async Task BakeLightSourceAsync(int index, CancellationToken token)
         {
             var source = sceneController.LightSources[index];
-            var name = GetName(source);
+            var name = KanikamaEditorUtil.GetName(source);
             Debug.Log($"[Kanikama] Baking LightSource: {name}");
             source.OnBake();
             Lightmapping.Clear();
@@ -98,7 +98,7 @@ namespace Kanikama.Editor
         async Task BakeLightSourceGroupAsync(int index, CancellationToken token)
         {
             var group = sceneController.LightSourceGroups[index];
-            var name = GetName(group);
+            var name = KanikamaEditorUtil.GetName(group);
 
             Debug.Log($"[Kanikama] Baking LightSourceGroup: {name}");
 
@@ -108,7 +108,7 @@ namespace Kanikama.Editor
             for (var i = 0; i < sourceCount; i++)
             {
                 var source = sources[i];
-                Debug.Log($"[Kanikama] - Baking {i}th LightSource {GetName(source)}");
+                Debug.Log($"[Kanikama] - Baking {i}th LightSource { KanikamaEditorUtil.GetName(source)}");
                 source.OnBake();
                 Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
@@ -300,15 +300,6 @@ namespace Kanikama.Editor
             AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
             return (mat, sceneMap);
-        }
-
-        string GetName(IKanikamaLightSource source)
-        {
-            return source is Object ob ? ob.name : source.GetType().Name;
-        }
-        string GetName(IKanikamaLightSourceGroup source)
-        {
-            return source is Object ob ? ob.name : source.GetType().Name;
         }
     }
 }

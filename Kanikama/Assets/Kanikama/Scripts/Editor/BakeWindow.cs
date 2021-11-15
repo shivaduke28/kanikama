@@ -178,7 +178,7 @@ namespace Kanikama.Editor
                         var lightCount = Mathf.Min(sourceFrags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
                         {
-                            sourceFrags[i] = EditorGUILayout.Toggle(source[i].GetType().Name, sourceFrags[i]);
+                            sourceFrags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(source[i]), sourceFrags[i]);
                         }
                     }
 
@@ -190,7 +190,7 @@ namespace Kanikama.Editor
                         var groupCount = Mathf.Min(groupFrags.Count, group.Count);
                         for (var i = 0; i < groupCount; i++)
                         {
-                            groupFrags[i] = EditorGUILayout.Toggle(group[i].GetType().Name, groupFrags[i]);
+                            groupFrags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(group[i]), groupFrags[i]);
                         }
                     }
 
