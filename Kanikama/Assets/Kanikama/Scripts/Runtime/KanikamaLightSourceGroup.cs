@@ -20,10 +20,4 @@ namespace Kanikama
         abstract public IReadOnlyList<IKanikamaLightSource> GetLightSources();
         abstract public bool Contains(object obj);
     }
-
-    public abstract class KanikamaLightGroup : KanikamaLightSourceGroup<Light>
-    { }
-
-    public abstract class KanikamaRendererGroup : KanikamaLightSourceGroup<Renderer>
-    { }
 }

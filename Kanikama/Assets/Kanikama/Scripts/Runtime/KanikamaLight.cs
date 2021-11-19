@@ -5,5 +5,4 @@ using UnityEngine;
 namespace Kanikama
 {
     public abstract class KanikamaLight : KanikamaLightSource<Light> { }
-    public abstract class KanikamaRenderer : KanikamaLightSource<Renderer> { }
 }

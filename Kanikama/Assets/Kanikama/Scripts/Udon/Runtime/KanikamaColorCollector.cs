@@ -11,7 +11,7 @@ namespace Kanikama.Udon
         [SerializeField] Renderer[] emissiveRenderers;
         [SerializeField] KanikamaCamera[] kanikamaCameras;
         [SerializeField] bool isAmbientEnable;
-        [ColorUsage(false, true), SerializeField] Color ambientColor;
+        [SerializeField] Light ambientLight;
 
         [Space]
         [Range(0, 20f)] public float intensity = 1f;
@@ -51,24 +51,6 @@ namespace Kanikama.Udon
             lightCount = lights == null ? 0 : lights.Length;
             size += lightCount;
 
-            // Monitor
-            monitorCount = kanikamaCameras == null ? 0 : kanikamaCameras.Length;
-            if (monitorCount > 0)
-            {
-                monitorColors = new Color[monitorCount][];
-                monitorLightCounts = new int[monitorCount];
-            }
-
-            for (var i = 0; i < monitorCount; i++)
-            {
-                var kanikamaCamera = kanikamaCameras[i];
-                var cols = kanikamaCamera.GetColors();
-                var colCount = cols.Length;
-                monitorColors[i] = cols;
-                monitorLightCounts[i] = colCount;
-                size += colCount;
-            }
-
             // Renderer
             rendererCount = emissiveRenderers == null ? 0 : emissiveRenderers.Length;
             if (rendererCount > 0)
@@ -96,6 +78,24 @@ namespace Kanikama.Udon
                 materialEmissiveFlags[i] = flags;
             }
 
+            // Monitor
+            monitorCount = kanikamaCameras == null ? 0 : kanikamaCameras.Length;
+            if (monitorCount > 0)
+            {
+                monitorColors = new Color[monitorCount][];
+                monitorLightCounts = new int[monitorCount];
+            }
+
+            for (var i = 0; i < monitorCount; i++)
+            {
+                var kanikamaCamera = kanikamaCameras[i];
+                var cols = kanikamaCamera.GetColors();
+                var colCount = cols.Length;
+                monitorColors[i] = cols;
+                monitorLightCounts[i] = colCount;
+                size += colCount;
+            }
+
             colors = new Vector4[size];
             isInitialized = true;
         }
@@ -110,15 +110,15 @@ namespace Kanikama.Udon
 
             var index = 0;
 
-            // Ambient
+            // 1. Ambient
             if (isAmbientEnable)
             {
                 // HDR (linear)
-                colors[index] = ambientColor * intensity;
+                colors[index] = ambientLight.color.linear * ambientLight.intensity * intensity;
                 index++;
             }
 
-            // Light
+            // 2. Light
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
@@ -127,20 +127,7 @@ namespace Kanikama.Udon
                 index++;
             }
 
-            // Monitor
-            for (var i = 0; i < monitorCount; i++)
-            {
-                var cols = monitorColors[i];
-                var count = monitorLightCounts[i];
-                for (var j = 0; j < count; j++)
-                {
-                    // monitorColors should be linear
-                    colors[index] = cols[j] * intensity;
-                    index++;
-                }
-            }
-
-            // Renderer
+            // 3. Renderer
             for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = emissiveRenderers[i];
@@ -157,6 +144,21 @@ namespace Kanikama.Udon
                     }
                 }
             }
+
+            // 4. Monitor
+            for (var i = 0; i < monitorCount; i++)
+            {
+                var cols = monitorColors[i];
+                var count = monitorLightCounts[i];
+                for (var j = 0; j < count; j++)
+                {
+                    // monitorColors should be linear
+                    colors[index] = cols[j] * intensity;
+                    index++;
+                }
+            }
+
+            // 5. Others (You can add custom udon scripts here)
         }
     }
 }

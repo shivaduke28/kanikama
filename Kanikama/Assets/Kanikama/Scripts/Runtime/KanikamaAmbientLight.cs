@@ -3,14 +3,24 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public class KanikamaAmbientLight : KanikamaLightSource
+    public class KanikamaAmbientLight : KanikamaLight
     {
+        [SerializeField] new Light light;
         float ambientIntensity;
         Color ambientLight;
         Color ambientSkyColor;
         Color ambientGroundColor;
         Color ambientEquatorColor;
-  
+
+        private void OnValidate()
+        {
+            if (light == null)
+            {
+                light = GetComponent<Light>();
+            }
+        }
+
+        public override Light GetSource() => light;  
         public override bool Contains(object obj)
         {
             return obj is AmbientLightModel;

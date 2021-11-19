@@ -10,6 +10,7 @@ namespace Kanikama.Udon.Editor
     public class KanikamaColorCollectorEditor : UnityEditor.Editor
     {
         UdonSharpBehaviour proxy;
+        SerializedProperty ambientLightProperty;
         SerializedProperty lightsProperty;
         SerializedProperty emissiveRenderersProperty;
         SerializedProperty kanikamaCamerasProperty;
@@ -22,6 +23,7 @@ namespace Kanikama.Udon.Editor
         {
             if (target == null) return;
             proxy = (UdonSharpBehaviour)target;
+            ambientLightProperty = serializedObject.FindProperty("ambientLight");
             lightsProperty = serializedObject.FindProperty("lights");
             emissiveRenderersProperty = serializedObject.FindProperty("emissiveRenderers");
             kanikamaCamerasProperty = serializedObject.FindProperty("kanikamaCameras");
@@ -102,7 +104,10 @@ namespace Kanikama.Udon.Editor
                 prop.objectReferenceValue = rendererGroups[i].GetSource();
             }
 
-            var kanikamaCameras = sceneDescriptor.KanikamaMonitorControls.Select(x => x.Camera.GetComponent<KanikamaCamera>()).ToArray();
+            var kanikamaCameras = sceneDescriptor.KanikamaLightSourceGroups
+                .Where(x => x is KanikamaMonitorControl)
+                .Select(x => ((KanikamaMonitorControl)x).Camera.GetComponent<KanikamaCamera>())
+                .ToArray();
             kanikamaCamerasProperty.ClearArray();
             kanikamaCamerasProperty.arraySize = kanikamaCameras.Length;
             for (var i = 0; i < kanikamaCameras.Length; i++)
@@ -112,6 +117,7 @@ namespace Kanikama.Udon.Editor
             }
 
             isAmbientEnableProperty.boolValue = sceneDescriptor.KanikamaAmbientLight != null;
+            ambientLightProperty.objectReferenceValue = sceneDescriptor.KanikamaAmbientLight?.GetSource();
 
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(proxy);
