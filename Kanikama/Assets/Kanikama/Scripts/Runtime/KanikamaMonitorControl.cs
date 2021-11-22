@@ -10,13 +10,13 @@ namespace Kanikama
     public class KanikamaMonitorControl : KanikamaLightSourceGroup
     {
         [SerializeField] Camera camera;
-        [SerializeField] Renderer gridRendererPrefab;
+        [SerializeField] KanikamaGridRenderer gridRendererPrefab;
         [SerializeField] KanikamaMonitor.PartitionType partitionType;
         [SerializeField] KanikamaMonitorQuad mainMonitor;
 
         [SerializeField] List<KanikamaMonitor> subMonitors;
         [SerializeField] CameraDetailedSettings cameraDetailedSettings;
-        [SerializeField, HideInInspector] List<KanikamaMonitorTraversedGrid> traversedGrids;
+        [SerializeField] List<KanikamaMonitorTraversedGrid> traversedGrids;
 
         public Camera Camera => camera;
         public KanikamaMonitor.PartitionType PartitionType => partitionType;
@@ -36,6 +36,7 @@ namespace Kanikama
                 monitor.SetupLights(partitionType, gridRendererPrefab);
             }
             SetupCamera();
+            SetupTraversedGrids();
         }
 
         void SetupCamera()
@@ -68,7 +69,7 @@ namespace Kanikama
             return false;
         }
 
-        public override IReadOnlyList<IKanikamaLightSource> GetLightSources() => traversedGrids.AsReadOnly();
+        public override IList<KanikamaLightSource> GetLightSources() => new List<KanikamaLightSource>(traversedGrids);
 
         public override void Rollback()
         {
@@ -77,7 +78,6 @@ namespace Kanikama
             {
                 m.monitorRenderer.enabled = true;
             }
-            traversedGrids = null;
         }
 
         public override void OnBakeSceneStart()
@@ -87,23 +87,28 @@ namespace Kanikama
             {
                 m.monitorRenderer.enabled = false;
             }
-
-            InitializeTraversedGrids();
         }
         #endregion
 
-        void InitializeTraversedGrids()
+        void SetupTraversedGrids()
         {
+            foreach(var grid in traversedGrids)
+            {
+                DestroyImmediate(grid.gameObject);
+            }
             var monitorCount = 1 + subMonitors.Count;
             var part = (int)partitionType;
-            var gridCount = Mathf.FloorToInt(part / 10f) + part % 10;
+            var gridCount = Mathf.FloorToInt(part / 10f) * part % 10;
             traversedGrids = new List<KanikamaMonitorTraversedGrid>();
             for (var i = 0; i < gridCount; i++)
             {
-                var gridRenderers = new List<Renderer>();
+                var gridRenderers = new List<KanikamaGridRenderer>();
                 gridRenderers.Add(mainMonitor.gridRenderers[i]);
                 gridRenderers.AddRange(subMonitors.Select(x => x.gridRenderers[i]));
-                var traversedGrid = new KanikamaMonitorTraversedGrid(gridRenderers);
+                var go = new GameObject($"TravesedGrid{i}");
+                go.transform.SetParent(transform, false);
+                var traversedGrid = go.AddComponent<KanikamaMonitorTraversedGrid>();
+                traversedGrid.gridRenderers = gridRenderers;
                 traversedGrids.Add(traversedGrid);
             }
         }

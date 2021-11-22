@@ -8,7 +8,7 @@ namespace Kanikama
     {
         abstract public void OnBakeSceneStart();
         abstract public void Rollback();
-        abstract public IReadOnlyList<IKanikamaLightSource> GetLightSources();
+        abstract public IList<KanikamaLightSource> GetLightSources();
         abstract public bool Contains(object obj);
     }
 

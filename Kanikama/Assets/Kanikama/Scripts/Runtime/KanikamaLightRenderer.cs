@@ -37,10 +37,10 @@ namespace Kanikama
             lightMaterials = null;
         }
 
-        public override IReadOnlyList<IKanikamaLightSource> GetLightSources()
+        public override IList<KanikamaLightSource> GetLightSources()
         {
             Initialize();
-            return lightMaterials.Cast<IKanikamaLightSource>().ToList().AsReadOnly();
+            return lightMaterials.Cast<KanikamaLightSource>().ToList();
         }
 
         void Initialize()

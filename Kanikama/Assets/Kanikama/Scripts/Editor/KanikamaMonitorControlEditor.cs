@@ -14,6 +14,7 @@ namespace Kanikama.Editor
             EditorGUILayout.Space();
             if (GUILayout.Button("Setup Lights and Camera"))
             {
+                Undo.RecordObject(monitorControl, "Setup Monitor Control");
                 monitorControl.Setup();
             }
             EditorGUI.EndDisabledGroup();

@@ -1,51 +1,51 @@
-﻿using Kanikama;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 
 namespace Kanikama
 {
-    [Serializable]
-    public class KanikamaMonitorTraversedGrid : IKanikamaLightSource
+
+    public class KanikamaMonitorTraversedGrid : KanikamaLightSource
     {
-        [SerializeField] readonly List<Renderer> renderers;
-        public KanikamaMonitorTraversedGrid(List<Renderer> renderers)
+        [SerializeField] public List<KanikamaGridRenderer> gridRenderers;
+        public override bool Contains(object obj)
         {
-            this.renderers = renderers;
+            return gridRenderers.Any(x => x.Contains(obj));
         }
 
-        #region IKanikamaLightSource
-        public bool Contains(object obj)
+        public override void OnBake()
         {
-            return obj is Renderer r && renderers.Contains(r);
-        }
-
-        public void OnBake()
-        {
-            foreach (var renderer in renderers)
+            foreach (var source in gridRenderers)
             {
-                renderer.enabled = true;
+                source.OnBake();
             }
         }
 
-        public void OnBakeSceneStart() { }
-
-        public void Rollback()
+        public override void OnBakeSceneStart()
         {
-            foreach (var renderer in renderers)
+            foreach (var source in gridRenderers)
             {
-                renderer.enabled = false;
+                source.OnBakeSceneStart();
             }
         }
 
-        public void TurnOff()
+        public override void Rollback()
         {
-            foreach (var renderer in renderers)
+            foreach (var source in gridRenderers)
             {
-                renderer.enabled = false;
+                source.Rollback();
             }
         }
-        #endregion
+
+        public override void TurnOff()
+        {
+            foreach (var source in gridRenderers)
+            {
+                source.TurnOff();
+            }
+        }
     }
 }

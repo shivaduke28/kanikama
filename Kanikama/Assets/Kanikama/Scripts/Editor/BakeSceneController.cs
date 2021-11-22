@@ -11,6 +11,7 @@ namespace Kanikama.Editor
         readonly KanikamaSceneDescriptor sceneDescriptor;
         public List<ObjectReference<KanikamaLightSource>> LightSources { get; private set; }
         public List<ObjectReference<KanikamaLightSourceGroup>> LightSourceGroups { get; private set; }
+        public List<List<ObjectReference<KanikamaLightSource>>> LightSourceGroupReferences { get; private set; }
         readonly List<ObjectReference<Light>> nonKanikamaLights = new List<ObjectReference<Light>>();
 
 
@@ -32,6 +33,7 @@ namespace Kanikama.Editor
         {
             LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<KanikamaLightSource>(x)).ToList();
             LightSourceGroups = sceneDescriptor.GetLightSourceGroups().Select(x => new ObjectReference<KanikamaLightSourceGroup>(x)).ToList();
+            LightSourceGroupReferences = new List<List<ObjectReference<KanikamaLightSource>>>();
             foreach (var source in LightSources)
             {
                 source.Ref.OnBakeSceneStart();
@@ -39,6 +41,10 @@ namespace Kanikama.Editor
             foreach (var group in LightSourceGroups)
             {
                 group.Ref.OnBakeSceneStart();
+                var references = group.Ref.GetLightSources()
+                    .Select(x => new ObjectReference<KanikamaLightSource>(x))
+                    .ToList();
+                LightSourceGroupReferences.Add(references);
             }
 
             isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);

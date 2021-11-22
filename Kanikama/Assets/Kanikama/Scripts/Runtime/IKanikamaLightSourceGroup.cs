@@ -7,6 +7,6 @@ namespace Kanikama
         void OnBakeSceneStart();
         void Rollback();
         bool Contains(object obj);
-        IReadOnlyList<IKanikamaLightSource> GetLightSources();
+        IList<KanikamaLightSource> GetLightSources();
     }
 }

@@ -104,17 +104,17 @@ namespace Kanikama.Editor
 
             Debug.Log($"[Kanikama] Baking LightSourceGroup: {name}");
 
-            var sources = group.Ref.GetLightSources();
-
+            var sources = sceneController.LightSourceGroupReferences[index];
             var sourceCount = sources.Count;
             for (var i = 0; i < sourceCount; i++)
             {
-                var source = sources[i];
+                var sourceRef = sources[i];
+                var source = sourceRef.Ref;
                 Debug.Log($"[Kanikama] - Baking {i}th LightSource { KanikamaEditorUtil.GetName(source)}");
                 source.OnBake();
                 Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
-                source.TurnOff();
+                sourceRef.Ref.TurnOff(); // reload is necessary for Bakery
                 MoveBakedLightmaps(BakePath.LightSourceGroupFormat(index, i));
             }
         }
