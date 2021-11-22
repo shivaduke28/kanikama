@@ -28,13 +28,15 @@ namespace Kanikama.Editor
         readonly BakeSceneController sceneController;
         readonly BakeRequest request;
         readonly BakePath bakePath;
+        readonly ILightmapper lightmapper;
         public BakedAsset BakedAsset { get; }
 
-        public Baker(BakeRequest request)
+        public Baker(ILightmapper lightmapper, BakeRequest request)
         {
+            this.lightmapper = lightmapper;
             this.request = request;
             sceneController = new BakeSceneController(request.SceneDescriptor);
-            bakePath = new BakePath(SceneManager.GetActiveScene());
+            bakePath = new BakePath(SceneManager.GetActiveScene(), lightmapper);
             BakedAsset = new BakedAsset();
         }
 
@@ -77,12 +79,12 @@ namespace Kanikama.Editor
         async Task BakeLightSourceAsync(int index, CancellationToken token)
         {
             var source = sceneController.LightSources[index];
-            var name = KanikamaEditorUtil.GetName(source);
+            var name = KanikamaEditorUtil.GetName(source.Ref);
             Debug.Log($"[Kanikama] Baking LightSource: {name}");
-            source.OnBake();
+            source.Ref.OnBake();
             Lightmapping.Clear();
             await BakeSceneGIAsync(token);
-            source.TurnOff();
+            source.Ref.TurnOff();
             MoveBakedLightmaps(BakePath.LightSourceFormat(index));
         }
 
@@ -98,11 +100,11 @@ namespace Kanikama.Editor
         async Task BakeLightSourceGroupAsync(int index, CancellationToken token)
         {
             var group = sceneController.LightSourceGroups[index];
-            var name = KanikamaEditorUtil.GetName(group);
+            var name = KanikamaEditorUtil.GetName(group.Ref);
 
             Debug.Log($"[Kanikama] Baking LightSourceGroup: {name}");
 
-            var sources = group.GetLightSources();
+            var sources = group.Ref.GetLightSources();
 
             var sourceCount = sources.Count;
             for (var i = 0; i < sourceCount; i++)
@@ -153,28 +155,30 @@ namespace Kanikama.Editor
                     AssetDatabase.CopyAsset(bakedDirMapPath, copiedDirMapPath);
                     var textureImporter = AssetImporter.GetAtPath(copiedDirMapPath) as TextureImporter;
                     textureImporter.isReadable = true;
+                    textureImporter.mipmapEnabled = true;
                     textureImporter.SaveAndReimport();
                 }
             }
         }
 
-        static async Task BakeSceneGIAsync(CancellationToken token)
+        async Task BakeSceneGIAsync(CancellationToken token)
         {
-            if (!Lightmapping.BakeAsync())
-                throw new TaskCanceledException("The lightmap bake job did not start successfully.");
+            await lightmapper.BakeAsync(token);
+            //if (!Lightmapping.BakeAsync())
+            //    throw new TaskCanceledException("The lightmap bake job did not start successfully.");
 
-            while (Lightmapping.isRunning)
-            {
-                try
-                {
-                    await Task.Delay(33, token);
-                }
-                catch (TaskCanceledException)
-                {
-                    Lightmapping.Cancel();
-                    throw;
-                }
-            }
+            //while (Lightmapping.isRunning)
+            //{
+            //    try
+            //    {
+            //        await Task.Delay(33, token);
+            //    }
+            //    catch (TaskCanceledException)
+            //    {
+            //        Lightmapping.Cancel();
+            //        throw;
+            //    }
+            //}
         }
 
         //void DeleteUnusedTextures()

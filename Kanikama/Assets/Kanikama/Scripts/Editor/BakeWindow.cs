@@ -1,4 +1,5 @@
 ﻿using Kanikama;
+using Kanikama.Editor.Bakery;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace Kanikama.Editor
         CancellationTokenSource tokenSource;
         bool isRunning;
         Vector2 scrollPosition = new Vector2(0, 0);
+
+        bool isUnity = true;
 
         [MenuItem("Window/Kanikama/Bake")]
         static void Initialize()
@@ -64,6 +67,7 @@ namespace Kanikama.Editor
                 scrollPosition = scroll.scrollPosition;
                 using (new EditorGUI.DisabledGroupScope(isRunning))
                 {
+                    isUnity = EditorGUILayout.Toggle("is Unity", isUnity);
                     DrawSceneData();
                     EditorGUILayout.Space();
                     DrawBakeRequest();
@@ -208,13 +212,23 @@ namespace Kanikama.Editor
             settings.createCustomRenderTexture = EditorGUILayout.Toggle("CustomRenderTexture", settings.createCustomRenderTexture);
         }
 
+        ILightmapper CreateLightmapper(bool isUnity)
+        {
+            if (isUnity)
+            {
+                return new UnityLightmapper(SceneManager.GetActiveScene());
+            }
+            return new BakeryLightmapper(SceneManager.GetActiveScene());
+        }
+
         async void BakeAsync()
         {
             bakeRequest.isDirectionalMode = settings.directionalMode;
             bakeRequest.createRenderTexture = settings.createRenderTexture;
             bakeRequest.createCustomRenderTexture = settings.createCustomRenderTexture;
             tokenSource = new CancellationTokenSource();
-            var baker = new Baker(bakeRequest);
+            var lightmapper = CreateLightmapper(isUnity);
+            var baker = new Baker(lightmapper, bakeRequest);
             isRunning = true;
             try
             {

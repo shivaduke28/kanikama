@@ -9,12 +9,14 @@ namespace Kanikama.Editor
     public class BakeSceneController : IDisposable
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
-        public IReadOnlyList<IKanikamaLightSource> LightSources { get; private set; }
-        public IReadOnlyList<IKanikamaLightSourceGroup> LightSourceGroups { get; private set; }
-        readonly List<Light> nonKanikamaLights = new List<Light>();
+        public List<ObjectReference<KanikamaLightSource>> LightSources { get; private set; }
+        public List<ObjectReference<KanikamaLightSourceGroup>> LightSourceGroups { get; private set; }
+        readonly List<ObjectReference<Light>> nonKanikamaLights = new List<ObjectReference<Light>>();
+
+
         readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
-        readonly List<ReflectionProbe> reflectionProbes = new List<ReflectionProbe>();
-        readonly List<LightProbeGroup> lightProbeGroups = new List<LightProbeGroup>();
+        readonly List<ObjectReference<ReflectionProbe>> reflectionProbes = new List<ObjectReference<ReflectionProbe>>();
+        readonly List<ObjectReference<LightProbeGroup>> lightProbeGroups = new List<ObjectReference<LightProbeGroup>>();
 
         Material dummyMaterial;
         LightmapsMode lightmapsMode;
@@ -28,11 +30,15 @@ namespace Kanikama.Editor
 
         public void Initialize()
         {
-            LightSources = sceneDescriptor.GetLightSources();
-            LightSourceGroups = sceneDescriptor.GetLightSourceGroups();
+            LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<KanikamaLightSource>(x)).ToList();
+            LightSourceGroups = sceneDescriptor.GetLightSourceGroups().Select(x => new ObjectReference<KanikamaLightSourceGroup>(x)).ToList();
+            foreach(var source in LightSources)
+            {
+                source.Ref.OnBakeSceneStart();
+            }
             foreach (var group in LightSourceGroups)
             {
-                group.OnBakeSceneStart();
+                group.Ref.OnBakeSceneStart();
             }
 
             isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);
@@ -49,7 +55,7 @@ namespace Kanikama.Editor
                     light.lightmapBakeType != LightmapBakeType.Realtime &&
                     !IsKanikama(light))
                 {
-                    nonKanikamaLights.Add(light);
+                    nonKanikamaLights.Add(new ObjectReference<Light>(light));
                 }
             }
 
@@ -78,9 +84,13 @@ namespace Kanikama.Editor
             }
 
             // reflection probes
-            reflectionProbes.AddRange(UnityEngine.Object.FindObjectsOfType<ReflectionProbe>().Where(x => x.gameObject.activeInHierarchy && x.enabled));
+            reflectionProbes.AddRange(UnityEngine.Object.FindObjectsOfType<ReflectionProbe>()
+                .Where(x => x.gameObject.activeInHierarchy && x.enabled)
+                .Select(x => new ObjectReference<ReflectionProbe>(x)));
             // light probes
-            lightProbeGroups.AddRange(UnityEngine.Object.FindObjectsOfType<LightProbeGroup>().Where(x => x.gameObject.activeInHierarchy && x.enabled));
+            lightProbeGroups.AddRange(UnityEngine.Object.FindObjectsOfType<LightProbeGroup>()
+                .Where(x => x.gameObject.activeInHierarchy && x.enabled)
+                .Select(x => new ObjectReference<LightProbeGroup>(x)));
 
             // directional mode
             lightmapsMode = LightmapEditorSettings.lightmapsMode;
@@ -90,17 +100,17 @@ namespace Kanikama.Editor
         {
             foreach (var light in nonKanikamaLights)
             {
-                light.enabled = false;
+                light.Ref.enabled = false;
             }
 
             foreach (var lightSource in LightSources)
             {
-                lightSource.TurnOff();
+                lightSource.Ref.TurnOff();
             }
 
             foreach (var group in LightSourceGroups)
             {
-                foreach (var source in group.GetLightSources())
+                foreach (var source in group.Ref.GetLightSources())
                 {
                     source.TurnOff();
                 }
@@ -108,12 +118,12 @@ namespace Kanikama.Editor
 
             foreach (var probe in reflectionProbes)
             {
-                probe.enabled = false;
+                probe.Ref.enabled = false;
             }
 
             foreach (var probe in lightProbeGroups)
             {
-                probe.enabled = false;
+                probe.Ref.enabled = false;
             }
 
             if (!isKanikamaAmbientEnable)
@@ -124,8 +134,8 @@ namespace Kanikama.Editor
 
         bool IsKanikama(object obj)
         {
-            return LightSources.Any(x => x.Contains(obj)) ||
-                LightSourceGroups.Any(x => x.Contains(obj) || x.GetLightSources().Any(y => y.Contains(obj)));
+            return LightSources.Any(x => x.Ref.Contains(obj)) ||
+                LightSourceGroups.Any(x => x.Ref.Contains(obj) || x.Ref.GetLightSources().Any(y => y.Contains(obj)));
         }
 
         public void SetLightmapSettings(bool isDirectional)
@@ -155,7 +165,7 @@ namespace Kanikama.Editor
             }
             foreach (var light in nonKanikamaLights)
             {
-                light.enabled = true;
+                light.Ref.enabled = true;
             }
 
             foreach (var kvp in nonKanikamaMaterialMaps)
@@ -167,12 +177,12 @@ namespace Kanikama.Editor
 
             foreach (var probe in reflectionProbes)
             {
-                probe.enabled = true;
+                probe.Ref.enabled = true;
             }
 
             foreach (var probe in lightProbeGroups)
             {
-                probe.enabled = true;
+                probe.Ref.enabled = true;
             }
         }
 
@@ -185,16 +195,16 @@ namespace Kanikama.Editor
         {
             foreach (var source in LightSources)
             {
-                source.Rollback();
+                source.Ref.Rollback();
             }
 
             foreach (var group in LightSourceGroups)
             {
-                foreach (var source in group.GetLightSources())
+                foreach (var source in group.Ref.GetLightSources())
                 {
                     source.Rollback();
                 }
-                group.Rollback();
+                group.Ref.Rollback();
             }
         }
 
@@ -207,7 +217,7 @@ namespace Kanikama.Editor
                 case BakePath.BakeTargetType.LightSourceGroup:
                     if (pathData.ObjectIndex >= LightSourceGroups.Count) return false;
                     var group = LightSourceGroups[pathData.ObjectIndex];
-                    return pathData.SubIndex < group.GetLightSources().Count;
+                    return pathData.SubIndex < group.Ref.GetLightSources().Count;
                 default:
                     return false;
             }

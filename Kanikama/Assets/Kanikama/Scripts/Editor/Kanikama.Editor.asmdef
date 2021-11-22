@@ -1,7 +1,9 @@
 {
     "name": "Kanikama.Editor",
     "references": [
-        "Kanikama.Runtime"
+        "Kanikama.Runtime",
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly"
     ],
     "includePlatforms": [
         "Editor"

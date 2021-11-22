@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor
@@ -22,11 +23,6 @@ namespace Kanikama.Editor
         public const string RenderTextureFormat = "KanikamaRT_{0}.renderTexture";
         public static readonly Regex KanikamaAssetRegex = new Regex("KanikamaTexArray_[0-9]+.asset|KanikamaComposite_[0-9]+.mat|KanikamaMap_[0-9]+.asset");
 
-        // Unity
-        public static readonly Regex UnityLightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
-        public static readonly Regex UnityDirectionalLightMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
-
-
         // Temp
         public static string LightSourceFormat(int sourceIndex) => $"L_{{0}}_{sourceIndex}.exr";
         public static string LightSourceGroupFormat(int groupIndex, int sourceIndex) => $"LG_{{0}}_{groupIndex}_{sourceIndex}.exr";
@@ -35,9 +31,9 @@ namespace Kanikama.Editor
         public static Regex TempDirectionalMapRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]_{lightmapIndex}");
 
 
-        public string UnityLightmapDirPath { get; }
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
+        ILightmapper lightmapper;
 
         public static string KanikamaAssetDirPath(SceneAsset scene)
         {
@@ -48,7 +44,7 @@ namespace Kanikama.Editor
             return Path.Combine(sceneDirPath, exportDirName);
         }
 
-        public BakePath(Scene scene)
+        public BakePath(Scene scene, ILightmapper lightmapper)
         {
             var sceneDirPath = Path.GetDirectoryName(scene.path);
             var exportDirName = string.Format(ExportDirFormat, scene.name);
@@ -56,24 +52,25 @@ namespace Kanikama.Editor
             ExportDirPath = Path.Combine(sceneDirPath, exportDirName);
             AssetUtil.CreateFolderIfNecessary(ExportDirPath, TmpDirName);
             TmpDirPath = Path.Combine(ExportDirPath, TmpDirName);
-
-            UnityLightmapDirPath = Path.Combine(sceneDirPath, scene.name);
+            this.lightmapper = lightmapper;
         }
 
         public List<string> GetUnityLightmapPaths()
         {
-            return AssetDatabase.FindAssets("t:Texture", new string[1] { UnityLightmapDirPath })
+            var dirPath = lightmapper.LightMapDirPath();
+            return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => Path.GetDirectoryName(x) == UnityLightmapDirPath)
-                .Where(x => UnityLightMapRegex.IsMatch(x)).ToList();
+                //.Where(x => Path.GetDirectoryName(x) == dirPath)
+                .Where(x => lightmapper.IsLightMap(x)).ToList();
         }
 
         public List<string> GetUnityDirectionalLightmapPaths()
         {
-            return AssetDatabase.FindAssets("t:Texture", new string[1] { UnityLightmapDirPath })
+            var dirPath = lightmapper.LightMapDirPath();
+            return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => Path.GetDirectoryName(x) == UnityLightmapDirPath)
-                .Where(x => UnityDirectionalLightMapRegex.IsMatch(x)).ToList();
+                //.Where(x => Path.GetDirectoryName(x) == dirPath)
+                .Where(x => lightmapper.IsDirectionalMap(x)).ToList();
         }
 
         public List<TempTexturePath> GetTempLightmapPaths(int lightmapIndex)
