@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Kanikama.EditorOnly
+namespace Kanikama
 {
     public class ReadOnlyAttribute : PropertyAttribute
     {
