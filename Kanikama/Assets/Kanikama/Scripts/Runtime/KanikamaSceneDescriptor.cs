@@ -7,7 +7,6 @@ namespace Kanikama
     [AddComponentMenu("Kanikama/KanikamaSceneDescriptor")]
     public class KanikamaSceneDescriptor : MonoBehaviour
     {
-        //[SerializeField] KanikamaLight kanikamaAmbientLight;
         [SerializeField] List<KanikamaLight> kanikamaLights;
         [SerializeField] List<KanikamaRenderer> kanikamaRenderers;
         [SerializeField] List<KanikamaLightSourceGroup> kanikamaLightSourceGroups;
@@ -15,15 +14,10 @@ namespace Kanikama
         public List<KanikamaLight> KanikamaLights => kanikamaLights;
         public List<KanikamaRenderer> KanikamaRendererGroups => kanikamaRenderers;
         public List<KanikamaLightSourceGroup> KanikamaLightSourceGroups => kanikamaLightSourceGroups;
-        //public KanikamaLight KanikamaAmbientLight => kanikamaAmbientLight;
 
         public IReadOnlyList<KanikamaLightSource> GetLightSources()
         {
             var sources = new List<KanikamaLightSource>();
-            //if (kanikamaAmbientLight != null)
-            //{
-            //    sources.Add(kanikamaAmbientLight);
-            //}
             sources.AddRange(kanikamaLights);
             return sources.AsReadOnly();
         }
