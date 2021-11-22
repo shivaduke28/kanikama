@@ -21,7 +21,7 @@ namespace Kanikama.Editor
         Material dummyMaterial;
         LightmapsMode lightmapsMode;
         bool isKanikamaAmbientEnable;
-        KanikamaAmbientLight tempAmbientLight;
+        ObjectReference<KanikamaAmbientLight> tempAmbientLight;
 
         public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -32,7 +32,7 @@ namespace Kanikama.Editor
         {
             LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<KanikamaLightSource>(x)).ToList();
             LightSourceGroups = sceneDescriptor.GetLightSourceGroups().Select(x => new ObjectReference<KanikamaLightSourceGroup>(x)).ToList();
-            foreach(var source in LightSources)
+            foreach (var source in LightSources)
             {
                 source.Ref.OnBakeSceneStart();
             }
@@ -44,7 +44,8 @@ namespace Kanikama.Editor
             isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight = new GameObject("TempAmbientLight").AddComponent<KanikamaAmbientLight>();
+                var temp = new GameObject("TempAmbientLight").AddComponent<KanikamaAmbientLight>();
+                tempAmbientLight = new ObjectReference<KanikamaAmbientLight>(temp);
             }
 
             // non kanikama lights
@@ -128,7 +129,7 @@ namespace Kanikama.Editor
 
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight.TurnOff();
+                tempAmbientLight.Ref.TurnOff();
             }
         }
 
@@ -161,7 +162,7 @@ namespace Kanikama.Editor
         {
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight.Rollback();
+                tempAmbientLight.Ref.Rollback();
             }
             foreach (var light in nonKanikamaLights)
             {
@@ -231,7 +232,7 @@ namespace Kanikama.Editor
             }
             if (tempAmbientLight != null)
             {
-                UnityEngine.Object.DestroyImmediate(tempAmbientLight.gameObject);
+                UnityEngine.Object.DestroyImmediate(tempAmbientLight.Ref.gameObject);
             }
         }
     }
