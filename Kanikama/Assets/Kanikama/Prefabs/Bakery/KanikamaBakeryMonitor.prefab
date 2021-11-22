@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5597072520764654327}
   - component: {fileID: 5597072520764654325}
   m_Layer: 0
-  m_Name: KanikamaMonitor
+  m_Name: KanikamaBakeryMonitor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 5597072520764654326}
-  gridRendererPrefab: {fileID: 5142982364245319798, guid: c83edb39890ec1144b83de405462cb05,
+  gridRendererPrefab: {fileID: 7597839281599741241, guid: bafadf6b3e5051742a6d56314a74a6c8,
     type: 3}
   partitionType: 11
   mainMonitor: {fileID: 0}
