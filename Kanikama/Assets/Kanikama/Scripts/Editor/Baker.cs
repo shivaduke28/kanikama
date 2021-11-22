@@ -141,6 +141,7 @@ namespace Kanikama.Editor
 
                 var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
                 textureImporter.isReadable = true;
+                textureImporter.mipmapEnabled = true;
                 textureImporter.SaveAndReimport();
             }
 
