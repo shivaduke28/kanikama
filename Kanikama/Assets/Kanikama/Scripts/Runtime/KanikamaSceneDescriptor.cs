@@ -19,7 +19,11 @@ namespace Kanikama
 
         public IReadOnlyList<IKanikamaLightSource> GetLightSources()
         {
-            var sources = new List<IKanikamaLightSource>() { kanikamaAmbientLight };
+            var sources = new List<IKanikamaLightSource>();
+            if (kanikamaAmbientLight != null)
+            {
+                sources.Add(kanikamaAmbientLight);
+            }
             sources.AddRange(kanikamaLights);
             return sources.AsReadOnly();
         }
