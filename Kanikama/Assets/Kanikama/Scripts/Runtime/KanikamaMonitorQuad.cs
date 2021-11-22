@@ -28,10 +28,9 @@ public class KanikamaMonitorQuad : KanikamaMonitor
     public override void SetupLights(PartitionType partitionType, Renderer gridRendererPrefab)
     {
         if (monitorRenderer is null) return;
-        var t = monitorRenderer.transform;
-        transform.SetPositionAndRotation(t.position, t.rotation);
+        var localScale = transform.localScale;
+        transform.localScale = Vector3.one;
 
-        var bounds = GetUnrotatedBounds();
         var children = transform.Cast<Transform>().ToArray();
         foreach (var child in children)
         {
@@ -39,7 +38,16 @@ public class KanikamaMonitorQuad : KanikamaMonitor
         }
 
         this.gridRendererPrefab = gridRendererPrefab;
-        gridRenderers.Clear();
+        if (gridRenderers == null)
+        {
+            gridRenderers = new List<Renderer>();
+        }
+        else
+        {
+            gridRenderers?.Clear();
+        }
+
+        var bounds = GetUnrotatedBounds();
 
         switch (partitionType)
         {
@@ -62,6 +70,8 @@ public class KanikamaMonitorQuad : KanikamaMonitor
                 SetupUniformGrid(bounds, 4);
                 break;
         }
+
+        transform.localScale = localScale;
     }
 
     void SetupUniformGrid(Bounds bounds, int count)
