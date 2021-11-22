@@ -60,7 +60,6 @@ namespace Kanikama.Editor
             var dirPath = lightmapper.LightMapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                //.Where(x => Path.GetDirectoryName(x) == dirPath)
                 .Where(x => lightmapper.IsLightMap(x)).ToList();
         }
 
@@ -69,7 +68,6 @@ namespace Kanikama.Editor
             var dirPath = lightmapper.LightMapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                //.Where(x => Path.GetDirectoryName(x) == dirPath)
                 .Where(x => lightmapper.IsDirectionalMap(x)).ToList();
         }
 

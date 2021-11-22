@@ -62,24 +62,26 @@ namespace Kanikama.Editor
 
         void OnGUI()
         {
-            if (sceneDescriptor == null)
-            {
-                LoadSceneAsset();
-            }
-
             using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
                 scrollPosition = scroll.scrollPosition;
-                using (new EditorGUI.DisabledGroupScope(isRunning))
+                if (!isRunning)
                 {
+                    // TODO: use enum or something with #if BAKERY_INCLUDED
+                    if (sceneDescriptor == null)
+                    {
+                        LoadSceneAsset();
+                    }
+
                     isUnity = EditorGUILayout.Toggle("is Unity", isUnity);
                     DrawSceneData();
                     EditorGUILayout.Space();
                     DrawBakeRequest();
                 }
 
-                if (isRunning)
+                if (isRunning && isUnity)
                 {
+                    GUILayout.Label("Bake", EditorStyles.boldLabel);
                     if (GUILayout.Button("Force Stop"))
                     {
                         Stop();

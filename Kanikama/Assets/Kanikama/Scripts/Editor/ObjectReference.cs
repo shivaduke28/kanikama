@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Text;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,7 +15,6 @@ namespace Kanikama.Editor
         {
             reference = value;
             (rootName, path) = GetPathInHierarchy(value.transform);
-            var x = new SerializedObject(value);
         }
 
         public T Ref => reference != null ? reference : (reference = Load());
@@ -68,7 +66,5 @@ namespace Kanikama.Editor
 
             return (rootPath, builder.ToString());
         }
-
     }
-
 }

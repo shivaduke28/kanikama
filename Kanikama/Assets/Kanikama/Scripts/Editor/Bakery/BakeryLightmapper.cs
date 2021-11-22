@@ -2,8 +2,6 @@
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEditor;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor.Bakery
@@ -27,18 +25,9 @@ namespace Kanikama.Editor.Bakery
 
         public async Task BakeAsync(CancellationToken token)
         {
-            if (ftRenderLightmap.bakeInProgress)
-            {
-                throw new TaskCanceledException("The lightmap bake job did not start successfully.");
-            }
             bakery.RenderButton(false);
             while (ftRenderLightmap.bakeInProgress)
             {
-                if (ftRenderLightmap.userCanceled)
-                {
-                    Debug.Log("user canceled");
-                    break;
-                }
                 try
                 {
                     await Task.Delay(33, token);
@@ -47,6 +36,11 @@ namespace Kanikama.Editor.Bakery
                 {
                     throw;
                 }
+            }
+
+            if (ftRenderLightmap.userCanceled)
+            {
+                throw new TaskCanceledException();
             }
         }
 

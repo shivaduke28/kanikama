@@ -22,7 +22,6 @@ namespace Kanikama.Editor
 
         public bool IsBakeLightSource(int index) => isBakeAll || lightSourceFlags[index];
         public bool IsBakeLightSourceGroup(int index) => isBakeAll || lightSourceGroupFlags[index];
-        //public bool IsBakeAmbient() => isBakeAll || isBakeAmbient;
         public bool IsBakeWithouKanikama() => isBakeAll || isBakeWithouKanikama;
 
         public BakeRequest(KanikamaSceneDescriptor sceneDescriptor)
