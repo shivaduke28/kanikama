@@ -62,6 +62,11 @@ namespace Kanikama.Editor
 
         void OnGUI()
         {
+            if (sceneDescriptor == null)
+            {
+                LoadSceneAsset();
+            }
+
             using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
                 scrollPosition = scroll.scrollPosition;
