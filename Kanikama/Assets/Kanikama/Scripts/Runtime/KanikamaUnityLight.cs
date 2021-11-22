@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Kanikama
 {
@@ -8,8 +6,8 @@ namespace Kanikama
     public class KanikamaUnityLight : KanikamaLight
     {
         [SerializeField] Light light;
-        float intensity;
-        Color color;
+        [SerializeField, HideInInspector] float intensity;
+        [SerializeField, HideInInspector] Color color;
 
         private void OnValidate()
         {
@@ -17,6 +15,11 @@ namespace Kanikama
             {
                 light = GetComponent<Light>();
             }
+        }
+        public override void OnBakeSceneStart()
+        {
+            intensity = light.intensity;
+            color = light.color;
         }
 
         public override void OnBake()
@@ -34,8 +37,6 @@ namespace Kanikama
 
         public override void TurnOff()
         {
-            intensity = light.intensity;
-            color = light.color;
             light.enabled = false;
         }
 

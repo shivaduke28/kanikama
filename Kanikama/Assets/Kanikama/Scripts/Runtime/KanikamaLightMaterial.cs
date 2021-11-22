@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
+    [Serializable]
     public class KanikamaLightMaterial : IKanikamaLightSource
     {
         public static readonly string ShaderKeywordEmission = "_EMISSION";
@@ -39,5 +40,9 @@ namespace Kanikama
         }
 
         public bool Contains(object obj) => false;
+
+        public void OnBakeSceneStart()
+        {
+        }
     }
 }

@@ -12,12 +12,8 @@ namespace Kanikama
         abstract public bool Contains(object obj);
     }
 
-    public abstract class KanikamaLightSourceGroup<T> : MonoBehaviour, IKanikamaLightSourceGroup
+    public abstract class KanikamaLightSourceGroup<T> : KanikamaLightSourceGroup
     {
         abstract public T GetSource();
-        abstract public void OnBakeSceneStart();
-        abstract public void Rollback();
-        abstract public IReadOnlyList<IKanikamaLightSource> GetLightSources();
-        abstract public bool Contains(object obj);
     }
 }

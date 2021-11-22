@@ -9,9 +9,9 @@ namespace Kanikama
     {
         [SerializeField] Renderer renderer;
 
-        Material[] sharedMaterials;
-        Material[] tmpMaterials;
-        List<KanikamaLightMaterial> lightMaterials = new List<KanikamaLightMaterial>();
+        [SerializeField, HideInInspector] Material[] sharedMaterials;
+        [SerializeField, HideInInspector] Material[] tmpMaterials;
+        [SerializeField, HideInInspector] List<KanikamaLightMaterial> lightMaterials = new List<KanikamaLightMaterial>();
 
         bool initialized;
 
@@ -34,7 +34,7 @@ namespace Kanikama
         public override void Rollback()
         {
             renderer.sharedMaterials = sharedMaterials;
-            lightMaterials.Clear();
+            lightMaterials = null;
         }
 
         public override IReadOnlyList<IKanikamaLightSource> GetLightSources()

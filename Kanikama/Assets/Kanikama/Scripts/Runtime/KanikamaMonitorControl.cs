@@ -16,7 +16,7 @@ namespace Kanikama
 
         [SerializeField] List<KanikamaMonitor> subMonitors;
         [SerializeField] CameraDetailedSettings cameraDetailedSettings;
-        private List<KanikamaMonitorTraversedGrid> traversedGrids;
+        [SerializeField, HideInInspector] List<KanikamaMonitorTraversedGrid> traversedGrids;
 
         public Camera Camera => camera;
         public KanikamaMonitor.PartitionType PartitionType => partitionType;
@@ -77,6 +77,7 @@ namespace Kanikama
             {
                 m.monitorRenderer.enabled = true;
             }
+            traversedGrids = null;
         }
 
         public override void OnBakeSceneStart()

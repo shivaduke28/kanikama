@@ -6,9 +6,10 @@ using UnityEngine;
 
 namespace Kanikama
 {
+    [Serializable]
     public class KanikamaMonitorTraversedGrid : IKanikamaLightSource
     {
-        readonly List<Renderer> renderers;
+        [SerializeField] readonly List<Renderer> renderers;
         public KanikamaMonitorTraversedGrid(List<Renderer> renderers)
         {
             this.renderers = renderers;
@@ -27,6 +28,8 @@ namespace Kanikama
                 renderer.enabled = true;
             }
         }
+
+        public void OnBakeSceneStart() { }
 
         public void Rollback()
         {
