@@ -10,8 +10,6 @@ namespace Kanikama.Udon
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
         [SerializeField] KanikamaCamera[] kanikamaCameras;
-        //[SerializeField] bool isAmbientEnable;
-        //[SerializeField] Light ambientLight;
 
         [Space]
         [Range(0, 20f)] public float intensity = 1f;
@@ -43,9 +41,6 @@ namespace Kanikama.Udon
         void Initialize()
         {
             size = 0;
-
-            //// Ambient
-            //if (isAmbientEnable) size += 1;
 
             // Light
             lightCount = lights == null ? 0 : lights.Length;
@@ -110,15 +105,7 @@ namespace Kanikama.Udon
 
             var index = 0;
 
-            //// 1. Ambient
-            //if (isAmbientEnable)
-            //{
-            //    // HDR (linear)
-            //    colors[index] = ambientLight.color.linear * ambientLight.intensity * intensity;
-            //    index++;
-            //}
-
-            // 2. Light
+            // 1. Light (include Ambient)
             for (var i = 0; i < lightCount; i++)
             {
                 var light = lights[i];
@@ -127,7 +114,7 @@ namespace Kanikama.Udon
                 index++;
             }
 
-            // 3. Renderer
+            // 2. Renderer
             for (var i = 0; i < rendererCount; i++)
             {
                 var renderer = emissiveRenderers[i];
@@ -145,7 +132,7 @@ namespace Kanikama.Udon
                 }
             }
 
-            // 4. Monitor
+            // 3. Monitor
             for (var i = 0; i < monitorCount; i++)
             {
                 var cols = monitorColors[i];
@@ -158,7 +145,7 @@ namespace Kanikama.Udon
                 }
             }
 
-            // 5. Others (You can add custom udon scripts here)
+            // 4. Others (You can add custom udon scripts here)
         }
     }
 }
