@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if BAKERY_INCLUDED
+using UnityEngine;
 
 namespace Kanikama.Bakery
 {
@@ -51,3 +52,4 @@ namespace Kanikama.Bakery
         }
     }
 }
+#endif
