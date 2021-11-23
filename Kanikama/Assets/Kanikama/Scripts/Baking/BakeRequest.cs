@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class BakeRequest
     {

@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public interface ILightmapper  
     {
         Task BakeAsync(CancellationToken token);
         void Clear();
-        bool IsLightMap(string assetPath);
+        bool IsLightmap(string assetPath);
         bool IsDirectionalMap(string assetPath);
-        string LightMapDirPath();
+        string LightmapDirPath();
     }
 }

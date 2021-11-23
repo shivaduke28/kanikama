@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     [CreateAssetMenu(fileName = "texture2d_array_converter", menuName = "Kanikama/Texture2DArrayGenerator")]
     public class Texture2DArrayGenerator : ScriptableObject
@@ -17,7 +17,7 @@ namespace Kanikama.Editor
             var texArray = Generate(textures);
             var path = AssetDatabase.GetAssetPath(this);
             var dir = Path.GetDirectoryName(path);
-            AssetUtil.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
             AssetDatabase.Refresh();
             return texArray;
         }
@@ -28,7 +28,7 @@ namespace Kanikama.Editor
             var texArray = Generate(textures, true);
             var path = AssetDatabase.GetAssetPath(this);
             var dir = Path.GetDirectoryName(path);
-            AssetUtil.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref texArray, Path.Combine(dir, $"{fileName}.asset"));
             AssetDatabase.Refresh();
             return texArray;
         }
@@ -50,8 +50,8 @@ namespace Kanikama.Editor
             };
             for (var i = 0; i < count; i++)
             {
-                var lightMap = textures[i];
-                Graphics.CopyTexture(lightMap, 0, texArray, i);
+                var lightmap = textures[i];
+                Graphics.CopyTexture(lightmap, 0, texArray, i);
             }
             return texArray;
         }

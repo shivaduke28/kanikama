@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     [CreateAssetMenu(menuName = "Kanikama/Settings", fileName = "KanikamaSettings")]
     public class KanikamaSettings : ScriptableObject

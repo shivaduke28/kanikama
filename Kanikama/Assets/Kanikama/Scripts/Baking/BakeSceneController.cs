@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class BakeSceneController : IDisposable
     {
@@ -36,12 +36,12 @@ namespace Kanikama.Editor
             LightSourceGroupReferences = new List<List<ObjectReference<LightSource>>>();
             foreach (var source in LightSources)
             {
-                source.Ref.OnBakeSceneStart();
+                source.Value.OnBakeSceneStart();
             }
             foreach (var group in LightSourceGroups)
             {
-                group.Ref.OnBakeSceneStart();
-                var references = group.Ref.GetLightSources()
+                group.Value.OnBakeSceneStart();
+                var references = group.Value.GetLightSources()
                     .Select(x => new ObjectReference<LightSource>(x))
                     .ToList();
                 LightSourceGroupReferences.Add(references);
@@ -107,17 +107,17 @@ namespace Kanikama.Editor
         {
             foreach (var light in nonKanikamaLights)
             {
-                light.Ref.enabled = false;
+                light.Value.enabled = false;
             }
 
             foreach (var lightSource in LightSources)
             {
-                lightSource.Ref.TurnOff();
+                lightSource.Value.TurnOff();
             }
 
             foreach (var group in LightSourceGroups)
             {
-                foreach (var source in group.Ref.GetLightSources())
+                foreach (var source in group.Value.GetLightSources())
                 {
                     source.TurnOff();
                 }
@@ -125,24 +125,24 @@ namespace Kanikama.Editor
 
             foreach (var probe in reflectionProbes)
             {
-                probe.Ref.enabled = false;
+                probe.Value.enabled = false;
             }
 
             foreach (var probe in lightProbeGroups)
             {
-                probe.Ref.enabled = false;
+                probe.Value.enabled = false;
             }
 
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight.Ref.TurnOff();
+                tempAmbientLight.Value.TurnOff();
             }
         }
 
         bool IsKanikama(object obj)
         {
-            return LightSources.Any(x => x.Ref.Contains(obj)) ||
-                LightSourceGroups.Any(x => x.Ref.Contains(obj) || x.Ref.GetLightSources().Any(y => y.Contains(obj)));
+            return LightSources.Any(x => x.Value.Contains(obj)) ||
+                LightSourceGroups.Any(x => x.Value.Contains(obj) || x.Value.GetLightSources().Any(y => y.Contains(obj)));
         }
 
         public void SetLightmapSettings(bool isDirectional)
@@ -168,11 +168,11 @@ namespace Kanikama.Editor
         {
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight.Ref.Rollback();
+                tempAmbientLight.Value.Rollback();
             }
             foreach (var light in nonKanikamaLights)
             {
-                light.Ref.enabled = true;
+                light.Value.enabled = true;
             }
 
             foreach (var kvp in nonKanikamaMaterialMaps)
@@ -184,12 +184,12 @@ namespace Kanikama.Editor
 
             foreach (var probe in reflectionProbes)
             {
-                probe.Ref.enabled = true;
+                probe.Value.enabled = true;
             }
 
             foreach (var probe in lightProbeGroups)
             {
-                probe.Ref.enabled = true;
+                probe.Value.enabled = true;
             }
         }
 
@@ -202,16 +202,16 @@ namespace Kanikama.Editor
         {
             foreach (var source in LightSources)
             {
-                source.Ref.Rollback();
+                source.Value.Rollback();
             }
 
             foreach (var group in LightSourceGroups)
             {
-                foreach (var source in group.Ref.GetLightSources())
+                foreach (var source in group.Value.GetLightSources())
                 {
                     source.Rollback();
                 }
-                group.Ref.Rollback();
+                group.Value.Rollback();
             }
         }
 
@@ -224,7 +224,7 @@ namespace Kanikama.Editor
                 case BakePath.BakeTargetType.LightSourceGroup:
                     if (pathData.ObjectIndex >= LightSourceGroups.Count) return false;
                     var group = LightSourceGroups[pathData.ObjectIndex];
-                    return pathData.SubIndex < group.Ref.GetLightSources().Count;
+                    return pathData.SubIndex < group.Value.GetLightSources().Count;
                 default:
                     return false;
             }
@@ -238,7 +238,7 @@ namespace Kanikama.Editor
             }
             if (tempAmbientLight != null)
             {
-                UnityEngine.Object.DestroyImmediate(tempAmbientLight.Ref.gameObject);
+                UnityEngine.Object.DestroyImmediate(tempAmbientLight.Value.gameObject);
             }
         }
     }

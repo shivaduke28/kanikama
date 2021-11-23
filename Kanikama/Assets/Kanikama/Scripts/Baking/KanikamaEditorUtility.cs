@@ -2,12 +2,26 @@
 using System.IO;
 using System.Reflection;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
-    public static class AssetUtil
+    public static class KanikamaEditorUtility
     {
+        public static string GetName(object obj)
+        {
+            if (obj == null) return "null";
+            try
+            {
+                return obj is UnityEngine.Object ob ? ob.name : obj.GetType().Name;
+            }
+            catch (MissingReferenceException)
+            {
+                return "missing";
+            }
+        }
+
         public static SceneAsset GetActiveSceneAsset()
         {
             var scene = SceneManager.GetActiveScene();

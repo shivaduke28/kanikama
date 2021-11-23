@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     [Serializable]
     public class BakedAsset

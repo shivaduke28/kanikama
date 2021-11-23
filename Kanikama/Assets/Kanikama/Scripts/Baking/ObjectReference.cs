@@ -3,21 +3,21 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class ObjectReference<T> where T : Component
     {
-        T reference;
+        T value;
         readonly string rootName;
         readonly string path; // relative to root
 
         public ObjectReference(T value)
         {
-            reference = value;
+            this.value = value;
             (rootName, path) = GetPathInHierarchy(value.transform);
         }
 
-        public T Ref => reference != null ? reference : (reference = Load());
+        public T Value => value != null ? value : (value = Load());
 
         T Load()
         {

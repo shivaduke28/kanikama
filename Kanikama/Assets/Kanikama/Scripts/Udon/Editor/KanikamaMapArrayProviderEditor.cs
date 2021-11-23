@@ -1,4 +1,4 @@
-﻿using Kanikama.Editor;
+﻿using Kanikama.Baking;
 using UdonSharp;
 using UdonSharpEditor;
 using UnityEditor;
@@ -49,7 +49,7 @@ namespace Kanikama.Udon.Editor
 
         void Setup()
         {
-            var sceneAsset = AssetUtil.GetActiveSceneAsset();
+            var sceneAsset = KanikamaEditorUtility.GetActiveSceneAsset();
             if (sceneAsset == null)
             {
                 Debug.LogError("[Kanikama] This scene is not saved yet.");

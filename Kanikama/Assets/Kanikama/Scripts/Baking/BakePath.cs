@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class BakePath
     {
@@ -40,7 +40,7 @@ namespace Kanikama.Editor
             var scenePath = AssetDatabase.GetAssetPath(scene);
             var sceneDirPath = Path.GetDirectoryName(scenePath);
             var exportDirName = string.Format(ExportDirFormat, scene.name);
-            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+            KanikamaEditorUtility.CreateFolderIfNecessary(sceneDirPath, exportDirName);
             return Path.Combine(sceneDirPath, exportDirName);
         }
 
@@ -48,24 +48,24 @@ namespace Kanikama.Editor
         {
             var sceneDirPath = Path.GetDirectoryName(scene.path);
             var exportDirName = string.Format(ExportDirFormat, scene.name);
-            AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+            KanikamaEditorUtility.CreateFolderIfNecessary(sceneDirPath, exportDirName);
             ExportDirPath = Path.Combine(sceneDirPath, exportDirName);
-            AssetUtil.CreateFolderIfNecessary(ExportDirPath, TmpDirName);
+            KanikamaEditorUtility.CreateFolderIfNecessary(ExportDirPath, TmpDirName);
             TmpDirPath = Path.Combine(ExportDirPath, TmpDirName);
             this.lightmapper = lightmapper;
         }
 
         public List<string> GetUnityLightmapPaths()
         {
-            var dirPath = lightmapper.LightMapDirPath();
+            var dirPath = lightmapper.LightmapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => lightmapper.IsLightMap(x)).ToList();
+                .Where(x => lightmapper.IsLightmap(x)).ToList();
         }
 
         public List<string> GetUnityDirectionalLightmapPaths()
         {
-            var dirPath = lightmapper.LightMapDirPath();
+            var dirPath = lightmapper.LightmapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
                 .Select(x => AssetDatabase.GUIDToAssetPath(x))
                 .Where(x => lightmapper.IsDirectionalMap(x)).ToList();

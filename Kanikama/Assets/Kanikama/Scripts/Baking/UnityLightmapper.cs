@@ -5,13 +5,12 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
-
     public class UnityLightmapper : ILightmapper
     {
-        static readonly Regex UnityLightMapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
-        static readonly Regex UnityDirectionalLightMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
+        static readonly Regex LightmapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
+        static readonly Regex DirectionalMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
         readonly string lightmapDirPath;
 
         public UnityLightmapper(Scene scene)
@@ -46,16 +45,16 @@ namespace Kanikama.Editor
             Lightmapping.Cancel();
         }
 
-        public bool IsLightMap(string assetPath)
+        public bool IsLightmap(string assetPath)
         {
-            return UnityLightMapRegex.IsMatch(assetPath);
+            return LightmapRegex.IsMatch(assetPath);
         }
         public bool IsDirectionalMap(string assetPath)
         {
-            return UnityDirectionalLightMapRegex.IsMatch(assetPath);
+            return DirectionalMapRegex.IsMatch(assetPath);
         }
 
-        public string LightMapDirPath()
+        public string LightmapDirPath()
         {
             return lightmapDirPath;
         }

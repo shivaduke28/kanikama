@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class TextureGenerator
     {
@@ -33,7 +33,7 @@ namespace Kanikama.Editor
         {
             var rt = new RenderTexture(parameter);
             var path = Path.Combine(dirPath, $"{name}.renderTexture");
-            AssetUtil.CreateOrReplaceAsset<RenderTexture>(ref rt, path);
+            KanikamaEditorUtility.CreateOrReplaceAsset<RenderTexture>(ref rt, path);
             return rt;
         }
 

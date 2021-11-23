@@ -1,4 +1,4 @@
-﻿namespace Kanikama.Editor
+﻿namespace Kanikama.Baking
 {
     public enum CompositeMode
     {

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Baking
 {
     public class Baker
     {
@@ -79,12 +78,12 @@ namespace Kanikama.Editor
         async Task BakeLightSourceAsync(int index, CancellationToken token)
         {
             var source = sceneController.LightSources[index];
-            var name = KanikamaEditorUtil.GetName(source.Ref);
+            var name = KanikamaEditorUtility.GetName(source.Value);
             Debug.Log($"[Kanikama] Baking LightSource: {name}");
-            source.Ref.OnBake();
+            source.Value.OnBake();
             Lightmapping.Clear();
             await BakeSceneGIAsync(token);
-            source.Ref.TurnOff();
+            source.Value.TurnOff();
             MoveBakedLightmaps(BakePath.LightSourceFormat(index));
         }
 
@@ -100,7 +99,7 @@ namespace Kanikama.Editor
         async Task BakeLightSourceGroupAsync(int index, CancellationToken token)
         {
             var group = sceneController.LightSourceGroups[index];
-            var name = KanikamaEditorUtil.GetName(group.Ref);
+            var name = KanikamaEditorUtility.GetName(group.Value);
 
             Debug.Log($"[Kanikama] Baking LightSourceGroup: {name}");
 
@@ -109,12 +108,12 @@ namespace Kanikama.Editor
             for (var i = 0; i < sourceCount; i++)
             {
                 var sourceRef = sources[i];
-                var source = sourceRef.Ref;
-                Debug.Log($"[Kanikama] - Baking {i}th LightSource { KanikamaEditorUtil.GetName(source)}");
+                var source = sourceRef.Value;
+                Debug.Log($"[Kanikama] - Baking {i}th LightSource { KanikamaEditorUtility.GetName(source)}");
                 source.OnBake();
                 Lightmapping.Clear();
                 await BakeSceneGIAsync(token);
-                sourceRef.Ref.TurnOff(); // reload is necessary for Bakery
+                sourceRef.Value.TurnOff(); // reload is necessary for Bakery
                 MoveBakedLightmaps(BakePath.LightSourceGroupFormat(index, i));
             }
         }
@@ -213,8 +212,8 @@ namespace Kanikama.Editor
         {
             if (!request.isGenerateAssets) { Debug.Log("[Kanikama] Skip creating assets"); return; }
 
-            var lightMapCount = bakePath.GetUnityLightmapPaths().Count;
-            for (var mapIndex = 0; mapIndex < lightMapCount; mapIndex++)
+            var lightmapCount = bakePath.GetUnityLightmapPaths().Count;
+            for (var mapIndex = 0; mapIndex < lightmapCount; mapIndex++)
             {
                 var textures = bakePath.GetTempLightmapPaths(mapIndex)
                     .Where(path => sceneController.ValidateTexturePath(path))
@@ -223,7 +222,7 @@ namespace Kanikama.Editor
                 if (!textures.Any()) continue;
                 var texArr = Texture2DArrayGenerator.Generate(textures);
                 var texArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.TexArrFormat, mapIndex));
-                AssetUtil.CreateOrReplaceAsset(ref texArr, texArrPath);
+                KanikamaEditorUtility.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"[Kanikama] Created {texArrPath}");
                 BakedAsset.kanikamaMapArrays.Add(texArr);
 
@@ -256,7 +255,7 @@ namespace Kanikama.Editor
                 .ToList();
             var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
             var dirTexArrPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.DirTexArrFormat, mapIndex));
-            AssetUtil.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
             Debug.Log($"[Kanikama] Created {dirTexArrPath}");
             return dirTexArr;
         }
@@ -266,7 +265,7 @@ namespace Kanikama.Editor
             var shader = Shader.Find(ShaderName.CompositeCRT);
             var mat = new Material(shader);
             var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.CustomRenderTextureMaterialFormat, mapIndex));
-            AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref mat, matPath);
             Debug.Log($"[Kanikama] Created {matPath}");
 
             mat.SetInt(ShaderProperties.LighmapCount, texture2DArray.depth);
@@ -281,7 +280,7 @@ namespace Kanikama.Editor
                 initializationMode = CustomRenderTextureUpdateMode.OnLoad,
                 initializationColor = Color.black
             };
-            AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
             return (mat, sceneMap);
         }
@@ -291,7 +290,7 @@ namespace Kanikama.Editor
             var shader = Shader.Find(ShaderName.CompositeUnlit);
             var mat = new Material(shader);
             var matPath = Path.Combine(bakePath.ExportDirPath, string.Format(BakePath.RenderTextureMaterialFormat, mapIndex));
-            AssetUtil.CreateOrReplaceAsset(ref mat, matPath);
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref mat, matPath);
             Debug.Log($"[Kanikama] Created {matPath}");
 
             mat.SetInt(ShaderProperties.LighmapCount, texture2DArray.depth);
@@ -302,7 +301,7 @@ namespace Kanikama.Editor
             {
                 useMipMap = true
             };
-            AssetUtil.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
+            KanikamaEditorUtility.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
             return (mat, sceneMap);
         }

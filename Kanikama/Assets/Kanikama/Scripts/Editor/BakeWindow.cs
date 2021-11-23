@@ -1,5 +1,5 @@
-﻿using Kanikama;
-using Kanikama.Editor.Bakery;
+﻿using Kanikama.Baking;
+using Kanikama.Baking.Bakery;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,7 +38,7 @@ namespace Kanikama.Editor
 
         void LoadSceneAsset()
         {
-            sceneAsset = AssetUtil.GetActiveSceneAsset();
+            sceneAsset = KanikamaEditorUtility.GetActiveSceneAsset();
 
             if (sceneAsset == null) return;
 
@@ -120,8 +120,8 @@ namespace Kanikama.Editor
                     {
                         var sceneDirPath = Path.GetDirectoryName(scene.path);
                         var exportDirName = string.Format(BakePath.ExportDirFormat, scene.name);
-                        AssetUtil.CreateFolderIfNecessary(sceneDirPath, exportDirName);
-                        AssetUtil.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
+                        KanikamaEditorUtility.CreateFolderIfNecessary(sceneDirPath, exportDirName);
+                        KanikamaEditorUtility.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
                     }
                 }
             }
@@ -189,7 +189,7 @@ namespace Kanikama.Editor
                         var lightCount = Mathf.Min(sourceFlags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
                         {
-                            sourceFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(source[i]), sourceFlags[i]);
+                            sourceFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtility.GetName(source[i]), sourceFlags[i]);
                         }
                     }
 
@@ -201,7 +201,7 @@ namespace Kanikama.Editor
                         var groupCount = Mathf.Min(groupFlags.Count, group.Count);
                         for (var i = 0; i < groupCount; i++)
                         {
-                            groupFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtil.GetName(group[i]), groupFlags[i]);
+                            groupFlags[i] = EditorGUILayout.Toggle(KanikamaEditorUtility.GetName(group[i]), groupFlags[i]);
                         }
                     }
 

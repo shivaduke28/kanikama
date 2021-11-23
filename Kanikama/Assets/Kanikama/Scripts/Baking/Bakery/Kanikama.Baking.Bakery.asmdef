@@ -1,9 +1,8 @@
 {
-    "name": "Kanikama.Editor",
+    "name": "Kanikama.Baking.Bakery",
     "references": [
-        "Kanikama.Runtime",
-        "Kanikama.Baking",
-        "Kanikama.Baking.Bakery"
+        "GUID:94311bfdae230174f847fc09f65348c7",
+        "GUID:290dd5870d0ead646bcb6ea5c6a60af5"
     ],
     "includePlatforms": [
         "Editor"
