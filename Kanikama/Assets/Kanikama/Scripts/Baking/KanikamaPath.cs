@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Baking
@@ -56,18 +57,12 @@ namespace Kanikama.Baking
 
         public List<string> GetBakedLightmapPaths()
         {
-            var dirPath = lightmapper.LightmapDirPath();
-            return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
-                .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => lightmapper.IsLightmap(x)).ToList();
+            return LightmapSettings.lightmaps.Select(x => AssetDatabase.GetAssetPath(x.lightmapColor)).ToList();
         }
 
         public List<string> GetBakedDirectionalMapPaths()
         {
-            var dirPath = lightmapper.LightmapDirPath();
-            return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
-                .Select(x => AssetDatabase.GUIDToAssetPath(x))
-                .Where(x => lightmapper.IsDirectionalMap(x)).ToList();
+            return LightmapSettings.lightmaps.Select(x => AssetDatabase.GetAssetPath(x.lightmapDir)).ToList();
         }
 
         public List<TempTexturePath> GetTempLightmapPaths(int lightmapIndex)

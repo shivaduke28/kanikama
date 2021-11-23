@@ -1,24 +1,14 @@
-﻿using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Kanikama.Baking
 {
     public class UnityLightmapper : ILightmapper
     {
-        static readonly Regex LightmapRegex = new Regex("Lightmap-[0-9]+_comp_light.exr");
-        static readonly Regex DirectionalMapRegex = new Regex("Lightmap-[0-9]+_comp_dir.png");
-        readonly string lightmapDirPath;
 
-        public UnityLightmapper(Scene scene)
-        {
-            var sceneDirPath = Path.GetDirectoryName(scene.path);
-            lightmapDirPath = Path.Combine(sceneDirPath, scene.name);
-        }
+        public UnityLightmapper() { }
 
         public async Task BakeAsync(CancellationToken token)
         {
@@ -44,20 +34,6 @@ namespace Kanikama.Baking
         public void Clear()
         {
             Lightmapping.Cancel();
-        }
-
-        public bool IsLightmap(string assetPath)
-        {
-            return LightmapRegex.IsMatch(assetPath);
-        }
-        public bool IsDirectionalMap(string assetPath)
-        {
-            return DirectionalMapRegex.IsMatch(assetPath);
-        }
-
-        public string LightmapDirPath()
-        {
-            return lightmapDirPath;
         }
 
         public bool IsDirectionalMode()

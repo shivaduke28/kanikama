@@ -260,9 +260,9 @@ namespace Kanikama.Editor
             switch (type)
             {
                 case LightmapperType.Unity:
-                    return new UnityLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                    return new UnityLightmapper();
                 case LightmapperType.Bakery:
-                    return new BakeryLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                    return new BakeryLightmapper();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

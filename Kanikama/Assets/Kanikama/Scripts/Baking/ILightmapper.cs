@@ -7,9 +7,6 @@ namespace Kanikama.Baking
     {
         Task BakeAsync(CancellationToken token);
         void Clear();
-        bool IsLightmap(string assetPath);
-        bool IsDirectionalMap(string assetPath);
         bool IsDirectionalMode();
-        string LightmapDirPath();
     }
 }
