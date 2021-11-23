@@ -7,7 +7,8 @@ namespace Kanikama
     public class KanikamaLightMaterial : ILightSource
     {
         public static readonly string ShaderKeywordEmission = "_EMISSION";
-        public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID("_EmissionColor");
+        public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID(ShaderPropertyEmissionColorName);
+        public const string ShaderPropertyEmissionColorName = "_EmissionColor";
 
         [SerializeField] int index;
         [SerializeField] Material material;

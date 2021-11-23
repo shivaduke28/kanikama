@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Kanikama.Bakery
 {
-    [RequireComponent(typeof(Renderer),typeof(BakeryLightMesh))]
+    [RequireComponent(typeof(Renderer), typeof(BakeryLightMesh))]
     public class KanikamaBakeryGridRenderer : KanikamaGridRenderer
     {
         [SerializeField] Renderer renderer;

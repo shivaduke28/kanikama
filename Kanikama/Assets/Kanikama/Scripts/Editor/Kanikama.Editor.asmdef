@@ -3,6 +3,7 @@
     "references": [
         "Kanikama.Runtime",
         "Kanikama.Baking",
+        "Kanikama.Bakery",
         "Kanikama.Baking.Bakery"
     ],
     "includePlatforms": [
