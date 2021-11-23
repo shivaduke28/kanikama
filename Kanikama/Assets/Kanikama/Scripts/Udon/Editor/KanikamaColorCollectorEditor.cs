@@ -116,9 +116,6 @@ namespace Kanikama.Udon.Editor
                 prop.objectReferenceValue = kanikamaCameras[i];
             }
 
-            //isAmbientEnableProperty.boolValue = sceneDescriptor.KanikamaAmbientLight != null;
-            //ambientLightProperty.objectReferenceValue = sceneDescriptor.KanikamaAmbientLight?.GetSource();
-
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(proxy);
         }
