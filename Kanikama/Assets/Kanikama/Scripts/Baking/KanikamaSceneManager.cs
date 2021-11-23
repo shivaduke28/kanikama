@@ -164,6 +164,7 @@ namespace Kanikama.Baking
             {
                 tempAmbientLight.Value.Rollback();
             }
+
             foreach (var light in nonKanikamaLights)
             {
                 light.Value.enabled = true;
@@ -201,10 +202,6 @@ namespace Kanikama.Baking
 
             foreach (var group in LightSourceGroups)
             {
-                foreach (var source in group.Value.GetLightSources())
-                {
-                    source.Rollback();
-                }
                 group.Value.Rollback();
             }
         }

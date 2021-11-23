@@ -71,6 +71,10 @@ namespace Kanikama
 
         public override void Rollback()
         {
+            foreach(var traverse in traversedGrids)
+            {
+                traverse.Rollback();
+            }
             mainMonitor.monitorRenderer.enabled = true;
             foreach (var m in subMonitors)
             {

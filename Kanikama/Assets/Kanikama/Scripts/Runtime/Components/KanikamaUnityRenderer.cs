@@ -48,6 +48,10 @@ namespace Kanikama
 
         public override void Rollback()
         {
+            foreach(var mat in lightMaterials)
+            {
+                mat.Rollback();
+            }
             renderer.sharedMaterials = sharedMaterials;
         }
 
