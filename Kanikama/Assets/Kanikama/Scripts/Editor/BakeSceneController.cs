@@ -9,9 +9,9 @@ namespace Kanikama.Editor
     public class BakeSceneController : IDisposable
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
-        public List<ObjectReference<KanikamaLightSource>> LightSources { get; private set; }
+        public List<ObjectReference<LightSource>> LightSources { get; private set; }
         public List<ObjectReference<KanikamaLightSourceGroup>> LightSourceGroups { get; private set; }
-        public List<List<ObjectReference<KanikamaLightSource>>> LightSourceGroupReferences { get; private set; }
+        public List<List<ObjectReference<LightSource>>> LightSourceGroupReferences { get; private set; }
         readonly List<ObjectReference<Light>> nonKanikamaLights = new List<ObjectReference<Light>>();
 
 
@@ -22,7 +22,7 @@ namespace Kanikama.Editor
         Material dummyMaterial;
         LightmapsMode lightmapsMode;
         bool isKanikamaAmbientEnable;
-        ObjectReference<KanikamaAmbientLight> tempAmbientLight;
+        ObjectReference<KanikamaUnitySkyLight> tempAmbientLight;
 
         public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
         {
@@ -31,9 +31,9 @@ namespace Kanikama.Editor
 
         public void Initialize()
         {
-            LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<KanikamaLightSource>(x)).ToList();
+            LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<LightSource>(x)).ToList();
             LightSourceGroups = sceneDescriptor.GetLightSourceGroups().Select(x => new ObjectReference<KanikamaLightSourceGroup>(x)).ToList();
-            LightSourceGroupReferences = new List<List<ObjectReference<KanikamaLightSource>>>();
+            LightSourceGroupReferences = new List<List<ObjectReference<LightSource>>>();
             foreach (var source in LightSources)
             {
                 source.Ref.OnBakeSceneStart();
@@ -42,7 +42,7 @@ namespace Kanikama.Editor
             {
                 group.Ref.OnBakeSceneStart();
                 var references = group.Ref.GetLightSources()
-                    .Select(x => new ObjectReference<KanikamaLightSource>(x))
+                    .Select(x => new ObjectReference<LightSource>(x))
                     .ToList();
                 LightSourceGroupReferences.Add(references);
             }
@@ -50,8 +50,8 @@ namespace Kanikama.Editor
             isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);
             if (!isKanikamaAmbientEnable)
             {
-                var temp = new GameObject("TempAmbientLight").AddComponent<KanikamaAmbientLight>();
-                tempAmbientLight = new ObjectReference<KanikamaAmbientLight>(temp);
+                var temp = new GameObject("TempAmbientLight").AddComponent<KanikamaUnitySkyLight>();
+                tempAmbientLight = new ObjectReference<KanikamaUnitySkyLight>(temp);
             }
 
             // non kanikama lights

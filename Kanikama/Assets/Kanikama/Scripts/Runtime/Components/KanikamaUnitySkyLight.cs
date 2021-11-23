@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public class KanikamaAmbientLight : KanikamaLight
+    public class KanikamaUnitySkyLight : KanikamaLight
     {
         [SerializeField] new Light light;
         [SerializeField, HideInInspector] float ambientIntensity;

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Kanikama
 {
     [Serializable]
-    public class KanikamaLightMaterial : IKanikamaLightSource
+    public class KanikamaLightMaterial : ILightSource
     {
         public static readonly string ShaderKeywordEmission = "_EMISSION";
         public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID("_EmissionColor");

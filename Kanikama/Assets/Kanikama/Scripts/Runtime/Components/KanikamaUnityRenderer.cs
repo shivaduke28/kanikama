@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Kanikama
 {
     [RequireComponent(typeof(Renderer)), AddComponentMenu("Kanikama/KanikamaLightRenderer")]
-    public class KanikamaLightRenderer : KanikamaRenderer
+    public class KanikamaUnityRenderer : KanikamaRenderer
     {
         [SerializeField] Renderer renderer;
 
@@ -37,10 +37,10 @@ namespace Kanikama
             lightMaterials = null;
         }
 
-        public override IList<KanikamaLightSource> GetLightSources()
+        public override IList<LightSource> GetLightSources()
         {
             Initialize();
-            return lightMaterials.Cast<KanikamaLightSource>().ToList();
+            return lightMaterials.Cast<LightSource>().ToList();
         }
 
         void Initialize()

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public abstract class KanikamaGridRenderer : KanikamaLightSource<Renderer>
+    public abstract class KanikamaGridRenderer : LightSource<Renderer>
     {
     }
 }

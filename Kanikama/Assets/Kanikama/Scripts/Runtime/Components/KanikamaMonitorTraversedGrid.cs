@@ -7,8 +7,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-
-    public class KanikamaMonitorTraversedGrid : KanikamaLightSource
+    public class KanikamaMonitorTraversedGrid : LightSource
     {
         [SerializeField] public List<KanikamaGridRenderer> gridRenderers;
         public override bool Contains(object obj)

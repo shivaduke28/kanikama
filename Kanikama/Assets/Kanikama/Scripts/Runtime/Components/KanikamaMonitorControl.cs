@@ -69,7 +69,7 @@ namespace Kanikama
             return false;
         }
 
-        public override IList<KanikamaLightSource> GetLightSources() => new List<KanikamaLightSource>(traversedGrids);
+        public override IList<LightSource> GetLightSources() => new List<LightSource>(traversedGrids);
 
         public override void Rollback()
         {

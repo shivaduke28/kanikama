@@ -15,8 +15,8 @@ namespace Kanikama.Bakery
 
         void OnValidate()
         {
-            light = GetComponent<Light>();
-            bakeryLight = GetComponent<BakeryLightMesh>();
+            light = light ?? GetComponent<Light>();
+            bakeryLight = bakeryLight ?? GetComponent<BakeryLightMesh>();
         }
         public override bool Contains(object obj)
         {

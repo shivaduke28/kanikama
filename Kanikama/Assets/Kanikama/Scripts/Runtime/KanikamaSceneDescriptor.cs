@@ -15,9 +15,9 @@ namespace Kanikama
         public List<KanikamaRenderer> KanikamaRendererGroups => kanikamaRenderers;
         public List<KanikamaLightSourceGroup> KanikamaLightSourceGroups => kanikamaLightSourceGroups;
 
-        public IReadOnlyList<KanikamaLightSource> GetLightSources()
+        public IReadOnlyList<LightSource> GetLightSources()
         {
-            var sources = new List<KanikamaLightSource>();
+            var sources = new List<LightSource>();
             sources.AddRange(kanikamaLights);
             return sources.AsReadOnly();
         }
