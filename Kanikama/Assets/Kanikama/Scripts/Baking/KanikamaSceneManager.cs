@@ -6,12 +6,11 @@ using UnityEngine;
 
 namespace Kanikama.Baking
 {
-    public class BakeSceneController : IDisposable
+    public class KanikamaSceneManager : IDisposable
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
         public List<ObjectReference<LightSource>> LightSources { get; private set; }
         public List<ObjectReference<KanikamaLightSourceGroup>> LightSourceGroups { get; private set; }
-        public List<List<ObjectReference<LightSource>>> LightSourceGroupReferences { get; private set; }
         readonly List<ObjectReference<Light>> nonKanikamaLights = new List<ObjectReference<Light>>();
 
 
@@ -24,7 +23,7 @@ namespace Kanikama.Baking
         bool isKanikamaAmbientEnable;
         ObjectReference<KanikamaUnitySkyLight> tempAmbientLight;
 
-        public BakeSceneController(KanikamaSceneDescriptor sceneDescriptor)
+        public KanikamaSceneManager(KanikamaSceneDescriptor sceneDescriptor)
         {
             this.sceneDescriptor = sceneDescriptor;
         }
@@ -33,7 +32,6 @@ namespace Kanikama.Baking
         {
             LightSources = sceneDescriptor.GetLightSources().Select(x => new ObjectReference<LightSource>(x)).ToList();
             LightSourceGroups = sceneDescriptor.GetLightSourceGroups().Select(x => new ObjectReference<KanikamaLightSourceGroup>(x)).ToList();
-            LightSourceGroupReferences = new List<List<ObjectReference<LightSource>>>();
             foreach (var source in LightSources)
             {
                 source.Value.OnBakeSceneStart();
@@ -41,10 +39,6 @@ namespace Kanikama.Baking
             foreach (var group in LightSourceGroups)
             {
                 group.Value.OnBakeSceneStart();
-                var references = group.Value.GetLightSources()
-                    .Select(x => new ObjectReference<LightSource>(x))
-                    .ToList();
-                LightSourceGroupReferences.Add(references);
             }
 
             isKanikamaAmbientEnable = IsKanikama(AmbientLightModel.Instance);
@@ -142,7 +136,7 @@ namespace Kanikama.Baking
         bool IsKanikama(object obj)
         {
             return LightSources.Any(x => x.Value.Contains(obj)) ||
-                LightSourceGroups.Any(x => x.Value.Contains(obj) || x.Value.GetLightSources().Any(y => y.Contains(obj)));
+                LightSourceGroups.Any(x => x.Value.Contains(obj));
         }
 
         public void SetLightmapSettings(bool isDirectional)
@@ -215,13 +209,13 @@ namespace Kanikama.Baking
             }
         }
 
-        public bool ValidateTexturePath(BakePath.TempTexturePath pathData)
+        public bool ValidateTexturePath(KanikamaPath.TempTexturePath pathData)
         {
             switch (pathData.Type)
             {
-                case BakePath.BakeTargetType.LightSource:
+                case KanikamaPath.BakeTargetType.LightSource:
                     return pathData.ObjectIndex < LightSources.Count;
-                case BakePath.BakeTargetType.LightSourceGroup:
+                case KanikamaPath.BakeTargetType.LightSourceGroup:
                     if (pathData.ObjectIndex >= LightSourceGroups.Count) return false;
                     var group = LightSourceGroups[pathData.ObjectIndex];
                     return pathData.SubIndex < group.Value.GetLightSources().Count;

@@ -105,8 +105,8 @@ namespace Kanikama.Udon.Editor
             }
 
             var kanikamaCameras = sceneDescriptor.KanikamaLightSourceGroups
-                .Where(x => x is KanikamaMonitorControl)
-                .Select(x => ((KanikamaMonitorControl)x).Camera.GetComponent<KanikamaCamera>())
+                .Where(x => x is KanikamaMonitorController)
+                .Select(x => ((KanikamaMonitorController)x).Camera.GetComponent<KanikamaCamera>())
                 .ToArray();
             kanikamaCamerasProperty.ClearArray();
             kanikamaCamerasProperty.arraySize = kanikamaCameras.Length;

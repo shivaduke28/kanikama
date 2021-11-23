@@ -9,40 +9,52 @@ namespace Kanikama
         public static readonly string ShaderKeywordEmission = "_EMISSION";
         public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID("_EmissionColor");
 
-        readonly Material material;
+        [SerializeField] int index;
+        [SerializeField] Material material;
+        [SerializeField, HideInInspector] Material materialInstance;
+        public Material MaterialInstance => materialInstance;
         public string Name => material.name;
+        public int Index => index;
 
-
-        public KanikamaLightMaterial(Material material)
+        public KanikamaLightMaterial(int index, Material material)
         {
+            this.index = index;
             this.material = material;
         }
 
         public void TurnOff()
         {
-            material.DisableKeyword(ShaderKeywordEmission);
+            materialInstance.DisableKeyword(ShaderKeywordEmission);
         }
 
         public void OnBake()
         {
-            material.EnableKeyword(ShaderKeywordEmission);
-            material.SetColor(ShaderKeywordEmission, Color.white);
+            materialInstance.SetColor(ShaderPropertyEmissionColor, Color.white);
+            materialInstance.EnableKeyword(ShaderKeywordEmission);
         }
 
         public void Rollback()
         {
-            UnityEngine.Object.DestroyImmediate(material);
+            if (materialInstance != null)
+            {
+                UnityEngine.Object.DestroyImmediate(materialInstance);
+            }
         }
 
         public static bool IsTarget(Material mat)
         {
-            return mat.IsKeywordEnabled(KanikamaLightMaterial.ShaderKeywordEmission);
+            return mat.IsKeywordEnabled(ShaderKeywordEmission);
         }
 
         public bool Contains(object obj) => false;
 
         public void OnBakeSceneStart()
         {
+            if (materialInstance != null)
+            {
+                UnityEngine.Object.DestroyImmediate(materialInstance);
+            }
+            materialInstance = UnityEngine.Object.Instantiate(material);
         }
     }
 }

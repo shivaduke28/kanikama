@@ -24,7 +24,7 @@ namespace Kanikama.Baking
 
         public static SceneAsset GetActiveSceneAsset()
         {
-            var scene = SceneManager.GetActiveScene();
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             return string.IsNullOrEmpty(scene.path) ? null : AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
         }
 

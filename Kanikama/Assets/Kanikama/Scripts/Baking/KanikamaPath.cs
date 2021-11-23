@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Baking
 {
-    public class BakePath
+    public class KanikamaPath
     {
         public const string ExportDirFormat = "{0}_Kanikama";
         public const string TmpDirName = "tmp";
@@ -33,7 +32,7 @@ namespace Kanikama.Baking
 
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
-        ILightmapper lightmapper;
+        readonly ILightmapper lightmapper;
 
         public static string KanikamaAssetDirPath(SceneAsset scene)
         {
@@ -44,7 +43,7 @@ namespace Kanikama.Baking
             return Path.Combine(sceneDirPath, exportDirName);
         }
 
-        public BakePath(Scene scene, ILightmapper lightmapper)
+        public KanikamaPath(Scene scene, ILightmapper lightmapper)
         {
             var sceneDirPath = Path.GetDirectoryName(scene.path);
             var exportDirName = string.Format(ExportDirFormat, scene.name);
@@ -55,7 +54,7 @@ namespace Kanikama.Baking
             this.lightmapper = lightmapper;
         }
 
-        public List<string> GetUnityLightmapPaths()
+        public List<string> GetBakedLightmapPaths()
         {
             var dirPath = lightmapper.LightmapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })
@@ -63,7 +62,7 @@ namespace Kanikama.Baking
                 .Where(x => lightmapper.IsLightmap(x)).ToList();
         }
 
-        public List<string> GetUnityDirectionalLightmapPaths()
+        public List<string> GetBakedDirectionalMapPaths()
         {
             var dirPath = lightmapper.LightmapDirPath();
             return AssetDatabase.FindAssets("t:Texture", new string[1] { dirPath })

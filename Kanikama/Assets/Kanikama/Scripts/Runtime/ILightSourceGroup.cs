@@ -7,15 +7,15 @@ namespace Kanikama
     {
         void OnBakeSceneStart();
         void Rollback();
-        bool Contains(object obj);
-        IList<LightSource> GetLightSources();
+        bool Contains(object obj); // should call lightSources.Any(x => x.Contains(obj))
+        IList<ILightSource> GetLightSources();
     }
 
     public abstract class KanikamaLightSourceGroup : MonoBehaviour, ILightSourceGroup
     {
         abstract public void OnBakeSceneStart();
         abstract public void Rollback();
-        abstract public IList<LightSource> GetLightSources();
+        abstract public IList<ILightSource> GetLightSources();
         abstract public bool Contains(object obj);
     }
 

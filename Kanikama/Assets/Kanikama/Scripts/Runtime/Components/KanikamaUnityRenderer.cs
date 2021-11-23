@@ -4,16 +4,14 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    [RequireComponent(typeof(Renderer)), AddComponentMenu("Kanikama/KanikamaLightRenderer")]
+    [RequireComponent(typeof(Renderer)), AddComponentMenu("Kanikama/KanikamaUnityRenderer")]
     public class KanikamaUnityRenderer : KanikamaRenderer
     {
         [SerializeField] Renderer renderer;
+        [SerializeField] List<KanikamaLightMaterial> lightMaterials = new List<KanikamaLightMaterial>();
 
         [SerializeField, HideInInspector] Material[] sharedMaterials;
         [SerializeField, HideInInspector] Material[] tmpMaterials;
-        [SerializeField, HideInInspector] List<KanikamaLightMaterial> lightMaterials = new List<KanikamaLightMaterial>();
-
-        bool initialized;
 
         void OnValidate()
         {
@@ -27,57 +25,64 @@ namespace Kanikama
 
         public override void OnBakeSceneStart()
         {
-            initialized = false;
-            Initialize();
+            sharedMaterials = renderer.sharedMaterials;
+            var count = sharedMaterials.Length;
+            tmpMaterials = new Material[count];
+            for (var i = 0; i < count; i++)
+            {
+                Material tmp;
+                var lightMaterial = lightMaterials.FirstOrDefault(x => x.Index == i);
+                if (lightMaterial != null)
+                {
+                    lightMaterial.OnBakeSceneStart(); // create instance
+                    tmp = lightMaterial.MaterialInstance;
+                }
+                else
+                {
+                    tmp = sharedMaterials[i];
+                }
+                tmpMaterials[i] = tmp;
+            }
+            renderer.sharedMaterials = tmpMaterials;
         }
 
         public override void Rollback()
         {
             renderer.sharedMaterials = sharedMaterials;
-            lightMaterials = null;
         }
 
-        public override IList<LightSource> GetLightSources()
+        public override IList<ILightSource> GetLightSources()
         {
-            Initialize();
-            return lightMaterials.Cast<LightSource>().ToList();
+            return lightMaterials.Select(x => (ILightSource)x).ToList();
         }
 
-        void Initialize()
+        public void Setup()
         {
-            if (initialized) return;
+            if (lightMaterials == null) lightMaterials = new List<KanikamaLightMaterial>();
+
+            foreach(var lightMaterial in lightMaterials)
+            {
+                lightMaterial.Rollback();
+            }
+            lightMaterials.Clear();
 
             sharedMaterials = renderer.sharedMaterials;
             var count = sharedMaterials.Length;
-            tmpMaterials = new Material[count];
 
             for (var i = 0; i < count; i++)
             {
                 var mat = sharedMaterials[i];
-                Material tmp;
                 if (KanikamaLightMaterial.IsTarget(mat))
                 {
-                    tmp = Instantiate(mat);
-                    var lightMaterial = new KanikamaLightMaterial(tmp);
+                    var lightMaterial = new KanikamaLightMaterial(i, mat);
                     lightMaterials.Add(lightMaterial);
                 }
-                else
-                {
-                    tmp = mat;
-                }
-                tmpMaterials[i] = tmp;
             }
-            renderer.sharedMaterials = tmpMaterials;
-            initialized = true;
         }
 
         public override bool Contains(object obj)
         {
-            if (obj is Renderer r)
-            {
-                return r == renderer;
-            }
-            return false;
+            return (obj is Renderer r && r == renderer) || lightMaterials.Any(x => x.Contains(obj));
         }
     }
 }

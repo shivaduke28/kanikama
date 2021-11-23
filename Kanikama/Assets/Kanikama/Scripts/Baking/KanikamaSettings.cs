@@ -50,7 +50,7 @@ namespace Kanikama.Baking
 
             settings = CreateInstance<KanikamaSettings>();
             settings.Initialize(sceneAsset, LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional);
-            var dirPath = BakePath.KanikamaAssetDirPath(sceneAsset);
+            var dirPath = KanikamaPath.KanikamaAssetDirPath(sceneAsset);
             AssetDatabase.CreateAsset(settings, Path.Combine(dirPath, "KanikamaSettings.asset"));
             AssetDatabase.Refresh();
             return settings;

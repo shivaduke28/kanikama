@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Kanikama
 {
     [RequireComponent(typeof(Camera))]
-    public class KanikamaMonitorControl : KanikamaLightSourceGroup
+    public class KanikamaMonitorController : KanikamaLightSourceGroup
     {
         [SerializeField] Camera camera;
         [SerializeField] KanikamaGridRenderer gridRendererPrefab;
@@ -62,14 +62,12 @@ namespace Kanikama
         #region KanikamaLightSourceGroup
         public override bool Contains(object obj)
         {
-            if (obj is Renderer r)
-            {
-                return mainMonitor.monitorRenderer == r || subMonitors.Any(x => x.monitorRenderer == r);
-            }
-            return false;
+            return (obj is Renderer r &&
+                (mainMonitor.monitorRenderer == r || subMonitors.Any(x => x.monitorRenderer == r))) ||
+                traversedGrids.Any(x => x.Contains(obj));
         }
 
-        public override IList<LightSource> GetLightSources() => new List<LightSource>(traversedGrids);
+        public override IList<ILightSource> GetLightSources() => new List<ILightSource>(traversedGrids);
 
         public override void Rollback()
         {
@@ -87,15 +85,20 @@ namespace Kanikama
             {
                 m.monitorRenderer.enabled = false;
             }
+            foreach(var traverse in traversedGrids)
+            {
+                traverse.OnBakeSceneStart();
+            }
         }
         #endregion
 
         void SetupTraversedGrids()
         {
-            foreach(var grid in traversedGrids)
+            if (traversedGrids == null)
             {
-                DestroyImmediate(grid.gameObject);
+                traversedGrids = new List<KanikamaMonitorTraversedGrid>();
             }
+            traversedGrids.Clear();
             var monitorCount = 1 + subMonitors.Count;
             var part = (int)partitionType;
             var gridCount = Mathf.FloorToInt(part / 10f) * part % 10;
@@ -105,10 +108,7 @@ namespace Kanikama
                 var gridRenderers = new List<KanikamaGridRenderer>();
                 gridRenderers.Add(mainMonitor.gridRenderers[i]);
                 gridRenderers.AddRange(subMonitors.Select(x => x.gridRenderers[i]));
-                var go = new GameObject($"TravesedGrid{i}");
-                go.transform.SetParent(transform, false);
-                var traversedGrid = go.AddComponent<KanikamaMonitorTraversedGrid>();
-                traversedGrid.gridRenderers = gridRenderers;
+                var traversedGrid =  new KanikamaMonitorTraversedGrid(gridRenderers);
                 traversedGrids.Add(traversedGrid);
             }
         }

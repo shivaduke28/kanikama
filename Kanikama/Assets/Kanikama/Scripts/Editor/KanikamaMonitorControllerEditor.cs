@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Kanikama.Editor
 {
-    [CustomEditor(typeof(KanikamaMonitorControl))]
-    public class KanikamaMonitorControlEditor : UnityEditor.Editor
+    [CustomEditor(typeof(KanikamaMonitorController))]
+    public class KanikamaMonitorControllerEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            var monitorControl = (KanikamaMonitorControl)target;
+            var monitorControl = (KanikamaMonitorController)target;
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUILayout.Space();
             if (GUILayout.Button("Setup Lights and Camera"))

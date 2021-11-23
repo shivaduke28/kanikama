@@ -115,11 +115,11 @@ namespace Kanikama.Editor
 
                 if (GUILayout.Button("Open Assets Directory"))
                 {
-                    var scene = SceneManager.GetActiveScene();
+                    var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
                     if (!string.IsNullOrEmpty(scene.path))
                     {
                         var sceneDirPath = Path.GetDirectoryName(scene.path);
-                        var exportDirName = string.Format(BakePath.ExportDirFormat, scene.name);
+                        var exportDirName = string.Format(KanikamaPath.ExportDirFormat, scene.name);
                         KanikamaEditorUtility.CreateFolderIfNecessary(sceneDirPath, exportDirName);
                         KanikamaEditorUtility.OpenDirectory(Path.Combine(sceneDirPath, exportDirName));
                     }
@@ -223,9 +223,9 @@ namespace Kanikama.Editor
         {
             if (isUnity)
             {
-                return new UnityLightmapper(SceneManager.GetActiveScene());
+                return new UnityLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             }
-            return new BakeryLightmapper(SceneManager.GetActiveScene());
+            return new BakeryLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         }
 
         async void BakeAsync()

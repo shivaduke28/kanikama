@@ -21,7 +21,7 @@ namespace Kanikama.Baking
 
         T Load()
         {
-            var scene = SceneManager.GetActiveScene();
+            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
             var rootObjects = scene.GetRootGameObjects();
             var root = rootObjects.FirstOrDefault(t => t.name == rootName);
             if (root == null)

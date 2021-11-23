@@ -34,7 +34,7 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 EditorGUILayout.Space();
-                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorControl)}"))
+                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorController)}"))
                 {
                     Setup();
                 }
@@ -56,17 +56,17 @@ namespace Kanikama.Udon.Editor
 
         void Setup()
         {
-            var monitorControl = proxy.GetComponent<KanikamaMonitorControl>();
+            var monitorControl = proxy.GetComponent<KanikamaMonitorController>();
             if (monitorControl == null)
             {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorControl)} object is not found.");
+                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object is not found.");
                 return;
             }
             var partitionType = (int)monitorControl.PartitionType;
             var mainMonitor = monitorControl.MainMonitor;
             if (mainMonitor == null)
             {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorControl)} object has no main monitor.");
+                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object has no main monitor.");
                 return;
             }
             var size = mainMonitor.GetUnrotatedBounds().size;

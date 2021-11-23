@@ -1,21 +1,26 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
 namespace Kanikama
 {
-    public class KanikamaMonitorTraversedGrid : LightSource
+    [Serializable]
+    public class KanikamaMonitorTraversedGrid : ILightSource
     {
-        [SerializeField] public List<KanikamaGridRenderer> gridRenderers;
-        public override bool Contains(object obj)
+        [SerializeField] List<KanikamaGridRenderer> gridRenderers;
+
+        public KanikamaMonitorTraversedGrid(List<KanikamaGridRenderer> gridRenderers)
+        {
+            this.gridRenderers = gridRenderers;
+        }
+
+        public bool Contains(object obj)
         {
             return gridRenderers.Any(x => x.Contains(obj));
         }
 
-        public override void OnBake()
+        public void OnBake()
         {
             foreach (var source in gridRenderers)
             {
@@ -23,7 +28,7 @@ namespace Kanikama
             }
         }
 
-        public override void OnBakeSceneStart()
+        public void OnBakeSceneStart()
         {
             foreach (var source in gridRenderers)
             {
@@ -31,7 +36,7 @@ namespace Kanikama
             }
         }
 
-        public override void Rollback()
+        public void Rollback()
         {
             foreach (var source in gridRenderers)
             {
@@ -39,7 +44,7 @@ namespace Kanikama
             }
         }
 
-        public override void TurnOff()
+        public void TurnOff()
         {
             foreach (var source in gridRenderers)
             {
