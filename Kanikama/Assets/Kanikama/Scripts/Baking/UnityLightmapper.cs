@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Kanikama.Baking
@@ -57,6 +58,11 @@ namespace Kanikama.Baking
         public string LightmapDirPath()
         {
             return lightmapDirPath;
+        }
+
+        public bool IsDirectionalMode()
+        {
+            return LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional;
         }
     }
 }

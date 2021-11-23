@@ -1,14 +1,20 @@
 ﻿using Kanikama.Baking;
 using Kanikama.Baking.Bakery;
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor
 {
+    public enum LightmapperType
+    {
+        Unity = 0,
+        Bakery = 1,
+    }
+
     class BakeWindow : EditorWindow
     {
         SceneAsset sceneAsset;
@@ -21,7 +27,8 @@ namespace Kanikama.Editor
         bool isRunning;
         Vector2 scrollPosition = new Vector2(0, 0);
 
-        bool isUnity = true;
+        LightmapperType lightmapperType = LightmapperType.Unity;
+        ILightmapper lightmapper;
 
         [MenuItem("Window/Kanikama/Bake")]
         static void Initialize()
@@ -65,29 +72,13 @@ namespace Kanikama.Editor
             using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
             {
                 scrollPosition = scroll.scrollPosition;
-                if (!isRunning)
                 {
-                    // TODO: use enum or something with #if BAKERY_INCLUDED
-                    if (sceneDescriptor == null)
-                    {
-                        LoadSceneAsset();
-                    }
-
-                    isUnity = EditorGUILayout.Toggle("is Unity", isUnity);
                     DrawSceneData();
                     EditorGUILayout.Space();
                     DrawBakeRequest();
                 }
 
-                if (isRunning && isUnity)
-                {
-                    GUILayout.Label("Bake", EditorStyles.boldLabel);
-                    if (GUILayout.Button("Force Stop"))
-                    {
-                        Stop();
-                    }
-                }
-                else if (sceneAsset == null)
+                if (sceneAsset == null)
                 {
                     EditorGUILayout.HelpBox("Scene is not saved as an asset.", MessageType.Warning);
                 }
@@ -129,6 +120,11 @@ namespace Kanikama.Editor
 
         void DrawSceneData()
         {
+            if (sceneDescriptor == null)
+            {
+                LoadSceneAsset();
+            }
+
             GUILayout.Label("Scene", EditorStyles.boldLabel);
             using (new EditorGUI.DisabledGroupScope(true))
             {
@@ -158,7 +154,38 @@ namespace Kanikama.Editor
             GUILayout.Label("Bake", EditorStyles.boldLabel);
 
 
-            if (LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional)
+            if (isRunning)
+            {
+                if (lightmapperType == LightmapperType.Unity)
+                {
+                    if (GUILayout.Button("Force Stop"))
+                    {
+                        Stop();
+                    }
+                    return;
+                }
+            }
+
+            EditorGUI.BeginChangeCheck();
+            if (IsBakeryIncluded())
+            {
+                lightmapperType = (LightmapperType)EditorGUILayout.EnumPopup("Lightmapper", lightmapperType);
+            }
+            else
+            {
+                using (new EditorGUI.DisabledGroupScope(true))
+                {
+                    lightmapperType = LightmapperType.Unity;
+                    EditorGUILayout.EnumPopup("Lightmapper", lightmapperType);
+                }
+            }
+            if (lightmapper == null || EditorGUI.EndChangeCheck())
+            {
+                lightmapper = CreateLightmapper(lightmapperType);
+            }
+
+
+            if (lightmapper.IsDirectionalMode())
             {
                 settings.directionalMode = EditorGUILayout.Toggle("Directional Mode", settings.directionalMode);
             }
@@ -219,13 +246,26 @@ namespace Kanikama.Editor
             settings.createCustomRenderTexture = EditorGUILayout.Toggle("CustomRenderTexture", settings.createCustomRenderTexture);
         }
 
-        ILightmapper CreateLightmapper(bool isUnity)
+        static bool IsBakeryIncluded()
         {
-            if (isUnity)
+#if BAKERY_INCLUDED
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        static ILightmapper CreateLightmapper(LightmapperType type)
+        {
+            switch (type)
             {
-                return new UnityLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                case LightmapperType.Unity:
+                    return new UnityLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                case LightmapperType.Bakery:
+                    return new BakeryLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            return new BakeryLightmapper(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
         }
 
         async void BakeAsync()
@@ -234,7 +274,6 @@ namespace Kanikama.Editor
             bakeRequest.createRenderTexture = settings.createRenderTexture;
             bakeRequest.createCustomRenderTexture = settings.createCustomRenderTexture;
             tokenSource = new CancellationTokenSource();
-            var lightmapper = CreateLightmapper(isUnity);
             var baker = new Baker(lightmapper, bakeRequest);
             isRunning = true;
             try

@@ -9,6 +9,7 @@ namespace Kanikama.Baking
         void Clear();
         bool IsLightmap(string assetPath);
         bool IsDirectionalMap(string assetPath);
+        bool IsDirectionalMode();
         string LightmapDirPath();
     }
 }

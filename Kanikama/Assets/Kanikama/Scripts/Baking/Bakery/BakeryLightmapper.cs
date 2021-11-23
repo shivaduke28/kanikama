@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if BAKERY_INCLUDED
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -51,5 +52,10 @@ namespace Kanikama.Baking.Bakery
         public bool IsLightmap(string assetPath) => LightmapRegex.IsMatch(assetPath);
         public bool IsDirectionalMap(string assetPath) => DirectionalMapRegex.IsMatch(assetPath);
         public string LightmapDirPath() => lightmapDirPath;
+        public bool IsDirectionalMode()
+        {
+            return ftRenderLightmap.renderDirMode == ftRenderLightmap.RenderDirMode.DominantDirection;
+        }
     }
 }
+#endif

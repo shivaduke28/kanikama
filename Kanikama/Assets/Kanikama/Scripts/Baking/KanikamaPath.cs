@@ -27,7 +27,7 @@ namespace Kanikama.Baking
         public static string LightSourceGroupFormat(int groupIndex, int sourceIndex) => $"LG_{{0}}_{groupIndex}_{sourceIndex}.exr";
         public const string DirectionalPrefix = "Dir-";
         public static Regex TempLightmapRegex(int lightmapIndex) => new Regex($"^[A-Z]+_{lightmapIndex}");
-        public static Regex TempDirectionalMapRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]_{lightmapIndex}");
+        public static Regex TempDirectionalMapRegex(int lightmapIndex) => new Regex($"^{DirectionalPrefix}[A-Z]+_{lightmapIndex}");
 
 
         public string ExportDirPath { get; }

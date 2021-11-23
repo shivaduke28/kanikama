@@ -1,5 +1,5 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿#if BAKERY_INCLUDED
+using UnityEditor;
 using Kanikama.Bakery;
 
 namespace Kanikama.Editor.Bakery
@@ -30,3 +30,4 @@ namespace Kanikama.Editor.Bakery
         }
     }
 }
+#endif

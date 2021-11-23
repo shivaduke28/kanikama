@@ -1,5 +1,4 @@
 ﻿#if BAKERY_INCLUDED
-
 using UnityEngine;
 
 namespace Kanikama.Bakery
