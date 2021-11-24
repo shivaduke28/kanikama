@@ -33,7 +33,6 @@ namespace Kanikama.Baking
 
         public string ExportDirPath { get; }
         public string TmpDirPath { get; }
-        readonly ILightmapper lightmapper;
 
         public static string KanikamaAssetDirPath(SceneAsset scene)
         {
@@ -44,7 +43,7 @@ namespace Kanikama.Baking
             return Path.Combine(sceneDirPath, exportDirName);
         }
 
-        public KanikamaPath(Scene scene, ILightmapper lightmapper)
+        public KanikamaPath(Scene scene)
         {
             var sceneDirPath = Path.GetDirectoryName(scene.path);
             var exportDirName = string.Format(ExportDirFormat, scene.name);
@@ -52,7 +51,6 @@ namespace Kanikama.Baking
             ExportDirPath = Path.Combine(sceneDirPath, exportDirName);
             KanikamaEditorUtility.CreateFolderIfNecessary(ExportDirPath, TmpDirName);
             TmpDirPath = Path.Combine(ExportDirPath, TmpDirName);
-            this.lightmapper = lightmapper;
         }
 
         public List<string> GetBakedLightmapPaths()

@@ -23,18 +23,18 @@ namespace Kanikama.Baking
             public static readonly int Lightmap = Shader.PropertyToID("_Lightmap");
         }
 
-        readonly KanikamaSceneManager sceneManager;
+        readonly IKanikamaSceneManager sceneManager;
+        readonly ILightmapper lightmapper;
         readonly BakeRequest request;
         readonly KanikamaPath bakePath;
-        readonly ILightmapper lightmapper;
         public BakedAsset BakedAsset { get; }
 
-        public Baker(ILightmapper lightmapper, BakeRequest request)
+        public Baker(ILightmapper lightmapper, IKanikamaSceneManager sceneManager, BakeRequest request)
         {
             this.lightmapper = lightmapper;
             this.request = request;
-            sceneManager = new KanikamaSceneManager(request.SceneDescriptor);
-            bakePath = new KanikamaPath(UnityEngine.SceneManagement.SceneManager.GetActiveScene(), lightmapper);
+            this.sceneManager = sceneManager;
+            bakePath = new KanikamaPath(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             BakedAsset = new BakedAsset();
         }
 
@@ -46,7 +46,7 @@ namespace Kanikama.Baking
 
                 sceneManager.Initialize();
                 sceneManager.TurnOff();
-                sceneManager.SetLightmapSettings(request.isDirectionalMode);
+                sceneManager.SetDirectionalMode(request.isDirectionalMode);
                 await BakeLightSourcesAsync(token);
                 await BakeLightSourceGroupsAsync(token);
                 await BakeWithoutKanikamaAsync(token);
@@ -61,7 +61,6 @@ namespace Kanikama.Baking
             finally
             {
                 sceneManager?.Rollback();
-                sceneManager?.Dispose();
                 AssetDatabase.Refresh();
             }
         }
@@ -119,7 +118,7 @@ namespace Kanikama.Baking
         {
             if (!request.IsBakeWithouKanikama()) return;
             sceneManager.RollbackNonKanikama();
-            sceneManager.RollbackLightmapSettings();
+            sceneManager.RollbackDirectionalMode();
             Debug.Log($"[Kanikama] Baking Scene GI without Kanikama...");
             lightmapper.Clear();
             await BakeSceneGIAsync(token);
@@ -171,7 +170,7 @@ namespace Kanikama.Baking
             for (var mapIndex = 0; mapIndex < lightmapCount; mapIndex++)
             {
                 var textures = bakePath.GetTempLightmapPaths(mapIndex)
-                    .Where(path => sceneManager.ValidateTexturePath(path))
+                    .Where(path => ValidateTexturePath(path))
                     .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                     .ToList();
                 if (!textures.Any()) continue;
@@ -205,7 +204,7 @@ namespace Kanikama.Baking
         Texture2DArray CreateDirectionalMapArray(int mapIndex)
         {
             var dirTextures = bakePath.GetTempDirctionalMapPaths(mapIndex)
-                .Where(x => sceneManager.ValidateTexturePath(x))
+                .Where(x => ValidateTexturePath(x))
                 .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                 .ToList();
             var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
@@ -259,6 +258,21 @@ namespace Kanikama.Baking
             KanikamaEditorUtility.CreateOrReplaceAsset(ref sceneMap, sceneMapPath);
             Debug.Log($"[Kanikama] Created {sceneMapPath}");
             return (mat, sceneMap);
+        }
+
+        public bool ValidateTexturePath(KanikamaPath.TempTexturePath pathData)
+        {
+            switch (pathData.Type)
+            {
+                case KanikamaPath.BakeTargetType.LightSource:
+                    return pathData.ObjectIndex < sceneManager.LightSources.Count;
+                case KanikamaPath.BakeTargetType.LightSourceGroup:
+                    if (pathData.ObjectIndex >= sceneManager.LightSourceGroups.Count) return false;
+                    var group = sceneManager.LightSourceGroups[pathData.ObjectIndex];
+                    return pathData.SubIndex < group.Value.GetLightSources().Count;
+                default:
+                    return false;
+            }
         }
     }
 }

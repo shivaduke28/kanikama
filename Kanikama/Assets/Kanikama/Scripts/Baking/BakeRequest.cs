@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
-using UnityEngine;
 
 namespace Kanikama.Baking
 {
     public class BakeRequest
     {
-        public KanikamaSceneDescriptor SceneDescriptor { get; }
         public bool isBakeAll = true;
 
         public List<bool> lightSourceFlags;
@@ -24,11 +21,10 @@ namespace Kanikama.Baking
         public bool IsBakeLightSourceGroup(int index) => isBakeAll || lightSourceGroupFlags[index];
         public bool IsBakeWithouKanikama() => isBakeAll || isBakeWithouKanikama;
 
-        public BakeRequest(KanikamaSceneDescriptor sceneDescriptor)
+        public BakeRequest(int sourceCount, int groupCount)
         {
-            SceneDescriptor = sceneDescriptor;
-            lightSourceFlags = Enumerable.Repeat(true, sceneDescriptor.GetLightSources().Count).ToList();
-            lightSourceGroupFlags = Enumerable.Repeat(true, sceneDescriptor.GetLightSourceGroups().Count).ToList();
+            lightSourceFlags = Enumerable.Repeat(true, sourceCount).ToList();
+            lightSourceGroupFlags = Enumerable.Repeat(true, groupCount).ToList();
         }
     }
 }

@@ -1,29 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.Baking
 {
-    public class KanikamaSceneManager : IDisposable
+    public class KanikamaUnitySceneManager : IKanikamaSceneManager
     {
         readonly KanikamaSceneDescriptor sceneDescriptor;
         public List<ObjectReference<LightSource>> LightSources { get; private set; }
         public List<ObjectReference<KanikamaLightSourceGroup>> LightSourceGroups { get; private set; }
         readonly List<ObjectReference<Light>> nonKanikamaLights = new List<ObjectReference<Light>>();
 
-
-        readonly Dictionary<GameObject, Material[]> nonKanikamaMaterialMaps = new Dictionary<GameObject, Material[]>();
+        readonly List<NonKanikamaRenderer> nonKanikamaRenderers = new List<NonKanikamaRenderer>();
         readonly List<ObjectReference<ReflectionProbe>> reflectionProbes = new List<ObjectReference<ReflectionProbe>>();
         readonly List<ObjectReference<LightProbeGroup>> lightProbeGroups = new List<ObjectReference<LightProbeGroup>>();
 
-        Material dummyMaterial;
         LightmapsMode lightmapsMode;
         bool isKanikamaAmbientEnable;
         ObjectReference<KanikamaUnitySkyLight> tempAmbientLight;
 
-        public KanikamaSceneManager(KanikamaSceneDescriptor sceneDescriptor)
+        public KanikamaUnitySceneManager(KanikamaSceneDescriptor sceneDescriptor)
         {
             this.sceneDescriptor = sceneDescriptor;
         }
@@ -60,27 +57,15 @@ namespace Kanikama.Baking
                 }
             }
 
-            if (dummyMaterial == null)
-            {
-                dummyMaterial = new Material(Shader.Find(Baker.ShaderName.Dummy));
-            }
-
             // non kanikama emissive renderers
             var allRenderers = UnityEngine.Object.FindObjectsOfType<Renderer>();
             foreach (var renderer in allRenderers)
             {
                 if (IsKanikama(renderer)) continue;
 
-                var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-                if (flag.HasFlag(StaticEditorFlags.ContributeGI))
+                if (NonKanikamaRenderer.IsTarget(renderer, out var nonKanikama))
                 {
-                    var sharedMaterials = renderer.sharedMaterials;
-
-                    if (sharedMaterials.Any(x => !(x is null) && KanikamaLightMaterial.IsTarget(x)))
-                    {
-                        nonKanikamaMaterialMaps[renderer.gameObject] = sharedMaterials;
-                        renderer.sharedMaterials = Enumerable.Repeat(dummyMaterial, sharedMaterials.Length).ToArray();
-                    }
+                    nonKanikamaRenderers.Add(nonKanikama);
                 }
             }
 
@@ -102,6 +87,11 @@ namespace Kanikama.Baking
             foreach (var light in nonKanikamaLights)
             {
                 light.Value.enabled = false;
+            }
+
+            foreach(var nonKanikamaRenderer in nonKanikamaRenderers)
+            {
+                nonKanikamaRenderer.TurnOff();
             }
 
             foreach (var lightSource in LightSources)
@@ -139,7 +129,7 @@ namespace Kanikama.Baking
                 LightSourceGroups.Any(x => x.Value.Contains(obj));
         }
 
-        public void SetLightmapSettings(bool isDirectional)
+        public void SetDirectionalMode(bool isDirectional)
         {
             if (isDirectional)
             {
@@ -155,14 +145,19 @@ namespace Kanikama.Baking
         {
             RollbackNonKanikama();
             RollbackKanikama();
-            RollbackLightmapSettings();
+            RollbackDirectionalMode();
         }
 
         public void RollbackNonKanikama()
         {
             if (!isKanikamaAmbientEnable)
             {
-                tempAmbientLight.Value.Rollback();
+                var value = tempAmbientLight.Value;
+                if (value != null)
+                {
+                    value.Rollback();
+                    tempAmbientLight = null;
+                }
             }
 
             foreach (var light in nonKanikamaLights)
@@ -170,11 +165,9 @@ namespace Kanikama.Baking
                 light.Value.enabled = true;
             }
 
-            foreach (var kvp in nonKanikamaMaterialMaps)
+            foreach(var nonKanikama in nonKanikamaRenderers)
             {
-                var go = kvp.Key;
-                var renderer = go.GetComponent<Renderer>();
-                renderer.sharedMaterials = kvp.Value;
+                nonKanikama.Rollback();
             }
 
             foreach (var probe in reflectionProbes)
@@ -188,7 +181,7 @@ namespace Kanikama.Baking
             }
         }
 
-        public void RollbackLightmapSettings()
+        public void RollbackDirectionalMode()
         {
             LightmapEditorSettings.lightmapsMode = lightmapsMode;
         }
@@ -203,33 +196,6 @@ namespace Kanikama.Baking
             foreach (var group in LightSourceGroups)
             {
                 group.Value.Rollback();
-            }
-        }
-
-        public bool ValidateTexturePath(KanikamaPath.TempTexturePath pathData)
-        {
-            switch (pathData.Type)
-            {
-                case KanikamaPath.BakeTargetType.LightSource:
-                    return pathData.ObjectIndex < LightSources.Count;
-                case KanikamaPath.BakeTargetType.LightSourceGroup:
-                    if (pathData.ObjectIndex >= LightSourceGroups.Count) return false;
-                    var group = LightSourceGroups[pathData.ObjectIndex];
-                    return pathData.SubIndex < group.Value.GetLightSources().Count;
-                default:
-                    return false;
-            }
-        }
-
-        public void Dispose()
-        {
-            if (dummyMaterial != null)
-            {
-                UnityEngine.Object.DestroyImmediate(dummyMaterial);
-            }
-            if (tempAmbientLight != null)
-            {
-                UnityEngine.Object.DestroyImmediate(tempAmbientLight.Value.gameObject);
             }
         }
     }

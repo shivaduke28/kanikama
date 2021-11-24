@@ -27,7 +27,6 @@ namespace Kanikama.Editor
         bool isRunning;
         Vector2 scrollPosition = new Vector2(0, 0);
 
-        LightmapperType lightmapperType = LightmapperType.Unity;
         ILightmapper lightmapper;
 
         [MenuItem("Window/Kanikama/Bake")]
@@ -54,7 +53,9 @@ namespace Kanikama.Editor
             sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor != null)
             {
-                bakeRequest = new BakeRequest(sceneDescriptor);
+                var sourceCount = sceneDescriptor.GetLightSources().Count;
+                var groupCount = sceneDescriptor.GetLightSourceGroups().Count;
+                bakeRequest = new BakeRequest(sourceCount, groupCount);
             }
             else
             {
@@ -130,7 +131,8 @@ namespace Kanikama.Editor
             {
                 sceneAsset = (SceneAsset)EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
-            sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
+            sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor",
+                sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
             settings = (KanikamaSettings)EditorGUILayout.ObjectField("Settings", settings, typeof(KanikamaSettings), false);
 
             if (GUILayout.Button("Load Active Scene"))
@@ -156,7 +158,7 @@ namespace Kanikama.Editor
 
             if (isRunning)
             {
-                if (lightmapperType == LightmapperType.Unity)
+                if (settings.lightmapperType == LightmapperType.Unity)
                 {
                     if (GUILayout.Button("Force Stop"))
                     {
@@ -169,19 +171,19 @@ namespace Kanikama.Editor
             EditorGUI.BeginChangeCheck();
             if (IsBakeryIncluded())
             {
-                lightmapperType = (LightmapperType)EditorGUILayout.EnumPopup("Lightmapper", lightmapperType);
+                settings.lightmapperType = (LightmapperType)EditorGUILayout.EnumPopup("Lightmapper", settings.lightmapperType);
             }
             else
             {
                 using (new EditorGUI.DisabledGroupScope(true))
                 {
-                    lightmapperType = LightmapperType.Unity;
-                    EditorGUILayout.EnumPopup("Lightmapper", lightmapperType);
+                    settings.lightmapperType = LightmapperType.Unity;
+                    EditorGUILayout.EnumPopup("Lightmapper", settings.lightmapperType);
                 }
             }
             if (lightmapper == null || EditorGUI.EndChangeCheck())
             {
-                lightmapper = CreateLightmapper(lightmapperType);
+                lightmapper = CreateLightmapper(settings.lightmapperType);
             }
 
 
@@ -212,7 +214,7 @@ namespace Kanikama.Editor
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
                         var sourceFlags = bakeRequest.lightSourceFlags;
-                        var source = bakeRequest.SceneDescriptor.GetLightSources();
+                        var source = sceneDescriptor.GetLightSources();
                         var lightCount = Mathf.Min(sourceFlags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
                         {
@@ -224,7 +226,7 @@ namespace Kanikama.Editor
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
                         var groupFlags = bakeRequest.lightSourceGroupFlags;
-                        var group = bakeRequest.SceneDescriptor.GetLightSourceGroups();
+                        var group = sceneDescriptor.GetLightSourceGroups();
                         var groupCount = Mathf.Min(groupFlags.Count, group.Count);
                         for (var i = 0; i < groupCount; i++)
                         {
@@ -268,13 +270,28 @@ namespace Kanikama.Editor
             }
         }
 
+        static IKanikamaSceneManager CreateSceneManager(LightmapperType type, KanikamaSceneDescriptor sceneDescriptor)
+        {
+            switch (type)
+            {
+                case LightmapperType.Unity:
+                    return new KanikamaUnitySceneManager(sceneDescriptor);
+                case LightmapperType.Bakery:
+                    return new KanikamaBakerySceneManager(sceneDescriptor);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         async void BakeAsync()
         {
             bakeRequest.isDirectionalMode = settings.directionalMode;
             bakeRequest.createRenderTexture = settings.createRenderTexture;
             bakeRequest.createCustomRenderTexture = settings.createCustomRenderTexture;
             tokenSource = new CancellationTokenSource();
-            var baker = new Baker(lightmapper, bakeRequest);
+            lightmapper = CreateLightmapper(settings.lightmapperType);
+            var sceneManager = CreateSceneManager(settings.lightmapperType, sceneDescriptor);
+            var baker = new Baker(lightmapper, sceneManager, bakeRequest);
             isRunning = true;
             try
             {

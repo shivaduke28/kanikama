@@ -20,7 +20,7 @@ namespace Kanikama.Bakery
         }
         public override bool Contains(object obj)
         {
-            return obj is AmbientLightModel || ((obj is Light l) && l == light);
+            return obj is BakerySkyLight l && l == bakeryLight;
         }
 
         public override Light GetSource() => light;

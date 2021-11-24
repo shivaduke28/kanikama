@@ -21,7 +21,8 @@ namespace Kanikama.Bakery
         }
         public override bool Contains(object obj)
         {
-            return obj is Renderer r && r == renderer;
+            return (obj is Renderer r && r == renderer) ||
+             (obj is BakeryLightMesh m && m == bakeryLightMesh);
         }
 
         public override Renderer GetSource()
