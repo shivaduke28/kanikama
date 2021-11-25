@@ -68,14 +68,13 @@
             o_gi.indirect.diffuse += SampleLightmap(data.lightmapUV.xy);
         #elif defined(_KANIKAMA_MODE_ARRAY)
             o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
-        #elif defined(_KANIKAMA_MODE_DIRECTIONAL)
+        #elif defined(_KANIKAMA_MODE_DIRECTIONAL) && !defined(_KANIKAMA_SPECULAR)
             o_gi.indirect.diffuse += SampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
         #endif
 
         o_gi.indirect.diffuse *= occlusion;
         return o_gi;
     }
-
 
 
     inline UnityGI KanikamaGlobalIllumination(UnityGIInput data, half occlusion, half3 normalWorld)

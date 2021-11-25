@@ -6,6 +6,8 @@ Shader "Kanikama/Standard"
     Properties
     {
         [KeywordEnum(Single,Array, Directional)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [Toggle(_KANIKAMA_SPECULAR)] _Kanikama_Specular("Directional Specular", Float) = 0
+        [Space]
 
         _Color("Color", Color) = (1,1,1,1)
         _MainTex("Albedo", 2D) = "white" {}
@@ -85,7 +87,8 @@ Shader "Kanikama/Standard"
             #pragma shader_feature _ _GLOSSYREFLECTIONS_OFF
             #pragma shader_feature _PARALLAXMAP
 
-            #pragma shader_feature _KANIKAMA_MODE_SINGLE _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL
+            #pragma shader_feature_local_fragment _KANIKAMA_MODE_SINGLE _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL
+            #pragma shader_feature_local_fragment _KANIKAMA_SPECULAR
 
             #pragma multi_compile_fwdbase
             #pragma multi_compile_fog
