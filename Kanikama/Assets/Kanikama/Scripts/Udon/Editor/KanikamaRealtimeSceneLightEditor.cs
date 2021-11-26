@@ -1,4 +1,5 @@
-﻿using Kanikama.Editor;
+﻿using Kanikama.Baking;
+using Kanikama.Editor;
 using System.Linq;
 using UdonSharp;
 using UdonSharpEditor;
@@ -43,7 +44,7 @@ namespace Kanikama.Udon.Editor
         void ResetWeights()
         {
             var lightmapCount = 0;
-            var sceneAsset = AssetUtil.GetActiveSceneAsset();
+            var sceneAsset = KanikamaEditorUtility.GetActiveSceneAsset();
             if (sceneAsset != null)
             {
                 var kanikamaSettings = KanikamaSettings.FindSettings(sceneAsset);

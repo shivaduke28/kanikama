@@ -40,10 +40,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5611941372859806328}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c8f30c016f8d4a45bdb66ada783e96c, type: 3}
+  m_Script: {fileID: 11500000, guid: f64cf77f49e29ef44991d3146789ff85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   kanikamaLights: []
   kanikamaRenderers: []
-  kanikamaMonitors: []
-  kanikamaAmbientEnable: 0
+  kanikamaLightSourceGroups: []

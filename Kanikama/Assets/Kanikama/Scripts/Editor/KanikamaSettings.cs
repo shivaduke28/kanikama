@@ -1,15 +1,16 @@
-﻿using UnityEditor;
-using UnityEngine;
-using Kanikama.EditorOnly;
+﻿using Kanikama.Baking;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.Editor
 {
     [CreateAssetMenu(menuName = "Kanikama/Settings", fileName = "KanikamaSettings")]
     public class KanikamaSettings : ScriptableObject
     {
-        [ReadOnly] [SerializeField] private SceneAsset sceneAsset;
+        [SerializeField] private SceneAsset sceneAsset;
+        public LightmapperType lightmapperType;
         public bool directionalMode;
         public bool createRenderTexture;
         public bool createCustomRenderTexture;
@@ -51,7 +52,7 @@ namespace Kanikama.Editor
 
             settings = CreateInstance<KanikamaSettings>();
             settings.Initialize(sceneAsset, LightmapEditorSettings.lightmapsMode == LightmapsMode.CombinedDirectional);
-            var dirPath = BakePath.KanikamaAssetDirPath(sceneAsset);
+            var dirPath = KanikamaPath.KanikamaAssetDirPath(sceneAsset);
             AssetDatabase.CreateAsset(settings, Path.Combine(dirPath, "KanikamaSettings.asset"));
             AssetDatabase.Refresh();
             return settings;

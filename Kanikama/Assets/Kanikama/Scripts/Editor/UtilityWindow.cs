@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using Kanikama.Baking;
 
 namespace Kanikama.Editor
 {

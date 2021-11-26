@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: BG
   m_Shader: {fileID: 4800000, guid: 613fb6b242a059c40be003a3f0ec5826, type: 3}
-  m_ShaderKeywords: _KANIKAMA_MODE_DIRECTIONAL _NORMALMAP _PARALLAXMAP
+  m_ShaderKeywords: _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_SPECULAR _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -70,6 +70,7 @@ Material:
     - _KanikamaDirectional: 0
     - _KanikamaMode: 1
     - _Kanikama_Mode: 2
+    - _Kanikama_Specular: 1
     - _Metallic: 0.443
     - _Mode: 0
     - _OcclusionStrength: 1

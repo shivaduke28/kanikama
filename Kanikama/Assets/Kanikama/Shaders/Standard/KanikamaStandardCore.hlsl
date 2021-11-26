@@ -12,8 +12,7 @@
         #define UNITY_STANDARD_SIMPLE 1
     #endif
 
-
-    inline UnityGI FragmentKanikamaGI(FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light, bool reflections)
+    inline UnityGI FragmentKanikamaGI(FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light)
     {
         UnityGIInput d;
         d.light = light;
@@ -41,27 +40,38 @@
             d.probePosition[1] = unity_SpecCube1_ProbePosition;
         #endif
 
-        if (reflections)
-        {
-            Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.smoothness, -s.eyeVec, s.normalWorld, s.specColor);
-            // Replace the reflUVW if it has been compute in Vertex shader. Note: the compiler will optimize the calcul in UnityGlossyEnvironmentSetup itself
-            #if UNITY_STANDARD_SIMPLE
-                g.reflUVW = s.reflUVW;
-            #endif
+        Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.smoothness, -s.eyeVec, s.normalWorld, s.specColor);
+        // Replace the reflUVW if it has been compute in Vertex shader. Note: the compiler will optimize the calcul in UnityGlossyEnvironmentSetup itself
+        #if UNITY_STANDARD_SIMPLE
+            g.reflUVW = s.reflUVW;
+        #endif
 
-            return KanikamaGlobalIllumination(d, occlusion, s.normalWorld, g);
-        }
-        else
-        {
-            return KanikamaGlobalIllumination(d, occlusion, s.normalWorld);
-        }
+        return KanikamaGlobalIllumination(d, occlusion, s.normalWorld, g);
     }
 
-    inline UnityGI FragmentKanikamaGI(FragmentCommonData s, half occlusion, half4 i_ambientOrLightmapUV, half atten, UnityLight light)
+#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
+    // Directional lightmap specular based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
+    // https://geom.io/bakery/wiki/
+    void KanikamaDirectionalLightmapSpecular(out UnityIndirect indirect, float2 lightmapUV, float3 normalWorld, float3 viewDir, float smoothness)
     {
-        return FragmentKanikamaGI(s, occlusion, i_ambientOrLightmapUV, atten, light, true);
-    }
+        half perceptualRoughness = SmoothnessToPerceptualRoughness(smoothness);
+        half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
+        for (int i = 0; i < _LightmapCount; i++)
+        {
+            half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * _LightmapColors[i].rgb;
+            float4 dirTex = UNITY_SAMPLE_TEX2DARRAY(_DirectionalLightmapArray, float3(lightmapUV.x, lightmapUV.y, i));
+            float3 dominantDir = dirTex.xyz - 0.5;
+            half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) - viewDir);
+            half nh = saturate(dot(normalWorld, halfDir));
+            half spec = GGXTerm(nh, roughness);
+            half halfLambert = dot(normalWorld, dominantDir) + 0.5;
+            half3 diffuse = bakedColor * halfLambert / max(1e-4h, dirTex.w);
+            indirect.diffuse += diffuse;
+            indirect.specular += spec * diffuse;
+        }
+    }
+#endif
 
     half4 fragKanikamaForwardBaseInternal(VertexOutputForwardBase i)
     {
@@ -77,6 +87,9 @@
 
         half occlusion = Occlusion(i.tex.xy);
         UnityGI gi = FragmentKanikamaGI(s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
+#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
+        KanikamaDirectionalLightmapSpecular(gi.indirect, i.ambientOrLightmapUV.xy, s.normalWorld, s.eyeVec, s.smoothness);
+#endif
 
         half4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
         c.rgb += Emission(i.tex.xy);
