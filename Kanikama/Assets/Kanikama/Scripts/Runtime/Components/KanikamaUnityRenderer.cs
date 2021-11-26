@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    [RequireComponent(typeof(Renderer)), AddComponentMenu("Kanikama/KanikamaUnityRenderer")]
+    [RequireComponent(typeof(Renderer))]
     public class KanikamaUnityRenderer : KanikamaRenderer
     {
         [SerializeField] Renderer renderer;

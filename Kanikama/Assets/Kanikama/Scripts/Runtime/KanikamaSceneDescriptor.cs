@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kanikama
 {
-    [AddComponentMenu("Kanikama/KanikamaSceneDescriptor")]
     public class KanikamaSceneDescriptor : MonoBehaviour
     {
         [SerializeField] List<KanikamaLight> kanikamaLights;

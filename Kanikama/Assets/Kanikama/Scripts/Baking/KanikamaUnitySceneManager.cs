@@ -156,7 +156,7 @@ namespace Kanikama.Baking
                 if (value != null)
                 {
                     value.Rollback();
-                    tempAmbientLight = null;
+                    Object.DestroyImmediate(value.gameObject);
                 }
             }
 

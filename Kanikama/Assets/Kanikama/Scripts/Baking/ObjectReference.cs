@@ -25,22 +25,17 @@ namespace Kanikama.Baking
             var root = rootObjects.FirstOrDefault(t => t.name == rootName);
             if (root == null)
             {
-                // error
+                return null;
             }
 
             var target = root.transform.Find(path);
 
             if (target == null)
             {
-                // error
+                return null;
             }
 
             var comp = target.GetComponent<T>();
-
-            if (comp == null)
-            {
-                // error
-            }
 
             return comp;
         }

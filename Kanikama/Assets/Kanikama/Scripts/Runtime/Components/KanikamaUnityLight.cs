@@ -2,7 +2,7 @@
 
 namespace Kanikama
 {
-    [RequireComponent(typeof(Light)), AddComponentMenu("Kanikama/KanikamaUnityLight")]
+    [RequireComponent(typeof(Light))]
     public class KanikamaUnityLight : KanikamaLight
     {
         [SerializeField] Light light;
