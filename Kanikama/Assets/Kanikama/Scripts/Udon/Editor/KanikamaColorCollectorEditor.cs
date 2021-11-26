@@ -10,7 +10,6 @@ namespace Kanikama.Udon.Editor
     public class KanikamaColorCollectorEditor : UnityEditor.Editor
     {
         UdonSharpBehaviour proxy;
-        SerializedProperty ambientLightProperty;
         SerializedProperty lightsProperty;
         SerializedProperty emissiveRenderersProperty;
         SerializedProperty kanikamaCamerasProperty;
@@ -23,7 +22,6 @@ namespace Kanikama.Udon.Editor
         {
             if (target == null) return;
             proxy = (UdonSharpBehaviour)target;
-            ambientLightProperty = serializedObject.FindProperty("ambientLight");
             lightsProperty = serializedObject.FindProperty("lights");
             emissiveRenderersProperty = serializedObject.FindProperty("emissiveRenderers");
             kanikamaCamerasProperty = serializedObject.FindProperty("kanikamaCameras");
