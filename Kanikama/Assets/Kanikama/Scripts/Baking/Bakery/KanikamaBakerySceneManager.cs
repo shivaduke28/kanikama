@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if BAKERY_INCLUDED
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -221,3 +222,4 @@ namespace Kanikama.Baking.Bakery
         }
     }
 }
+#endif
