@@ -2,12 +2,13 @@
 using System.Linq;
 using UnityEngine;
 
-
 namespace Kanikama
 {
     [RequireComponent(typeof(Renderer))]
     public class KanikamaMonitorQuad : KanikamaMonitor
     {
+        [SerializeField, HideInInspector] bool isGridRenderersLocked;
+        [SerializeField, HideInInspector] KanikamaGridRenderer overridePrefab;
         KanikamaGridRenderer gridRendererPrefab;
 
         void OnValidate()
@@ -30,6 +31,7 @@ namespace Kanikama
         public override void SetupLights(PartitionType partitionType, KanikamaGridRenderer gridRendererPrefab)
         {
             if (monitorRenderer is null) return;
+            if (isGridRenderersLocked) return;
             var localScale = transform.localScale;
             transform.localScale = Vector3.one;
 
@@ -39,7 +41,8 @@ namespace Kanikama
                 DestroyImmediate(child.gameObject);
             }
 
-            this.gridRendererPrefab = gridRendererPrefab;
+            this.gridRendererPrefab = overridePrefab ?? gridRendererPrefab;
+
             if (gridRenderers == null)
             {
                 gridRenderers = new List<KanikamaGridRenderer>();
@@ -74,6 +77,7 @@ namespace Kanikama
             }
 
             transform.localScale = localScale;
+            this.gridRendererPrefab = null;
         }
 
         void SetupUniformGrid(Bounds bounds, int count)
