@@ -93,7 +93,7 @@ namespace Kanikama.Editor
                 {
                     EditorGUILayout.HelpBox("Load or Create Kanikama Settings Asset.", MessageType.Warning);
                 }
-                else
+                else if (!isRunning)
                 {
                     if (GUILayout.Button("Bake"))
                     {
@@ -166,8 +166,8 @@ namespace Kanikama.Editor
                     {
                         Stop();
                     }
-                    return;
                 }
+                return;
             }
 
             EditorGUI.BeginChangeCheck();
@@ -245,6 +245,7 @@ namespace Kanikama.Editor
         void DrawAssetCreation()
         {
             if (settings == null) return;
+            if (isRunning) return;
             GUILayout.Label("Asset Creation", EditorStyles.boldLabel);
             settings.createRenderTexture = EditorGUILayout.Toggle("RenderTexture", settings.createRenderTexture);
             settings.createCustomRenderTexture = EditorGUILayout.Toggle("CustomRenderTexture", settings.createCustomRenderTexture);
