@@ -42,6 +42,7 @@ namespace Kanikama.Baking
             if (!isKanikamaAmbientEnable)
             {
                 var temp = new GameObject("TempAmbientLight").AddComponent<KanikamaUnitySkyLight>();
+                temp.OnBakeSceneStart();
                 tempAmbientLight = new ObjectReference<KanikamaUnitySkyLight>(temp);
             }
 
