@@ -9,7 +9,7 @@ namespace Kanikama.Udon
     {
         [SerializeField] Texture[] lightmapArrays;
         [SerializeField] Texture[] directionalLightmapArrays;
-        [SerializeField] int lightmapCount;
+        [SerializeField] int sliceCount;
         [SerializeField] KanikamaColorCollector colorCollector;
         [Space]
         [SerializeField] Renderer[] receivers;
@@ -31,7 +31,7 @@ namespace Kanikama.Udon
                 {
                     block.SetTexture("_DirectionalLightmapArray", directionalLightmapArrays[index]);
                 }
-                block.SetInt("_LightmapCount", lightmapCount);
+                block.SetInt("_LightmapCount", sliceCount);
                 renderer.SetPropertyBlock(block);
             }
 

@@ -11,17 +11,17 @@ namespace Kanikama.Udon.Editor
     public class KanikamaMapArrayProviderEditor : UnityEditor.Editor
     {
         UdonSharpBehaviour proxy;
-        SerializedProperty lightmapArraysProperty;
-        SerializedProperty directionalLightmapArraysProperty;
-        SerializedProperty lightmapCountProperty;
+        SerializedProperty lightmapArrays;
+        SerializedProperty directionalLightmapArrays;
+        SerializedProperty sliceCount;
 
         void OnEnable()
         {
             if (target == null) return;
             proxy = (UdonSharpBehaviour)target;
-            lightmapArraysProperty = serializedObject.FindProperty("lightmapArrays");
-            directionalLightmapArraysProperty = serializedObject.FindProperty("directionalLightmapArrays");
-            lightmapCountProperty = serializedObject.FindProperty("lightmapCount");
+            lightmapArrays = serializedObject.FindProperty("lightmapArrays");
+            directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
+            sliceCount = serializedObject.FindProperty("sliceCount");
         }
 
         public override void OnInspectorGUI()
@@ -65,24 +65,24 @@ namespace Kanikama.Udon.Editor
 
             var bakedAsset = kanikamaSettings.bakedAsset;
             var arrayCount = bakedAsset.kanikamaMapArrays.Count;
-            lightmapArraysProperty.arraySize = arrayCount;
+            lightmapArrays.arraySize = arrayCount;
             for (var i = 0; i < arrayCount; i++)
             {
-                var prop = lightmapArraysProperty.GetArrayElementAtIndex(i);
+                var prop = lightmapArrays.GetArrayElementAtIndex(i);
                 prop.objectReferenceValue = bakedAsset.kanikamaMapArrays[i];
             }
 
             var dirArrayCount = kanikamaSettings.directionalMode ? bakedAsset.kanikamaDirectionalMapArrays.Count : 0;
-            directionalLightmapArraysProperty.arraySize = dirArrayCount;
+            directionalLightmapArrays.arraySize = dirArrayCount;
 
             for (var i = 0; i < dirArrayCount; i++)
             {
-                var prop = directionalLightmapArraysProperty.GetArrayElementAtIndex(i);
+                var prop = directionalLightmapArrays.GetArrayElementAtIndex(i);
                 prop.objectReferenceValue = bakedAsset.kanikamaDirectionalMapArrays[i];
             }
 
             var sliceCount = arrayCount > 0 ? bakedAsset.kanikamaMapArrays[0].depth : 0;
-            lightmapCountProperty.intValue = sliceCount;
+            this.sliceCount.intValue = sliceCount;
 
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(proxy);
