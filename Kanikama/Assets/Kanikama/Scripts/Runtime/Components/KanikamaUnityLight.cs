@@ -8,7 +8,6 @@ namespace Kanikama
         [SerializeField] Light light;
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;
-        [SerializeField, HideInInspector] bool lightEnabled;
 
         private void OnValidate()
         {
@@ -21,26 +20,23 @@ namespace Kanikama
         {
             intensity = light.intensity;
             color = light.color;
-            lightEnabled = light.enabled;
         }
 
         public override void OnBake()
         {
             light.color = Color.white;
             light.intensity = 1f;
-            light.enabled = true;
         }
 
         public override void Rollback()
         {
             light.intensity = intensity;
             light.color = color;
-            light.enabled = lightEnabled;
         }
 
         public override void TurnOff()
         {
-            light.enabled = false;
+            light.intensity = 0;
         }
 
         public override bool Contains(object obj)
