@@ -63,7 +63,7 @@ namespace Kanikama.Udon
                 materialCounts[i] = count;
                 for (var j = 0; j < count; j++)
                 {
-                    var isEmissive = mats[j].IsKeywordEnabled("_EMISSION");
+                    var isEmissive = ((byte)mats[j].globalIlluminationFlags & (byte)MaterialGlobalIlluminationFlags.BakedEmissive) == (byte)MaterialGlobalIlluminationFlags.BakedEmissive;
                     flags[j] = isEmissive;
                     if (isEmissive)
                     {

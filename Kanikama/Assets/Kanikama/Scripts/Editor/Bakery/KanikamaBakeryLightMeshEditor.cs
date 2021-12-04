@@ -1,6 +1,7 @@
 ﻿#if BAKERY_INCLUDED
 using UnityEditor;
 using Kanikama.Bakery;
+using UnityEngine;
 
 namespace Kanikama.Editor.Bakery
 {
@@ -18,9 +19,13 @@ namespace Kanikama.Editor.Bakery
             }
             var material = renderer.sharedMaterial;
 
-            if (!material.IsKeywordEnabled(KanikamaLightMaterial.ShaderKeywordEmission))
+            if (!KanikamaLightMaterial.IsBakedEmissive(material))
             {
-                EditorGUILayout.HelpBox($"Shader keyword \"{KanikamaLightMaterial.ShaderKeywordEmission}\" should be enabled.", MessageType.Warning);
+                EditorGUILayout.HelpBox($"The lightmap flags of the material does not have \"BakedEmissive\".", MessageType.Error);
+                if (GUILayout.Button("Fix"))
+                {
+                    KanikamaLightMaterial.AddBakedEmissiveFlag(material);
+                }
             }
 
             if (!material.HasProperty(KanikamaLightMaterial.ShaderPropertyEmissionColor))

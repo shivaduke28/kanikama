@@ -13,7 +13,6 @@ namespace Kanikama.Baking
         {
             public const string CompositeCRT = "Kanikama/Composite/CRT";
             public const string CompositeUnlit = "Kanikama/Composite/Unlit";
-            public const string Dummy = "Kanikama/Dummy";
         }
 
         public static class ShaderProperties

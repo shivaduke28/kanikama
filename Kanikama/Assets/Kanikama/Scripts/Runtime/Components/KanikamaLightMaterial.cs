@@ -6,7 +6,6 @@ namespace Kanikama
     [Serializable]
     public class KanikamaLightMaterial : ILightSource
     {
-        public static readonly string ShaderKeywordEmission = "_EMISSION";
         public static readonly int ShaderPropertyEmissionColor = Shader.PropertyToID(ShaderPropertyEmissionColorName);
         public const string ShaderPropertyEmissionColorName = "_EmissionColor";
 
@@ -25,13 +24,13 @@ namespace Kanikama
 
         public void TurnOff()
         {
-            materialInstance.DisableKeyword(ShaderKeywordEmission);
+            RemoveBakedEmissiveFlag(materialInstance);
         }
 
         public void OnBake()
         {
+            AddBakedEmissiveFlag(materialInstance);
             materialInstance.SetColor(ShaderPropertyEmissionColor, Color.white);
-            materialInstance.EnableKeyword(ShaderKeywordEmission);
         }
 
         public void Rollback()
@@ -42,9 +41,23 @@ namespace Kanikama
             }
         }
 
-        public static bool IsTarget(Material mat)
+        public static bool IsBakedEmissive(Material mat)
         {
-            return mat.IsKeywordEnabled(ShaderKeywordEmission);
+            return mat.globalIlluminationFlags.HasFlag(MaterialGlobalIlluminationFlags.BakedEmissive);
+        }
+
+        public static void RemoveBakedEmissiveFlag(Material mat)
+        {
+            var flags = mat.globalIlluminationFlags;
+            flags &= ~MaterialGlobalIlluminationFlags.BakedEmissive;
+            mat.globalIlluminationFlags = flags;
+        }
+
+        public static void AddBakedEmissiveFlag(Material mat)
+        {
+            var flags = mat.globalIlluminationFlags;
+            flags |= MaterialGlobalIlluminationFlags.BakedEmissive;
+            mat.globalIlluminationFlags = flags;
         }
 
         public bool Contains(object obj) => false;

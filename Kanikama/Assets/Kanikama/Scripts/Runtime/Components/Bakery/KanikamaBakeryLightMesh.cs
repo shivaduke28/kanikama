@@ -9,6 +9,8 @@ namespace Kanikama.Bakery
     {
         [SerializeField] Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
+        [SerializeField, HideInInspector] Material materialInstance;
+        [SerializeField, HideInInspector] Material material;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] float intensity;
 
@@ -39,7 +41,14 @@ namespace Kanikama.Bakery
         {
             color = bakeryLightMesh.color;
             intensity = bakeryLightMesh.intensity;
-            renderer.sharedMaterial.DisableKeyword(KanikamaLightMaterial.ShaderKeywordEmission);
+            if (materialInstance != null)
+            {
+                DestroyImmediate(materialInstance);
+            }
+            material = renderer.sharedMaterial;
+            materialInstance = Instantiate(renderer.sharedMaterial);
+            KanikamaLightMaterial.RemoveBakedEmissiveFlag(materialInstance);
+            renderer.sharedMaterial = materialInstance;
         }
 
         public override void Rollback()
@@ -48,6 +57,11 @@ namespace Kanikama.Bakery
             bakeryLightMesh.enabled = true;
             bakeryLightMesh.color = color;
             bakeryLightMesh.intensity = intensity;
+            renderer.sharedMaterial = material;
+            if (materialInstance != null)
+            {
+                DestroyImmediate(materialInstance);
+            }
         }
 
         public void TurnOff()

@@ -76,7 +76,7 @@ namespace Kanikama
             for (var i = 0; i < count; i++)
             {
                 var mat = sharedMaterials[i];
-                if (KanikamaLightMaterial.IsTarget(mat))
+                if (KanikamaLightMaterial.IsBakedEmissive(mat))
                 {
                     var lightMaterial = new KanikamaLightMaterial(i, mat);
                     lightMaterials.Add(lightMaterial);
