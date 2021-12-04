@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.Baking
@@ -9,47 +10,23 @@ namespace Kanikama.Baking
         readonly Material[] sharedMaterials;
         readonly Material[] tempMaterials;
 
-        public NonKanikamaRenderer(Renderer renderer, Material[] tempMaterials)
+        public NonKanikamaRenderer(Renderer renderer)
         {
-            this.tempMaterials = tempMaterials;
             reference = new ObjectReference<Renderer>(renderer);
             sharedMaterials = renderer.sharedMaterials;
+            var temp = sharedMaterials.Select(x => Object.Instantiate(x));
+            foreach(var mat in temp)
+            {
+                KanikamaLightMaterial.RemoveBakedEmissiveFlag(mat);
+            }
+            tempMaterials = temp.ToArray();
         }
 
-        public static bool IsTarget(Renderer renderer, out NonKanikamaRenderer nonKanikamaRenderer)
+        public static bool IsTarget(Renderer renderer)
         {
-            var isTarget = false;
-            nonKanikamaRenderer = null;
-
-            var dummyMaterial = new Material(Shader.Find(Baker.ShaderName.Dummy));
-            var flag = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-
-            if (flag.HasFlag(StaticEditorFlags.ContributeGI))
-            {
-                var sharedMaterials = renderer.sharedMaterials;
-                var count = sharedMaterials.Length;
-                var tempMaterials = new Material[count];
-
-                for (var i = 0; i < count; i++)
-                {
-                    var mat = sharedMaterials[i];
-                    if (mat != null && KanikamaLightMaterial.IsTarget(mat))
-                    {
-                        isTarget = true;
-                        tempMaterials[i] = dummyMaterial;
-                    }
-                    else
-                    {
-                        tempMaterials[i] = mat;
-                    }
-                }
-                if (isTarget)
-                {
-                    nonKanikamaRenderer = new NonKanikamaRenderer(renderer, tempMaterials);
-                }
-            }
-
-            return isTarget;
+            var flags = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
+            if (!flags.HasFlag(StaticEditorFlags.ContributeGI)) return false;
+            return renderer.sharedMaterials.Any(m => KanikamaLightMaterial.IsBakedEmissive(m));
         }
 
         public void TurnOff()

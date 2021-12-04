@@ -70,9 +70,9 @@ namespace Kanikama.Baking.Bakery
 
                 if (renderer.GetComponent<BakeryLightMesh>() != null) continue;
 
-                if (NonKanikamaRenderer.IsTarget(renderer, out var nonKanikama))
+                if (NonKanikamaRenderer.IsTarget(renderer))
                 {
-                    nonKanikamaRenderers.Add(nonKanikama);
+                    nonKanikamaRenderers.Add(new NonKanikamaRenderer(renderer));
                 }
             }
 
