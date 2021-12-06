@@ -13,6 +13,16 @@ MonoBehaviour:
   m_Name: KanikamaSettings
   m_EditorClassIdentifier: 
   sceneAsset: {fileID: 102900000, guid: 646413d9b37404b449162b325da83835, type: 3}
-  directionalMode: 0
+  lightmapperType: 0
+  directionalMode: 1
   createRenderTexture: 0
   createCustomRenderTexture: 0
+  bakedAsset:
+    kanikamaMapArrays:
+    - {fileID: 18700000, guid: a8c0164139fa3d74ca2b00cae5690b26, type: 2}
+    kanikamaDirectionalMapArrays:
+    - {fileID: 18700000, guid: 7de95a5cd89fae44fa3d78fcef8489b1, type: 2}
+    customRenderTextures: []
+    customRenderTextureMaterials: []
+    renderTextures: []
+    renderTextureMaterials: []
