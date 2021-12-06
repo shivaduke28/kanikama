@@ -33,7 +33,7 @@ namespace Kanikama.Baking
 
         public void Clear()
         {
-            Lightmapping.Cancel();
+            Lightmapping.Clear();
         }
 
         public bool IsDirectionalMode()
