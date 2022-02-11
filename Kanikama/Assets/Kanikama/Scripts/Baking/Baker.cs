@@ -17,9 +17,9 @@ namespace Kanikama.Baking
 
         public static class ShaderProperties
         {
-            public static readonly int LighmapCount = Shader.PropertyToID("_LightmapCount");
-            public static readonly int LightmapArray = Shader.PropertyToID("_LightmapArray");
-            public static readonly int Lightmap = Shader.PropertyToID("_Lightmap");
+            public static readonly int LighmapCount = Shader.PropertyToID("knkm_Count");
+            public static readonly int LightmapArray = Shader.PropertyToID("knkm_LightmapArray");
+            public static readonly int Lightmap = Shader.PropertyToID("knkm_Lightmap");
         }
 
         readonly IKanikamaSceneManager sceneManager;

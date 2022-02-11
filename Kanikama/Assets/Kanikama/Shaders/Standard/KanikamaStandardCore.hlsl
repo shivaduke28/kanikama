@@ -57,10 +57,10 @@
         half perceptualRoughness = SmoothnessToPerceptualRoughness(smoothness);
         half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
-        for (int i = 0; i < _LightmapCount; i++)
+        for (int i = 0; i < knkm_Count; i++)
         {
-            half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * _LightmapColors[i].rgb;
-            float4 dirTex = UNITY_SAMPLE_TEX2DARRAY(_DirectionalLightmapArray, float3(lightmapUV.x, lightmapUV.y, i));
+            half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * knkm_Colors[i];
+            float4 dirTex = UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapIndArray, float3(lightmapUV.x, lightmapUV.y, i));
             float3 dominantDir = dirTex.xyz - 0.5;
             half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) - viewDir);
             half nh = saturate(dot(normalWorld, halfDir));
