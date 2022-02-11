@@ -65,11 +65,11 @@
     
         // custom lightmap array
         #if defined(_KANIKAMA_MODE_SINGLE)
-            o_gi.indirect.diffuse += SampleLightmap(data.lightmapUV.xy);
+            o_gi.indirect.diffuse += KanikamaSampleLightmap(data.lightmapUV.xy);
         #elif defined(_KANIKAMA_MODE_ARRAY)
-            o_gi.indirect.diffuse += SampleLightmapArray(data.lightmapUV.xy);
+            o_gi.indirect.diffuse += KanikamaSampleLightmapArray(data.lightmapUV.xy);
         #elif defined(_KANIKAMA_MODE_DIRECTIONAL) && !defined(_KANIKAMA_SPECULAR)
-            o_gi.indirect.diffuse += SampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
+            o_gi.indirect.diffuse += KanikamaSampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
         #endif
 
         o_gi.indirect.diffuse *= occlusion;

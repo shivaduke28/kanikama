@@ -26,12 +26,12 @@ namespace Kanikama.Udon
                 var index = renderer.lightmapIndex;
                 if (index < 0) continue;
                 renderer.GetPropertyBlock(block);
-                block.SetTexture("_LightmapArray", lightmapArrays[index]);
+                block.SetTexture("knkm_LightmapArray", lightmapArrays[index]);
                 if (index <= directionalMapCount)
                 {
-                    block.SetTexture("_DirectionalLightmapArray", directionalLightmapArrays[index]);
+                    block.SetTexture("knkm_LightmapIndArray", directionalLightmapArrays[index]);
                 }
-                block.SetInt("_LightmapCount", sliceCount);
+                block.SetInt("knkm_Count", sliceCount);
                 renderer.SetPropertyBlock(block);
             }
 
@@ -47,7 +47,7 @@ namespace Kanikama.Udon
             foreach (var renderer in receivers)
             {
                 renderer.GetPropertyBlock(block);
-                block.SetVectorArray("_LightmapColors", colors);
+                block.SetVectorArray("knkm_Colors", colors);
                 renderer.SetPropertyBlock(block);
             }
         }

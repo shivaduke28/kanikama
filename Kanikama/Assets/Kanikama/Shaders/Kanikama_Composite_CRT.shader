@@ -2,8 +2,8 @@
 {
     Properties
     {
-        [NoScaleOffset] _LightmapArray("_LightmapArray", 2DArray) = "" {}
-        _LightmapCount("_LightmapCount", int) = 0
+        [NoScaleOffset] knkm_LightmapArray("knkm_LightmapArray", 2DArray) = "" {}
+        knkm_Count("knkm_Count", int) = 0
     }
     SubShader
     {
@@ -28,7 +28,7 @@
             {
                 float2 uv = IN.localTexcoord.xy;
                 float4 color;
-                color.rgb = SampleLightmapArray(uv);
+                color.rgb = KanikamaSampleLightmapArray(uv);
                 color.a = 1;
                 return color;
             }

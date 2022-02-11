@@ -24,7 +24,7 @@ namespace Kanikama.Udon
                 var index = renderer.lightmapIndex;
                 if (index < 0) continue;
                 renderer.GetPropertyBlock(block);
-                block.SetTexture("_Lightmap", compositeTextures[index]);
+                block.SetTexture("knkm_Lightmap", compositeTextures[index]);
                 renderer.SetPropertyBlock(block);
             }
 
@@ -40,7 +40,7 @@ namespace Kanikama.Udon
             foreach (var mat in compositeMaterials)
             {
                 // No sRGB-linear conversion
-                mat.SetVectorArray("_LightmapColors", colors);
+                mat.SetVectorArray("knkm_Colors", colors);
             }
         }
     }

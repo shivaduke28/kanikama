@@ -2,8 +2,8 @@
 {
     Properties
     {
-        [NoScaleOffset] _LightmapArray("_LightmapArray", 2DArray) = "" {}
-        _LightmapCount("_LightmapCount", int) = 0
+        [NoScaleOffset] knkm_LightmapArray("knkm_LightmapArray", 2DArray) = "" {}
+        knkm_Count("knkm_Count", int) = 0
     }
     SubShader
     {
@@ -45,7 +45,7 @@
             fixed4 frag(v2f i) : SV_Target
             {
                 float4 color;
-                color.rgb = SampleLightmapArray(i.uv);
+                color.rgb = KanikamaSampleLightmapArray(i.uv);
                 color.a = 1;
                 return color;
             }
