@@ -33,7 +33,7 @@ inline half3 KanikamaSampleLightmapArray(float2 lightmapUV)
 }
 
 #if defined(_KANIKAMA_MODE_DIRECTIONAL)
-UNITY_DECLARE_TEX2DARRAY(knkm_LightmapIndArray);
+UNITY_DECLARE_TEX2DARRAY_NOSAMPLER(knkm_LightmapIndArray);
 
 inline half3 KanikamaSampleDirectionalLightmapArray(float2 lightmapUV, float3 normalWorld)
 {
@@ -41,7 +41,7 @@ inline half3 KanikamaSampleDirectionalLightmapArray(float2 lightmapUV, float3 no
     for (int i = 0; i < knkm_Count; i++)
     {
         half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * knkm_Colors[i];
-        fixed4 bakedDirTex = UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapIndArray, float3(lightmapUV.x, lightmapUV.y, i));
+        fixed4 bakedDirTex = UNITY_SAMPLE_TEX2DARRAY_SAMPLER(knkm_LightmapIndArray, knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i));
         col += DecodeDirectionalLightmap(bakedColor, bakedDirTex, normalWorld);
     }
 
