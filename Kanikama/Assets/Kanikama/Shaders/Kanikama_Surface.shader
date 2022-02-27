@@ -82,38 +82,47 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             float2 uv = IN.uv_MainTex;
-            fixed4 c = tex2D (_MainTex, uv) * _Color;
-            o.Albedo = c.rgb;
+            half4 base = tex2D (_MainTex, uv) * _Color;
+            o.Albedo = base.rgb;
+            o.Alpha = base.a;
             half2 mg = tex2D(_MetallicGlossMap, uv).ra;
-            o.Metallic = mg.r * _Metallic;
-            o.Smoothness = mg.g * _Glossiness;
+
+            half metallic = mg.r * _Metallic;
+            half smoothness = mg.g * _Glossiness;;
+            half occlusion = LerpOneTo(tex2D(_OcclusionMap, uv).g, _OcclusionStrength);
+
+            o.Metallic = metallic;
+            o.Smoothness = smoothness;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
-            o.Occlusion = LerpOneTo(tex2D(_OcclusionMap, uv).g, _OcclusionStrength);
+            o.Occlusion = occlusion;
 
 #if defined(_EMISSION)
             o.Emission = tex2D(_EmissionMap, uv).rgb * _EmissionColor;
 #endif
 
-            half3 specular;
+            half3 specColor;
             half oneMinusReflectivity;
-            half3 diffuse = DiffuseAndSpecularFromMetallic(o.Albedo, o.Metallic, specular, oneMinusReflectivity);
+            half3 diffColor = DiffuseAndSpecularFromMetallic(base.rgb, metallic, specColor, oneMinusReflectivity);
             float3 normal = WorldNormalVector(IN, o.Normal);
+            float2 lightmapUV = IN.lightmapUV;
 #if defined(_KANIKAMA_MODE_SINGLE)
-            o.Emission += diffuse * KanikamaSampleLightmap(IN.lightmapUV) * o.Occlusion;
+            o.Emission += diffColor * KanikamaSampleLightmap(lightmapUV) * occlusion;
 #elif defined(_KANIKAMA_MODE_ARRAY)
-            o.Emission += diffuse * KanikamaSampleLightmapArray(IN.lightmapUV) * o.Occlusion;
+            o.Emission += diffColor * KanikamaSampleLightmapArray(lightmapUV) * occlusion;
 #elif defined(_KANIKAMA_MODE_DIRECTIONAL)
-            o.Emission += diffuse * KanikamaSampleDirectionalLightmapArray(IN.lightmapUV, normal) * o.Occlusion;
+            o.Emission += diffColor * KanikamaSampleDirectionalLightmapArray(lightmapUV, normal) * occlusion;
 #elif defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
             half3 diff;
             half3 spec;
             half3 view = normalize(_WorldSpaceCameraPos - IN.worldPos);
-            half roughness = SmoothnessToRoughness(o.Smoothness);
-            KanikamaDirectionalLightmapSpecular(IN.lightmapUV, normal, view, roughness, o.Occlusion, diff, spec);
-            o.Emission += diffuse * diff + specular * spec;
+            half roughness = SmoothnessToRoughness(smoothness);
+            KanikamaDirectionalLightmapSpecular(lightmapUV, normal, view, roughness, occlusion, diff, spec);
+            half nv = saturate(dot(normal, view));
+            half surfaceReduction = 1.0 / (roughness * roughness + 1.0);
+            half grazingTerm = saturate(smoothness + (1 - oneMinusReflectivity));
+            o.Emission += diffColor * diff + surfaceReduction * spec * FresnelLerp(specColor, grazingTerm, nv);
 #endif
 
-            o.Alpha = c.a;
         }
         ENDCG
     }
