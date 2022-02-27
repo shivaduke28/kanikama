@@ -32,7 +32,7 @@ inline half3 KanikamaSampleLightmapArray(float2 lightmapUV)
     return col;
 }
 
-#if defined(_KANIKAMA_MODE_DIRECTIONAL)
+#if defined(_KANIKAMA_MODE_DIRECTIONAL) || defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
 UNITY_DECLARE_TEX2DARRAY_NOSAMPLER(knkm_LightmapIndArray);
 
 inline half3 KanikamaSampleDirectionalLightmapArray(float2 lightmapUV, float3 normalWorld)

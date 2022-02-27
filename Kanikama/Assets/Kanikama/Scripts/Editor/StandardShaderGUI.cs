@@ -31,13 +31,6 @@ namespace Kanikama.Editor
             AlbedoAlpha,
         }
 
-        public enum KanikamaMode
-        {
-            Single,
-            Array,
-            Directional,
-        }
-
         private static class Styles
         {
             public static GUIContent uvSetLabel = EditorGUIUtility.TrTextContent("UV Set");
@@ -68,7 +61,6 @@ namespace Kanikama.Editor
 
             public static string kanikamaText = "Kanikama";
             public static GUIContent kanikamaModeText = EditorGUIUtility.TrTextContent("Kanikama Mode", "Kanikama Mode");
-            public static GUIContent kanikamaSpecularText = EditorGUIUtility.TrTextContent("Directional Specular", "Directional Specular");
         }
 
         MaterialProperty blendMode = null;
@@ -99,7 +91,6 @@ namespace Kanikama.Editor
         MaterialProperty uvSetSecondary = null;
 
         MaterialProperty kanikamaMode = null;
-        MaterialProperty kanikamaSpecular = null;
 
         MaterialEditor m_MaterialEditor;
         WorkflowMode m_WorkflowMode = WorkflowMode.Specular;
@@ -142,7 +133,6 @@ namespace Kanikama.Editor
             uvSetSecondary = FindProperty("_UVSec", props);
 
             kanikamaMode = FindProperty("_Kanikama_Mode", props);
-            kanikamaSpecular = FindProperty("_Kanikama_Specular", props);
         }
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
@@ -481,7 +471,6 @@ namespace Kanikama.Editor
         void DoKanikamaArea()
         {
             m_MaterialEditor.ShaderProperty(kanikamaMode, Styles.kanikamaModeText);
-            m_MaterialEditor.ShaderProperty(kanikamaSpecular, Styles.kanikamaSpecularText);
         }
     }
 } // namespace Kanikama.Editor

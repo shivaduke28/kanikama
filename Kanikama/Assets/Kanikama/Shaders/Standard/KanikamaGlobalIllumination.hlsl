@@ -68,7 +68,7 @@
             o_gi.indirect.diffuse += KanikamaSampleLightmap(data.lightmapUV.xy);
         #elif defined(_KANIKAMA_MODE_ARRAY)
             o_gi.indirect.diffuse += KanikamaSampleLightmapArray(data.lightmapUV.xy);
-        #elif defined(_KANIKAMA_MODE_DIRECTIONAL) && !defined(_KANIKAMA_SPECULAR)
+        #elif defined(_KANIKAMA_MODE_DIRECTIONAL)
             o_gi.indirect.diffuse += KanikamaSampleDirectionalLightmapArray(data.lightmapUV.xy, normalWorld);
         #endif
 
@@ -77,7 +77,7 @@
     }
 
 
-#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
+#if defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
     // Directional lightmap specular based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
     // https://geom.io/bakery/wiki/
     inline void KanikamaDirectionalLightmapSpecular(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness, half occulsion, out half3 diffuse, out half3 specular)
@@ -102,7 +102,7 @@
         UnityGI o_gi = KanikamaGI_Base(data, occlusion, normalWorld);
         o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn);
 
-#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
+#if defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
         half roughness = PerceptualRoughnessToRoughness(glossIn.roughness);
         half3 diffuse;
         half3 specular;
