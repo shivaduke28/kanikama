@@ -18,10 +18,13 @@
         _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
 
         [Space]
-        [Header(Normal)]
+        [Header(Bump)]
         [Space]
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
+        [Toggle(_PARALLAX)] _ParallasEnable("Enable Parallax", Float) = 0
+        [NoScaleOffset] _ParallaxMap("Height Map", 2D) = "black" {}
+        _Parallax("Height Scale", Range(0.005, 0.08)) = 0.02
 
         [Space]
         [Header(Occlusion)]
@@ -32,14 +35,14 @@
         [Space]
         [Header(Emission)]
         [Space]
-        [Toggle(_EMISSION)] _Emission("Emission", Float) = 0
+        [Toggle(_EMISSION)] _Emission("Enable Emission", Float) = 0
         [NoScaleOffset] _EmissionMap("Emission Map", 2D) = "white" {}
         [HDR] _EmissionColor("Emission Color", Color) = (0, 0, 0)
     }
     SubShader
     {
         Tags { "RenderType" = "Opaque" }
-        LOD 200
+        LOD 300
 
         CGPROGRAM
         #include "UnityStandardUtils.cginc"
@@ -50,11 +53,14 @@
 
         #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_SINGLE _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_DIRECTIONAL_SPECULAR
         #pragma shader_feature_local_fragment _ _EMISSION
+        #pragma shader_feature_local_fragment _ _PARALLAX
 
         fixed4 _Color;
         sampler2D _MainTex;
         sampler2D _BumpMap;
         half _BumpScale;
+        sampler2D _ParallaxMap;
+        half _Parallax;
         sampler2D _MetallicGlossMap;
         half _Metallic;
         half _Glossiness;
@@ -70,6 +76,7 @@
             float2 uv_MainTex;
             float2 lightmapUV;
             float3 worldPos;
+            float3 viewDir;
             float3 worldNormal; INTERNAL_DATA
         };
 
@@ -82,6 +89,9 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             float2 uv = IN.uv_MainTex;
+#if defined(_PARALLAX)
+            uv += ParallaxOffset(tex2D(_ParallaxMap, uv).r, _Parallax, IN.viewDir);
+#endif
             half4 base = tex2D (_MainTex, uv) * _Color;
             o.Albedo = base.rgb;
             o.Alpha = base.a;
