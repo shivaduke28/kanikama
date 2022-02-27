@@ -206,7 +206,7 @@ namespace Kanikama.Baking
                 .Where(x => ValidateTexturePath(x))
                 .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                 .ToList();
-            var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures);
+            var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures, true);
             var dirTexArrPath = Path.Combine(kanikamaPath.ExportDirPath, string.Format(KanikamaPath.DirTexArrFormat, mapIndex));
             KanikamaEditorUtility.CreateOrReplaceAsset(ref dirTexArr, dirTexArrPath);
             Debug.Log($"[Kanikama] Created {dirTexArrPath}");
