@@ -76,27 +76,6 @@
         return o_gi;
     }
 
-
-#if defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
-    // Directional lightmap specular based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
-    // https://geom.io/bakery/wiki/
-    inline void KanikamaDirectionalLightmapSpecular(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness, half occulsion, out half3 diffuse, out half3 specular)
-    {
-        for (int i = 0; i < knkm_Count; i++)
-        {
-            half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * knkm_Colors[i];
-            half4 dirTex = UNITY_SAMPLE_TEX2DARRAY_SAMPLER(knkm_LightmapIndArray, knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i));
-            half3 dominantDir = dirTex.xyz - 0.5;
-            half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) + viewDir);
-            half nh = saturate(dot(normalWorld, halfDir));
-            half spec = GGXTerm(nh, roughness);
-            half halfLambert = dot(normalWorld, dominantDir) + 0.5;
-            half3 diff = bakedColor * halfLambert / max(1e-4h, dirTex.w);
-            diffuse += diff * occulsion;
-            specular += spec * bakedColor * occulsion;
-        }
-    }
-#endif
     inline UnityGI KanikamaGlobalIllumination(UnityGIInput data, half occlusion, half3 normalWorld, Unity_GlossyEnvironmentData glossIn)
     {
         UnityGI o_gi = KanikamaGI_Base(data, occlusion, normalWorld);
