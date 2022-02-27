@@ -9,7 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: KanikamaStandard_Directional
   m_Shader: {fileID: 4800000, guid: 613fb6b242a059c40be003a3f0ec5826, type: 3}
-  m_ShaderKeywords: _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_SPECULAR _NORMALMAP _PARALLAXMAP
+  m_ShaderKeywords: _KANIKAMA_MODE_DIRECTIONAL_SPECULAR _KANIKAMA_SPECULAR _NORMALMAP
+    _PARALLAXMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -65,13 +66,13 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.52
+    - _Glossiness: 0.811
     - _GlossyReflections: 1
     - _KanikamaDirectional: 0
     - _KanikamaMode: 1
-    - _Kanikama_Mode: 3
+    - _Kanikama_Mode: 4
     - _Kanikama_Specular: 1
-    - _Metallic: 0.443
+    - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.0483

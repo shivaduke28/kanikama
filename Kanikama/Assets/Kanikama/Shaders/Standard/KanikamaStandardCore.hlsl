@@ -49,30 +49,6 @@
         return KanikamaGlobalIllumination(d, occlusion, s.normalWorld, g);
     }
 
-#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
-    // Directional lightmap specular based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
-    // https://geom.io/bakery/wiki/
-    void KanikamaDirectionalLightmapSpecular(out UnityIndirect indirect, float2 lightmapUV, float3 normalWorld, float3 viewDir, float smoothness)
-    {
-        half perceptualRoughness = SmoothnessToPerceptualRoughness(smoothness);
-        half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
-
-        for (int i = 0; i < knkm_Count; i++)
-        {
-            half3 bakedColor = DecodeLightmap(UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapArray, float3(lightmapUV.x, lightmapUV.y, i))) * knkm_Colors[i];
-            float4 dirTex = UNITY_SAMPLE_TEX2DARRAY(knkm_LightmapIndArray, float3(lightmapUV.x, lightmapUV.y, i));
-            float3 dominantDir = dirTex.xyz - 0.5;
-            half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) - viewDir);
-            half nh = saturate(dot(normalWorld, halfDir));
-            half spec = GGXTerm(nh, roughness);
-            half halfLambert = dot(normalWorld, dominantDir) + 0.5;
-            half3 diffuse = bakedColor * halfLambert / max(1e-4h, dirTex.w);
-            indirect.diffuse += diffuse;
-            indirect.specular += spec * diffuse;
-        }
-    }
-#endif
-
     half4 fragKanikamaForwardBaseInternal(VertexOutputForwardBase i)
     {
         UNITY_APPLY_DITHER_CROSSFADE(i.pos.xy);
@@ -87,9 +63,6 @@
 
         half occlusion = Occlusion(i.tex.xy);
         UnityGI gi = FragmentKanikamaGI(s, occlusion, i.ambientOrLightmapUV, atten, mainLight);
-#if defined(_KANIKAMA_MODE_DIRECTIONAL) && defined(_KANIKAMA_SPECULAR)
-        KanikamaDirectionalLightmapSpecular(gi.indirect, i.ambientOrLightmapUV.xy, s.normalWorld, s.eyeVec, s.smoothness);
-#endif
 
         half4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec, gi.light, gi.indirect);
         c.rgb += Emission(i.tex.xy);
