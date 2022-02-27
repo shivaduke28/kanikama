@@ -14,7 +14,7 @@
         {
 
             CGPROGRAM
-
+            #define _KANIKAMA_MODE_ARRAY
             #include "UnityCustomRenderTexture.cginc"
             #include "./CGIncludes/KanikamaComposite.hlsl"
 

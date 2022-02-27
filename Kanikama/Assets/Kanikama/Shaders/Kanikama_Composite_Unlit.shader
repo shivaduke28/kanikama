@@ -13,6 +13,7 @@
         Pass
         {
             CGPROGRAM
+            #define _KANIKAMA_MODE_ARRAY
             #include "UnityCG.cginc"
             #include "./CGIncludes/KanikamaComposite.hlsl"
 
