@@ -25,7 +25,7 @@ namespace Kanikama.Udon
         }
 
         // Note:
-        // Colors are updated by KanikamaColorCollector on OnPreCull.
+        // Colors are updated by KanikamaCamera on OnPostRender of a Camera capturing a monitor.
         void OnPreRender()
         {
             var color = Color.black;
