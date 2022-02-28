@@ -130,7 +130,7 @@
             half nv = saturate(dot(normal, view));
             half surfaceReduction = 1.0 / (roughness * roughness + 1.0);
             half grazingTerm = saturate(smoothness + (1 - oneMinusReflectivity));
-            o.Emission += diffColor * diff + surfaceReduction * spec * FresnelLerp(specColor, grazingTerm, nv);
+            o.Emission += (diffColor * diff + surfaceReduction * spec * FresnelLerp(specColor, grazingTerm, nv)) * occlusion;
 #endif
 
         }
