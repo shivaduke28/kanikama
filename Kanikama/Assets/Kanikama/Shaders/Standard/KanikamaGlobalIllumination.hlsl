@@ -81,14 +81,14 @@
         UnityGI o_gi = KanikamaGI_Base(data, occlusion, normalWorld);
         o_gi.indirect.specular = UnityGI_IndirectSpecular(data, occlusion, glossIn);
 
-#if defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
-        half roughness = PerceptualRoughnessToRoughness(glossIn.roughness);
-        half3 diffuse;
-        half3 specular;
-        KanikamaDirectionalLightmapSpecular(data.lightmapUV.xy, normalWorld, data.worldViewDir, roughness, occlusion, /* out */ diffuse, /* out */specular);
-        o_gi.indirect.diffuse += diffuse;
-        o_gi.indirect.specular += specular;
-#endif
+        #if defined(_KANIKAMA_MODE_DIRECTIONAL_SPECULAR)
+            half roughness = PerceptualRoughnessToRoughness(glossIn.roughness);
+            half3 diffuse;
+            half3 specular;
+            KanikamaDirectionalLightmapSpecular(data.lightmapUV.xy, normalWorld, data.worldViewDir, roughness, /* out */ diffuse, /* out */ specular);
+            o_gi.indirect.diffuse += diffuse * occlusion;
+            o_gi.indirect.specular += specular * occlusion;
+        #endif
         return o_gi;
     }
 

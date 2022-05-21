@@ -93,7 +93,7 @@ inline half3 KanikamaSampleDirectionalLightmapArray(float2 lightmapUV, float3 no
 // Directional lightmap specular based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
 // https://geom.io/bakery/wiki/
 inline void KanikamaDirectionalLightmapSpecular(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
-                                                half occulsion, out half3 diffuse, out half3 specular)
+                                                out half3 diffuse, out half3 specular)
 {
     #if _KANIKAMA_PACK
     const int loopCount = ceil((float)knkm_Count * 0.3333333);
@@ -116,8 +116,8 @@ inline void KanikamaDirectionalLightmapSpecular(float2 lightmapUV, half3 normalW
             half spec = GGXTerm(nh, roughness);
             half halfLambert = dot(normalWorld, dominantDir) + 0.5;
             half3 diff = bakedColor * halfLambert / max(1e-4h, dirTex.w);
-            diffuse += diff * occulsion;
-            specular += spec * bakedColor * occulsion;
+            diffuse += diff;
+            specular += spec * bakedColor;
         }
     }
     #else
@@ -133,8 +133,8 @@ inline void KanikamaDirectionalLightmapSpecular(float2 lightmapUV, half3 normalW
         half spec = GGXTerm(nh, roughness);
         half halfLambert = dot(normalWorld, dominantDir) + 0.5;
         half3 diff = bakedColor * halfLambert / max(1e-4h, dirTex.w);
-        diffuse += diff * occulsion;
-        specular += spec * bakedColor * occulsion;
+        diffuse += diff;
+        specular += spec * bakedColor;
     }
     #endif
 }
