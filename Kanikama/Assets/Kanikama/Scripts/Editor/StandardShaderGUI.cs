@@ -61,6 +61,7 @@ namespace Kanikama.Editor
 
             public static string kanikamaText = "Kanikama";
             public static GUIContent kanikamaModeText = EditorGUIUtility.TrTextContent("Kanikama Mode", "Kanikama Mode");
+            public static GUIContent kanikamaPackText = EditorGUIUtility.TrTextContent("RGB Packing", "RGB Packing");
         }
 
         MaterialProperty blendMode = null;
@@ -91,6 +92,7 @@ namespace Kanikama.Editor
         MaterialProperty uvSetSecondary = null;
 
         MaterialProperty kanikamaMode = null;
+        MaterialProperty kanikamaPack = null;
 
         MaterialEditor m_MaterialEditor;
         WorkflowMode m_WorkflowMode = WorkflowMode.Specular;
@@ -133,6 +135,7 @@ namespace Kanikama.Editor
             uvSetSecondary = FindProperty("_UVSec", props);
 
             kanikamaMode = FindProperty("_Kanikama_Mode", props);
+            kanikamaPack = FindProperty("_Kanikama_Pack", props);
         }
 
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
@@ -471,6 +474,7 @@ namespace Kanikama.Editor
         void DoKanikamaArea()
         {
             m_MaterialEditor.ShaderProperty(kanikamaMode, Styles.kanikamaModeText);
+            m_MaterialEditor.ShaderProperty(kanikamaPack, Styles.kanikamaPackText);
         }
     }
 } // namespace Kanikama.Editor
