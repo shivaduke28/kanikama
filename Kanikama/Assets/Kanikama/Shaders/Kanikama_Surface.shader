@@ -3,6 +3,7 @@
     Properties
     {
         [KeywordEnum(None, Single, Array, Directional, Directional_Specular)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [Toggle(_KANIKAMA_PACK)] _Kanikama_Pack("Enable RGB Packing", Float) = 0
 
         [Space]
         [Header(Base)]
@@ -52,6 +53,8 @@
         #pragma target 3.0
 
         #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_SINGLE _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_DIRECTIONAL_SPECULAR
+        #pragma shader_feature_local_fragment _ _KANIKAMA_PACK
+
         #pragma shader_feature_local_fragment _ _EMISSION
         #pragma shader_feature_local_fragment _ _PARALLAX
 
