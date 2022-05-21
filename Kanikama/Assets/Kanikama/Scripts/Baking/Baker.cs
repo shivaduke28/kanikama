@@ -45,7 +45,7 @@ namespace Kanikama.Baking
 
                 sceneManager.Initialize();
                 sceneManager.TurnOff();
-                sceneManager.SetDirectionalMode(request.isDirectionalMode);
+                sceneManager.SetDirectionalMode(request.IsDirectionalMode);
                 await BakeLightSourcesAsync(token);
                 await BakeLightSourceGroupsAsync(token);
                 await BakeWithoutKanikamaAsync(token);
@@ -72,6 +72,7 @@ namespace Kanikama.Baking
                 await BakeLightSourceAsync(i, token);
             }
         }
+
         async Task BakeLightSourceAsync(int index, CancellationToken token)
         {
             var source = sceneManager.LightSources[index];
@@ -104,7 +105,7 @@ namespace Kanikama.Baking
             for (var i = 0; i < sourceCount; i++)
             {
                 var source = group.Value.GetLightSources()[i];
-                Debug.Log($"[Kanikama] - Baking {i}th LightSource { KanikamaEditorUtility.GetName(source)}");
+                Debug.Log($"[Kanikama] - Baking {i}th LightSource {KanikamaEditorUtility.GetName(source)}");
                 source.OnBake();
                 lightmapper.Clear();
                 await BakeSceneGIAsync(token);
@@ -115,7 +116,7 @@ namespace Kanikama.Baking
 
         async Task BakeWithoutKanikamaAsync(CancellationToken token)
         {
-            if (!request.IsBakeWithouKanikama()) return;
+            if (!request.IsBakeWithoutKanikama()) return;
             sceneManager.RollbackNonKanikama();
             sceneManager.RollbackDirectionalMode();
             Debug.Log($"[Kanikama] Baking Scene GI without Kanikama...");
@@ -133,13 +134,13 @@ namespace Kanikama.Baking
                 var copiedMapPath = Path.Combine(kanikamaPath.TmpDirPath, copiedFileName);
                 AssetDatabase.CopyAsset(bakedMapPath, copiedMapPath);
 
-                var textureImporter = AssetImporter.GetAtPath(copiedMapPath) as TextureImporter;
+                var textureImporter = (TextureImporter) AssetImporter.GetAtPath(copiedMapPath);
                 textureImporter.isReadable = true;
                 textureImporter.mipmapEnabled = true;
                 textureImporter.SaveAndReimport();
             }
 
-            if (request.isDirectionalMode)
+            if (request.IsDirectionalMode)
             {
                 var bakedDirectionalLightmapPaths = kanikamaPath.GetBakedDirectionalMapPaths();
                 for (var mapIndex = 0; mapIndex < bakedLightmapPaths.Count; mapIndex++)
@@ -148,7 +149,7 @@ namespace Kanikama.Baking
                     var dirFileName = $"{KanikamaPath.DirectionalPrefix}{Path.GetFileNameWithoutExtension(string.Format(format, mapIndex))}.png";
                     var copiedDirMapPath = Path.Combine(kanikamaPath.TmpDirPath, dirFileName);
                     AssetDatabase.CopyAsset(bakedDirMapPath, copiedDirMapPath);
-                    var textureImporter = AssetImporter.GetAtPath(copiedDirMapPath) as TextureImporter;
+                    var textureImporter = (TextureImporter) AssetImporter.GetAtPath(copiedDirMapPath);
                     textureImporter.isReadable = true;
                     textureImporter.mipmapEnabled = true;
                     textureImporter.SaveAndReimport();
@@ -163,47 +164,67 @@ namespace Kanikama.Baking
 
         void CreateKanikamaAssets()
         {
-            if (!request.isGenerateAssets) { Debug.Log("[Kanikama] Skip creating assets"); return; }
+            if (!request.IsGenerateAssets)
+            {
+                Debug.Log("[Kanikama] Skip creating assets");
+                return;
+            }
 
             var lightmapCount = kanikamaPath.GetBakedLightmapPaths().Count;
             for (var mapIndex = 0; mapIndex < lightmapCount; mapIndex++)
             {
                 var textures = kanikamaPath.GetTempLightmapPaths(mapIndex)
-                    .Where(path => ValidateTexturePath(path))
+                    .Where(ValidateTexturePath)
                     .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                     .ToList();
-                if (!textures.Any()) continue;
-                var texArr = Texture2DArrayGenerator.Generate(textures);
+                if (mapIndex == 0)
+                {
+                    BakedAsset.sliceCount = textures.Count;
+                }
+                if (textures.Count == 0) continue;
+                Texture2DArray texArr;
+
+                if (request.IsPackTextures)
+                {
+                    texArr = Texture2DArrayGenerator.PackBC6H(textures);
+                }
+                else
+                {
+                    texArr = Texture2DArrayGenerator.Generate(textures);
+                }
                 var texArrPath = Path.Combine(kanikamaPath.ExportDirPath, string.Format(KanikamaPath.TexArrFormat, mapIndex));
                 KanikamaEditorUtility.CreateOrReplaceAsset(ref texArr, texArrPath);
                 Debug.Log($"[Kanikama] Created {texArrPath}");
                 BakedAsset.kanikamaMapArrays.Add(texArr);
 
-                if (request.createRenderTexture)
+                if (request.IsCreateRenderTexture)
                 {
                     var (mat, rt) = CreateRTAssets(mapIndex, texArr);
                     BakedAsset.renderTextureMaterials.Add(mat);
                     BakedAsset.renderTextures.Add(rt);
                 }
-                if (request.createCustomRenderTexture)
+
+                if (request.IsCreateCustomRenderTexture)
                 {
                     var (mat, crt) = CreateCRTAssets(mapIndex, texArr);
                     BakedAsset.customRenderTextureMaterials.Add(mat);
                     BakedAsset.customRenderTextures.Add(crt);
                 }
-                if (request.isDirectionalMode)
+
+                if (request.IsDirectionalMode)
                 {
                     var dirMapArray = CreateDirectionalMapArray(mapIndex);
                     BakedAsset.kanikamaDirectionalMapArrays.Add(dirMapArray);
                 }
             }
+
             AssetDatabase.Refresh();
         }
 
         Texture2DArray CreateDirectionalMapArray(int mapIndex)
         {
             var dirTextures = kanikamaPath.GetTempDirctionalMapPaths(mapIndex)
-                .Where(x => ValidateTexturePath(x))
+                .Where(ValidateTexturePath)
                 .Select(x => AssetDatabase.LoadAssetAtPath<Texture2D>(x.Path))
                 .ToList();
             var dirTexArr = Texture2DArrayGenerator.Generate(dirTextures, true);

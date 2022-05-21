@@ -9,11 +9,12 @@ namespace Kanikama.Editor
     [CreateAssetMenu(menuName = "Kanikama/Settings", fileName = "KanikamaSettings")]
     public class KanikamaSettings : ScriptableObject
     {
-        [SerializeField] private SceneAsset sceneAsset;
+        [SerializeField] SceneAsset sceneAsset;
         public LightmapperType lightmapperType;
         public bool directionalMode;
         public bool createRenderTexture;
         public bool createCustomRenderTexture;
+        public bool packTextures;
         public BakedAsset bakedAsset;
 
         public SceneAsset SceneAsset => sceneAsset;
@@ -32,16 +33,20 @@ namespace Kanikama.Editor
             {
                 bakedAsset.kanikamaDirectionalMapArrays = new List<Texture2DArray>(asset.kanikamaDirectionalMapArrays);
             }
+
             if (createCustomRenderTexture)
             {
                 bakedAsset.customRenderTextures = new List<CustomRenderTexture>(asset.customRenderTextures);
                 bakedAsset.customRenderTextureMaterials = new List<Material>(asset.customRenderTextureMaterials);
             }
+
             if (createRenderTexture)
             {
                 bakedAsset.renderTextures = new List<RenderTexture>(asset.renderTextures);
                 bakedAsset.renderTextureMaterials = new List<Material>(asset.renderTextureMaterials);
             }
+
+            bakedAsset.sliceCount = asset.sliceCount;
         }
 
         public static KanikamaSettings FindOrCreateSettings(SceneAsset sceneAsset)
@@ -67,6 +72,7 @@ namespace Kanikama.Editor
                 var settings = AssetDatabase.LoadAssetAtPath<KanikamaSettings>(path);
                 if (settings.SceneAsset == sceneAsset) return settings;
             }
+
             return null;
         }
     }

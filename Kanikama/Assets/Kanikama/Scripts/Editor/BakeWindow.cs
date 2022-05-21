@@ -131,11 +131,12 @@ namespace Kanikama.Editor
             GUILayout.Label("Scene", EditorStyles.boldLabel);
             using (new EditorGUI.DisabledGroupScope(true))
             {
-                sceneAsset = (SceneAsset)EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
+                sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
-            sceneDescriptor = (KanikamaSceneDescriptor)EditorGUILayout.ObjectField("Scene Descriptor",
+
+            sceneDescriptor = (KanikamaSceneDescriptor) EditorGUILayout.ObjectField("Scene Descriptor",
                 sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
-            settings = (KanikamaSettings)EditorGUILayout.ObjectField("Settings", settings, typeof(KanikamaSettings), false);
+            settings = (KanikamaSettings) EditorGUILayout.ObjectField("Settings", settings, typeof(KanikamaSettings), false);
 
             if (GUILayout.Button("Load Active Scene"))
             {
@@ -167,13 +168,14 @@ namespace Kanikama.Editor
                         Stop();
                     }
                 }
+
                 return;
             }
 
             EditorGUI.BeginChangeCheck();
             if (IsBakeryIncluded())
             {
-                settings.lightmapperType = (LightmapperType)EditorGUILayout.EnumPopup("Lightmapper", settings.lightmapperType);
+                settings.lightmapperType = (LightmapperType) EditorGUILayout.EnumPopup("Lightmapper", settings.lightmapperType);
             }
             else
             {
@@ -183,6 +185,7 @@ namespace Kanikama.Editor
                     EditorGUILayout.EnumPopup("Lightmapper", settings.lightmapperType);
                 }
             }
+
             if (lightmapper == null || EditorGUI.EndChangeCheck())
             {
                 lightmapper = CreateLightmapper(settings.lightmapperType);
@@ -197,17 +200,18 @@ namespace Kanikama.Editor
             {
                 using (new EditorGUI.DisabledGroupScope(true))
                 {
-                    settings.directionalMode = false;
-                    settings.directionalMode = EditorGUILayout.Toggle("Directional Mode", settings.directionalMode);
+                    settings.directionalMode = EditorGUILayout.Toggle("Directional Mode", false);
                 }
             }
+
+            settings.packTextures = EditorGUILayout.Toggle("Pack Textures", settings.packTextures);
 
 
             EditorGUILayout.Space();
 
-            bakeRequest.isBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.isBakeAll);
+            bakeRequest.IsBakeAll = EditorGUILayout.Toggle("Bake All", bakeRequest.IsBakeAll);
 
-            using (new EditorGUI.DisabledGroupScope(bakeRequest.isBakeAll))
+            using (new EditorGUI.DisabledGroupScope(bakeRequest.IsBakeAll))
             {
                 using (new EditorGUI.IndentLevelScope(EditorGUI.indentLevel++))
                 {
@@ -215,7 +219,7 @@ namespace Kanikama.Editor
                     EditorGUILayout.LabelField("Light Source");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var sourceFlags = bakeRequest.lightSourceFlags;
+                        var sourceFlags = bakeRequest.LightSourceFlags;
                         var source = sceneDescriptor.GetLightSources();
                         var lightCount = Mathf.Min(sourceFlags.Count, source.Count);
                         for (var i = 0; i < lightCount; i++)
@@ -227,7 +231,7 @@ namespace Kanikama.Editor
                     EditorGUILayout.LabelField("Light Source Group");
                     using (new EditorGUI.IndentLevelScope(indentLevel))
                     {
-                        var groupFlags = bakeRequest.lightSourceGroupFlags;
+                        var groupFlags = bakeRequest.LightSourceGroupFlags;
                         var group = sceneDescriptor.GetLightSourceGroups();
                         var groupCount = Mathf.Min(groupFlags.Count, group.Count);
                         for (var i = 0; i < groupCount; i++)
@@ -236,8 +240,8 @@ namespace Kanikama.Editor
                         }
                     }
 
-                    bakeRequest.isBakeWithouKanikama = EditorGUILayout.Toggle("Non-Kanikama GI", bakeRequest.isBakeWithouKanikama);
-                    bakeRequest.isGenerateAssets = EditorGUILayout.Toggle("Create Assets", bakeRequest.isGenerateAssets);
+                    bakeRequest.IsBakeNonKanikama = EditorGUILayout.Toggle("Non-Kanikama GI", bakeRequest.IsBakeNonKanikama);
+                    bakeRequest.IsGenerateAssets = EditorGUILayout.Toggle("Create Assets", bakeRequest.IsGenerateAssets);
                 }
             }
         }
@@ -292,9 +296,10 @@ namespace Kanikama.Editor
 
         async void BakeAsync()
         {
-            bakeRequest.isDirectionalMode = settings.directionalMode;
-            bakeRequest.createRenderTexture = settings.createRenderTexture;
-            bakeRequest.createCustomRenderTexture = settings.createCustomRenderTexture;
+            bakeRequest.IsDirectionalMode = settings.directionalMode;
+            bakeRequest.IsCreateRenderTexture = settings.createRenderTexture;
+            bakeRequest.IsCreateCustomRenderTexture = settings.createCustomRenderTexture;
+            bakeRequest.IsPackTextures = settings.packTextures;
             tokenSource = new CancellationTokenSource();
             lightmapper = CreateLightmapper(settings.lightmapperType);
             var sceneManager = CreateSceneManager(settings.lightmapperType, sceneDescriptor);

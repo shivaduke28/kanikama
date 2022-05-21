@@ -6,9 +6,13 @@ namespace Kanikama.Editor
 {
     class UtilityWindow : EditorWindow
     {
-        TextureGenerator.Parameter texParam;
+        [SerializeField] TextureGenerator.Parameter texParam;
+        [SerializeField] TextureGenerator.ImportParameter importParam;
         RenderTextureDescriptor rtDescriptor;
         Vector2 scrollPosition = new Vector2(0, 0);
+        SerializedObject serializedObject;
+        SerializedProperty texParamProperty;
+        SerializedProperty importParamProperty;
 
         [MenuItem("Window/Kanikama/Utility")]
         static void ShowWindow()
@@ -32,6 +36,9 @@ namespace Kanikama.Editor
         {
             titleContent.text = "Kanikama Utility";
             rtDescriptor = new RenderTextureDescriptor(256, 256);
+            serializedObject = new SerializedObject(this);
+            texParamProperty = serializedObject.FindProperty(nameof(texParam));
+            importParamProperty = serializedObject.FindProperty(nameof(importParam));
             Show();
         }
 
@@ -41,20 +48,13 @@ namespace Kanikama.Editor
             var indentLevel = EditorGUI.indentLevel;
             using (new EditorGUI.IndentLevelScope(indentLevel + 1))
             {
-                if (texParam is null)
-                {
-                    texParam = new TextureGenerator.Parameter();
-                }
-                texParam.width = EditorGUILayout.IntField("width", texParam.width);
-                texParam.height = EditorGUILayout.IntField("height", texParam.height);
-                texParam.format = (TextureFormat)EditorGUILayout.EnumPopup("format", texParam.format);
-                texParam.extension = (TextureGenerator.TextureExtension)EditorGUILayout.EnumPopup("ext", texParam.extension);
-                texParam.mipChain = EditorGUILayout.Toggle("mipChain", texParam.mipChain);
-                texParam.linear = EditorGUILayout.Toggle("linear", texParam.linear);
-                texParam.isReadable = EditorGUILayout.Toggle("is readable", texParam.isReadable);
+                EditorGUILayout.PropertyField(texParamProperty);
+                EditorGUILayout.PropertyField(importParamProperty);
                 if (GUILayout.Button("Create"))
                 {
-                    var tex = TextureGenerator.GenerateTexture("Assets", "texture", texParam);
+                    serializedObject.ApplyModifiedProperties();
+                    var tex = TextureGenerator.GenerateTexture(texParam);
+                    TextureGenerator.SaveTexture2D(tex, "Assets", "texture", importParam);
                     Selection.activeObject = tex;
                 }
             }

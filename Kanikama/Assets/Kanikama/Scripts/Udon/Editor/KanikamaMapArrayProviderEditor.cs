@@ -81,8 +81,7 @@ namespace Kanikama.Udon.Editor
                 prop.objectReferenceValue = bakedAsset.kanikamaDirectionalMapArrays[i];
             }
 
-            var sliceCount = arrayCount > 0 ? bakedAsset.kanikamaMapArrays[0].depth : 0;
-            this.sliceCount.intValue = sliceCount;
+            sliceCount.intValue = bakedAsset.sliceCount;
 
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(proxy);

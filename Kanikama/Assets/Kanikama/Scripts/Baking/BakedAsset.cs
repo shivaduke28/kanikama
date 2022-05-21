@@ -13,6 +13,7 @@ namespace Kanikama.Baking
         public List<Material> customRenderTextureMaterials = new List<Material>();
         public List<RenderTexture> renderTextures = new List<RenderTexture>();
         public List<Material> renderTextureMaterials = new List<Material>();
+        public int sliceCount;
 
         public void RemoveNullAssets()
         {

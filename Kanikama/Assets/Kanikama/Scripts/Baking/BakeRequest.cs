@@ -5,26 +5,26 @@ namespace Kanikama.Baking
 {
     public class BakeRequest
     {
-        public bool isBakeAll = true;
+        public bool IsBakeAll = true;
 
-        public List<bool> lightSourceFlags;
-        public List<bool> lightSourceGroupFlags;
+        public readonly List<bool> LightSourceFlags;
+        public readonly List<bool> LightSourceGroupFlags;
 
-        public bool isBakeAmbient = true;
-        public bool isGenerateAssets = true;
-        public bool isBakeWithouKanikama = true;
-        public bool isDirectionalMode = false;
-        public bool createRenderTexture;
-        public bool createCustomRenderTexture;
+        public bool IsGenerateAssets = true;
+        public bool IsBakeNonKanikama = true;
+        public bool IsDirectionalMode = false;
+        public bool IsPackTextures = false;
+        public bool IsCreateRenderTexture;
+        public bool IsCreateCustomRenderTexture;
 
-        public bool IsBakeLightSource(int index) => isBakeAll || lightSourceFlags[index];
-        public bool IsBakeLightSourceGroup(int index) => isBakeAll || lightSourceGroupFlags[index];
-        public bool IsBakeWithouKanikama() => isBakeAll || isBakeWithouKanikama;
+        public bool IsBakeLightSource(int index) => IsBakeAll || LightSourceFlags[index];
+        public bool IsBakeLightSourceGroup(int index) => IsBakeAll || LightSourceGroupFlags[index];
+        public bool IsBakeWithoutKanikama() => IsBakeAll || IsBakeNonKanikama;
 
         public BakeRequest(int sourceCount, int groupCount)
         {
-            lightSourceFlags = Enumerable.Repeat(true, sourceCount).ToList();
-            lightSourceGroupFlags = Enumerable.Repeat(true, groupCount).ToList();
+            LightSourceFlags = Enumerable.Repeat(true, sourceCount).ToList();
+            LightSourceGroupFlags = Enumerable.Repeat(true, groupCount).ToList();
         }
     }
 }
