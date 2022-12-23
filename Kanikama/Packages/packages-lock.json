@@ -224,6 +224,24 @@
         "com.unity.textmeshpro": "2.1.6"
       }
     },
+    "net.shivaduke28.kanikama": {
+      "version": "file:net.shivaduke28.kanikama",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "net.shivaduke28.kanikama.bakery": {
+      "version": "file:net.shivaduke28.kanikama.bakery",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "net.shivaduke28.kanikama.udon": {
+      "version": "file:net.shivaduke28.kanikama.udon",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "nuget.mono-cecil": {
       "version": "0.1.6-preview",
       "depth": 1,

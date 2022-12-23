@@ -1,0 +1,23 @@
+{
+    "name": "Kanikama.Udon.Editor",
+    "references": [
+        "VRC.Udon",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor",
+        "net.shivaduke28.kanikama.udon",
+        "Kanikama.Runtime",
+        "Kanikama.Baking",
+        "Kanikama.Editor.GUI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,17 @@
+{
+    "name": "net.shivaduke28.kanikama.udon",
+    "displayName": "Kanikama Udon",
+    "version": "3.0.0",
+    "unity": "2019.4",
+    "description": "VRC MIDI STAR DRIVER (AudioLink support)",
+    "vrchatVersion": "2022.1.1",
+    "author": {
+        "name": "shivaduke28",
+        "email": "shivaduke28@gmail.com",
+        "url": "https://github.com/shivaduke28"
+    },
+    "vpmDependencies": {
+        "com.vrchat.udonsharp": "1.x",
+        "net.shivaduke28.kanikama": "3.x"
+    }
+}

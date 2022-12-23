@@ -1,0 +1,20 @@
+{
+    "name": "Kanikama.Editor.GUI",
+    "references": [
+        "Kanikama.Runtime",
+        "Kanikama.Baking",
+        "Kanikama.Bakery",
+        "Kanikama.Baking.Bakery"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
