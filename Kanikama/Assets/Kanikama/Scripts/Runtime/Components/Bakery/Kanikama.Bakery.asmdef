@@ -10,7 +10,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
