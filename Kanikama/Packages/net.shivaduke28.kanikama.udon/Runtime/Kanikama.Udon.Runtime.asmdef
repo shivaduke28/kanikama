@@ -1,5 +1,5 @@
 {
-    "name": "net.shivaduke28.kanikama.udon",
+    "name": "Kanikama.Udon.Runtime",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon"

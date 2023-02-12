@@ -17,7 +17,7 @@ MonoBehaviour:
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 164e1fe45f83c1049b4d248a2bd7f548, type: 3}
-  scriptVersion: 0
+  scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaCamera, Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaCamera, Kanikama.Udon.Runtime
     - Name: 
       Entry: 8
       Data: 

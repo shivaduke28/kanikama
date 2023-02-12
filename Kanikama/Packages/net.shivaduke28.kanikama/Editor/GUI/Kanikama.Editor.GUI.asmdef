@@ -2,7 +2,7 @@
     "name": "Kanikama.Editor.GUI",
     "references": [
         "Kanikama.Runtime",
-        "Kanikama.Baking",
+        "Kanikama.Editor.Baking",
         "Kanikama.Bakery",
         "Kanikama.Baking.Bakery"
     ],

@@ -1,5 +1,5 @@
 {
-    "name": "Kanikama.Baking",
+    "name": "Kanikama.Editor.Baking",
     "references": [
         "Kanikama.Runtime"
     ],
