@@ -70,10 +70,14 @@ namespace Kanikama.Core.Editor
             return context;
         }
 
-        public static BakedLightmap[] GetBakedLightmaps(SceneAssetData sceneAssetData)
+        public static BakedLightingAssetCollection GetBakedLightingAssetCollection(SceneAssetData sceneAssetData)
         {
             var dirPath = sceneAssetData.LightingAssetDirectoryPath;
-            var result = new List<BakedLightmap>();
+            var result = new BakedLightingAssetCollection
+            {
+                Lightmaps = new List<BakedLightmap>(),
+                DirectionalLightmaps = new List<BakedLightmap>(),
+            };
 
             foreach (var guid in AssetDatabase.FindAssets("t:Texture", new string[] { dirPath }))
             {
@@ -83,10 +87,23 @@ namespace Kanikama.Core.Editor
                     continue;
                 }
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                result.Add(new BakedLightmap(lightmapType, texture, path, index));
+                var lightmap = new BakedLightmap(lightmapType, texture, path, index);
+                switch (lightmapType)
+                {
+                    case LightmapType.Color:
+                        result.Lightmaps.Add(lightmap);
+                        break;
+                    case LightmapType.Directional:
+                        result.DirectionalLightmaps.Add(lightmap);
+                        break;
+                    case LightmapType.ShadowMask:
+                        result.ShadowMasks.Add(lightmap);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-
-            return result.ToArray();
+            return result;
         }
 
         // todo: name control...
@@ -132,7 +149,7 @@ namespace Kanikama.Core.Editor
         }
 
 
-        static readonly Regex LightmapRegex = new Regex("Lightmap-[0-9]+_comp_[light|dir]");
+        static readonly Regex LightmapRegex = new Regex("Lightmap-[0-9]+_comp_[light|dir|shadowmask]");
 
         public static bool TryGetLightmapType(string path, out LightmapType lightmapType, out int lightmapIndex)
         {
@@ -159,6 +176,9 @@ namespace Kanikama.Core.Editor
                     break;
                 case "dir":
                     lightmapType = LightmapType.Directional;
+                    break;
+                case "shadowmask":
+                    lightmapType = LightmapType.ShadowMask;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(list[2]);

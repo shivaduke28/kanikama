@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Kanikama.Core.Editor
 {
@@ -19,9 +20,17 @@ namespace Kanikama.Core.Editor
         }
     }
 
+    public sealed class BakedLightingAssetCollection
+    {
+        public List<BakedLightmap> Lightmaps = new List<BakedLightmap>();
+        public List<BakedLightmap> DirectionalLightmaps = new List<BakedLightmap>();
+        public List<BakedLightmap> ShadowMasks = new List<BakedLightmap>();
+    }
+
     public enum LightmapType
     {
         Color = 0,
         Directional = 1,
+        ShadowMask = 2,
     }
 }
