@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Kanikama.Core
 {
@@ -20,7 +21,7 @@ namespace Kanikama.Core
 
         T Load()
         {
-            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            var scene = SceneManager.GetActiveScene();
             var rootObjects = scene.GetRootGameObjects();
             var root = rootObjects.FirstOrDefault(t => t.name == rootName);
             if (root == null)

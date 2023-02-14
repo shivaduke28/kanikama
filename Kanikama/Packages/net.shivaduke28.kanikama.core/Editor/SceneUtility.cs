@@ -3,29 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Kanikama.Core.Editor.LightSources;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.Core.Editor
 {
-    public sealed class SceneLightingData
-    {
-        public AmbientLightHandler AmbientLight { get; } = new AmbientLightHandler();
-        public List<LightHandler> Light { get; } = new List<LightHandler>();
-        public List<RendererHandler> Renderers { get; } = new List<RendererHandler>();
-    }
-
-    public struct TextureAssetData
-    {
-        public string Path;
-        public Texture2D Asset;
-    }
-
-
     public static class SceneUtility
     {
         public static SceneAssetHandler CopySceneAsset(SceneAssetData sceneAssetData)
@@ -62,43 +47,28 @@ namespace Kanikama.Core.Editor
             return true;
         }
 
-
-        public static void TurnOffAllLightSources()
+        public static SceneLightingCollection GetSceneLightingCollection()
         {
-            var lights = Object.FindObjectsOfType<Light>();
-            foreach (var light in lights)
+            var context = new SceneLightingCollection
             {
-                if (IsContributeGI(light))
-                {
-                    light.enabled = false;
-                }
-            }
-            var renderers = Object.FindObjectsOfType<Renderer>();
-            foreach (var renderer in renderers)
-            {
-                if (IsContributeGI(renderer))
-                {
-                }
-            }
+                AmbientLight = new AmbientLight(),
+                LightReferences = Object.FindObjectsOfType<Light>()
+                    .Where(LightReference.IsContributeGI)
+                    .Select(l => new LightReference(l))
+                    .ToList(),
+                EmissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
+                    .Where(EmissiveRendererReference.IsContributeGI)
+                    .Select(l => new EmissiveRendererReference(l))
+                    .ToList(),
+                LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
+                    .Select(lg => new ComponentReference<LightProbeGroup>(lg))
+                    .ToList(),
+                ReflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
+                    .Select(rp => new ComponentReference<ReflectionProbe>(rp))
+                    .ToList(),
+            };
+            return context;
         }
-
-        public static bool IsContributeGI(Light light)
-        {
-            return light.isActiveAndEnabled && (light.lightmapBakeType & LightmapBakeType.Realtime) == 0;
-        }
-
-        public static bool IsContributeGI(Renderer renderer)
-        {
-            if (!renderer.enabled) return false;
-            var flags = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-            return flags.HasFlag(StaticEditorFlags.ContributeGI) && renderer.sharedMaterials.Any(IsContributeGI);
-        }
-
-        public static bool IsContributeGI(Material material)
-        {
-            return material.globalIlluminationFlags.HasFlag(MaterialGlobalIlluminationFlags.BakedEmissive);
-        }
-
 
         public static BakedLightmap[] GetBakedLightmaps(SceneAssetData sceneAssetData)
         {
@@ -120,12 +90,11 @@ namespace Kanikama.Core.Editor
         }
 
         // todo: name control...
-        public static BakedLightmap CopyBakedLightmap(BakedLightmap bakedLightmap, string dstDirPath)
+        public static BakedLightmap CopyBakedLightmap(BakedLightmap bakedLightmap, string dstPath)
         {
-            var newPath = Path.Combine(dstDirPath, Path.GetFileName(bakedLightmap.Path));
-            AssetDatabase.CopyAsset(bakedLightmap.Path, newPath);
-            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(newPath);
-            return new BakedLightmap(bakedLightmap.Type, texture, newPath, bakedLightmap.Index);
+            AssetDatabase.CopyAsset(bakedLightmap.Path, dstPath);
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
+            return new BakedLightmap(bakedLightmap.Type, texture, dstPath, bakedLightmap.Index);
         }
 
         public static void CreateFolderIfNecessary(string dirPath, string folderName)
