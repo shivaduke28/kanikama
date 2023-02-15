@@ -22,7 +22,7 @@ namespace Test.Editor
         static async Task ExecuteAsync()
         {
             // make sure the current active scene is saved as a SceneAsset
-            if (!SceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
+            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
 
             // get objects that you want to control in this pipeline.
             var myLightReference = Object.FindObjectOfType<MyLightReference>();
@@ -30,17 +30,16 @@ namespace Test.Editor
 
 
             // create copy
-            using (var copiedSceneHandler = SceneUtility.CopySceneAsset(sceneAssetData))
+            using (var copiedSceneHandler = KanikamaSceneUtility.CopySceneAsset(sceneAssetData))
             {
-                var light = myLightReference.light;
                 // create a reference before change your scene
+                var light = myLightReference.Light;
                 var lightReference = new ComponentReference<Light>(light);
 
                 var copiedSceneAssetData = copiedSceneHandler.SceneAssetData;
 
                 // change to the copied scene
                 EditorSceneManager.OpenScene(copiedSceneHandler.SceneAssetData.Path);
-
 
                 // get a reference in the copied scene (using hierarchy path)
                 light = lightReference.Value;
@@ -50,32 +49,10 @@ namespace Test.Editor
                 light.lightmapBakeType = LightmapBakeType.Baked;
 
                 // turn off other light sources
-                var lightSourceCtx = SceneUtility.GetSceneLightingCollection();
-                foreach (var reference in lightSourceCtx.LightReferences)
-                {
-                    if (reference.Reference.Value != light)
-                    {
-                        reference.TurnOff();
-                    }
-                }
-
-                foreach (var reference in lightSourceCtx.EmissiveRendererReferences)
-                {
-                    reference.TurnOff();
-                }
-
-                lightSourceCtx.AmbientLight.TurnOff();
-
-                foreach (var reference in lightSourceCtx.LightProbeGroups)
-                {
-                    reference.Value.gameObject.SetActive(false);
-                }
-
-                foreach (var reference in lightSourceCtx.ReflectionProbes)
-                {
-                    reference.Value.gameObject.SetActive(false);
-                }
-
+                var sceneLightingCollection = KanikamaSceneUtility.GetSceneLightingCollection();
+                sceneLightingCollection.TurnOff();
+                sceneLightingCollection.DisableLightProbes();
+                sceneLightingCollection.DisableReflectionProbes();
 
                 // non directional
                 LightmapEditorSettings.lightmapsMode = LightmapsMode.NonDirectional;
@@ -83,13 +60,13 @@ namespace Test.Editor
                 var context = new Context
                 {
                     Light = light,
-                    original = sceneAssetData,
-                    copied = copiedSceneAssetData,
+                    Original = sceneAssetData,
+                    Copied = copiedSceneAssetData,
                     Lightmapper = new Lightmapper(),
                     DstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst"
                 };
 
-                SceneUtility.CreateFolderIfNecessary(context.DstDir);
+                KanikamaSceneUtility.CreateFolderIfNecessary(context.DstDir);
 
                 var indirects = await BakeIndirectAsync(context);
                 var directs = await BakeDirectAsync(context);
@@ -104,7 +81,7 @@ namespace Test.Editor
                     var compressed = KanikamaTextureUtility.CompressToBC6H(rt, false, true, TextureCompressionQuality.Best);
 
                     var path = Path.Combine(context.DstDir, $"subtract_{indirects[i].Index}.asset");
-                    SceneUtility.CreateOrReplaceAsset(ref compressed, path);
+                    KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);
                 }
 
 
@@ -119,8 +96,8 @@ namespace Test.Editor
         {
             public Light Light;
             public Lightmapper Lightmapper;
-            public SceneAssetData original;
-            public SceneAssetData copied;
+            public SceneAssetData Original;
+            public SceneAssetData Copied;
             public string DstDir;
         }
 
@@ -130,7 +107,7 @@ namespace Test.Editor
             context.Light.bounceIntensity = 1;
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = SceneUtility.GetBakedLightingAssetCollection(context.copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
 
 
             // copy baked lightmaps
@@ -145,7 +122,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
             {
-                var copied = SceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
@@ -159,7 +136,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = SceneUtility.GetBakedLightingAssetCollection(context.copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)
             {
@@ -172,7 +149,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
             {
-                var copied = SceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
@@ -186,7 +163,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = SceneUtility.GetBakedLightingAssetCollection(context.copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)
             {
@@ -199,7 +176,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
             {
-                var copied = SceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 

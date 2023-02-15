@@ -13,6 +13,37 @@ namespace Kanikama.Core.Editor.LightSources
         public List<ComponentReference<LightProbeGroup>> LightProbeGroups;
         public List<ComponentReference<ReflectionProbe>> ReflectionProbes;
         public AmbientLight AmbientLight;
+
+        public void TurnOff()
+        {
+            foreach (var reference in LightReferences)
+            {
+                reference.TurnOff();
+            }
+
+            foreach (var reference in EmissiveRendererReferences)
+            {
+                reference.TurnOff();
+            }
+
+            AmbientLight.TurnOff();
+        }
+
+        public void DisableLightProbes()
+        {
+            foreach (var reference in LightProbeGroups)
+            {
+                reference.Value.enabled = false;
+            }
+        }
+
+        public void DisableReflectionProbes()
+        {
+            foreach (var reference in ReflectionProbes)
+            {
+                reference.Value.enabled = false;
+            }
+        }
     }
 
     public sealed class LightReference

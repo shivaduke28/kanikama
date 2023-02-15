@@ -4,6 +4,6 @@ namespace Test
 {
     public class MyLightReference : MonoBehaviour
     {
-        public Light light;
+        public Light Light;
     }
 }

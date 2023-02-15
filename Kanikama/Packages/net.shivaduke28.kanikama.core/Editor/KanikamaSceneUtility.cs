@@ -11,8 +11,24 @@ using Object = UnityEngine.Object;
 
 namespace Kanikama.Core.Editor
 {
-    public static class SceneUtility
+    public static class KanikamaSceneUtility
     {
+        public static bool TryGetActiveSceneAsset(out SceneAssetData sceneAssetData)
+        {
+            var scene = SceneManager.GetActiveScene();
+            var path = scene.path;
+            if (string.IsNullOrEmpty(path))
+            {
+                sceneAssetData = new SceneAssetData(path, null, null);
+                return false;
+            }
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
+            var dirPath = Path.GetDirectoryName(scene.path);
+            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, scene.name) : string.Empty;
+            sceneAssetData = new SceneAssetData(path, sceneAsset, lightingDirPath);
+            return true;
+        }
+
         public static SceneAssetHandler CopySceneAsset(SceneAssetData sceneAssetData)
         {
             var path = sceneAssetData.Path;
@@ -28,23 +44,6 @@ namespace Kanikama.Core.Editor
             var dirPath = Path.GetDirectoryName(newPath);
             var lightingDirPath = dirPath != null ? Path.Combine(dirPath, newAsset.name) : string.Empty;
             return new SceneAssetHandler(new SceneAssetData(newPath, newAsset, lightingDirPath));
-        }
-
-
-        public static bool TryGetActiveSceneAsset(out SceneAssetData sceneAssetData)
-        {
-            var scene = SceneManager.GetActiveScene();
-            var path = scene.path;
-            if (string.IsNullOrEmpty(path))
-            {
-                sceneAssetData = new SceneAssetData(path, null, null);
-                return false;
-            }
-            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
-            var dirPath = Path.GetDirectoryName(scene.path);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, scene.name) : string.Empty;
-            sceneAssetData = new SceneAssetData(path, sceneAsset, lightingDirPath);
-            return true;
         }
 
         public static SceneLightingCollection GetSceneLightingCollection()
@@ -106,7 +105,6 @@ namespace Kanikama.Core.Editor
             return result;
         }
 
-        // todo: name control...
         public static BakedLightmap CopyBakedLightmap(BakedLightmap bakedLightmap, string dstPath)
         {
             AssetDatabase.CopyAsset(bakedLightmap.Path, dstPath);
