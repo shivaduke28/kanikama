@@ -1,0 +1,17 @@
+{
+    "name": "Kanikama.GI.Editor",
+    "references": [
+        "GUID:eeface99c9654134d9422f5c2470a0c0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
