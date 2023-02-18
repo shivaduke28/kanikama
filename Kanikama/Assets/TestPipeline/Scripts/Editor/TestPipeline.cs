@@ -57,30 +57,40 @@ namespace Test.Editor
                 // non directional
                 LightmapEditorSettings.lightmapsMode = LightmapsMode.NonDirectional;
 
+
+                var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst";
+                KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                var bakeAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
+
                 var context = new Context
                 {
                     Light = light,
                     Original = sceneAssetData,
                     Copied = copiedSceneAssetData,
                     Lightmapper = new Lightmapper(),
-                    DstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst"
+                    DstDir = dstDir,
+                    BakedAssetRegistry = bakeAssetRegistry,
                 };
 
-                KanikamaSceneUtility.CreateFolderIfNecessary(context.DstDir);
 
-                var indirects = await BakeIndirectAsync(context);
-                var directs = await BakeDirectAsync(context);
-                var mixed = await BakeMixedAsync(context);
+                await BakeIndirectAsync(context);
+                await BakeDirectAsync(context);
+                await BakeMixedAsync(context);
 
+                bakeAssetRegistry.TryGet("indirect", out var indirects);
+                bakeAssetRegistry.TryGet("direct", out var directs);
 
-                for (var i = 0; i < indirects.Count; i++)
+                var indirectLightmaps = indirects.Lightmaps;
+                var directLightmaps = directs.Lightmaps;
+
+                for (var i = 0; i < indirectLightmaps.Count; i++)
                 {
-                    var indirect = indirects[i].Texture;
-                    var direct = directs[i].Texture;
+                    var indirect = indirectLightmaps[i].Texture;
+                    var direct = directLightmaps[i].Texture;
                     var rt = KanikamaTextureUtility.Subtract(indirect, direct, indirect.width, indirect.height);
                     var compressed = KanikamaTextureUtility.CompressToBC6H(rt, false, true, TextureCompressionQuality.Best);
 
-                    var path = Path.Combine(context.DstDir, $"subtract_{indirects[i].Index}.asset");
+                    var path = Path.Combine(context.DstDir, $"subtract_{indirectLightmaps[i].Index}.asset");
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);
                 }
 
@@ -99,9 +109,10 @@ namespace Test.Editor
             public SceneAssetData Original;
             public SceneAssetData Copied;
             public string DstDir;
+            public BakedAssetRegistry BakedAssetRegistry;
         }
 
-        static async ValueTask<List<BakedLightmap>> BakeIndirectAsync(Context context)
+        static async Task BakeIndirectAsync(Context context)
         {
             context.Light.lightmapBakeType = LightmapBakeType.Baked;
             context.Light.bounceIntensity = 1;
@@ -126,10 +137,10 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            return result;
+            context.BakedAssetRegistry.AddOrUpdate("indirect", new BakedAssetData { Lightmaps = result });
         }
 
-        static async ValueTask<List<BakedLightmap>> BakeDirectAsync(Context context)
+        static async Task BakeDirectAsync(Context context)
         {
             context.Light.lightmapBakeType = LightmapBakeType.Baked;
             context.Light.bounceIntensity = 0;
@@ -153,10 +164,10 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            return result;
+            context.BakedAssetRegistry.AddOrUpdate("direct", new BakedAssetData { Lightmaps = result });
         }
 
-        static async ValueTask<List<BakedLightmap>> BakeMixedAsync(Context context)
+        static async Task BakeMixedAsync(Context context)
         {
             context.Light.lightmapBakeType = LightmapBakeType.Mixed;
             context.Light.bounceIntensity = 1;
@@ -180,7 +191,7 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            return result;
+            context.BakedAssetRegistry.AddOrUpdate("mixed", new BakedAssetData { Lightmaps = result });
         }
     }
 }
