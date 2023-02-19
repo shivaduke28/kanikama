@@ -49,7 +49,7 @@ namespace Test.Editor
                 light.lightmapBakeType = LightmapBakeType.Baked;
 
                 // turn off other light sources
-                var sceneLightingCollection = KanikamaSceneUtility.GetSceneLightingCollection();
+                var sceneLightingCollection = KanikamaSceneUtility.GetSceneGIContext();
                 sceneLightingCollection.TurnOff();
                 sceneLightingCollection.DisableLightProbes();
                 sceneLightingCollection.DisableReflectionProbes();
@@ -118,7 +118,7 @@ namespace Test.Editor
             context.Light.bounceIntensity = 1;
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
 
             // copy baked lightmaps
@@ -147,7 +147,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)
             {
@@ -174,7 +174,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.Lightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedLightingAssetCollection(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)
             {

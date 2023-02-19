@@ -35,4 +35,22 @@ namespace Kanikama.Core.Editor
         Directional = 1,
         ShadowMask = 2,
     }
+
+    public static class LightmapTypeExtension
+    {
+        public static string ToFileName(this LightmapType lightmapType)
+        {
+            switch (lightmapType)
+            {
+                case LightmapType.Color:
+                    return "light";
+                case LightmapType.Directional:
+                    return "dir";
+                case LightmapType.ShadowMask:
+                    return "shadowmask";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(lightmapType), lightmapType, null);
+            }
+        }
+    }
 }

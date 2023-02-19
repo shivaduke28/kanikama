@@ -4,21 +4,21 @@ using UnityEditor;
 
 namespace Kanikama.Core.Editor
 {
-    public sealed class SceneAssetHandler : IDisposable
+    public sealed class TemporarySceneAssetHandle : IDisposable
     {
         public SceneAssetData SceneAssetData { get; }
 
-        public SceneAssetHandler(SceneAssetData sceneAssetData)
+        public TemporarySceneAssetHandle(SceneAssetData sceneAssetData)
         {
             SceneAssetData = sceneAssetData;
         }
 
         public void Dispose()
         {
-            var directory = System.IO.Path.GetDirectoryName(SceneAssetData.Path);
+            var directory = Path.GetDirectoryName(SceneAssetData.Path);
             if (directory != null)
             {
-                var lightingDataDirectory = System.IO.Path.Combine(directory, SceneAssetData.Asset.name);
+                var lightingDataDirectory = Path.Combine(directory, SceneAssetData.Asset.name);
                 FileUtil.DeleteFileOrDirectory(lightingDataDirectory);
             }
             AssetDatabase.DeleteAsset(SceneAssetData.Path);

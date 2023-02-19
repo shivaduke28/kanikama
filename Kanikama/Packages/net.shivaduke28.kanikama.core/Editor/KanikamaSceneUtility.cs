@@ -29,7 +29,7 @@ namespace Kanikama.Core.Editor
             return true;
         }
 
-        public static SceneAssetHandler CopySceneAsset(SceneAssetData sceneAssetData)
+        public static TemporarySceneAssetHandle CopySceneAsset(SceneAssetData sceneAssetData)
         {
             var path = sceneAssetData.Path;
             var dir = Path.GetDirectoryName(path);
@@ -43,20 +43,22 @@ namespace Kanikama.Core.Editor
             var newAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(newPath);
             var dirPath = Path.GetDirectoryName(newPath);
             var lightingDirPath = dirPath != null ? Path.Combine(dirPath, newAsset.name) : string.Empty;
-            return new SceneAssetHandler(new SceneAssetData(newPath, newAsset, lightingDirPath));
+            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, lightingDirPath));
         }
 
-        public static SceneLightingCollection GetSceneLightingCollection()
+        public static SceneGIContext GetSceneGIContext(Func<Object, bool> filter = null)
         {
-            var context = new SceneLightingCollection
+            var context = new SceneGIContext
             {
                 AmbientLight = new AmbientLight(),
                 LightReferences = Object.FindObjectsOfType<Light>()
                     .Where(LightReference.IsContributeGI)
+                    .Where(x => filter?.Invoke(x) ?? true)
                     .Select(l => new LightReference(l))
                     .ToList(),
                 EmissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
                     .Where(EmissiveRendererReference.IsContributeGI)
+                    .Where(x => filter?.Invoke(x) ?? true)
                     .Select(l => new EmissiveRendererReference(l))
                     .ToList(),
                 LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
@@ -69,16 +71,17 @@ namespace Kanikama.Core.Editor
             return context;
         }
 
-        public static BakedAssetData GetBakedLightingAssetCollection(SceneAssetData sceneAssetData)
+        public static BakedAssetData GetBakedAssetData(SceneAssetData sceneAssetData)
         {
             var dirPath = sceneAssetData.LightingAssetDirectoryPath;
             var result = new BakedAssetData
             {
                 Lightmaps = new List<BakedLightmap>(),
                 DirectionalLightmaps = new List<BakedLightmap>(),
+                ShadowMasks = new List<BakedLightmap>(),
             };
 
-            foreach (var guid in AssetDatabase.FindAssets("t:Texture", new string[] { dirPath }))
+            foreach (var guid in AssetDatabase.FindAssets("t:Texture", new[] { dirPath }))
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 if (!TryGetLightmapType(path, out var lightmapType, out var index))

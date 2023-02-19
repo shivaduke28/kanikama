@@ -3,10 +3,11 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
 
 namespace Kanikama.Core.Editor.LightSources
 {
-    public sealed class SceneLightingCollection
+    public sealed class SceneGIContext
     {
         public List<LightReference> LightReferences;
         public List<EmissiveRendererReference> EmissiveRendererReferences;
@@ -86,7 +87,7 @@ namespace Kanikama.Core.Editor.LightSources
             var temp = sharedMaterials.Select(Object.Instantiate).ToArray();
             foreach (var mat in temp)
             {
-                RemoveBakedEmissiveFlag(mat);
+                MaterialUtility.RemoveBakedEmissiveFlag(mat);
             }
             tempMaterials = temp.ToArray();
         }
@@ -109,26 +110,7 @@ namespace Kanikama.Core.Editor.LightSources
         {
             if (!renderer.enabled) return false;
             var flags = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-            return flags.HasFlag(StaticEditorFlags.ContributeGI) && renderer.sharedMaterials.Any(IsContributeGI);
-        }
-
-        public static bool IsContributeGI(Material material)
-        {
-            return material.globalIlluminationFlags.HasFlag(MaterialGlobalIlluminationFlags.BakedEmissive);
-        }
-
-        public static void RemoveBakedEmissiveFlag(Material mat)
-        {
-            var flags = mat.globalIlluminationFlags;
-            flags &= ~MaterialGlobalIlluminationFlags.BakedEmissive;
-            mat.globalIlluminationFlags = flags;
-        }
-
-        public static void AddBakedEmissiveFlag(Material mat)
-        {
-            var flags = mat.globalIlluminationFlags;
-            flags |= MaterialGlobalIlluminationFlags.BakedEmissive;
-            mat.globalIlluminationFlags = flags;
+            return flags.HasFlag(StaticEditorFlags.ContributeGI) && renderer.sharedMaterials.Any(MaterialUtility.IsContributeGI);
         }
     }
 

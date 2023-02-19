@@ -7,6 +7,11 @@ namespace Kanikama.Core.Editor
 {
     public sealed class Lightmapper
     {
+        public void ClearCache()
+        {
+            Lightmapping.ClearDiskCache();
+        }
+
         public async Task BakeAsync(CancellationToken cancellationToken)
         {
             if (!Lightmapping.BakeAsync())

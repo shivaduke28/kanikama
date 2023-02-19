@@ -1,7 +1,8 @@
 {
     "name": "Kanikama.GI.Editor",
     "references": [
-        "GUID:eeface99c9654134d9422f5c2470a0c0"
+        "Kanikama.Core.Editor",
+        "Kanikama.GI"
     ],
     "includePlatforms": [
         "Editor"

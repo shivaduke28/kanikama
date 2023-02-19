@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ namespace Kanikama.Core.Editor
     {
         public const string DefaultFileName = "BakeAssetRegistry.asset";
         [SerializeField] List<BakedAssetKeyValuePair> map = new List<BakedAssetKeyValuePair>();
+
+        public BakedAssetData[] GetAllBakedAssetDatum() => map.Select(kvp => kvp.BakedAssetData).ToArray();
 
         public bool TryGet(string key, out BakedAssetData data)
         {
