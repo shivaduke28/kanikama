@@ -1,8 +1,8 @@
 {
     "name": "Kanikama.Bakery",
     "references": [
-        "GUID:927056d837655ee478285fc6867f86fb",
-        "GUID:a1653399f63795746b1857281d1e400d"
+        "Kanikama.Runtime",
+        "BakeryRuntimeAssembly"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

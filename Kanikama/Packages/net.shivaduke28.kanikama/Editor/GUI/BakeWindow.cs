@@ -1,6 +1,6 @@
 ﻿using Kanikama.Baking;
 #if BAKERY_INCLUDED
-using Kanikama.Baking.Bakery;
+// using Kanikama.Baking.Bakery;
 #endif
 using System;
 using System.IO;
@@ -272,7 +272,7 @@ namespace Kanikama.Editor
                     return new UnityLightmapper();
                 case LightmapperType.Bakery:
 #if BAKERY_INCLUDED
-                    return new BakeryLightmapper();
+                    // return new BakeryLightmapper();
 #endif
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -287,7 +287,7 @@ namespace Kanikama.Editor
                     return new KanikamaUnitySceneManager(sceneDescriptor);
 #if BAKERY_INCLUDED
                 case LightmapperType.Bakery:
-                    return new KanikamaBakerySceneManager(sceneDescriptor);
+                    // return new KanikamaBakerySceneManager(sceneDescriptor);
 #endif
                 default:
                     throw new ArgumentOutOfRangeException();

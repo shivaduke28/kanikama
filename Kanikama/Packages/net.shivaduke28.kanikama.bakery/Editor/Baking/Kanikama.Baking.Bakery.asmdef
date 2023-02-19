@@ -1,10 +1,10 @@
 {
     "name": "Kanikama.Baking.Bakery",
     "references": [
-        "Kanikama.Baking",
-        "net.shivaduke28.kanikama.Runtime",
-        "GUID:a1653399f63795746b1857281d1e400d",
-        "GUID:290dd5870d0ead646bcb6ea5c6a60af5"
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly",
+        "Kanikama.Runtime",
+        "Kanikama.Editor.Baking"
     ],
     "includePlatforms": [
         "Editor"
