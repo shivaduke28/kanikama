@@ -1,5 +1,6 @@
 {
     "name": "Kanikama.Baking.Bakery",
+    "rootNamespace": "",
     "references": [
         "BakeryRuntimeAssembly",
         "BakeryEditorAssembly",
@@ -15,7 +16,8 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "BAKERY_INCLUDED"
+        "BAKERY_INCLUDED",
+        "UNITY_EDITOR_WIN"
     ],
     "versionDefines": [],
     "noEngineReferences": false
