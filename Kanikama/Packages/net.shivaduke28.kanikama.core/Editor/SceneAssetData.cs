@@ -16,16 +16,4 @@ namespace Kanikama.Core.Editor
             LightingAssetDirectoryPath = lightingAssetDirectoryPath;
         }
     }
-
-    public readonly struct AssetData<T> where T : Object
-    {
-        public string Path { get; }
-        public T Asset { get; }
-
-        public AssetData(string path, T asset)
-        {
-            Path = path;
-            Asset = asset;
-        }
-    }
 }

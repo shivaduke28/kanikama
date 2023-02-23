@@ -75,7 +75,7 @@ namespace Kanikama.Core.Editor
 
             asset = CreateInstance<BakedAssetRegistry>();
             AssetDatabase.CreateAsset(asset, path);
-            return asset;
+            return AssetDatabase.LoadAssetAtPath<BakedAssetRegistry>(path);
         }
     }
 }

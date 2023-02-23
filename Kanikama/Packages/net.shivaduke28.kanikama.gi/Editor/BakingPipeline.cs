@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Editor
@@ -27,58 +29,72 @@ namespace Kanikama.GI.Editor
             // create a copy of the active scene.
             using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(sceneAssetData))
             {
-                // open the copied scene
-                EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
-
-                // initialize all light source handles **after** opening the copied scene
-                foreach (var lightSourceHandle in lightSourceHandles)
+                try
                 {
-                    lightSourceHandle.Initialize();
-                    lightSourceHandle.TurnOff();
+                    // open the copied scene
+                    EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
+
+                    // initialize all light source handles **after** opening the copied scene
+                    foreach (var lightSourceHandle in lightSourceHandles)
+                    {
+                        lightSourceHandle.Initialize();
+                        lightSourceHandle.TurnOff();
+                    }
+
+                    // turn off all light sources but kanikama ones
+                    bool Filter(Object obj) => lightSourceHandles.All(l => !l.Includes(obj));
+                    var sceneGIContext = KanikamaSceneUtility.GetSceneGIContext(Filter);
+
+                    sceneGIContext.TurnOff();
+                    sceneGIContext.DisableLightProbes();
+                    sceneGIContext.DisableReflectionProbes();
+
+                    var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
+                    KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                    
+                    // TODO: don't use scriptable object here because its lifecyle is unstable when opening a new scene...
+                    var bakedAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
+                    bakedAssetRegistry.hideFlags = HideFlags.DontUnloadUnusedAsset;
+                    var lightmapper = new Lightmapper();
+
+                    for (var i = 0; i < lightSourceHandles.Length; i++)
+                    {
+                        var lightSourceHandle = lightSourceHandles[i];
+
+                        lightSourceHandle.TurnOn();
+                        lightmapper.ClearCache();
+                        await lightmapper.BakeAsync(cancellationToken);
+                        lightSourceHandle.TurnOff();
+
+                        var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
+                        var copied = new BakedAssetData();
+                        foreach (var bakedLightmap in baked.Lightmaps)
+                        {
+                            var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
+                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
+                            copied.Lightmaps.Add(copiedLightmap);
+                        }
+                        foreach (var bakedLightmap in baked.DirectionalLightmaps)
+                        {
+                            var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
+                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
+                            copied.DirectionalLightmaps.Add(copiedLightmap);
+                        }
+                        bakedAssetRegistry.AddOrUpdate(i.ToString(), copied);
+                    }
+
+                    bakedAssetRegistry.hideFlags = HideFlags.None;
+                    EditorUtility.SetDirty(bakedAssetRegistry);
+                    AssetDatabase.SaveAssetIfDirty(bakedAssetRegistry);
                 }
-
-                // turn off all light sources but kanikama ones
-                bool Filter(Object obj) => lightSourceHandles.All(l => !l.Includes(obj));
-                var sceneGIContext = KanikamaSceneUtility.GetSceneGIContext(Filter);
-
-                sceneGIContext.TurnOff();
-                sceneGIContext.DisableLightProbes();
-                sceneGIContext.DisableReflectionProbes();
-
-                var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
-                KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-
-                var bakedAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
-                var lightmapper = new Lightmapper();
-
-                for (var i = 0; i < lightSourceHandles.Length; i++)
+                catch (OperationCanceledException)
                 {
-                    var lightSourceHandle = lightSourceHandles[i];
-
-                    lightSourceHandle.TurnOn();
-                    lightmapper.ClearCache();
-                    await lightmapper.BakeAsync(cancellationToken);
-                    lightSourceHandle.TurnOff();
-
-                    var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
-                    var copied = new BakedAssetData();
-                    foreach (var bakedLightmap in baked.Lightmaps)
-                    {
-                        var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
-                        var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
-                        copied.Lightmaps.Add(copiedLightmap);
-                    }
-                    foreach (var bakedLightmap in baked.DirectionalLightmaps)
-                    {
-                        var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
-                        var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
-                        copied.DirectionalLightmaps.Add(copiedLightmap);
-                    }
-                    bakedAssetRegistry.AddOrUpdate(i.ToString(), copied);
+                    throw;
                 }
-
-                EditorUtility.SetDirty(bakedAssetRegistry);
-                AssetDatabase.SaveAssets();
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }
 
             EditorSceneManager.OpenScene(sceneAssetData.Path);
@@ -136,6 +152,7 @@ namespace Kanikama.GI.Editor
                 lightSourceHandle.Initialize();
                 lightSourceHandle.TurnOff();
             }
+
             var lightmapper = new Lightmapper();
             await lightmapper.BakeAsync(cancellationToken);
 

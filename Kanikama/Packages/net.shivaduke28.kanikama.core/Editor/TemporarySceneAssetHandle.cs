@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.Core.Editor
 {
@@ -15,12 +16,7 @@ namespace Kanikama.Core.Editor
 
         public void Dispose()
         {
-            var directory = Path.GetDirectoryName(SceneAssetData.Path);
-            if (directory != null)
-            {
-                var lightingDataDirectory = Path.Combine(directory, SceneAssetData.Asset.name);
-                FileUtil.DeleteFileOrDirectory(lightingDataDirectory);
-            }
+            FileUtil.DeleteFileOrDirectory(SceneAssetData.LightingAssetDirectoryPath);
             AssetDatabase.DeleteAsset(SceneAssetData.Path);
             AssetDatabase.Refresh();
         }
