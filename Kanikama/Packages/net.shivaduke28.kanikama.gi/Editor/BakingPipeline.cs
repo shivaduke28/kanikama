@@ -7,7 +7,6 @@ using Kanikama.Core;
 using Kanikama.Core.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -112,7 +111,7 @@ namespace Kanikama.GI.Editor
                 }
                 catch (Exception e)
                 {
-                    Debug.LogException(e);
+                    KanikamaDebug.LogException(e);
                 }
             }
 
