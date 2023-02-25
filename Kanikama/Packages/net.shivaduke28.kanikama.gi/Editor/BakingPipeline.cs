@@ -51,10 +51,8 @@ namespace Kanikama.GI.Editor
 
                     var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-                    
-                    // TODO: don't use scriptable object here because its lifecyle is unstable when opening a new scene...
-                    var bakedAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
-                    bakedAssetRegistry.hideFlags = HideFlags.DontUnloadUnusedAsset;
+
+                    var bakedAssetDataBase = new BakedAssetDataBase();
                     var lightmapper = new Lightmapper();
 
                     for (var i = 0; i < lightSourceHandles.Length; i++)
@@ -67,7 +65,7 @@ namespace Kanikama.GI.Editor
                         lightSourceHandle.TurnOff();
 
                         var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
-                        var copied = new BakedAssetData();
+                        var copied = new BakedLightingAssetCollection();
                         foreach (var bakedLightmap in baked.Lightmaps)
                         {
                             var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
@@ -80,12 +78,13 @@ namespace Kanikama.GI.Editor
                             var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
                             copied.DirectionalLightmaps.Add(copiedLightmap);
                         }
-                        bakedAssetRegistry.AddOrUpdate(i.ToString(), copied);
+                        bakedAssetDataBase.AddOrUpdate(i.ToString(), copied);
                     }
 
-                    bakedAssetRegistry.hideFlags = HideFlags.None;
-                    EditorUtility.SetDirty(bakedAssetRegistry);
-                    AssetDatabase.SaveAssetIfDirty(bakedAssetRegistry);
+                    var repository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
+                    repository.DataBase = bakedAssetDataBase;
+                    EditorUtility.SetDirty(repository);
+                    AssetDatabase.SaveAssetIfDirty(repository);
                 }
                 catch (OperationCanceledException)
                 {
@@ -108,15 +107,17 @@ namespace Kanikama.GI.Editor
             var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
-            var bakedAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
-            CreateAssets(bakedAssetRegistry, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out");
+            var bakedAssetRegistry = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
+            CreateAssets(bakedAssetRegistry.DataBase, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out");
+            EditorUtility.SetDirty(bakedAssetRegistry);
+            AssetDatabase.SaveAssetIfDirty(bakedAssetRegistry);
         }
 
-        public static void CreateAssets(BakedAssetRegistry bakedAssetRegistry, string dstDirPath)
+        public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath)
         {
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
-            var bakedDatum = bakedAssetRegistry.GetAllBakedAssetDatum();
+            var bakedDatum = bakedAssetDataBase.GetAllBakedAssets();
             var lightmaps = bakedDatum.SelectMany(data => data.Lightmaps).ToArray();
             var directionalMaps = bakedDatum.SelectMany(data => data.DirectionalLightmaps).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);

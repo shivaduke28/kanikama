@@ -22,7 +22,7 @@ namespace Kanikama.Core.Editor
     }
 
     [Serializable]
-    public sealed class BakedAssetData
+    public sealed class BakedLightingAssetCollection
     {
         [SerializeField] public List<BakedLightmap> Lightmaps = new List<BakedLightmap>();
         [SerializeField] public List<BakedLightmap> DirectionalLightmaps = new List<BakedLightmap>();

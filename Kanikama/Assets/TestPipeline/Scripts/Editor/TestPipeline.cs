@@ -60,7 +60,7 @@ namespace Test.Editor
 
                 var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst";
                 KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-                var bakeAssetRegistry = BakedAssetRegistry.FindOrCreate(Path.Combine(dstDir, BakedAssetRegistry.DefaultFileName));
+                var bakedAssetDataBase = new BakedAssetDataBase();
 
                 var context = new Context
                 {
@@ -69,7 +69,7 @@ namespace Test.Editor
                     Copied = copiedSceneAssetData,
                     Lightmapper = new Lightmapper(),
                     DstDir = dstDir,
-                    BakedAssetRegistry = bakeAssetRegistry,
+                    BakedAssetDataBase = bakedAssetDataBase,
                 };
 
 
@@ -77,8 +77,8 @@ namespace Test.Editor
                 await BakeDirectAsync(context);
                 await BakeMixedAsync(context);
 
-                bakeAssetRegistry.TryGet("indirect", out var indirects);
-                bakeAssetRegistry.TryGet("direct", out var directs);
+                bakedAssetDataBase.TryGet("indirect", out var indirects);
+                bakedAssetDataBase.TryGet("direct", out var directs);
 
                 var indirectLightmaps = indirects.Lightmaps;
                 var directLightmaps = directs.Lightmaps;
@@ -93,6 +93,11 @@ namespace Test.Editor
                     var path = Path.Combine(context.DstDir, $"subtract_{indirectLightmaps[i].Index}.asset");
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);
                 }
+
+                var bakedAssetRepository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
+                bakedAssetRepository.DataBase = bakedAssetDataBase;
+                EditorUtility.SetDirty(bakedAssetRepository);
+                AssetDatabase.SaveAssetIfDirty(bakedAssetRepository);
 
 
                 // delete copied scene and generated lightmaps
@@ -109,7 +114,7 @@ namespace Test.Editor
             public SceneAssetData Original;
             public SceneAssetData Copied;
             public string DstDir;
-            public BakedAssetRegistry BakedAssetRegistry;
+            public BakedAssetDataBase BakedAssetDataBase;
         }
 
         static async Task BakeIndirectAsync(Context context)
@@ -137,7 +142,7 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            context.BakedAssetRegistry.AddOrUpdate("indirect", new BakedAssetData { Lightmaps = result });
+            context.BakedAssetDataBase.AddOrUpdate("indirect", new BakedLightingAssetCollection { Lightmaps = result });
         }
 
         static async Task BakeDirectAsync(Context context)
@@ -164,7 +169,7 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            context.BakedAssetRegistry.AddOrUpdate("direct", new BakedAssetData { Lightmaps = result });
+            context.BakedAssetDataBase.AddOrUpdate("direct", new BakedLightingAssetCollection { Lightmaps = result });
         }
 
         static async Task BakeMixedAsync(Context context)
@@ -191,7 +196,7 @@ namespace Test.Editor
                 result.Add(copied);
             }
 
-            context.BakedAssetRegistry.AddOrUpdate("mixed", new BakedAssetData { Lightmaps = result });
+            context.BakedAssetDataBase.AddOrUpdate("mixed", new BakedLightingAssetCollection { Lightmaps = result });
         }
     }
 }

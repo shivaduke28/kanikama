@@ -71,10 +71,10 @@ namespace Kanikama.Core.Editor
             return context;
         }
 
-        public static BakedAssetData GetBakedAssetData(SceneAssetData sceneAssetData)
+        public static BakedLightingAssetCollection GetBakedAssetData(SceneAssetData sceneAssetData)
         {
             var dirPath = sceneAssetData.LightingAssetDirectoryPath;
-            var result = new BakedAssetData
+            var result = new BakedLightingAssetCollection
             {
                 Lightmaps = new List<BakedLightmap>(),
                 DirectionalLightmaps = new List<BakedLightmap>(),
