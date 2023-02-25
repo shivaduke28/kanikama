@@ -4,14 +4,19 @@ using UnityEngine;
 
 namespace Kanikama.GI.Implements
 {
-    [RequireComponent(typeof(Renderer), typeof(MaterialInstanceHandle))]
+    [RequireComponent(typeof(Renderer))]
     [AddComponentMenu("Kanikama/GI/KanikamaRenderer")]
+    [EditorOnly]
     public sealed class KanikamaRenderer : LightSourceGroup
     {
         public override IEnumerable<ILightSourceHandle> GetHandles()
         {
             var renderer = GetComponent<Renderer>();
-            var materialInstanceHandle = gameObject.AddComponent<MaterialInstanceHandle>();
+
+            if (!TryGetComponent<MaterialInstanceHandle>(out var materialInstanceHandle))
+            {
+                materialInstanceHandle = gameObject.AddComponent<MaterialInstanceHandle>();
+            }
 
             var sharedMaterials = renderer.sharedMaterials;
             var handles = new List<ILightSourceHandle>();

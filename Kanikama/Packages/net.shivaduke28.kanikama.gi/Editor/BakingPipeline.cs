@@ -3,10 +3,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Core;
 using Kanikama.Core.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Editor
@@ -17,17 +19,29 @@ namespace Kanikama.GI.Editor
         public static void Bake()
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
-            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptorBase>();
             if (sceneDescriptor == null) return;
 
-            var lightSources = sceneDescriptor.GetLightSources();
-            var _ = BakeAsync(sceneAssetData, lightSources, default);
+            var context = new BakingContext
+            {
+                Descriptor = new ComponentReference<KanikamaSceneDescriptorBase>(sceneDescriptor),
+                SceneAsseData = sceneAssetData,
+                TemporarySceneAssetHandle = KanikamaSceneUtility.CopySceneAsset(sceneAssetData),
+            };
+
+            var _ = BakeAsync(context, default);
         }
 
-        public static async Task BakeAsync(SceneAssetData sceneAssetData, ILightSourceHandle[] lightSourceHandles, CancellationToken cancellationToken)
+        public sealed class BakingContext
         {
-            // create a copy of the active scene.
-            using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(sceneAssetData))
+            public ComponentReference<KanikamaSceneDescriptorBase> Descriptor;
+            public SceneAssetData SceneAsseData;
+            public TemporarySceneAssetHandle TemporarySceneAssetHandle;
+        }
+
+        public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
+        {
+            using (var copiedSceneHandle = context.TemporarySceneAssetHandle)
             {
                 try
                 {
@@ -35,11 +49,15 @@ namespace Kanikama.GI.Editor
                     EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
 
                     // initialize all light source handles **after** opening the copied scene
+                    var lightSourceHandles = context.Descriptor.Value.GetLightSources();
                     foreach (var lightSourceHandle in lightSourceHandles)
                     {
                         lightSourceHandle.Initialize();
                         lightSourceHandle.TurnOff();
                     }
+
+                    // save scene
+                    EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
                     // turn off all light sources but kanikama ones
                     bool Filter(Object obj) => lightSourceHandles.All(l => !l.Includes(obj));
@@ -49,7 +67,7 @@ namespace Kanikama.GI.Editor
                     sceneGIContext.DisableLightProbes();
                     sceneGIContext.DisableReflectionProbes();
 
-                    var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
+                    var dstDir = $"{context.SceneAsseData.LightingAssetDirectoryPath}_kanikama-temp";
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
                     var bakedAssetDataBase = new BakedAssetDataBase();
@@ -72,12 +90,14 @@ namespace Kanikama.GI.Editor
                             var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
                             copied.Lightmaps.Add(copiedLightmap);
                         }
+
                         foreach (var bakedLightmap in baked.DirectionalLightmaps)
                         {
                             var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
                             var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
                             copied.DirectionalLightmaps.Add(copiedLightmap);
                         }
+
                         bakedAssetDataBase.AddOrUpdate(i.ToString(), copied);
                     }
 
@@ -96,7 +116,7 @@ namespace Kanikama.GI.Editor
                 }
             }
 
-            EditorSceneManager.OpenScene(sceneAssetData.Path);
+            EditorSceneManager.OpenScene(context.SceneAsseData.Path);
         }
 
 
@@ -138,7 +158,7 @@ namespace Kanikama.GI.Editor
         public static void BakeWithoutKanikama()
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var _)) return;
-            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptorBase>();
             if (sceneDescriptor == null) return;
 
             var lightSources = sceneDescriptor.GetLightSources();

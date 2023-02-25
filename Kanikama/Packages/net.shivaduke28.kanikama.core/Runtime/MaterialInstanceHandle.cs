@@ -5,12 +5,13 @@ using UnityEngine;
 namespace Kanikama.Core
 {
     [RequireComponent(typeof(Renderer))]
+    [EditorOnly]
     public sealed class MaterialInstanceHandle : MonoBehaviour
     {
         [SerializeField] Renderer renderer;
         [SerializeField] Material[] sharedMaterials;
         [SerializeField] Material[] instances;
-        bool isInstantiated;
+        [SerializeField] bool isInstantiated;
         public Renderer Renderer => renderer != null ? renderer : renderer = GetComponent<Renderer>();
 
         public void CreateInstances()

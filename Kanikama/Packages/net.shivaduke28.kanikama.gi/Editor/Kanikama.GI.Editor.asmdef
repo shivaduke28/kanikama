@@ -1,6 +1,7 @@
 {
     "name": "Kanikama.GI.Editor",
     "references": [
+        "Kanikama.Core",
         "Kanikama.Core.Editor",
         "Kanikama.GI"
     ],
