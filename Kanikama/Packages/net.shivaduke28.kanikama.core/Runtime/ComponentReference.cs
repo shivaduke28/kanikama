@@ -29,16 +29,13 @@ namespace Kanikama.Core
                 return null;
             }
 
-            var target = root.transform.Find(path);
-
-            if (target == null)
+            if (string.IsNullOrEmpty(path))
             {
-                return null;
+                return root.GetComponent<T>();
             }
 
-            var comp = target.GetComponent<T>();
-
-            return comp;
+            var target = root.transform.Find(path);
+            return target == null ? null : target.GetComponent<T>();
         }
 
         static (string root, string relative) GetPathInHierarchy(Transform t)
