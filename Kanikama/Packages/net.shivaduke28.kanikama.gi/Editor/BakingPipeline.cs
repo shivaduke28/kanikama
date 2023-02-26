@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.GI.Implements;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -18,12 +19,12 @@ namespace Kanikama.GI.Editor
         public static void Bake()
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
-            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptorBase>();
+            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor == null) return;
 
             var context = new BakingContext
             {
-                Descriptor = new ComponentReference<KanikamaSceneDescriptorBase>(sceneDescriptor),
+                LightSourceHandles = sceneDescriptor.GetLightSources(),
                 SceneAsseData = sceneAssetData,
                 TemporarySceneAssetHandle = KanikamaSceneUtility.CopySceneAsset(sceneAssetData),
             };
@@ -33,7 +34,7 @@ namespace Kanikama.GI.Editor
 
         public sealed class BakingContext
         {
-            public ComponentReference<KanikamaSceneDescriptorBase> Descriptor;
+            public ILightSourceHandle[] LightSourceHandles;
             public SceneAssetData SceneAsseData;
             public TemporarySceneAssetHandle TemporarySceneAssetHandle;
         }
@@ -48,7 +49,7 @@ namespace Kanikama.GI.Editor
                     EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
 
                     // initialize all light source handles **after** opening the copied scene
-                    var lightSourceHandles = context.Descriptor.Value.GetLightSources();
+                    var lightSourceHandles = context.LightSourceHandles;
                     foreach (var lightSourceHandle in lightSourceHandles)
                     {
                         lightSourceHandle.Initialize();
@@ -157,7 +158,7 @@ namespace Kanikama.GI.Editor
         public static void BakeWithoutKanikama()
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var _)) return;
-            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptorBase>();
+            var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor == null) return;
 
             var lightSources = sceneDescriptor.GetLightSources();

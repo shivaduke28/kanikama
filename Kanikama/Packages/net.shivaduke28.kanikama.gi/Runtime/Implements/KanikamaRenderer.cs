@@ -12,12 +12,6 @@ namespace Kanikama.GI.Implements
         public override IEnumerable<ILightSourceHandle> GetHandles()
         {
             var renderer = GetComponent<Renderer>();
-
-            if (!TryGetComponent<MaterialInstanceHandle>(out var materialInstanceHandle))
-            {
-                materialInstanceHandle = gameObject.AddComponent<MaterialInstanceHandle>();
-            }
-
             var sharedMaterials = renderer.sharedMaterials;
             var handles = new List<ILightSourceHandle>();
             for (var i = 0; i < sharedMaterials.Length; i++)
@@ -25,7 +19,7 @@ namespace Kanikama.GI.Implements
                 var material = sharedMaterials[i];
                 if (MaterialUtility.IsContributeGI(material))
                 {
-                    handles.Add(new EmissiveMaterialHandle(materialInstanceHandle, i));
+                    handles.Add(new EmissiveMaterialHandle(renderer, i));
                 }
             }
 

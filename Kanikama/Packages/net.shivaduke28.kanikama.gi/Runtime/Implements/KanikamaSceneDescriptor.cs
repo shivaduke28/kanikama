@@ -7,12 +7,12 @@ namespace Kanikama.GI.Implements
 {
     [AddComponentMenu("Kanikama/GI/KanikamaSceneDescriptor")]
     [EditorOnly]
-    public sealed class KanikamaSceneDescriptor : KanikamaSceneDescriptorBase
+    public sealed class KanikamaSceneDescriptor : MonoBehaviour
     {
         [SerializeField] LightSource[] lightSources;
         [SerializeField] LightSourceGroup[] lightSourceGroups;
 
-        public override ILightSourceHandle[] GetLightSources()
+        public ILightSourceHandle[] GetLightSources()
         {
             var list = new List<ILightSourceHandle>();
             list.AddRange(lightSources.Select(x => x.GetHandle()));

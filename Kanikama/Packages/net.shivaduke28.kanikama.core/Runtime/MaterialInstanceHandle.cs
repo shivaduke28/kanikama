@@ -12,13 +12,13 @@ namespace Kanikama.Core
         [SerializeField] Material[] sharedMaterials;
         [SerializeField] Material[] instances;
         [SerializeField] bool isInstantiated;
-        public Renderer Renderer => renderer != null ? renderer : renderer = GetComponent<Renderer>();
 
         public void CreateInstances()
         {
             if (isInstantiated) return;
 
-            sharedMaterials = Renderer.sharedMaterials;
+            renderer = GetComponent<Renderer>();
+            sharedMaterials = renderer.sharedMaterials;
             instances = sharedMaterials.Select(Instantiate).ToArray();
             renderer.sharedMaterials = instances;
             isInstantiated = true;

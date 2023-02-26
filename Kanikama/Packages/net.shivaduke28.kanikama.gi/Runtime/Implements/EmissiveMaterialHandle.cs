@@ -7,36 +7,44 @@ namespace Kanikama.GI.Implements
 {
     public sealed class EmissiveMaterialHandle : ILightSourceHandle
     {
-        readonly ComponentReference<MaterialInstanceHandle> reference;
+        readonly ComponentReference<Renderer> rendererReference;
         readonly int index;
+        ComponentReference<MaterialInstanceHandle> materialReference;
 
-        public EmissiveMaterialHandle(MaterialInstanceHandle renderer, int index)
+        public EmissiveMaterialHandle(Renderer renderer, int index)
         {
-            reference = new ComponentReference<MaterialInstanceHandle>(renderer);
+            this.rendererReference = new ComponentReference<Renderer>(renderer);
             this.index = index;
         }
 
         // with side effect to the active scene.
         public void Initialize()
         {
-            reference.Value.CreateInstances();
+            var renderer = rendererReference.Value;
+            if (!renderer.gameObject.TryGetComponent<MaterialInstanceHandle>(out var materialInstanceHandle))
+            {
+                materialInstanceHandle = renderer.gameObject.AddComponent<MaterialInstanceHandle>();
+            }
+
+            materialReference = new ComponentReference<MaterialInstanceHandle>(materialInstanceHandle);
+            materialReference.Value.CreateInstances();
         }
 
         public void TurnOn()
         {
-            MaterialUtility.AddBakedEmissiveFlag(reference.Value.GetInstance(index));
+            MaterialUtility.AddBakedEmissiveFlag(materialReference.Value.GetInstance(index));
         }
 
         public void TurnOff()
         {
-            MaterialUtility.RemoveBakedEmissiveFlag(reference.Value.GetInstance(index));
+            MaterialUtility.RemoveBakedEmissiveFlag(materialReference.Value.GetInstance(index));
         }
 
-        public bool Includes(Object obj) => obj is Renderer renderer && renderer == reference.Value.Renderer;
+        public bool Includes(Object obj) => obj is Renderer renderer && renderer == rendererReference.Value;
 
         void IDisposable.Dispose()
         {
-            reference.Value.Clear();
+            materialReference.Value.Clear();
         }
     }
 }
