@@ -25,8 +25,7 @@ namespace Kanikama.GI.Editor
             var context = new BakingContext
             {
                 LightSourceHandles = sceneDescriptor.GetLightSources(),
-                SceneAsseData = sceneAssetData,
-                TemporarySceneAssetHandle = KanikamaSceneUtility.CopySceneAsset(sceneAssetData),
+                SceneAssetData = sceneAssetData,
             };
 
             var _ = BakeAsync(context, default);
@@ -35,20 +34,19 @@ namespace Kanikama.GI.Editor
         public sealed class BakingContext
         {
             public ILightSourceHandle[] LightSourceHandles;
-            public SceneAssetData SceneAsseData;
-            public TemporarySceneAssetHandle TemporarySceneAssetHandle;
+            public SceneAssetData SceneAssetData;
         }
 
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
         {
-            using (var copiedSceneHandle = context.TemporarySceneAssetHandle)
+            using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
             {
                 try
                 {
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
 
-                    // initialize all light source handles **after** opening the copied scene
+                    // initialize all light source handles **after** the copied scene is opened
                     var lightSourceHandles = context.LightSourceHandles;
                     foreach (var lightSourceHandle in lightSourceHandles)
                     {
@@ -67,7 +65,7 @@ namespace Kanikama.GI.Editor
                     sceneGIContext.DisableLightProbes();
                     sceneGIContext.DisableReflectionProbes();
 
-                    var dstDir = $"{context.SceneAsseData.LightingAssetDirectoryPath}_kanikama-temp";
+                    var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
                     var bakedAssetDataBase = new BakedAssetDataBase();
@@ -116,7 +114,7 @@ namespace Kanikama.GI.Editor
                 }
             }
 
-            EditorSceneManager.OpenScene(context.SceneAsseData.Path);
+            EditorSceneManager.OpenScene(context.SceneAssetData.Path);
         }
 
 
@@ -157,29 +155,43 @@ namespace Kanikama.GI.Editor
         [MenuItem("Kanikama/Bake non Kanikama GI", false, 0)]
         public static void BakeWithoutKanikama()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var _)) return;
+            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
             var sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
             if (sceneDescriptor == null) return;
 
-            var lightSources = sceneDescriptor.GetLightSources();
-            var _ = BakeWithoutKanikamaAsync(lightSources, default);
+            var context = new BakingContext
+            {
+                LightSourceHandles = sceneDescriptor.GetLightSources(),
+                SceneAssetData = sceneAssetData,
+            };
+
+            var _ = BakeWithoutKanikamaAsync(context, default);
         }
 
-        public static async Task BakeWithoutKanikamaAsync(ILightSourceHandle[] lightSourceHandles,
-            CancellationToken cancellationToken)
+        public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
         {
-            foreach (var lightSourceHandle in lightSourceHandles)
+            try
             {
-                lightSourceHandle.Initialize();
-                lightSourceHandle.TurnOff();
+                foreach (var lightSourceHandle in context.LightSourceHandles)
+                {
+                    lightSourceHandle.Initialize();
+                    lightSourceHandle.TurnOff();
+                }
+
+                var lightmapper = new Lightmapper();
+                lightmapper.ClearCache();
+                await lightmapper.BakeAsync(cancellationToken);
             }
-
-            var lightmapper = new Lightmapper();
-            await lightmapper.BakeAsync(cancellationToken);
-
-            foreach (var lightSourceHandle in lightSourceHandles)
+            catch (Exception e)
             {
-                lightSourceHandle.Dispose();
+                KanikamaDebug.LogException(e);
+            }
+            finally
+            {
+                foreach (var lightSourceHandle in context.LightSourceHandles)
+                {
+                    lightSourceHandle.Dispose();
+                }
             }
         }
 

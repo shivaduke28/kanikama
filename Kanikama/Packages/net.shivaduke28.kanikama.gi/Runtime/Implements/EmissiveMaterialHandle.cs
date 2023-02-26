@@ -44,7 +44,12 @@ namespace Kanikama.GI.Implements
 
         void IDisposable.Dispose()
         {
-            materialReference.Value.Clear();
+            var instanceHandle = materialReference.Value;
+            if (instanceHandle != null)
+            {
+                instanceHandle.Clear();
+                Object.DestroyImmediate(instanceHandle);
+            }
         }
     }
 }
