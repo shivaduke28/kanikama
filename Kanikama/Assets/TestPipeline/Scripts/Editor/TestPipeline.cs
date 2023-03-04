@@ -97,7 +97,7 @@ namespace Test.Editor
                 var bakedAssetRepository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
                 bakedAssetRepository.DataBase = bakedAssetDataBase;
                 EditorUtility.SetDirty(bakedAssetRepository);
-                AssetDatabase.SaveAssetIfDirty(bakedAssetRepository);
+                AssetDatabase.SaveAssets();
 
 
                 // delete copied scene and generated lightmaps

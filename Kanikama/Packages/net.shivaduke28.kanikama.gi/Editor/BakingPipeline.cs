@@ -102,7 +102,7 @@ namespace Kanikama.GI.Editor
                     var repository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
                     repository.DataBase = bakedAssetDataBase;
                     EditorUtility.SetDirty(repository);
-                    AssetDatabase.SaveAssetIfDirty(repository);
+                    AssetDatabase.SaveAssets();
                 }
                 catch (OperationCanceledException)
                 {
@@ -128,7 +128,7 @@ namespace Kanikama.GI.Editor
             var bakedAssetRegistry = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
             CreateAssets(bakedAssetRegistry.DataBase, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out");
             EditorUtility.SetDirty(bakedAssetRegistry);
-            AssetDatabase.SaveAssetIfDirty(bakedAssetRegistry);
+            AssetDatabase.SaveAssets();
         }
 
         public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath)
