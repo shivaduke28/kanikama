@@ -21,6 +21,7 @@ namespace Kanikama.Core.Editor.EditorOnly
                 var components = root.GetComponentsInChildren<Component>();
                 foreach (var component in components)
                 {
+                    if (component == null) continue;
                     var editorOnly = component.GetType().GetCustomAttribute<EditorOnlyAttribute>();
                     if (editorOnly != null)
                     {
