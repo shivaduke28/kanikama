@@ -9,20 +9,30 @@ namespace Kanikama.GI.Implements
     [EditorOnly]
     public sealed class KanikamaRenderer : LightSourceGroup
     {
+        [SerializeField] int[] materialIndices = { 0 };
+
         public override IEnumerable<ILightSourceHandle> GetHandles()
         {
-            var renderer = GetComponent<Renderer>();
-            var sharedMaterials = renderer.sharedMaterials;
+            var rend = GetComponent<Renderer>();
+            var sharedMaterials = rend.sharedMaterials;
             var handles = new List<ILightSourceHandle>();
-            for (var i = 0; i < sharedMaterials.Length; i++)
+            foreach (var materialIndex in materialIndices)
             {
-                var material = sharedMaterials[i];
+                if (materialIndex < 0 || sharedMaterials.Length <= materialIndex)
+                {
+                    KanikamaDebug.LogError($"Invalid material index {materialIndex}.");
+                    continue;
+                }
+                var material = sharedMaterials[materialIndex];
                 if (MaterialUtility.IsContributeGI(material))
                 {
-                    handles.Add(new EmissiveMaterialHandle(renderer, i));
+                    handles.Add(new EmissiveMaterialHandle(rend, materialIndex));
+                }
+                else
+                {
+                    KanikamaDebug.LogError($"Material with index {materialIndex} will not contribute to GI.");
                 }
             }
-
             return handles;
         }
     }
