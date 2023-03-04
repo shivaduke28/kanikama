@@ -1,6 +1,5 @@
 {
     "name": "Kanikama.Udon.Runtime",
-    "rootNamespace": "",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon"
@@ -12,8 +11,7 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "UDONSHARP",
-        "UNITY_EDITOR_WIN"
+        "UDONSHARP"
     ],
     "versionDefines": [],
     "noEngineReferences": false
