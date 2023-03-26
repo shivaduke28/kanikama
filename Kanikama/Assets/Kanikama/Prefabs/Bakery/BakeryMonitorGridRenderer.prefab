@@ -99,11 +99,13 @@ MonoBehaviour:
   texture: {fileID: 0}
   cutoff: 100
   samples: 256
-  samples2: 16
+  samples2: 0
   bitmask: 1
-  selfShadow: 1
+  selfShadow: 0
   bakeToIndirect: 1
+  shadowmask: 0
   indirectIntensity: 1
+  shadowmaskFalloff: 0
   lmid: -2
 --- !u!114 &7597839281599741241
 MonoBehaviour:
