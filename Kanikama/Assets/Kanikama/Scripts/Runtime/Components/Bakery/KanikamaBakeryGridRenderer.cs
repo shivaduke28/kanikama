@@ -32,6 +32,7 @@ namespace Kanikama.Bakery
 
         public override void OnBake()
         {
+            gameObject.tag = "Untagged";
             renderer.enabled = true;
             bakeryLightMesh.enabled = true;
         }
@@ -42,6 +43,7 @@ namespace Kanikama.Bakery
 
         public override void Rollback()
         {
+            gameObject.tag = "EditorOnly";
             renderer.enabled = false;
             bakeryLightMesh.enabled = true;
         }
