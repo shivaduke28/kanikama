@@ -62,39 +62,67 @@ namespace Kanikama.Core.Editor
     {
         Object obj;
         readonly Type type;
-        bool isSearch;
+        public int Index { get; }
+        bool isChanged = true;
+        static readonly GUIContent BlankLabel = new GUIContent(" ");
+        GlobalObjectId lastId;
 
         public SerializableGlobalObjectIdDrawer(Type type)
         {
             this.type = type;
         }
 
+        public SerializableGlobalObjectIdDrawer(Type type, int index)
+        {
+            this.type = type;
+            Index = index;
+        }
+
         public void Draw(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (!isSearch && obj == null && TryParse(property, out var currentId))
+            if (isChanged)
             {
-                obj = GlobalObjectId.GlobalObjectIdentifierToObjectSlow(currentId);
-                isSearch = true;
+                if (TryParse(property, out var currentId))
+                {
+                    if (!currentId.Equals(lastId))
+                    {
+                        lastId = currentId;
+                        obj = GlobalObjectId.GlobalObjectIdentifierToObjectSlow(currentId);
+                    }
+                }
+                else
+                {
+                    lastId = default;
+                    obj = null;
+                }
+                isChanged = false;
             }
 
-            var rect = new Rect(position);
-            rect.height = 17f;
-            EditorGUI.BeginChangeCheck();
-            obj = EditorGUI.ObjectField(rect, obj, type, true);
+            var rect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
-            if (EditorGUI.EndChangeCheck())
+            using (var check = new EditorGUI.ChangeCheckScope())
             {
-                var id = GlobalObjectId.GetGlobalObjectIdSlow(obj);
-                Set(property, id);
+                obj = EditorGUI.ObjectField(rect, BlankLabel, obj, type, true);
+                if (check.changed)
+                {
+                    lastId = GlobalObjectId.GetGlobalObjectIdSlow(obj);
+                    Set(property, lastId);
+                }
             }
 
-            position.y += EditorGUIUtility.singleLineHeight;
-            EditorGUI.PropertyField(position, property, label, true);
+            using (var check = new EditorGUI.ChangeCheckScope())
+            {
+                EditorGUI.PropertyField(position, property, label, true);
+                if (check.changed)
+                {
+                    isChanged = true;
+                }
+            }
         }
 
         public static float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            return EditorGUI.GetPropertyHeight(property) + EditorGUIUtility.singleLineHeight;
+            return EditorGUI.GetPropertyHeight(property);
         }
 
         static void Set(SerializedProperty property, GlobalObjectId globalObjectId)
