@@ -29,6 +29,14 @@ namespace Kanikama.Core.Editor
             return true;
         }
 
+        public static SceneAssetData ToAssetData(SceneAsset sceneAsset)
+        {
+            var path = AssetDatabase.GetAssetPath(sceneAsset);
+            var dirPath = Path.GetDirectoryName(path);
+            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
+            return new SceneAssetData(path, sceneAsset, lightingDirPath);
+        }
+
         public static TemporarySceneAssetHandle CopySceneAsset(SceneAssetData sceneAssetData)
         {
             var path = sceneAssetData.Path;

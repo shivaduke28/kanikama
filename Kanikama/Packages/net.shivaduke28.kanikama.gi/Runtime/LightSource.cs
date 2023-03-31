@@ -2,8 +2,21 @@
 
 namespace Kanikama.GI
 {
-    public abstract class LightSource : MonoBehaviour
+    public interface ILightSource
     {
-        public abstract ILightSourceHandle GetHandle();
+        void Initialize();
+        void TurnOff();
+        void TurnOn();
+        bool Includes(Object obj);
+        void Clear();
+    }
+
+    public abstract class LightSource : MonoBehaviour, ILightSource
+    {
+        public abstract void Initialize();
+        public abstract void TurnOff();
+        public abstract void TurnOn();
+        public abstract bool Includes(Object obj);
+        public abstract void Clear();
     }
 }
