@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
@@ -126,13 +127,83 @@ namespace Kanikama.Core.Editor
             width = (int) args[0];
             height = (int) args[1];
         }
-    }
 
-    public enum TextureResizeType
-    {
-        One = 1,
-        OneHalf = 2,
-        OneQuarter = 4,
-        OneEighth = 8,
+
+        public static void SaveTexture2D(Texture2D texture, string dirPath, string name, TextureImportParameter parameter)
+        {
+            string ext;
+            byte[] bytes;
+            if (parameter.Extension == TextureExtension.Png)
+            {
+                ext = "png";
+                bytes = texture.EncodeToPNG();
+            }
+            else
+            {
+                ext = "exr";
+                bytes = texture.EncodeToEXR();
+            }
+
+            var path = Path.Combine(dirPath, $"{name}.{ext}");
+            File.WriteAllBytes(path, bytes);
+            AssetDatabase.ImportAsset(path);
+            var textureImporter = (TextureImporter) AssetImporter.GetAtPath(path);
+            textureImporter.isReadable = parameter.IsReadable;
+            textureImporter.textureCompression = parameter.Compression;
+            textureImporter.SaveAndReimport();
+            if (parameter.Compression != TextureImporterCompression.Uncompressed)
+            {
+                EditorUtility.CompressTexture(texture, parameter.CompressedFormat, parameter.CompressionQuality);
+            }
+
+            KanikamaDebug.Log($"{path} has been saved.");
+        }
+
+        public static Texture2D GenerateTexture(TextureParameter textureParameter)
+        {
+            return new Texture2D(textureParameter.Width, textureParameter.Height, textureParameter.Format, textureParameter.MipChain, textureParameter.Linear);
+        }
+
+        public static RenderTexture GenerateRenderTexture(string dirPath, string name, RenderTextureDescriptor parameter)
+        {
+            var rt = new RenderTexture(parameter);
+            var path = Path.Combine(dirPath, $"{name}.renderTexture");
+            KanikamaSceneUtility.CreateOrReplaceAsset(ref rt, path);
+            return rt;
+        }
+
+        [Serializable]
+        public class TextureParameter
+        {
+            public int Width = 256;
+            public int Height = 256;
+            public TextureFormat Format = TextureFormat.RGBAHalf;
+            public bool MipChain = true;
+            public bool Linear = true;
+        }
+
+        [Serializable]
+        public class TextureImportParameter
+        {
+            public TextureExtension Extension = TextureExtension.Exr;
+            public bool IsReadable = true;
+            public TextureImporterCompression Compression = TextureImporterCompression.Uncompressed;
+            public TextureFormat CompressedFormat = TextureFormat.BC6H;
+            public TextureCompressionQuality CompressionQuality = TextureCompressionQuality.Best;
+        }
+
+        public enum TextureExtension
+        {
+            Png = 0,
+            Exr = 1,
+        }
+
+        public enum TextureResizeType
+        {
+            One = 1,
+            OneHalf = 2,
+            OneQuarter = 4,
+            OneEighth = 8,
+        }
     }
 }

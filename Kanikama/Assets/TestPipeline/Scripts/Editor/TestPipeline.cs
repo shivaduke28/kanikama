@@ -13,7 +13,7 @@ namespace Test.Editor
 {
     public class TestPipeline
     {
-        [MenuItem("Kanikama/Execute Test Pipeline")]
+        [MenuItem("Kanikama/Test/Execute Test Pipeline")]
         public static void Bake()
         {
             _ = ExecuteAsync();

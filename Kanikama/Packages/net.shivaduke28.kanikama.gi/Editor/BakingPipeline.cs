@@ -141,7 +141,7 @@ namespace Kanikama.GI.Editor
             }
         }
 
-        public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath, TextureResizeType resizeType)
+        public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath, KanikamaTextureUtility.TextureResizeType resizeType)
         {
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
