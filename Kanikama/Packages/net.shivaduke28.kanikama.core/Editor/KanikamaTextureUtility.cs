@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Kanikama.Core.Editor
 {
@@ -83,5 +85,54 @@ namespace Kanikama.Core.Editor
             UnityEngine.Object.DestroyImmediate(mat);
             return renderTexture;
         }
+
+        public static void ResizeTexture(Texture2D texture, TextureResizeType textureResizeType)
+        {
+            var path = AssetDatabase.GetAssetPath(texture);
+            if (string.IsNullOrEmpty(path)) return;
+            var textureImporter = (TextureImporter) AssetImporter.GetAtPath(path);
+            GetTextureRealWidthAndHeight(textureImporter, out var width, out _);
+            switch (textureResizeType)
+            {
+                case TextureResizeType.One:
+                    break;
+                case TextureResizeType.OneHalf:
+                    width /= 2;
+                    break;
+                case TextureResizeType.OneQuarter:
+                    width /= 4;
+                    break;
+                case TextureResizeType.OneEighth:
+                    width /= 8;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(textureResizeType), textureResizeType, null);
+            }
+            width = Mathf.Max(1, width);
+            textureImporter.maxTextureSize = width;
+            textureImporter.SaveAndReimport();
+        }
+
+        // https://answers.unity.com/questions/893447/get-the-real-texture-size.html
+        public static void GetTextureRealWidthAndHeight(TextureImporter textureImporter, out int width, out int height)
+        {
+            width = 0;
+            height = 0;
+            var type = typeof(TextureImporter);
+            var method = type.GetMethod("GetWidthAndHeight", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsTrue(method != null);
+            var args = new object[] { width, height };
+            method.Invoke(textureImporter, args);
+            width = (int) args[0];
+            height = (int) args[1];
+        }
+    }
+
+    public enum TextureResizeType
+    {
+        One = 1,
+        OneHalf = 2,
+        OneQuarter = 4,
+        OneEighth = 8,
     }
 }
