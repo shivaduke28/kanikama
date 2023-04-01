@@ -17,7 +17,10 @@ namespace Kanikama.GI.Editor
         [SerializeField, SpecifyObject(typeof(LightSourceGroup))]
         SerializableGlobalObjectId[] lightSourceGroups;
 
+        [SerializeField] TextureResizeType textureResizeType;
+
         public SceneAsset SceneAsset => sceneAsset;
+        public TextureResizeType TextureResizeType => textureResizeType;
 
         public GlobalObjectId[] GetLightSources() => lightSources
             .Select(i => (Valid: i.TryParse(out var id), Id: id))
@@ -30,11 +33,15 @@ namespace Kanikama.GI.Editor
             .Select(t => t.Id).ToArray();
 
 
-        public BakingConfiguration(SceneAsset sceneAsset, SerializableGlobalObjectId[] lightSources, SerializableGlobalObjectId[] lightSourceGroups)
+        public BakingConfiguration(SceneAsset sceneAsset,
+            SerializableGlobalObjectId[] lightSources,
+            SerializableGlobalObjectId[] lightSourceGroups,
+            TextureResizeType textureResizeType)
         {
             this.sceneAsset = sceneAsset;
             this.lightSources = lightSources;
             this.lightSourceGroups = lightSourceGroups;
+            this.textureResizeType = textureResizeType;
         }
 
         public BakingConfiguration Clone()
@@ -43,7 +50,7 @@ namespace Kanikama.GI.Editor
             Array.Copy(lightSources, ls, lightSources.Length);
             var lsg = new SerializableGlobalObjectId[lightSourceGroups.Length];
             Array.Copy(lightSourceGroups, lsg, lightSourceGroups.Length);
-            return new BakingConfiguration(sceneAsset, ls, lsg);
+            return new BakingConfiguration(sceneAsset, ls, lsg, textureResizeType);
         }
 
         public void UpdateSceneAsset(SceneAsset sceneAsset)

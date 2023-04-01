@@ -141,21 +141,7 @@ namespace Kanikama.GI.Editor
             }
         }
 
-
-        [MenuItem("Kanikama/Create Assets", false, 2)]
-        public static void CreateAssets()
-        {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
-            var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
-            KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-
-            var bakedAssetRegistry = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
-            CreateAssets(bakedAssetRegistry.DataBase, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out");
-            EditorUtility.SetDirty(bakedAssetRegistry);
-            AssetDatabase.SaveAssets();
-        }
-
-        public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath)
+        public static void CreateAssets(BakedAssetDataBase bakedAssetDataBase, string dstDirPath, TextureResizeType resizeType)
         {
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
@@ -167,6 +153,17 @@ namespace Kanikama.GI.Editor
             {
                 var light = lightmaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
                 var dir = directionalMaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
+
+                foreach (var texture in light)
+                {
+                    KanikamaTextureUtility.ResizeTexture(texture, resizeType);
+                }
+
+                foreach (var texture in dir)
+                {
+                    KanikamaTextureUtility.ResizeTexture(texture, resizeType);
+                }
+
                 var lightArr = KanikamaTextureUtility.CreateTexture2DArray(light, false);
                 var dirArr = KanikamaTextureUtility.CreateTexture2DArray(dir, true);
                 var lightPath = Path.Combine(dstDirPath, $"{LightmapType.Color.ToFileName()}-{index}.asset");
