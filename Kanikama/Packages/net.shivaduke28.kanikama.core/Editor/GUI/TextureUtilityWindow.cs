@@ -1,12 +1,13 @@
-﻿using UnityEditor;
+﻿using Kanikama.Core.Editor.Textures;
+using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.Core.Editor.GUI
 {
     internal sealed class TextureUtilityWindow : EditorWindow
     {
-        [SerializeField] KanikamaTextureUtility.TextureParameter textureParameter;
-        [SerializeField] KanikamaTextureUtility.TextureImportParameter textureImportParameter;
+        [SerializeField] TextureParameter textureParameter;
+        [SerializeField] TextureImportParameter textureImportParameter;
 
         Vector2 scrollPosition = new Vector2(0, 0);
         SerializedObject serializedObject;
@@ -49,8 +50,8 @@ namespace Kanikama.Core.Editor.GUI
                 if (GUILayout.Button("Create"))
                 {
                     serializedObject.ApplyModifiedProperties();
-                    var tex = KanikamaTextureUtility.GenerateTexture(textureParameter);
-                    KanikamaTextureUtility.SaveTexture2D(tex, "Assets", "texture", textureImportParameter);
+                    var tex = TextureUtility.GenerateTexture(textureParameter);
+                    TextureUtility.SaveTexture2D(tex, "Assets", "texture", textureImportParameter);
                     Selection.activeObject = tex;
                 }
             }

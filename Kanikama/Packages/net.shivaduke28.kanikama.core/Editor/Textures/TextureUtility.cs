@@ -6,9 +6,9 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Core.Editor.Textures
 {
-    public class KanikamaTextureUtility
+    public static class TextureUtility
     {
         // isLinear:
         // - lightmap: false
@@ -171,39 +171,39 @@ namespace Kanikama.Core.Editor
             KanikamaSceneUtility.CreateOrReplaceAsset(ref rt, path);
             return rt;
         }
+    }
 
-        [Serializable]
-        public class TextureParameter
-        {
-            public int Width = 256;
-            public int Height = 256;
-            public TextureFormat Format = TextureFormat.RGBAHalf;
-            public bool MipChain = true;
-            public bool Linear = true;
-        }
+    [Serializable]
+    public class TextureParameter
+    {
+        public int Width = 256;
+        public int Height = 256;
+        public TextureFormat Format = TextureFormat.RGBAHalf;
+        public bool MipChain = true;
+        public bool Linear = true;
+    }
 
-        [Serializable]
-        public class TextureImportParameter
-        {
-            public TextureExtension Extension = TextureExtension.Exr;
-            public bool IsReadable = true;
-            public TextureImporterCompression Compression = TextureImporterCompression.Uncompressed;
-            public TextureFormat CompressedFormat = TextureFormat.BC6H;
-            public TextureCompressionQuality CompressionQuality = TextureCompressionQuality.Best;
-        }
+    [Serializable]
+    public class TextureImportParameter
+    {
+        public TextureExtension Extension = TextureExtension.Exr;
+        public bool IsReadable = true;
+        public TextureImporterCompression Compression = TextureImporterCompression.Uncompressed;
+        public TextureFormat CompressedFormat = TextureFormat.BC6H;
+        public TextureCompressionQuality CompressionQuality = TextureCompressionQuality.Best;
+    }
 
-        public enum TextureExtension
-        {
-            Png = 0,
-            Exr = 1,
-        }
+    public enum TextureExtension
+    {
+        Png = 0,
+        Exr = 1,
+    }
 
-        public enum TextureResizeType
-        {
-            One = 1,
-            OneHalf = 2,
-            OneQuarter = 4,
-            OneEighth = 8,
-        }
+    public enum TextureResizeType
+    {
+        One = 1,
+        OneHalf = 2,
+        OneQuarter = 4,
+        OneEighth = 8,
     }
 }

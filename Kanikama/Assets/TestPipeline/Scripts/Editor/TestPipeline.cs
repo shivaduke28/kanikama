@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -87,8 +88,8 @@ namespace Test.Editor
                 {
                     var indirect = indirectLightmaps[i].Texture;
                     var direct = directLightmaps[i].Texture;
-                    var rt = KanikamaTextureUtility.Subtract(indirect, direct, indirect.width, indirect.height);
-                    var compressed = KanikamaTextureUtility.CompressToBC6H(rt, false, true, TextureCompressionQuality.Best);
+                    var rt = TextureUtility.Subtract(indirect, direct, indirect.width, indirect.height);
+                    var compressed = TextureUtility.CompressToBC6H(rt, false, true, TextureCompressionQuality.Best);
 
                     var path = Path.Combine(context.DstDir, $"subtract_{indirectLightmaps[i].Index}.asset");
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);

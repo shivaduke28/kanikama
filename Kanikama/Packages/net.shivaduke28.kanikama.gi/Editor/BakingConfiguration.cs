@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,10 +18,10 @@ namespace Kanikama.GI.Editor
         [SerializeField, SpecifyObject(typeof(LightSourceGroup))]
         SerializableGlobalObjectId[] lightSourceGroups;
 
-        [SerializeField] KanikamaTextureUtility.TextureResizeType textureResizeType;
+        [SerializeField] TextureResizeType textureResizeType;
 
         public SceneAsset SceneAsset => sceneAsset;
-        public KanikamaTextureUtility.TextureResizeType TextureResizeType => textureResizeType;
+        public TextureResizeType TextureResizeType => textureResizeType;
 
         public GlobalObjectId[] GetLightSources() => lightSources
             .Select(i => (Valid: i.TryParse(out var id), Id: id))
@@ -36,7 +37,7 @@ namespace Kanikama.GI.Editor
         public BakingConfiguration(SceneAsset sceneAsset,
             SerializableGlobalObjectId[] lightSources,
             SerializableGlobalObjectId[] lightSourceGroups,
-            KanikamaTextureUtility.TextureResizeType textureResizeType)
+            TextureResizeType textureResizeType)
         {
             this.sceneAsset = sceneAsset;
             this.lightSources = lightSources;
