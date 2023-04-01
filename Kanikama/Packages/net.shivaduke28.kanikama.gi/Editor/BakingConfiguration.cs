@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEngine;
 

@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -156,16 +157,16 @@ namespace Kanikama.GI.Editor
 
                 foreach (var texture in light)
                 {
-                    KanikamaTextureUtility.ResizeTexture(texture, resizeType);
+                    TextureUtility.ResizeTexture(texture, resizeType);
                 }
 
                 foreach (var texture in dir)
                 {
-                    KanikamaTextureUtility.ResizeTexture(texture, resizeType);
+                    TextureUtility.ResizeTexture(texture, resizeType);
                 }
 
-                var lightArr = KanikamaTextureUtility.CreateTexture2DArray(light, false);
-                var dirArr = KanikamaTextureUtility.CreateTexture2DArray(dir, true);
+                var lightArr = TextureUtility.CreateTexture2DArray(light, false);
+                var dirArr = TextureUtility.CreateTexture2DArray(dir, true);
                 var lightPath = Path.Combine(dstDirPath, $"{LightmapType.Color.ToFileName()}-{index}.asset");
                 var dirPath = Path.Combine(dstDirPath, $"{LightmapType.Directional.ToFileName()}-{index}.asset");
                 KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
