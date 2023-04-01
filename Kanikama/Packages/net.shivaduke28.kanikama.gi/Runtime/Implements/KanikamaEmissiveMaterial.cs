@@ -21,6 +21,8 @@ namespace Kanikama.GI.Implements
 
         public override void Initialize()
         {
+            gameObject.SetActive(true);
+            renderer.enabled = true;
             var sharedMaterials = renderer.sharedMaterials;
             if (materialIndex < 0 || materialIndex >= sharedMaterials.Length)
             {
