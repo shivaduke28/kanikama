@@ -71,10 +71,8 @@ namespace Kanikama.GI.Editor
                     var bakedAssetDataBase = new BakedAssetDataBase();
                     var lightmapper = new Lightmapper();
 
-                    for (var i = 0; i < lightSourceHandles.Length; i++)
+                    foreach (var lightSourceHandle in lightSourceHandles)
                     {
-                        var lightSourceHandle = lightSourceHandles[i];
-
                         lightSourceHandle.Value.TurnOn();
                         lightmapper.ClearCache();
                         await lightmapper.BakeAsync(cancellationToken);
@@ -82,25 +80,30 @@ namespace Kanikama.GI.Editor
 
                         var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
                         var copied = new BakedLightingAssetCollection();
-                        foreach (var bakedLightmap in baked.Lightmaps)
-                        {
-                            var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
-                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
-                            copied.Lightmaps.Add(copiedLightmap);
-                        }
+                        CopyBakedLightingAssetCollection(baked, copied, dstDir, lightSourceHandle.LocalFileId());
 
-                        foreach (var bakedLightmap in baked.DirectionalLightmaps)
-                        {
-                            var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, i));
-                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
-                            copied.DirectionalLightmaps.Add(copiedLightmap);
-                        }
-
-                        // TODO: use "id" of lightsource
-                        bakedAssetDataBase.AddOrUpdate(i.ToString(), copied);
+                        bakedAssetDataBase.AddOrUpdate(lightSourceHandle.LocalFileId(), copied);
                     }
 
-                    // TODO: bake LightSourceGroup
+                    foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
+                    {
+                        for (var i = 0; i < lightSourceGroupHandle.Value.GetLightSources().Count; i++)
+                        {
+                            // NOTE: need to access to ILightSource via ObjectHandle
+                            // because LightSourceGroup may be destroyed when baking...
+                            lightSourceGroupHandle.Value.GetLightSources()[i].TurnOn();
+                            lightmapper.ClearCache();
+                            await lightmapper.BakeAsync(cancellationToken);
+                            lightSourceGroupHandle.Value.GetLightSources()[i].TurnOff();
+
+                            var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
+                            var copied = new BakedLightingAssetCollection();
+                            var id = $"{lightSourceGroupHandle.LocalFileId()}_{i}";
+                            CopyBakedLightingAssetCollection(baked, copied, dstDir, id);
+
+                            bakedAssetDataBase.AddOrUpdate(id, copied);
+                        }
+                    }
 
                     var repository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
                     repository.DataBase = bakedAssetDataBase;
@@ -118,6 +121,24 @@ namespace Kanikama.GI.Editor
             }
 
             EditorSceneManager.OpenScene(context.SceneAssetData.Path);
+        }
+
+        static void CopyBakedLightingAssetCollection(BakedLightingAssetCollection src, BakedLightingAssetCollection dst, string dstDir,
+            string id)
+        {
+            foreach (var bakedLightmap in src.Lightmaps)
+            {
+                var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, id));
+                var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
+                dst.Lightmaps.Add(copiedLightmap);
+            }
+
+            foreach (var bakedLightmap in src.DirectionalLightmaps)
+            {
+                var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, id));
+                var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
+                dst.DirectionalLightmaps.Add(copiedLightmap);
+            }
         }
 
 
@@ -203,12 +224,12 @@ namespace Kanikama.GI.Editor
             }
         }
 
-        static string TempLightmapName(BakedLightmap bakedLightmap, int lightSourceIndex)
+        static string TempLightmapName(BakedLightmap bakedLightmap, string id)
         {
             var path = bakedLightmap.Path;
             var fileName = Path.GetFileName(path);
             var ext = Path.GetExtension(fileName);
-            return $"{bakedLightmap.Type.ToFileName()}-{bakedLightmap.Index}-{lightSourceIndex}{ext}";
+            return $"{bakedLightmap.Type.ToFileName()}-{bakedLightmap.Index}-{id}{ext}";
         }
     }
 }

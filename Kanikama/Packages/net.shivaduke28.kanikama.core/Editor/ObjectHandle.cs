@@ -16,5 +16,8 @@ namespace Kanikama.Core.Editor
         {
             this.globalObjectId = globalObjectId;
         }
+
+        public override string ToString() => globalObjectId.ToString();
+        public string LocalFileId() => globalObjectId.targetObjectId.ToString();
     }
 }
