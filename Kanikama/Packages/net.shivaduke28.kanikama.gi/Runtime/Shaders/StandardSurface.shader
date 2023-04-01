@@ -16,7 +16,7 @@
     {
         Tags
         {
-            "RenderType"="Opaque"
+            "RenderType"="Opaque" "KanikamaGI"="True"
         }
         LOD 200
 
