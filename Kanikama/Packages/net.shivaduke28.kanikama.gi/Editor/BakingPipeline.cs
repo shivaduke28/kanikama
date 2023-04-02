@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -19,6 +20,7 @@ namespace Kanikama.GI.Editor
         {
             public BakingConfiguration BakingConfiguration;
             public SceneAssetData SceneAssetData;
+            public List<IBakeableHandle> BakeableHandles;
         }
 
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
@@ -30,35 +32,36 @@ namespace Kanikama.GI.Editor
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
 
+                    var bakeableHandles = context.BakeableHandles;
+                    // TODO: get handles from groups
+                    // var lightSourceGroupHandles = config.GetLightSourceGroups().Select(id => new ObjectHandle<LightSourceGroup>(id)).ToArray();
+
+                    var guid = AssetDatabase.AssetPathToGUID(copiedSceneHandle.SceneAssetData.Path);
+
                     // initialize all light source handles **after** the copied scene is opened
-                    var config = context.BakingConfiguration;
-                    config.UpdateSceneAsset(copiedSceneHandle.SceneAssetData.Asset);
-
-                    var lightSourceHandles = config.GetLightSources().Select(id => new ObjectHandle<LightSource>(id)).ToArray();
-                    var lightSourceGroupHandles = config.GetLightSourceGroups().Select(id => new ObjectHandle<LightSourceGroup>(id)).ToArray();
-
-                    foreach (var lightSourceHandle in lightSourceHandles)
+                    foreach (var handle in bakeableHandles)
                     {
-                        lightSourceHandle.Value.Initialize();
-                        lightSourceHandle.Value.TurnOff();
+                        handle.ReplaceSceneGuid(guid);
+                        handle.Initialize();
+                        handle.TurnOff();
                     }
 
-                    foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
-                    {
-                        foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
-                        {
-                            lightSource.Initialize();
-                            lightSource.TurnOff();
-                        }
-                    }
+                    // foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
+                    // {
+                    //     foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
+                    //     {
+                    //         lightSource.Initialize();
+                    //         lightSource.TurnOff();
+                    //     }
+                    // }
 
                     // save scene
                     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
                     // turn off all light sources but kanikama ones
                     bool Filter(Object obj) =>
-                        lightSourceHandles.All(l => !l.Value.Includes(obj)) &&
-                        lightSourceGroupHandles.All(g => !g.Value.Includes(obj));
+                        bakeableHandles.All(l => !l.Includes(obj)); // &&
+                    // lightSourceGroupHandles.All(g => !g.Value.Includes(obj));
 
                     var sceneGIContext = KanikamaSceneUtility.GetSceneGIContext(Filter);
 
@@ -72,39 +75,39 @@ namespace Kanikama.GI.Editor
                     var bakedAssetDataBase = new BakedAssetDataBase();
                     var lightmapper = new Lightmapper();
 
-                    foreach (var lightSourceHandle in lightSourceHandles)
+                    foreach (var handle in bakeableHandles)
                     {
-                        lightSourceHandle.Value.TurnOn();
+                        handle.TurnOn();
                         lightmapper.ClearCache();
                         await lightmapper.BakeAsync(cancellationToken);
-                        lightSourceHandle.Value.TurnOff();
+                        handle.TurnOff();
 
                         var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
                         var copied = new BakedLightingAssetCollection();
-                        CopyBakedLightingAssetCollection(baked, copied, dstDir, lightSourceHandle.LocalFileId());
+                        CopyBakedLightingAssetCollection(baked, copied, dstDir, handle.Id);
 
-                        bakedAssetDataBase.AddOrUpdate(lightSourceHandle.LocalFileId(), copied);
+                        bakedAssetDataBase.AddOrUpdate(handle.Id, copied);
                     }
 
-                    foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
-                    {
-                        for (var i = 0; i < lightSourceGroupHandle.Value.GetLightSources().Count; i++)
-                        {
-                            // NOTE: need to access to ILightSource via ObjectHandle
-                            // because LightSourceGroup may be destroyed when baking...
-                            lightSourceGroupHandle.Value.GetLightSources()[i].TurnOn();
-                            lightmapper.ClearCache();
-                            await lightmapper.BakeAsync(cancellationToken);
-                            lightSourceGroupHandle.Value.GetLightSources()[i].TurnOff();
-
-                            var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
-                            var copied = new BakedLightingAssetCollection();
-                            var id = $"{lightSourceGroupHandle.LocalFileId()}_{i}";
-                            CopyBakedLightingAssetCollection(baked, copied, dstDir, id);
-
-                            bakedAssetDataBase.AddOrUpdate(id, copied);
-                        }
-                    }
+                    // foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
+                    // {
+                    //     for (var i = 0; i < lightSourceGroupHandle.Value.GetLightSources().Count; i++)
+                    //     {
+                    //         // NOTE: need to access to ILightSource via ObjectHandle
+                    //         // because LightSourceGroup may be destroyed when baking...
+                    //         lightSourceGroupHandle.Value.GetLightSources()[i].TurnOn();
+                    //         lightmapper.ClearCache();
+                    //         await lightmapper.BakeAsync(cancellationToken);
+                    //         lightSourceGroupHandle.Value.GetLightSources()[i].TurnOff();
+                    //
+                    //         var baked = KanikamaSceneUtility.GetBakedAssetData(copiedSceneHandle.SceneAssetData);
+                    //         var copied = new BakedLightingAssetCollection();
+                    //         var id = $"{lightSourceGroupHandle.LocalFileId()}_{i}";
+                    //         CopyBakedLightingAssetCollection(baked, copied, dstDir, id);
+                    //
+                    //         bakedAssetDataBase.AddOrUpdate(id, copied);
+                    //     }
+                    // }
 
                     var repository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
                     repository.DataBase = bakedAssetDataBase;
@@ -177,23 +180,24 @@ namespace Kanikama.GI.Editor
         public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
         {
             var config = context.BakingConfiguration;
-            var lightSourceHandles = config.GetLightSources().Select(id => new ObjectHandle<LightSource>(id)).ToArray();
-            var lightSourceGroupHandles = config.GetLightSourceGroups().Select(id => new ObjectHandle<LightSourceGroup>(id)).ToArray();
 
-            foreach (var lightSourceHandle in lightSourceHandles)
+            var handles = context.BakeableHandles;
+            // var lightSourceGroupHandles = config.GetLightSourceGroups().Select(id => new ObjectHandle<LightSourceGroup>(id)).ToArray();
+
+            foreach (var handle in handles)
             {
-                lightSourceHandle.Value.Initialize();
-                lightSourceHandle.Value.TurnOff();
+                handle.Initialize();
+                handle.TurnOff();
             }
 
-            foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
-            {
-                foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
-                {
-                    lightSource.Initialize();
-                    lightSource.TurnOff();
-                }
-            }
+            // foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
+            // {
+            //     foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
+            //     {
+            //         lightSource.Initialize();
+            //         lightSource.TurnOff();
+            //     }
+            // }
 
             try
             {
@@ -207,18 +211,18 @@ namespace Kanikama.GI.Editor
             }
             finally
             {
-                foreach (var lightSourceHandle in lightSourceHandles)
+                foreach (var handle in handles)
                 {
-                    lightSourceHandle.Value.Clear();
+                    handle.Clear();
                 }
 
-                foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
-                {
-                    foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
-                    {
-                        lightSource.Clear();
-                    }
-                }
+                // foreach (var lightSourceGroupHandle in lightSourceGroupHandles)
+                // {
+                //     foreach (var lightSource in lightSourceGroupHandle.Value.GetLightSources())
+                //     {
+                //         lightSource.Clear();
+                //     }
+                // }
             }
         }
 
