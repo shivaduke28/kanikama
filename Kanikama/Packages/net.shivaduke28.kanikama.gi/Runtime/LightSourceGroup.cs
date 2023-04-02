@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace Kanikama.GI
 {
+    // TODO: implement BakeableGroup
     public abstract class LightSourceGroup : MonoBehaviour
     {
-        public abstract IList<ILightSource> GetLightSources();
+        public abstract IList<IBakeable> GetLightSources();
 
         public bool Includes(Object obj)
         {
-            return GetLightSources().Any(l => l.Includes(obj));
+            return false;
         }
     }
 }
