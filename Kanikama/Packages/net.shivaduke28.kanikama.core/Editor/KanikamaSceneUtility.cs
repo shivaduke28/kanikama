@@ -194,5 +194,19 @@ namespace Kanikama.Core.Editor
             }
             return true;
         }
+
+        public static T FindObjectOfType<T>()
+        {
+            var roots = SceneManager.GetActiveScene().GetRootGameObjects();
+            foreach (var root in roots)
+            {
+                var child = root.GetComponentInChildren<T>();
+                if (child != null)
+                {
+                    return child;
+                }
+            }
+            return default;
+        }
     }
 }

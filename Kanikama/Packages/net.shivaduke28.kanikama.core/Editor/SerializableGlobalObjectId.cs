@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 namespace Kanikama.Core.Editor
 {
     [Serializable]
-    public struct SerializableGlobalObjectId : IEquatable<SerializableGlobalObjectId>
+    public sealed class SerializableGlobalObjectId : IEquatable<SerializableGlobalObjectId>
     {
         [SerializeField] public string assetGUID;
         [SerializeField] public int identifierType;
@@ -36,23 +36,24 @@ namespace Kanikama.Core.Editor
 
         public bool Equals(SerializableGlobalObjectId other)
         {
-            return assetGUID.Equals(other.assetGUID) && identifierType == other.identifierType && targetObjectId == other.targetObjectId &&
-                targetPrefabId == other.targetPrefabId;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return assetGUID == other.assetGUID && identifierType == other.identifierType && targetObjectId == other.targetObjectId && targetPrefabId == other.targetPrefabId;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is SerializableGlobalObjectId other && Equals(other);
+            return ReferenceEquals(this, obj) || obj is SerializableGlobalObjectId other && Equals(other);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = assetGUID.GetHashCode();
+                var hashCode = (assetGUID != null ? assetGUID.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ identifierType;
-                hashCode = (hashCode * 397) ^ targetObjectId.GetHashCode();
-                hashCode = (hashCode * 397) ^ targetPrefabId.GetHashCode();
+                hashCode = (hashCode * 397) ^ (targetObjectId != null ? targetObjectId.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (targetPrefabId != null ? targetPrefabId.GetHashCode() : 0);
                 return hashCode;
             }
         }
