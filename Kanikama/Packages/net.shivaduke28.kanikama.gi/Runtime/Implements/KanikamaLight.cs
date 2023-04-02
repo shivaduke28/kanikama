@@ -42,5 +42,10 @@ namespace Kanikama.GI.Implements
             light.color = color;
             light.intensity = intensity;
         }
+
+        public override Color GetColorLinear()
+        {
+            return light.color.linear * light.intensity;
+        }
     }
 }

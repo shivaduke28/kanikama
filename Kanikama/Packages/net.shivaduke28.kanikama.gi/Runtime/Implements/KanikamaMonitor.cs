@@ -139,7 +139,7 @@ namespace Kanikama.GI.Implements
             }
         }
 
-        public override IList<ILightSource> GetLightSources() => new List<ILightSource>(lightSources);
+        public override IList<IBakeable> GetLightSources() => new List<IBakeable>(lightSources);
         public LightSource GetLightSource(int index) => lightSources[index];
 
         public enum PartitionType
