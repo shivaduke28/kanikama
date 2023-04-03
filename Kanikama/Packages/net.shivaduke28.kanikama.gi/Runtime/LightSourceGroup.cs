@@ -1,17 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-
-namespace Kanikama.GI
+﻿namespace Kanikama.GI
 {
-    // TODO: implement BakeableGroup
-    public abstract class LightSourceGroup : MonoBehaviour
+    public abstract class LightSourceGroup : BakeableGroup
     {
-        public abstract IList<IBakeable> GetLightSources();
-
-        public bool Includes(Object obj)
-        {
-            return false;
-        }
     }
 }

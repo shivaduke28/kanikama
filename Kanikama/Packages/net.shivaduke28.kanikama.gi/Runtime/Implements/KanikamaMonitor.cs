@@ -139,8 +139,11 @@ namespace Kanikama.GI.Implements
             }
         }
 
-        public override IList<IBakeable> GetLightSources() => new List<IBakeable>(lightSources);
+        public List<LightSource> GetAllLightSources() => lightSources;
         public LightSource GetLightSource(int index) => lightSources[index];
+        public override List<IBakeable> GetAll() => lightSources.Cast<IBakeable>().ToList();
+        public override IBakeable Get(int index) => lightSources[index];
+
 
         public enum PartitionType
         {

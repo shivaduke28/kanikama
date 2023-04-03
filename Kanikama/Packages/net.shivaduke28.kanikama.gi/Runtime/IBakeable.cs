@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Kanikama.GI
 {
@@ -19,4 +20,5 @@ namespace Kanikama.GI
         public abstract bool Includes(Object obj);
         public abstract void Clear();
     }
+
 }

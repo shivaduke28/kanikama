@@ -5,5 +5,6 @@ namespace Kanikama.GI
     public interface IBakingDescriptor
     {
         List<Bakeable> GetBakeables();
+        List<BakeableGroup> GetBakeableGroups();
     }
 }

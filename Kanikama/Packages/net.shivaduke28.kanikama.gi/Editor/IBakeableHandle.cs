@@ -17,39 +17,63 @@ namespace Kanikama.GI.Editor
 
     public sealed class BakeableHandle<T> : IBakeableHandle where T : Object, IBakeable
     {
-        readonly SerializableGlobalObjectId id;
-        T value;
-        T Value => value != null ? value : value = FindSlow();
-
-        T FindSlow()
-        {
-            if (id.TryParse(out var globalObjectId))
-            {
-                var obj = GlobalObjectId.GlobalObjectIdentifierToObjectSlow(globalObjectId);
-                return (T) obj;
-            }
-            return default;
-        }
+        GlobalObjectId id;
+        ObjectHandle<T> handle;
 
         public override string ToString() => id.ToString();
-        public string Id => id.targetObjectId;
+        string IBakeableHandle.Id => id.targetObjectId.ToString();
 
         public BakeableHandle(T value)
         {
-            this.value = value;
-            id = SerializableGlobalObjectId.Create(GlobalObjectId.GetGlobalObjectIdSlow(value));
+            id = GlobalObjectId.GetGlobalObjectIdSlow(value);
+            handle = new ObjectHandle<T>(id);
         }
 
         void IBakeableHandle.ReplaceSceneGuid(string sceneGuid)
         {
-            id.assetGUID = sceneGuid;
-            value = null;
+            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, id.identifierType, id.targetObjectId, id.targetPrefabId, out var newId))
+            {
+                id = newId;
+                handle = new ObjectHandle<T>(id);
+            }
         }
 
-        void IBakeableHandle.Initialize() => Value.Initialize();
-        void IBakeableHandle.TurnOff() => Value.TurnOff();
-        void IBakeableHandle.TurnOn() => Value.TurnOn();
-        bool IBakeableHandle.Includes(Object obj) => Value.Includes(obj);
-        void IBakeableHandle.Clear() => Value.Clear();
+        void IBakeableHandle.Initialize() => handle.Value.Initialize();
+        void IBakeableHandle.TurnOff() => handle.Value.TurnOff();
+        void IBakeableHandle.TurnOn() => handle.Value.TurnOn();
+        bool IBakeableHandle.Includes(Object obj) => handle.Value.Includes(obj);
+        void IBakeableHandle.Clear() => handle.Value.Clear();
+    }
+
+    public sealed class BakeableGroupElementHandle<T> : IBakeableHandle where T : Object, IBakeableGroup
+    {
+        GlobalObjectId id;
+        ObjectHandle<T> handle;
+        readonly int index;
+        IBakeable GetBakeable() => handle.Value.Get(index);
+
+        public BakeableGroupElementHandle(T value, int index)
+        {
+            id = GlobalObjectId.GetGlobalObjectIdSlow(value);
+            handle = new ObjectHandle<T>(id);
+            this.index = index;
+        }
+
+        string IBakeableHandle.Id => $"{id.targetObjectId}_{index}";
+
+        void IBakeableHandle.ReplaceSceneGuid(string sceneGuid)
+        {
+            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, id.identifierType, id.targetObjectId, id.targetPrefabId, out var newId))
+            {
+                id = newId;
+                handle = new ObjectHandle<T>(id);
+            }
+        }
+
+        void IBakeableHandle.Initialize() => GetBakeable().Initialize();
+        void IBakeableHandle.TurnOff() => GetBakeable().TurnOff();
+        void IBakeableHandle.TurnOn() => GetBakeable().TurnOn();
+        bool IBakeableHandle.Includes(Object obj) => GetBakeable().Includes(obj);
+        void IBakeableHandle.Clear() => GetBakeable().Clear();
     }
 }

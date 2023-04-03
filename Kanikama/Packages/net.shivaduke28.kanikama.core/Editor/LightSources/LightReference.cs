@@ -9,6 +9,7 @@ namespace Kanikama.Core.Editor.LightSources
 {
     public sealed class SceneGIContext
     {
+        // TODO: GlobalObjectIdに乗り換えたい
         public List<LightReference> LightReferences;
         public List<EmissiveRendererReference> EmissiveRendererReferences;
         public List<ComponentReference<LightProbeGroup>> LightProbeGroups;
