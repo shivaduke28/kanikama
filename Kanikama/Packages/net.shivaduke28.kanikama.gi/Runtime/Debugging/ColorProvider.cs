@@ -1,17 +1,16 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Kanikama.GI.Implements;
+using UnityEngine;
 
 namespace Kanikama.GI.Debugging
 {
-    [ExecuteAlways]
     [AddComponentMenu("Kanikama/GI/ColorProvider")]
     public class ColorProvider : MonoBehaviour
     {
+        [SerializeField] KanikamaSceneDescriptor kanikamaSceneDescriptor;
         [SerializeField] Renderer[] renderers;
         [SerializeField] Texture2DArray[] lightmapArrays;
         [SerializeField] Texture2DArray[] directionalLightmapArrays;
-
-        [SerializeField, ColorUsage(false, true)]
-        Color[] colors;
 
         static readonly int LightmapArray = Shader.PropertyToID("_Udon_LightmapArray");
         static readonly int LightmapIndArray = Shader.PropertyToID("_Udon_LightmapIndArray");
@@ -20,10 +19,12 @@ namespace Kanikama.GI.Debugging
 
         Vector4[] colorsInternal;
         MaterialPropertyBlock block;
+        List<ILightSource> lightSources;
 
 
         void Start()
         {
+            lightSources = kanikamaSceneDescriptor.GetLightSources();
             block = new MaterialPropertyBlock();
             foreach (var r in renderers)
             {
@@ -46,13 +47,13 @@ namespace Kanikama.GI.Debugging
 
         void LateUpdate()
         {
-            if (colorsInternal == null || colorsInternal.Length != colors.Length)
+            if (colorsInternal == null || colorsInternal.Length != lightSources.Count)
             {
-                colorsInternal = new Vector4[colors.Length];
+                colorsInternal = new Vector4[lightSources.Count];
             }
-            for (var i = 0; i < colors.Length; i++)
+            for (var i = 0; i < lightSources.Count; i++)
             {
-                colorsInternal[i] = colors[i];
+                colorsInternal[i] = lightSources[i].GetColorLinear();
             }
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);

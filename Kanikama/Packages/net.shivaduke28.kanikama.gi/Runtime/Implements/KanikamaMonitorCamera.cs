@@ -30,10 +30,9 @@ namespace Kanikama.GI.Implements
             if (camera == null) camera = GetComponent<Camera>();
         }
 
-        public override IList<ILightSource> GetLightSources()
-        {
-            return new List<ILightSource>(monitorGridFibers);
-        }
+        public override List<IBakeable> GetAll() => monitorGridFibers.Cast<IBakeable>().ToList();
+
+        public override IBakeable Get(int index) => monitorGridFibers[index];
 
 
         public void Setup()
@@ -92,7 +91,7 @@ namespace Kanikama.GI.Implements
 
 
         [Serializable]
-        sealed class MonitorGridFiber : ILightSource
+        sealed class MonitorGridFiber : IBakeable
         {
             [SerializeField] LightSource[] lightSources;
 

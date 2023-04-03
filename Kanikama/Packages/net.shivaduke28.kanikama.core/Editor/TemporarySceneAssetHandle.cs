@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Kanikama.Core.Editor
 {
+    // TODO: 名前変えたい
     public sealed class TemporarySceneAssetHandle : IDisposable
     {
         public SceneAssetData SceneAssetData { get; }

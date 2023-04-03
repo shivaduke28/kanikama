@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Kanikama.Core.Editor;
+using Kanikama.GI.Implements;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,13 +32,11 @@ namespace Kanikama.GI.Editor.GUI
 
                 var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
 
-                var context = new BakingPipeline.BakingContext
+                var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
+                if (baking != null)
                 {
-                    BakingConfiguration = config,
-                    SceneAssetData = sceneAssetData,
-                };
-
-                var _ = BakingPipeline.BakeWithoutKanikamaAsync(context, default);
+                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, config, sceneAssetData, default);
+                }
             }
 
             if (GUILayout.Button("Bake Kanikama"))
@@ -48,13 +47,11 @@ namespace Kanikama.GI.Editor.GUI
 
                 var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
 
-                var context = new BakingPipeline.BakingContext
+                var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
+                if (baking != null)
                 {
-                    BakingConfiguration = config,
-                    SceneAssetData = sceneAssetData,
-                };
-
-                var _ = BakingPipeline.BakeAsync(context, default);
+                    var _ = BakingPipelineRunner.RunAsync(baking, config, sceneAssetData, default);
+                }
             }
 
             if (GUILayout.Button("Create Assets"))
