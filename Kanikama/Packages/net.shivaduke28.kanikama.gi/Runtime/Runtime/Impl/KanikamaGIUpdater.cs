@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using Kanikama.GI.Implements;
 using UnityEngine;
 
-namespace Kanikama.GI.Debugging
+namespace Kanikama.GI.Runtime.Impl
 {
-    [AddComponentMenu("Kanikama/GI/ColorProvider")]
-    public class ColorProvider : MonoBehaviour
+    [AddComponentMenu("Kanikama/GI/Runtime/KanikamaGIUpdater")]
+    public class KanikamaGIUpdater : MonoBehaviour
     {
         [SerializeField] KanikamaSceneDescriptor kanikamaSceneDescriptor;
         [SerializeField] Renderer[] renderers;

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Kanikama.GI
+namespace Kanikama.GI.Baking
 {
-    public interface IBakeable
+    public interface IBakeTarget
     {
         void Initialize();
         void TurnOff();
@@ -12,7 +11,7 @@ namespace Kanikama.GI
         void Clear();
     }
 
-    public abstract class Bakeable : MonoBehaviour, IBakeable
+    public abstract class BakeTarget : MonoBehaviour, IBakeTarget
     {
         public abstract void Initialize();
         public abstract void TurnOff();

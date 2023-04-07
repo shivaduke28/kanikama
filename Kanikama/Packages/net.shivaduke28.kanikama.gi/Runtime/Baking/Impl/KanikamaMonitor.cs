@@ -3,15 +3,15 @@ using System.Linq;
 using Kanikama.Core;
 using UnityEngine;
 
-namespace Kanikama.GI.Implements
+namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    [AddComponentMenu("Kanikama/GI/KanikamaMonitor")]
+    [AddComponentMenu("Kanikama/GI/Baking/KanikamaMonitor")]
     [EditorOnly]
-    public sealed class KanikamaMonitor : LightSourceGroup
+    public sealed class KanikamaMonitor : BakeTargetGroup
     {
         [SerializeField] Renderer monitorRenderer;
-        [SerializeField] List<LightSource> lightSources;
+        [SerializeField] List<BakeTarget> bakeTargets;
 
         const float LightOffset = -0.001f;
 
@@ -34,7 +34,7 @@ namespace Kanikama.GI.Implements
             return bounds;
         }
 
-        public void SetupLights(PartitionType partitionType, LightSource prefab)
+        public void SetupLights(PartitionType partitionType, BakeTarget prefab)
         {
             if (monitorRenderer == null) return;
 
@@ -47,13 +47,13 @@ namespace Kanikama.GI.Implements
                 DestroyImmediate(child.gameObject);
             }
 
-            if (lightSources == null)
+            if (bakeTargets == null)
             {
-                lightSources = new List<LightSource>();
+                bakeTargets = new List<BakeTarget>();
             }
             else
             {
-                lightSources.Clear();
+                bakeTargets.Clear();
             }
 
             var bounds = GetUnRotatedBounds();
@@ -83,7 +83,7 @@ namespace Kanikama.GI.Implements
             transform.localScale = localScale;
         }
 
-        void SetupUniformGrid(LightSource prefab, Bounds bounds, int count)
+        void SetupUniformGrid(BakeTarget prefab, Bounds bounds, int count)
         {
             var size = bounds.size;
             var sizeX = size.x / count;
@@ -102,12 +102,12 @@ namespace Kanikama.GI.Implements
                     var t = item.transform;
                     t.localScale = new Vector3(sizeX, sizeY, 1);
                     t.localPosition = anchor + new Vector3(sizeX * (0.5f + (i % count)), sizeY * (0.5f + (j % count)), LightOffset);
-                    lightSources.Add(item);
+                    bakeTargets.Add(item);
                 }
             }
         }
 
-        void SetupExpandInterior(LightSource prefab, Bounds bounds, int countX, int countY, bool expandX = true, bool expandY = true)
+        void SetupExpandInterior(BakeTarget prefab, Bounds bounds, int countX, int countY, bool expandX = true, bool expandY = true)
         {
             var size = bounds.size;
 
@@ -131,7 +131,7 @@ namespace Kanikama.GI.Implements
                     var t = item.transform;
                     t.localPosition = anchor + position + new Vector3(areaX, areaY, 0) * 0.5f + new Vector3(0, 0, LightOffset);
                     t.localScale = new Vector3(areaX, areaY, 1);
-                    lightSources.Add(item);
+                    bakeTargets.Add(item);
                     position += new Vector3(areaX, 0, 0);
                 }
 
@@ -139,10 +139,10 @@ namespace Kanikama.GI.Implements
             }
         }
 
-        public List<LightSource> GetAllLightSources() => lightSources;
-        public LightSource GetLightSource(int index) => lightSources[index];
-        public override List<IBakeable> GetAll() => lightSources.Cast<IBakeable>().ToList();
-        public override IBakeable Get(int index) => lightSources[index];
+        public override List<IBakeTarget> GetAll() => bakeTargets.Cast<IBakeTarget>().ToList();
+        public override IBakeTarget Get(int index) => bakeTargets[index];
+        public List<BakeTarget> GetAllBakeTargets() => bakeTargets.ToList();
+        public BakeTarget GetBakeTarget(int index) => bakeTargets[index];
 
 
         public enum PartitionType
