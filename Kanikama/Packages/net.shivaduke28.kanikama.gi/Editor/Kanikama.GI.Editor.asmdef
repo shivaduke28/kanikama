@@ -3,7 +3,7 @@
     "references": [
         "Kanikama.Core",
         "Kanikama.Core.Editor",
-        "Kanikama.GI"
+        "Kanikama.GI.Baking"
     ],
     "includePlatforms": [
         "Editor"

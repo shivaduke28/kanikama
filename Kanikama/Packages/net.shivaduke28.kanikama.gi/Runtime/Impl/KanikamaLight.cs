@@ -1,11 +1,9 @@
-﻿using Kanikama.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Light))]
     [AddComponentMenu("Kanikama/GI/Runtime/KanikamaLight")]
-    [EditorOnly]
     public sealed class KanikamaLight : LightSource
     {
         [SerializeField] new Light light;

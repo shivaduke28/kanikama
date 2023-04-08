@@ -1,11 +1,9 @@
-﻿using Kanikama.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Renderer))]
     [AddComponentMenu("Kanikama/GI/Runtime/KanikamaEmissiveMaterial")]
-    [EditorOnly]
     public sealed class KanikamaEmissiveMaterial : LightSource
     {
         [SerializeField] new Renderer renderer;
