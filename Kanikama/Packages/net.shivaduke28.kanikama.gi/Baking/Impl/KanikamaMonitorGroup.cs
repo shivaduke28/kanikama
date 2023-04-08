@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Baking.Impl
 {
-    [AddComponentMenu("Kanikama/GI/Baking/KanikamaMonitorGroup")]
+    [AddComponentMenu("Kanikama/GI/Baking.KanikamaMonitorGroup")]
     [EditorOnly]
     public sealed class KanikamaMonitorGroup : BakeTargetGroup
     {

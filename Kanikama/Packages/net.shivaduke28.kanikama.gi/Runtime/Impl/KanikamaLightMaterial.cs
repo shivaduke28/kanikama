@@ -3,8 +3,8 @@
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    [AddComponentMenu("Kanikama/GI/Runtime/KanikamaEmissiveMaterial")]
-    public sealed class KanikamaEmissiveMaterial : LightSource
+    [AddComponentMenu("Kanikama/GI/Runtime.KanikamaLightMaterial")]
+    public sealed class KanikamaLightMaterial : LightSource
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;

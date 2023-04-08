@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("Kanikama/GI/Runtime/KanikamaMonitorCamera")]
+    [AddComponentMenu("Kanikama/GI/Runtime.KanikamaMonitorCamera")]
     public sealed class KanikamaMonitorCamera : LightSourceGroup
     {
         [SerializeField] CameraSettings cameraSettings;

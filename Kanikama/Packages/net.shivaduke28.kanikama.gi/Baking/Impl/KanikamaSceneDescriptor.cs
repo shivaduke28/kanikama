@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Core;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking
+namespace Kanikama.GI.Baking.Impl
 {
-    public sealed class BakingDescriptor : MonoBehaviour, IBakingDescriptor
+    [AddComponentMenu("Kanikama/GI/Baking.KanikamaSceneDescriptor")]
+    [EditorOnly]
+    public sealed class KanikamaSceneDescriptor : MonoBehaviour, IBakingDescriptor
     {
         [SerializeField] List<BakeTarget> bakeTargets;
         [SerializeField] List<BakeTargetGroup> bakeTargetGroups;
