@@ -4,10 +4,11 @@ namespace Kanikama.GI.Runtime
 {
     public interface ILightSourceGroup
     {
-        // TODO: implement
+        Color[] GetColors();
     }
 
     public abstract class LightSourceGroup : MonoBehaviour, ILightSourceGroup
     {
+        public abstract Color[] GetColors();
     }
 }

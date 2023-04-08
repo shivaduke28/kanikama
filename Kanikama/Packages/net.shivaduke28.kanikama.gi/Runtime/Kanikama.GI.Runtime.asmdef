@@ -1,13 +1,9 @@
 {
-    "name": "Kanikama.GI.Editor",
+    "name": "Kanikama.GI.Runtime",
     "references": [
-        "Kanikama.Core",
-        "Kanikama.Core.Editor",
-        "Kanikama.GI.Baking"
+        "Kanikama.Core"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
