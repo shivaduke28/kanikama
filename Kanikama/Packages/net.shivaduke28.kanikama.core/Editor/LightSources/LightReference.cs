@@ -9,11 +9,10 @@ namespace Kanikama.Core.Editor.LightSources
 {
     public sealed class SceneGIContext
     {
-        // TODO: GlobalObjectIdに乗り換えたい
         public List<LightReference> LightReferences;
         public List<EmissiveRendererReference> EmissiveRendererReferences;
-        public List<ComponentReference<LightProbeGroup>> LightProbeGroups;
-        public List<ComponentReference<ReflectionProbe>> ReflectionProbes;
+        public List<ObjectHandle<LightProbeGroup>> LightProbeGroups;
+        public List<ObjectHandle<ReflectionProbe>> ReflectionProbes;
         public AmbientLight AmbientLight;
 
         public void TurnOff()
@@ -50,12 +49,12 @@ namespace Kanikama.Core.Editor.LightSources
 
     public sealed class LightReference
     {
-        public ComponentReference<Light> Reference { get; }
+        readonly ObjectHandle<Light> handle;
         readonly float intensity;
 
         public LightReference(Light light)
         {
-            Reference = new ComponentReference<Light>(light);
+            handle = new ObjectHandle<Light>(light);
             intensity = light.intensity;
         }
 
@@ -66,24 +65,24 @@ namespace Kanikama.Core.Editor.LightSources
 
         public void TurnOff()
         {
-            Reference.Value.intensity = 0;
+            handle.Value.intensity = 0;
         }
 
         public void Revert()
         {
-            Reference.Value.intensity = intensity;
+            handle.Value.intensity = intensity;
         }
     }
 
     public sealed class EmissiveRendererReference
     {
-        public ComponentReference<Renderer> Reference { get; }
+        readonly ObjectHandle<Renderer> handle;
         readonly Material[] sharedMaterials;
         readonly Material[] tempMaterials;
 
         public EmissiveRendererReference(Renderer renderer)
         {
-            Reference = new ComponentReference<Renderer>(renderer);
+            handle = new ObjectHandle<Renderer>(renderer);
             sharedMaterials = renderer.sharedMaterials;
             var temp = sharedMaterials.Select(Object.Instantiate).ToArray();
             foreach (var mat in temp)
@@ -95,12 +94,12 @@ namespace Kanikama.Core.Editor.LightSources
 
         public void TurnOff()
         {
-            Reference.Value.sharedMaterials = tempMaterials;
+            handle.Value.sharedMaterials = tempMaterials;
         }
 
         public void Revert()
         {
-            Reference.Value.sharedMaterials = sharedMaterials;
+            handle.Value.sharedMaterials = sharedMaterials;
             foreach (var mat in tempMaterials)
             {
                 if (mat != null) Object.DestroyImmediate(mat);
