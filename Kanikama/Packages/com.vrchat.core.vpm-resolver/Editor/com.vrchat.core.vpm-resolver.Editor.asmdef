@@ -1,6 +1,5 @@
 {
     "name": "com.vrchat.core.vpm-resolver.Editor",
-    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
@@ -10,9 +9,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [
-        "UNITY_EDITOR_WIN"
-    ],
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }
