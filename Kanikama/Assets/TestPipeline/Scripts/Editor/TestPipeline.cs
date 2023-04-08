@@ -35,7 +35,7 @@ namespace Test.Editor
             {
                 // create a reference before change your scene
                 var light = myLightReference.Light;
-                var lightReference = new ComponentReference<Light>(light);
+                var lightReference = new ObjectHandle<Light>(light);
 
                 var copiedSceneAssetData = copiedSceneHandler.SceneAssetData;
 

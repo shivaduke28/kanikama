@@ -70,10 +70,10 @@ namespace Kanikama.Core.Editor
                     .Select(l => new EmissiveRendererReference(l))
                     .ToList(),
                 LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
-                    .Select(lg => new ComponentReference<LightProbeGroup>(lg))
+                    .Select(lg => new ObjectHandle<LightProbeGroup>(lg))
                     .ToList(),
                 ReflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
-                    .Select(rp => new ComponentReference<ReflectionProbe>(rp))
+                    .Select(rp => new ObjectHandle<ReflectionProbe>(rp))
                     .ToList(),
             };
             return context;
