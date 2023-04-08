@@ -20,7 +20,7 @@ namespace Kanikama.GI.Editor
         {
             public BakingConfiguration BakingConfiguration; // not used...
             public SceneAssetData SceneAssetData;
-            public List<IBakeableHandle> BakeableHandles;
+            public List<IBakeTargetHandle> BakeableHandles;
         }
 
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)

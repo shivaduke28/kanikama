@@ -1,6 +1,10 @@
 {
-    "name": "com.vrchat.core.vpm-resolver.Editor",
-    "references": [],
+    "name": "Kanikama.GI.Baking.Editor",
+    "references": [
+        "Kanikama.Core",
+        "Kanikama.Core.Editor",
+        "Kanikama.GI.Baking"
+    ],
     "includePlatforms": [
         "Editor"
     ],

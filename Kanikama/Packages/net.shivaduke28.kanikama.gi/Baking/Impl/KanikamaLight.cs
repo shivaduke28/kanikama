@@ -1,13 +1,12 @@
 ﻿using Kanikama.Core;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Implements
+namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
-    [AddComponentMenu("Kanikama/GI/KanikamaLight")]
+    [AddComponentMenu("Kanikama/GI/Baking.KanikamaLight")]
     [EditorOnly]
-    public sealed class KanikamaLight : LightSource
+    public sealed class KanikamaLight : BakeTarget
     {
         [SerializeField] new Light light;
         [SerializeField, HideInInspector] Color color;
@@ -41,11 +40,6 @@ namespace Kanikama.GI.Implements
         {
             light.color = color;
             light.intensity = intensity;
-        }
-
-        public override Color GetColorLinear()
-        {
-            return light.color.linear * light.intensity;
         }
     }
 }

@@ -1,9 +1,9 @@
 {
-    "name": "Kanikama.GI.Editor",
+    "name": "Kanikama.GI.Runtime.Editor",
     "references": [
-        "Kanikama.Core",
-        "Kanikama.Core.Editor",
-        "Kanikama.GI"
+        "Kanikama.GI.Runtime",
+        "Kanikama.GI.Baking",
+        "Kanikama.GI.Baking.Editor"
     ],
     "includePlatforms": [
         "Editor"

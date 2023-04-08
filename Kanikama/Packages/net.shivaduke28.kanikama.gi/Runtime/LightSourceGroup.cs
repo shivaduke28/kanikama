@@ -1,6 +1,14 @@
-﻿namespace Kanikama.GI
+﻿using UnityEngine;
+
+namespace Kanikama.GI.Runtime
 {
-    public abstract class LightSourceGroup : BakeableGroup
+    public interface ILightSourceGroup
     {
+        Color[] GetColors();
+    }
+
+    public abstract class LightSourceGroup : MonoBehaviour, ILightSourceGroup
+    {
+        public abstract Color[] GetColors();
     }
 }

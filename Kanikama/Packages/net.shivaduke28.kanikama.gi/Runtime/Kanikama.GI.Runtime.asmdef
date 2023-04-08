@@ -1,9 +1,9 @@
 {
-    "name": "com.vrchat.core.vpm-resolver.Editor",
-    "references": [],
-    "includePlatforms": [
-        "Editor"
+    "name": "Kanikama.GI.Runtime",
+    "references": [
+        "Kanikama.Core"
     ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
