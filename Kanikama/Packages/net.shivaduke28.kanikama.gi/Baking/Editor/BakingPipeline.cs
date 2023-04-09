@@ -162,7 +162,7 @@ namespace Kanikama.GI.Editor
 
             try
             {
-                var lightmapper = new Lightmapper();
+                var lightmapper = context.Lightmapper;
                 lightmapper.ClearCache();
                 await lightmapper.BakeAsync(cancellationToken);
             }

@@ -11,8 +11,16 @@ namespace Kanikama.Core.Editor
         Task BakeAsync(CancellationToken cancellationToken);
     }
 
+    [InitializeOnLoad]
     public sealed class Lightmapper : ILightmapper
     {
+        static ILightmapper Create() => new Lightmapper();
+
+        static Lightmapper()
+        {
+            LightmapperFactory.Register("Unity", Create, 0);
+        }
+
         public void ClearCache()
         {
             Lightmapping.ClearDiskCache();

@@ -1,16 +1,25 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
+using UnityEditor;
 
 namespace Kanikama.GI.Bakery.Editor
 {
+    [InitializeOnLoad]
     public sealed class BakeryLightmapper : ILightmapper
     {
+        static ILightmapper Create() => new BakeryLightmapper();
+
+        static BakeryLightmapper()
+        {
+            LightmapperFactory.Register("Bakery", Create, 1);
+        }
+
         readonly ftRenderLightmap bakery;
 
         public BakeryLightmapper()
         {
-            bakery = ftRenderLightmap.instance;
+            bakery = ftRenderLightmap.instance != null ? ftRenderLightmap.instance : EditorWindow.GetWindow<ftRenderLightmap>();
             bakery.LoadRenderSettings();
         }
 
