@@ -10,8 +10,8 @@ namespace Kanikama.GI.Bakery.Baking
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
-        [SerializeField, HideInInspector] Material materialInstance;
-        [SerializeField, HideInInspector] Material material;
+        [SerializeField] Material materialInstance;
+        [SerializeField] Material material;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] float intensity;
 
