@@ -1,29 +1,23 @@
 ﻿using Kanikama.GI.Baking;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Bakery.Baking
+namespace Kanikama.GI.Bakery.Baking.Impl
 {
-    [RequireComponent(typeof(Light), typeof(BakeryPointLight))]
-    [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakeryPointLight")]
-    public sealed class KanikamaBakeryPointLight : BakeTarget
+    [RequireComponent(typeof(Light), typeof(BakerySkyLight))]
+    [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakerySkyLight")]
+    public sealed class KanikamaBakerySkyLight : BakeTarget
     {
         [SerializeField] new Light light;
-        [SerializeField] BakeryPointLight bakeryLight;
+        [SerializeField] BakerySkyLight bakeryLight;
+
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] bool lightEnabled;
 
         void OnValidate()
         {
-            if (light == null)
-            {
-                light = GetComponent<Light>();
-            }
-            if (bakeryLight == null)
-            {
-                bakeryLight = GetComponent<BakeryPointLight>();
-            }
+            if (light == null) light = GetComponent<Light>();
+            if (bakeryLight == null) bakeryLight = GetComponent<BakerySkyLight>();
         }
 
         public override void Initialize()
@@ -51,7 +45,7 @@ namespace Kanikama.GI.Bakery.Baking
 
         public override bool Includes(Object obj)
         {
-            return obj is BakeryPointLight l && l == bakeryLight;
+            return obj is BakerySkyLight l && l == bakeryLight;
         }
 
         public override void Clear()

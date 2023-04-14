@@ -1,22 +1,29 @@
 ﻿using Kanikama.GI.Baking;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Bakery.Baking
+namespace Kanikama.GI.Bakery.Baking.Impl
 {
-    [RequireComponent(typeof(Light), typeof(BakeryDirectLight))]
-    [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakeryDirectLight")]
-    public sealed class KanikamaBakeryDirectLight : BakeTarget
+    [RequireComponent(typeof(Light), typeof(BakeryPointLight))]
+    [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakeryPointLight")]
+    public sealed class KanikamaBakeryPointLight : BakeTarget
     {
-        [SerializeField] Light light;
-        [SerializeField] BakeryDirectLight bakeryLight;
+        [SerializeField] new Light light;
+        [SerializeField] BakeryPointLight bakeryLight;
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] bool lightEnabled;
 
         void OnValidate()
         {
-            if (light != null) light = GetComponent<Light>();
-            if (bakeryLight != null) bakeryLight = GetComponent<BakeryDirectLight>();
+            if (light == null)
+            {
+                light = GetComponent<Light>();
+            }
+            if (bakeryLight == null)
+            {
+                bakeryLight = GetComponent<BakeryPointLight>();
+            }
         }
 
         public override void Initialize()
@@ -44,7 +51,7 @@ namespace Kanikama.GI.Bakery.Baking
 
         public override bool Includes(Object obj)
         {
-            return obj is BakeryDirectLight l && l == bakeryLight;
+            return obj is BakeryPointLight l && l == bakeryLight;
         }
 
         public override void Clear()

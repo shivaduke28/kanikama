@@ -1,7 +1,7 @@
 ﻿using Kanikama.GI.Baking;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking
+namespace Kanikama.GI.Bakery.Baking.Impl
 {
     [RequireComponent(typeof(Light), typeof(BakeryLightMesh))]
     [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakeryAreaLight")]
