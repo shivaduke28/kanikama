@@ -35,5 +35,14 @@ namespace Kanikama.GI.Bakery.Editor
 
             var _ = BakeryBakingPipeline.BakeAsync(ctx, default);
         }
+
+        [MenuItem("Kanikama/Create with Bakery")]
+        public static void CreateAssets()
+        {
+            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
+            var asset = BakeryBakingSettingAsset.Find(sceneAssetData.Asset);
+            var lightmapper = new BakeryLightmapper();
+            BakeryBakingPipeline.CreateAssets(asset, sceneAssetData.LightingAssetDirectoryPath + "_kanikama_bakery", asset.TextureResizeType);
+        }
     }
 }

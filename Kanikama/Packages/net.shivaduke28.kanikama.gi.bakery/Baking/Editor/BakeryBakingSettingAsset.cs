@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
@@ -23,6 +24,8 @@ namespace Kanikama.GI.Bakery.Editor
         }
 
         public SceneAsset SceneAsset => sceneAsset;
+        public List<BakeryLightmap> GetBakeryLightmaps() => lightmapsPairs.SelectMany(pair => pair.Lightmaps).ToList();
+        public TextureResizeType TextureResizeType => textureResizeType;
 
         public void AddOrUpdate(string key, List<BakeryLightmap> lightmaps)
         {

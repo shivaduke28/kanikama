@@ -14,7 +14,7 @@ namespace Kanikama.Core.Editor.Textures
         // - lightmap: false
         // - directional lightmap: true
         // - shadow mask: ?
-        public static Texture2DArray CreateTexture2DArray(List<Texture2D> textures, bool isLinear)
+        public static Texture2DArray CreateTexture2DArray(List<Texture2D> textures, bool isLinear, bool mipChain)
         {
             var count = textures.Count;
             if (count == 0)
@@ -23,7 +23,7 @@ namespace Kanikama.Core.Editor.Textures
             }
 
             var map = textures[0];
-            var texArray = new Texture2DArray(map.width, map.height, count, map.format, true, isLinear)
+            var texArray = new Texture2DArray(map.width, map.height, count, map.format, mipChain, isLinear)
             {
                 anisoLevel = map.anisoLevel,
                 wrapMode = map.wrapMode,
