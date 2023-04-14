@@ -8,14 +8,17 @@ namespace Kanikama.GI.Bakery.Editor
     public sealed class BakeryLightmapper
     {
         readonly ftRenderLightmap bakery;
+        readonly BakeryProjectSettings projectSetting;
 
         public BakeryLightmapper()
         {
             bakery = ftRenderLightmap.instance != null ? ftRenderLightmap.instance : EditorWindow.GetWindow<ftRenderLightmap>();
             bakery.LoadRenderSettings();
+            projectSetting = ftLightmaps.GetProjectSettings();
         }
 
         public string OutputAssetDirPath => Path.Combine("Assets", ftRenderLightmap.outputPath);
+        public bool UseMipmap => projectSetting.mipmapLightmaps;
 
         public async Task BakeAsync(CancellationToken cancellationToken)
         {
