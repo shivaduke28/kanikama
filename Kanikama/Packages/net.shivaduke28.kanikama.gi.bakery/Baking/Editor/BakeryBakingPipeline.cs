@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,28 +9,34 @@ using Kanikama.Core.Editor;
 using Kanikama.GI.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Bakery.Editor
 {
-    public sealed class BakingPipeline
+    public static class BakeryBakingPipeline
     {
         public sealed class Context
         {
             public SceneAssetData SceneAssetData { get; }
             public List<IBakeTargetHandle> BakeTargetHandles { get; }
             public BakeryLightmapper Lightmapper { get; }
+            public BakeryBakingSettingAsset SettingAsset { get; }
 
-            public Context(SceneAssetData sceneAssetData, List<IBakeTargetHandle> bakeTargetHandles, BakeryLightmapper lightmapper)
+            public Context(SceneAssetData sceneAssetData,
+                List<IBakeTargetHandle> bakeTargetHandles,
+                BakeryLightmapper lightmapper,
+                BakeryBakingSettingAsset settingAsset)
             {
                 SceneAssetData = sceneAssetData;
                 BakeTargetHandles = bakeTargetHandles;
                 Lightmapper = lightmapper;
+                SettingAsset = settingAsset;
             }
         }
 
-        public async Task BakeAsync(Context context, CancellationToken cancellationToken)
+        public static async Task BakeAsync(Context context, CancellationToken cancellationToken)
         {
             using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
             {
@@ -58,12 +65,14 @@ namespace Kanikama.GI.Bakery.Editor
                     var sceneGIContext = BakerySceneGIContext.GetContext(Filter);
                     sceneGIContext.TurnOff();
 
-                    var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
+                    // TODO: setting assetをパスを共通化...
+                    var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama_bakery";
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
                     // 元のシーンに対して取得する（Contextに入れた方がよさそう)
                     var assets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
                     var lightmapper = context.Lightmapper;
+                    var outputDirPath = lightmapper.OutputAssetDirPath;
 
                     // TODO: Lightmapperのパラメータ指定があるはず
                     foreach (var handle in bakeTargetHandles)
@@ -72,11 +81,8 @@ namespace Kanikama.GI.Bakery.Editor
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
-                        // TODO: ここがBakery使用になるはず
-                        var baked = KanikamaBakeryUtility.GetLightmaps(lightmapper.OutputDirPath, copiedSceneHandle.SceneAssetData.Asset.name);
-                        var copied = new List<BakeryLightmap>();
-                        Copy(baked, copied, handle.Id);
-
+                        var baked = KanikamaBakeryUtility.GetLightmaps(outputDirPath, copiedSceneHandle.SceneAssetData.Asset.name);
+                        Copy(baked, out var copied, dstDir, handle.Id);
                         assets.AddOrUpdate(handle.Id, copied);
                     }
 
@@ -91,12 +97,32 @@ namespace Kanikama.GI.Bakery.Editor
                 {
                     KanikamaDebug.LogException(e);
                 }
+                finally
+                {
+                    EditorSceneManager.OpenScene(context.SceneAssetData.Path);
+                }
             }
+        }
 
-            void Copy(List<BakeryLightmap> src, List<BakeryLightmap> dst, string key)
+        static void Copy(List<BakeryLightmap> src, out List<BakeryLightmap> dst, string dstDir, string id)
+        {
+            dst = new List<BakeryLightmap>(src.Count);
+            foreach (var lightmap in src)
             {
-                // TODO: 実装
+                var dstPath = Path.Combine(dstDir, CopiedLightmapName(lightmap, id));
+                AssetDatabase.CopyAsset(lightmap.Path, dstPath);
+                var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
+                var copied = new BakeryLightmap(lightmap.Type, texture, dstPath, lightmap.Index);
+                dst.Add(copied);
             }
+        }
+
+        static string CopiedLightmapName(BakeryLightmap bakedLightmap, string id)
+        {
+            var path = bakedLightmap.Path;
+            var fileName = Path.GetFileName(path);
+            var ext = Path.GetExtension(fileName);
+            return $"{bakedLightmap.Type.ToString()}-{bakedLightmap.Index}-{id}{ext}";
         }
     }
 }

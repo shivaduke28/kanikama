@@ -143,7 +143,7 @@ namespace Kanikama.Core.Editor
                 return false;
             }
 
-            // "Lightmap_".Length = 9
+            // "Lightmap-".Length = 9
             var str = fileName.Substring(9);
 
             // length should be 3
