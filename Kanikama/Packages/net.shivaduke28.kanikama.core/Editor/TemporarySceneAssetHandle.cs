@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using UnityEditor;
-using UnityEngine;
 
 namespace Kanikama.Core.Editor
 {

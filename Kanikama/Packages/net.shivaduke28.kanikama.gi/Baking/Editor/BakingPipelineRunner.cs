@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
@@ -9,12 +8,10 @@ namespace Kanikama.GI.Editor
 {
     public class BakingPipelineRunner
     {
-        public static async Task RunAsync(IBakingDescriptor bakingDescriptor, BakingConfiguration bakingConfiguration, SceneAssetData sceneAssetData,
-            CancellationToken cancellationToken)
+        public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
-            // GetBakeables() が null を返さないためには、アクティブシーンのObjectを参照している必要がありそう
-            var bakeables = bakingDescriptor.GetBakeTargets();
-            var handles = bakeables.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            var bakeTargets = bakingDescriptor.GetBakeTargets();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
             var groups = bakingDescriptor.GetBakeTargetGroups();
             foreach (var group in groups)
             {
@@ -24,29 +21,18 @@ namespace Kanikama.GI.Editor
                     handles.Add(new BakeTargetGroupElementHandle<BakeTargetGroup>(group, i));
                 }
             }
-            var context = new BakingPipeline.BakingContext
-            {
-                BakingConfiguration = bakingConfiguration,
-                BakeableHandles = handles,
-                SceneAssetData = sceneAssetData,
-            };
+            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
 
             await BakingPipeline.BakeAsync(context, cancellationToken);
         }
 
-        public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor, BakingConfiguration bakingConfiguration,
+        public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor,
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
-            // GetBakeables() が null を返さないためには、アクティブシーンのObjectを参照している必要がありそう
-            var bakeables = bakingDescriptor.GetBakeTargets();
-            var handles = bakeables.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
-            var context = new BakingPipeline.BakingContext
-            {
-                BakingConfiguration = bakingConfiguration,
-                BakeableHandles = handles,
-                SceneAssetData = sceneAssetData,
-            };
+            var bakeTargets = bakingDescriptor.GetBakeTargets();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
 
             await BakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
         }

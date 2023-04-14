@@ -5,7 +5,7 @@ using UnityEditor;
 
 namespace Kanikama.Core.Editor
 {
-    public sealed class Lightmapper
+    public sealed class UnityLightmapper
     {
         public void ClearCache()
         {

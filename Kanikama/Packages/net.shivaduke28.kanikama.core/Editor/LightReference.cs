@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Core.Editor.LightSources
+namespace Kanikama.Core.Editor
 {
     public sealed class SceneGIContext
     {
@@ -44,6 +45,31 @@ namespace Kanikama.Core.Editor.LightSources
             {
                 reference.Value.enabled = false;
             }
+        }
+
+        public static SceneGIContext GetSceneGIContext(Func<Object, bool> filter = null)
+        {
+            var context = new SceneGIContext
+            {
+                AmbientLight = new AmbientLight(),
+                LightReferences = Object.FindObjectsOfType<Light>()
+                    .Where(LightReference.IsContributeGI)
+                    .Where(x => filter?.Invoke(x) ?? true)
+                    .Select(l => new LightReference(l))
+                    .ToList(),
+                EmissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
+                    .Where(EmissiveRendererReference.IsContributeGI)
+                    .Where(x => filter?.Invoke(x) ?? true)
+                    .Select(l => new EmissiveRendererReference(l))
+                    .ToList(),
+                LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
+                    .Select(lg => new ObjectHandle<LightProbeGroup>(lg))
+                    .ToList(),
+                ReflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
+                    .Select(rp => new ObjectHandle<ReflectionProbe>(rp))
+                    .ToList(),
+            };
+            return context;
         }
     }
 

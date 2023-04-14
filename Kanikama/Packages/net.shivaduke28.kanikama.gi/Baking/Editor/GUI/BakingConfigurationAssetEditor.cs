@@ -11,7 +11,6 @@ namespace Kanikama.GI.Editor.GUI
     {
         BakingConfigurationAsset asset;
 
-
         void OnEnable()
         {
             asset = (BakingConfigurationAsset) target;
@@ -22,7 +21,6 @@ namespace Kanikama.GI.Editor.GUI
             base.OnInspectorGUI();
 
             EditorGUILayout.Space();
-
 
             if (GUILayout.Button("Bake without Kanikama"))
             {
@@ -35,7 +33,8 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, config, sceneAssetData, default);
+                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, default);
+                    return;
                 }
             }
 
@@ -50,7 +49,7 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunAsync(baking, config, sceneAssetData, default);
+                    var _ = BakingPipelineRunner.RunAsync(baking, sceneAssetData, default);
                 }
             }
 

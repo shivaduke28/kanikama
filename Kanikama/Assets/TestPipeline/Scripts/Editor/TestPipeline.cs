@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
@@ -50,7 +48,7 @@ namespace Test.Editor
                 light.lightmapBakeType = LightmapBakeType.Baked;
 
                 // turn off other light sources
-                var sceneLightingCollection = KanikamaSceneUtility.GetSceneGIContext();
+                var sceneLightingCollection = SceneGIContext.GetSceneGIContext();
                 sceneLightingCollection.TurnOff();
                 sceneLightingCollection.DisableLightProbes();
                 sceneLightingCollection.DisableReflectionProbes();
@@ -68,7 +66,7 @@ namespace Test.Editor
                     Light = light,
                     Original = sceneAssetData,
                     Copied = copiedSceneAssetData,
-                    Lightmapper = new Lightmapper(),
+                    UnityLightmapper = new UnityLightmapper(),
                     DstDir = dstDir,
                     BakedAssetDataBase = bakedAssetDataBase,
                 };
@@ -111,7 +109,7 @@ namespace Test.Editor
         class Context
         {
             public Light Light;
-            public Lightmapper Lightmapper;
+            public UnityLightmapper UnityLightmapper;
             public SceneAssetData Original;
             public SceneAssetData Copied;
             public string DstDir;
@@ -123,7 +121,7 @@ namespace Test.Editor
             context.Light.lightmapBakeType = LightmapBakeType.Baked;
             context.Light.bounceIntensity = 1;
             Lightmapping.ClearDiskCache();
-            await context.Lightmapper.BakeAsync(default);
+            await context.UnityLightmapper.BakeAsync(default);
             var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
 
@@ -152,7 +150,7 @@ namespace Test.Editor
             context.Light.bounceIntensity = 0;
 
             Lightmapping.ClearDiskCache();
-            await context.Lightmapper.BakeAsync(default);
+            await context.UnityLightmapper.BakeAsync(default);
             var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)
@@ -179,7 +177,7 @@ namespace Test.Editor
             context.Light.bounceIntensity = 1;
 
             Lightmapping.ClearDiskCache();
-            await context.Lightmapper.BakeAsync(default);
+            await context.UnityLightmapper.BakeAsync(default);
             var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
 
             string RenameFunc(BakedLightmap bakedLightmap)

@@ -10,21 +10,25 @@ namespace Kanikama.GI.Editor
     {
         [SerializeField] SceneAsset sceneAsset;
         [SerializeField] TextureResizeType textureResizeType;
+        [SerializeField] string lightmapperKey;
 
         public SceneAsset SceneAsset => sceneAsset;
         public TextureResizeType TextureResizeType => textureResizeType;
+        public string LightmapperKey => lightmapperKey;
 
 
         public BakingConfiguration(SceneAsset sceneAsset,
-            TextureResizeType textureResizeType)
+            TextureResizeType textureResizeType,
+            string lightmapperKey)
         {
             this.sceneAsset = sceneAsset;
             this.textureResizeType = textureResizeType;
+            this.lightmapperKey = lightmapperKey;
         }
 
         public BakingConfiguration Clone()
         {
-            return new BakingConfiguration(sceneAsset, textureResizeType);
+            return new BakingConfiguration(sceneAsset, textureResizeType, lightmapperKey);
         }
     }
 }

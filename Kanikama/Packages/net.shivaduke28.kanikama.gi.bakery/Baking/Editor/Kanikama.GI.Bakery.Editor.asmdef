@@ -1,0 +1,27 @@
+{
+    "name": "Kanikama.GI.Bakery.Editor",
+    "references": [
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly",
+        "Kanikama.Core",
+        "Kanikama.Core.Editor",
+        "Kanikama.GI.Runtime",
+        "Kanikama.GI.Runtime.Editor",
+        "Kanikama.GI.Baking",
+        "Kanikama.GI.Baking.Editor",
+        "Kanikama.GI.Bakery"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
