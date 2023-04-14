@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Kanikama.Core;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.LightSources;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEditor.SceneManagement;

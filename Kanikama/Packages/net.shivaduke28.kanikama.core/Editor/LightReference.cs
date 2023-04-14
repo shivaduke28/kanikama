@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Core.Editor.LightSources
+namespace Kanikama.Core.Editor
 {
     public sealed class SceneGIContext
     {
