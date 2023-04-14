@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 
@@ -14,9 +15,7 @@ namespace Kanikama.GI.Bakery.Editor
             bakery.LoadRenderSettings();
         }
 
-        // TODO: Assetsが入っているかどうか見る...
-        // ~AssetPathならAssetを含む、含まない、みたいな命名ルールにしたい...
-        public string OutputDirPath => ftRenderLightmap.outputPath;
+        public string OutputAssetDirPath => Path.Combine("Assets", ftRenderLightmap.outputPath);
 
         public async Task BakeAsync(CancellationToken cancellationToken)
         {

@@ -13,7 +13,7 @@ namespace Kanikama.GI.Bakery.Editor
     {
         [SerializeField] SceneAsset sceneAsset;
         [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
-        [SerializeField] List<KeyLightmapsPair> lightmapsPairs;
+        [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
 
         [Serializable]
         sealed class KeyLightmapsPair
@@ -68,9 +68,10 @@ namespace Kanikama.GI.Bakery.Editor
             var setting = Find(sceneAsset);
             if (setting != null) return setting;
             setting = CreateInstance<BakeryBakingSettingAsset>();
+            setting.sceneAsset = sceneAsset;
             var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
 
-            var dirPath = sceneAssetData + "_kanikama_bakery"; // todo: 良い感じに...
+            var dirPath = sceneAssetData.LightingAssetDirectoryPath + "_kanikama_bakery"; // todo: 良い感じに...
             KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
             AssetDatabase.CreateAsset(setting, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
