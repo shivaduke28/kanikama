@@ -34,12 +34,12 @@ namespace Kanikama.GI.Baking.Impl
 
         public override void TurnOff()
         {
-            MaterialUtility.RemoveBakedEmissiveFlag(instance);
+            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(instance);
         }
 
         public override void TurnOn()
         {
-            MaterialUtility.AddBakedEmissiveFlag(instance);
+            KanikamaRuntimeUtility.AddBakedEmissiveFlag(instance);
         }
 
         public override bool Includes(Object obj) => obj == renderer;

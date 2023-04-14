@@ -113,7 +113,7 @@ namespace Kanikama.Core.Editor
             var temp = sharedMaterials.Select(Object.Instantiate).ToArray();
             foreach (var mat in temp)
             {
-                MaterialUtility.RemoveBakedEmissiveFlag(mat);
+                KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(mat);
             }
             tempMaterials = temp.ToArray();
         }
@@ -135,8 +135,7 @@ namespace Kanikama.Core.Editor
         public static bool IsContributeGI(Renderer renderer)
         {
             if (!renderer.enabled) return false;
-            var flags = GameObjectUtility.GetStaticEditorFlags(renderer.gameObject);
-            return flags.HasFlag(StaticEditorFlags.ContributeGI) && renderer.sharedMaterials.Any(MaterialUtility.IsContributeGI);
+            return KanikamaEditorUtility.IsStaticContributeGI(renderer.gameObject) && renderer.sharedMaterials.Any(KanikamaRuntimeUtility.IsContributeGI);
         }
     }
 

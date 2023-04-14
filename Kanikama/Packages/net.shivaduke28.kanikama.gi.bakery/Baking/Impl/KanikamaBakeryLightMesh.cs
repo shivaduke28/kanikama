@@ -27,12 +27,11 @@ namespace Kanikama.GI.Bakery.Baking.Impl
             intensity = bakeryLightMesh.intensity;
             if (materialInstance != null)
             {
-                // TODO: DestroySafeみたいなUtility作る
-                DestroyImmediate(materialInstance);
+                KanikamaRuntimeUtility.DestroySafe(materialInstance);
             }
             material = renderer.sharedMaterial;
             materialInstance = Instantiate(material);
-            MaterialUtility.RemoveBakedEmissiveFlag(materialInstance);
+            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(materialInstance);
             renderer.sharedMaterial = materialInstance;
         }
 

@@ -55,17 +55,13 @@ namespace Kanikama.GI.Bakery.Editor
                     // turn off all light sources but kanikama ones
                     bool Filter(Object obj) => bakeTargetHandles.All(l => !l.Includes(obj));
 
-                    // TODO: BakerySceneGIContextにする
-                    var sceneGIContext = SceneGIContext.GetSceneGIContext(Filter);
-
+                    var sceneGIContext = BakerySceneGIContext.GetContext(Filter);
                     sceneGIContext.TurnOff();
-                    sceneGIContext.DisableLightProbes();
-                    sceneGIContext.DisableReflectionProbes();
 
                     var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
-                    // 元のシーンに対して取得する
+                    // 元のシーンに対して取得する（Contextに入れた方がよさそう)
                     var assets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
                     var lightmapper = context.Lightmapper;
 
