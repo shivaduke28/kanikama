@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.LightSources;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -20,9 +21,9 @@ namespace Kanikama.GI.Editor
         {
             public SceneAssetData SceneAssetData { get; }
             public List<IBakeTargetHandle> BakeTargetHandles { get; }
-            public ILightmapper Lightmapper { get; }
+            public UnityLightmapper Lightmapper { get; }
 
-            public BakingContext(SceneAssetData sceneAssetData, List<IBakeTargetHandle> bakeTargetHandles, ILightmapper lightmapper)
+            public BakingContext(SceneAssetData sceneAssetData, List<IBakeTargetHandle> bakeTargetHandles, UnityLightmapper lightmapper)
             {
                 SceneAssetData = sceneAssetData;
                 BakeTargetHandles = bakeTargetHandles;
@@ -56,7 +57,7 @@ namespace Kanikama.GI.Editor
                     // turn off all light sources but kanikama ones
                     bool Filter(Object obj) => bakeableHandles.All(l => !l.Includes(obj));
 
-                    var sceneGIContext = KanikamaSceneUtility.GetSceneGIContext(Filter);
+                    var sceneGIContext = SceneGIContext.GetSceneGIContext(Filter);
 
                     sceneGIContext.TurnOff();
                     sceneGIContext.DisableLightProbes();

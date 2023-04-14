@@ -8,8 +8,7 @@ namespace Kanikama.GI.Editor
 {
     public class BakingPipelineRunner
     {
-        public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, string lightmapperKey,
-            CancellationToken cancellationToken)
+        public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
@@ -22,19 +21,18 @@ namespace Kanikama.GI.Editor
                     handles.Add(new BakeTargetGroupElementHandle<BakeTargetGroup>(group, i));
                 }
             }
-            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, LightmapperFactory.Create(lightmapperKey));
+            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
 
             await BakingPipeline.BakeAsync(context, cancellationToken);
         }
 
         public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor,
             SceneAssetData sceneAssetData,
-            string lightmapperKey,
             CancellationToken cancellationToken)
         {
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
-            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, LightmapperFactory.Create(lightmapperKey));
+            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
 
             await BakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
         }

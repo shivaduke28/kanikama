@@ -1,20 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Core.Editor;
 using UnityEditor;
 
 namespace Kanikama.GI.Bakery.Editor
 {
-    [InitializeOnLoad]
-    public sealed class BakeryLightmapper : ILightmapper
+    public sealed class BakeryLightmapper
     {
-        static ILightmapper Create() => new BakeryLightmapper();
-
-        static BakeryLightmapper()
-        {
-            LightmapperFactory.Register("Bakery", Create, 1);
-        }
-
         readonly ftRenderLightmap bakery;
 
         public BakeryLightmapper()
@@ -23,9 +14,9 @@ namespace Kanikama.GI.Bakery.Editor
             bakery.LoadRenderSettings();
         }
 
-        public void ClearCache()
-        {
-        }
+        // TODO: Assetsが入っているかどうか見る...
+        // ~AssetPathならAssetを含む、含まない、みたいな命名ルールにしたい...
+        public string OutputDirPath => ftRenderLightmap.outputPath;
 
         public async Task BakeAsync(CancellationToken cancellationToken)
         {

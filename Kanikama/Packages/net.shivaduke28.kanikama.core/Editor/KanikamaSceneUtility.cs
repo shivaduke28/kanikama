@@ -54,31 +54,6 @@ namespace Kanikama.Core.Editor
             return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, lightingDirPath));
         }
 
-        public static SceneGIContext GetSceneGIContext(Func<Object, bool> filter = null)
-        {
-            var context = new SceneGIContext
-            {
-                AmbientLight = new AmbientLight(),
-                LightReferences = Object.FindObjectsOfType<Light>()
-                    .Where(LightReference.IsContributeGI)
-                    .Where(x => filter?.Invoke(x) ?? true)
-                    .Select(l => new LightReference(l))
-                    .ToList(),
-                EmissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
-                    .Where(EmissiveRendererReference.IsContributeGI)
-                    .Where(x => filter?.Invoke(x) ?? true)
-                    .Select(l => new EmissiveRendererReference(l))
-                    .ToList(),
-                LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
-                    .Select(lg => new ObjectHandle<LightProbeGroup>(lg))
-                    .ToList(),
-                ReflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
-                    .Select(rp => new ObjectHandle<ReflectionProbe>(rp))
-                    .ToList(),
-            };
-            return context;
-        }
-
         public static BakedLightingAssetCollection GetBakedAssetData(SceneAssetData sceneAssetData)
         {
             var dirPath = sceneAssetData.LightingAssetDirectoryPath;

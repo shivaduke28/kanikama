@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
 using UnityEditor;
@@ -11,41 +10,15 @@ namespace Kanikama.GI.Editor.GUI
     internal sealed class BakingConfigurationAssetEditor : UnityEditor.Editor
     {
         BakingConfigurationAsset asset;
-        string[] lightmapperKeys;
-        int lightmapperIndex;
-        SerializedProperty lightmapperKey;
 
         void OnEnable()
         {
             asset = (BakingConfigurationAsset) target;
-            lightmapperKeys = LightmapperFactory.GetKeys();
-            var bakingConfiguration = serializedObject.FindProperty("bakingConfiguration");
-            lightmapperKey = bakingConfiguration.FindPropertyRelative("lightmapperKey");
-            var key = lightmapperKey.stringValue;
-            for (var i = 0; i < lightmapperKeys.Length; i++)
-            {
-                if (key == lightmapperKeys[i])
-                {
-                    lightmapperIndex = i;
-                    break;
-                }
-            }
         }
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            using (var check = new EditorGUI.ChangeCheckScope())
-            {
-                lightmapperIndex = EditorGUILayout.Popup("Lightmapper", lightmapperIndex, lightmapperKeys);
-
-                if (check.changed)
-                {
-                    lightmapperKey.stringValue = lightmapperKeys[lightmapperIndex];
-                    serializedObject.ApplyModifiedProperties();
-                }
-            }
-
 
             EditorGUILayout.Space();
 
@@ -60,7 +33,7 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, config.LightmapperKey, default);
+                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, default);
                     return;
                 }
             }
@@ -76,7 +49,7 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunAsync(baking, sceneAssetData, config.LightmapperKey, default);
+                    var _ = BakingPipelineRunner.RunAsync(baking, sceneAssetData, default);
                 }
             }
 

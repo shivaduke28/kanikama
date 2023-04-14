@@ -7,6 +7,8 @@
         "Kanikama.Core.Editor",
         "Kanikama.GI.Runtime",
         "Kanikama.GI.Runtime.Editor",
+        "Kanikama.GI.Baking",
+        "Kanikama.GI.Baking.Editor",
         "Kanikama.GI.Bakery"
     ],
     "includePlatforms": [
