@@ -22,12 +22,15 @@ namespace Kanikama.GI.Editor
             public SceneAssetData SceneAssetData { get; }
             public List<IBakeTargetHandle> BakeTargetHandles { get; }
             public UnityLightmapper Lightmapper { get; }
+            public UnityBakingSetting Setting { get; }
 
-            public BakingContext(SceneAssetData sceneAssetData, List<IBakeTargetHandle> bakeTargetHandles, UnityLightmapper lightmapper)
+            public BakingContext(SceneAssetData sceneAssetData, List<IBakeTargetHandle> bakeTargetHandles, UnityLightmapper lightmapper,
+                UnityBakingSetting setting)
             {
                 SceneAssetData = sceneAssetData;
                 BakeTargetHandles = bakeTargetHandles;
                 Lightmapper = lightmapper;
+                Setting = setting;
             }
         }
 
@@ -64,10 +67,9 @@ namespace Kanikama.GI.Editor
                     sceneGIContext.DisableLightProbes();
                     sceneGIContext.DisableReflectionProbes();
 
-                    var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
+                    var dstDir = context.Setting.OutputAssetDirPath;
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
-                    var bakedAssetDataBase = new UnityLightmapStorage();
                     var lightmapper = context.Lightmapper;
 
                     foreach (var handle in bakeableHandles)
@@ -81,12 +83,12 @@ namespace Kanikama.GI.Editor
                         var baked = KanikamaSceneUtility.GetLightmaps(copiedSceneHandle.SceneAssetData);
                         CopyBakedLightingAssetCollection(baked, out var copied, dstDir, handle.Id);
 
-                        bakedAssetDataBase.AddOrUpdate(handle.Id, copied);
+                       context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
                     }
 
-                    var repository = UnityLightmapStorageAsset.FindOrCreate(Path.Combine(dstDir, UnityLightmapStorageAsset.DefaultFileName));
-                    repository.Storage = bakedAssetDataBase;
-                    EditorUtility.SetDirty(repository);
+                    var settingAsset = UnityBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
+                    settingAsset.Setting = context.Setting;
+                    EditorUtility.SetDirty(settingAsset);
                     AssetDatabase.SaveAssets();
                     Debug.LogFormat(KanikamaDebug.Format, "done");
                 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
@@ -12,25 +13,39 @@ namespace Kanikama.GI.Editor
         [SerializeField] SceneAsset sceneAsset;
         [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
         [SerializeField] UnityLightmapStorage lightmapStorage = null;
+        [SerializeField] string outputAssetDirPath = "Assets";
 
         public SceneAsset SceneAsset
         {
             get => sceneAsset;
-            set => sceneAsset = value;
+            set
+            {
+                sceneAsset = value;
+                outputAssetDirPath = GetOutputAssetDirPath(value);
+            }
         }
 
         public TextureResizeType TextureResizeType => textureResizeType;
         public UnityLightmapStorage LightmapStorage => lightmapStorage;
+        public string OutputAssetDirPath => outputAssetDirPath;
+
 
         public UnityBakingSetting(SceneAsset sceneAsset, TextureResizeType textureResizeType)
         {
-            this.sceneAsset = sceneAsset;
+            SceneAsset = sceneAsset;
             this.textureResizeType = textureResizeType;
         }
 
         public UnityBakingSetting Clone()
         {
             return new UnityBakingSetting(sceneAsset, textureResizeType);
+        }
+
+        public static string GetOutputAssetDirPath(SceneAsset sceneAsset)
+        {
+            var path = AssetDatabase.GetAssetPath(sceneAsset);
+            var dirPath = Path.GetDirectoryName(path);
+            return dirPath != null ? Path.Combine(dirPath, $"{sceneAsset.name}_kanikama_unity") : string.Empty;
         }
     }
 }

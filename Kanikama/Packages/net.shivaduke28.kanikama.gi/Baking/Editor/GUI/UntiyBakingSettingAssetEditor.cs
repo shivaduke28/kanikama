@@ -59,14 +59,8 @@ namespace Kanikama.GI.Editor.GUI
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
-                var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
-
-                var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
-                KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-
-                var bakedAssetRegistry = UnityLightmapStorageAsset.FindOrCreate(Path.Combine(dstDir, UnityLightmapStorageAsset.DefaultFileName));
-                UnityBakingPipeline.CreateAssets(bakedAssetRegistry.Storage, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out", config.TextureResizeType);
-                EditorUtility.SetDirty(bakedAssetRegistry);
+                UnityBakingPipeline.CreateAssets(asset.Setting.LightmapStorage, asset.Setting.OutputAssetDirPath, config.TextureResizeType);
+                EditorUtility.SetDirty(asset);
                 AssetDatabase.SaveAssets();
             }
         }
