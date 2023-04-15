@@ -145,6 +145,7 @@ namespace Kanikama.GI.Editor
 
         public static void CreateAssets(UnityLightmapStorage unityLightmapStorage, string dstDirPath, TextureResizeType resizeType)
         {
+            Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
             var allLightmaps = unityLightmapStorage.Get();
@@ -172,12 +173,14 @@ namespace Kanikama.GI.Editor
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{i}.asset");
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                    Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                 }
                 if (dir.Count > 0)
                 {
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{i}.asset");
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                    Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }
         }

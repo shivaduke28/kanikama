@@ -141,6 +141,7 @@ namespace Kanikama.GI.Bakery.Editor
 
         public static void CreateAssets(BakeryBakingSetting setting)
         {
+            Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
@@ -166,6 +167,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (lightArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
                 if (dir.Count > 0)
@@ -179,6 +181,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (dirArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }
             }
