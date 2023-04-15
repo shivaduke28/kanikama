@@ -1,8 +1,10 @@
 ﻿using System.Linq;
+using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
 using Kanikama.GI.Editor;
 using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.GI.Bakery.Editor
 {
@@ -12,6 +14,7 @@ namespace Kanikama.GI.Bakery.Editor
         public static void Run()
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
+            var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var bakingDescriptor = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
@@ -28,7 +31,8 @@ namespace Kanikama.GI.Bakery.Editor
             var ctx = new BakeryBakingPipeline.Context(
                 sceneAssetData,
                 handles,
-                new BakeryLightmapper()
+                new BakeryLightmapper(),
+                settingAsset.Setting
             );
 
             var _ = BakeryBakingPipeline.BakeAsync(ctx, default);
@@ -37,9 +41,18 @@ namespace Kanikama.GI.Bakery.Editor
         [MenuItem("Kanikama/Create with Bakery")]
         public static void CreateAssets()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
-            var asset = BakeryBakingSettingAsset.Find(sceneAssetData.Asset);
-            BakeryBakingPipeline.CreateAssets(asset, sceneAssetData.LightingAssetDirectoryPath + "_kanikama_bakery", asset.TextureResizeType);
+            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData))
+            {
+                Debug.LogFormat(KanikamaDebug.Format, "Scene asset is not found.");
+                return;
+            }
+            if (!BakeryBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
+            {
+                Debug.LogFormat(KanikamaDebug.Format, $"{nameof(BakeryBakingSettingAsset)} is not found.");
+                return;
+            }
+            var setting = settingAsset.Setting;
+            BakeryBakingPipeline.CreateAssets(settingAsset, setting.OutputAssetDirPath, setting.TextureResizeType);
         }
     }
 }

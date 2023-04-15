@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Kanikama.GI.Editor.GUI
 {
-    [CustomEditor(typeof(BakingConfigurationAsset))]
-    internal sealed class BakingConfigurationAssetEditor : UnityEditor.Editor
+    [CustomEditor(typeof(UnityBakingSettingAsset))]
+    internal sealed class UntiyBakingSettingAssetEditor : UnityEditor.Editor
     {
-        BakingConfigurationAsset asset;
+        UnityBakingSettingAsset asset;
 
         void OnEnable()
         {
-            asset = (BakingConfigurationAsset) target;
+            asset = (UnityBakingSettingAsset) target;
         }
 
         public override void OnInspectorGUI()
@@ -24,7 +24,7 @@ namespace Kanikama.GI.Editor.GUI
 
             if (GUILayout.Button("Bake without Kanikama"))
             {
-                var config = asset.Configuration.Clone();
+                var config = asset.Setting.Clone();
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
@@ -40,7 +40,7 @@ namespace Kanikama.GI.Editor.GUI
 
             if (GUILayout.Button("Bake Kanikama"))
             {
-                var config = asset.Configuration.Clone();
+                var config = asset.Setting.Clone();
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
@@ -55,18 +55,12 @@ namespace Kanikama.GI.Editor.GUI
 
             if (GUILayout.Button("Create Assets"))
             {
-                var config = asset.Configuration.Clone();
+                var config = asset.Setting.Clone();
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
-                var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
-
-                var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-temp";
-                KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-
-                var bakedAssetRegistry = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
-                BakingPipeline.CreateAssets(bakedAssetRegistry.DataBase, $"{sceneAssetData.LightingAssetDirectoryPath}_kanikama-out", config.TextureResizeType);
-                EditorUtility.SetDirty(bakedAssetRegistry);
+                UnityBakingPipeline.CreateAssets(asset.Setting.LightmapStorage, asset.Setting.OutputAssetDirPath, config.TextureResizeType);
+                EditorUtility.SetDirty(asset);
                 AssetDatabase.SaveAssets();
             }
         }

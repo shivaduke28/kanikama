@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,73 +8,48 @@ namespace Kanikama.GI.Bakery.Editor
     [CreateAssetMenu(menuName = "Kanikama/BakeryBakingSettingAsset", fileName = "BakeryBakingSettingAsset")]
     public sealed class BakeryBakingSettingAsset : ScriptableObject
     {
-        [SerializeField] SceneAsset sceneAsset;
-        [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
-        [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
+        [SerializeField] BakeryBakingSetting setting;
 
-        [Serializable]
-        sealed class KeyLightmapsPair
+        public BakeryBakingSetting Setting
         {
-            public string Key;
-            public List<BakeryLightmap> Lightmaps;
+            get => setting;
+            set => setting = value;
         }
 
-        public SceneAsset SceneAsset => sceneAsset;
-        public List<BakeryLightmap> GetBakeryLightmaps() => lightmapsPairs.SelectMany(pair => pair.Lightmaps).ToList();
-        public TextureResizeType TextureResizeType => textureResizeType;
-
-        public void AddOrUpdate(string key, List<BakeryLightmap> lightmaps)
+        public static bool TryFind(SceneAsset sceneAsset, out BakeryBakingSettingAsset settingAsset)
         {
-            foreach (var pair in lightmapsPairs)
+            var guids = AssetDatabase.FindAssets($"t:{typeof(BakeryBakingSettingAsset)}");
+            foreach (var guid in guids)
             {
-                if (pair.Key == key)
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath<BakeryBakingSettingAsset>(path);
+                if (asset.Setting.SceneAsset == sceneAsset)
                 {
-                    pair.Lightmaps = lightmaps;
-                    return;
+                    settingAsset = asset;
+                    return true;
                 }
             }
 
-            lightmapsPairs.Add(new KeyLightmapsPair
-            {
-                Key = key, Lightmaps = lightmaps,
-            });
-        }
-
-        public void Remove(string key)
-        {
-            var index = lightmapsPairs.FindIndex(pair => pair.Key == key);
-            if (index >= 0)
-            {
-                lightmapsPairs.RemoveAt(index);
-            }
-        }
-
-        public static BakeryBakingSettingAsset Find(SceneAsset sceneAsset)
-        {
-            var assets = AssetDatabase.FindAssets($"t:{typeof(BakeryBakingSettingAsset)}");
-            foreach (var asset in assets)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(asset);
-                var settings = AssetDatabase.LoadAssetAtPath<BakeryBakingSettingAsset>(path);
-                if (settings.SceneAsset == sceneAsset) return settings;
-            }
-
-            return null;
+            settingAsset = default;
+            return false;
         }
 
         public static BakeryBakingSettingAsset FindOrCreate(SceneAsset sceneAsset)
         {
-            var setting = Find(sceneAsset);
-            if (setting != null) return setting;
-            setting = CreateInstance<BakeryBakingSettingAsset>();
-            setting.sceneAsset = sceneAsset;
-            var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
+            if (TryFind(sceneAsset, out var settingAsset))
+            {
+                return settingAsset;
+            }
 
-            var dirPath = sceneAssetData.LightingAssetDirectoryPath + "_kanikama_bakery"; // todo: 良い感じに...
+            settingAsset = CreateInstance<BakeryBakingSettingAsset>();
+            var setting = new BakeryBakingSetting();
+            setting.SetSceneAsset(sceneAsset);
+            settingAsset.setting = setting;
+            var dirPath = setting.OutputAssetDirPath;
             KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
-            AssetDatabase.CreateAsset(setting, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
+            AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
-            return setting;
+            return settingAsset;
         }
     }
 }

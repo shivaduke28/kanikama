@@ -59,7 +59,7 @@ namespace Test.Editor
 
                 var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst";
                 KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
-                var bakedAssetDataBase = new BakedAssetDataBase();
+                var bakedAssetDataBase = new UnityLightmapStorage();
 
                 var context = new Context
                 {
@@ -68,7 +68,7 @@ namespace Test.Editor
                     Copied = copiedSceneAssetData,
                     UnityLightmapper = new UnityLightmapper(),
                     DstDir = dstDir,
-                    BakedAssetDataBase = bakedAssetDataBase,
+                    UnityLightmapStorage = bakedAssetDataBase,
                 };
 
 
@@ -79,8 +79,8 @@ namespace Test.Editor
                 bakedAssetDataBase.TryGet("indirect", out var indirects);
                 bakedAssetDataBase.TryGet("direct", out var directs);
 
-                var indirectLightmaps = indirects.Lightmaps;
-                var directLightmaps = directs.Lightmaps;
+                var indirectLightmaps = indirects;
+                var directLightmaps = directs;
 
                 for (var i = 0; i < indirectLightmaps.Count; i++)
                 {
@@ -93,8 +93,8 @@ namespace Test.Editor
                     KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);
                 }
 
-                var bakedAssetRepository = BakedAssetRepository.FindOrCreate(Path.Combine(dstDir, BakedAssetRepository.DefaultFileName));
-                bakedAssetRepository.DataBase = bakedAssetDataBase;
+                var bakedAssetRepository = UnityLightmapStorageAsset.FindOrCreate(Path.Combine(dstDir, UnityLightmapStorageAsset.DefaultFileName));
+                bakedAssetRepository.Storage = bakedAssetDataBase;
                 EditorUtility.SetDirty(bakedAssetRepository);
                 AssetDatabase.SaveAssets();
 
@@ -113,7 +113,7 @@ namespace Test.Editor
             public SceneAssetData Original;
             public SceneAssetData Copied;
             public string DstDir;
-            public BakedAssetDataBase BakedAssetDataBase;
+            public UnityLightmapStorage UnityLightmapStorage;
         }
 
         static async Task BakeIndirectAsync(Context context)
@@ -122,26 +122,26 @@ namespace Test.Editor
             context.Light.bounceIntensity = 1;
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
 
 
             // copy baked lightmaps
-            string RenameFunc(BakedLightmap bakedLightmap)
+            string RenameFunc(UnityLightmap bakedLightmap)
             {
                 var ext = Path.GetExtension(bakedLightmap.Path);
                 var fileName = $"indirect_{bakedLightmap.Type}_{bakedLightmap.Index}{ext}";
                 return Path.Combine(context.DstDir, fileName);
             }
 
-            var result = new List<BakedLightmap>();
+            var result = new List<UnityLightmap>();
 
-            foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
+            foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
                 var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
-            context.BakedAssetDataBase.AddOrUpdate("indirect", new BakedLightingAssetCollection { Lightmaps = result });
+            context.UnityLightmapStorage.AddOrUpdate("indirect", result);
         }
 
         static async Task BakeDirectAsync(Context context)
@@ -151,24 +151,24 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
 
-            string RenameFunc(BakedLightmap bakedLightmap)
+            string RenameFunc(UnityLightmap bakedLightmap)
             {
                 var ext = Path.GetExtension(bakedLightmap.Path);
                 var fileName = $"direct_{bakedLightmap.Type}_{bakedLightmap.Index}{ext}";
                 return Path.Combine(context.DstDir, fileName);
             }
 
-            var result = new List<BakedLightmap>();
+            var result = new List<UnityLightmap>();
 
-            foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
+            foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
                 var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
-            context.BakedAssetDataBase.AddOrUpdate("direct", new BakedLightingAssetCollection { Lightmaps = result });
+            context.UnityLightmapStorage.AddOrUpdate("direct", result);
         }
 
         static async Task BakeMixedAsync(Context context)
@@ -178,24 +178,24 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetBakedAssetData(context.Copied);
+            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
 
-            string RenameFunc(BakedLightmap bakedLightmap)
+            string RenameFunc(UnityLightmap bakedLightmap)
             {
                 var ext = Path.GetExtension(bakedLightmap.Path);
                 var fileName = $"mixed_{bakedLightmap.Type}_{bakedLightmap.Index}{ext}";
                 return Path.Combine(context.DstDir, fileName);
             }
 
-            var result = new List<BakedLightmap>();
+            var result = new List<UnityLightmap>();
 
-            foreach (var bakedLightmap in bakedLightingAssetCollection.Lightmaps)
+            foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
                 var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
-            context.BakedAssetDataBase.AddOrUpdate("mixed", new BakedLightingAssetCollection { Lightmaps = result });
+            context.UnityLightmapStorage.AddOrUpdate("mixed", result);
         }
     }
 }

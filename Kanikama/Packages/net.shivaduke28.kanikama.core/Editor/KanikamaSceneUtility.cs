@@ -20,18 +20,21 @@ namespace Kanikama.Core.Editor
                 return false;
             }
             var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
-            var dirPath = Path.GetDirectoryName(scene.path);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, scene.name) : string.Empty;
-            sceneAssetData = new SceneAssetData(path, sceneAsset, lightingDirPath);
+            sceneAssetData = new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
             return true;
+        }
+
+        public static string LightingAssetDirPath(SceneAsset sceneAsset)
+        {
+            var path = AssetDatabase.GetAssetPath(sceneAsset);
+            var dirPath = Path.GetDirectoryName(path);
+            return dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
         }
 
         public static SceneAssetData ToAssetData(SceneAsset sceneAsset)
         {
             var path = AssetDatabase.GetAssetPath(sceneAsset);
-            var dirPath = Path.GetDirectoryName(path);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
-            return new SceneAssetData(path, sceneAsset, lightingDirPath);
+            return new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
         }
 
         public static TemporarySceneAssetHandle CopySceneAsset(SceneAssetData sceneAssetData)
@@ -46,20 +49,13 @@ namespace Kanikama.Core.Editor
             var newPath = Path.Combine(dir, $"{file}_copy.unity");
             AssetDatabase.CopyAsset(path, newPath);
             var newAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(newPath);
-            var dirPath = Path.GetDirectoryName(newPath);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, newAsset.name) : string.Empty;
-            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, lightingDirPath));
+            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, LightingAssetDirPath(newAsset)));
         }
 
-        public static BakedLightingAssetCollection GetBakedAssetData(SceneAssetData sceneAssetData)
+        public static List<UnityLightmap> GetLightmaps(SceneAssetData sceneAssetData)
         {
             var dirPath = sceneAssetData.LightingAssetDirectoryPath;
-            var result = new BakedLightingAssetCollection
-            {
-                Lightmaps = new List<BakedLightmap>(),
-                DirectionalLightmaps = new List<BakedLightmap>(),
-                ShadowMasks = new List<BakedLightmap>(),
-            };
+            var result = new List<UnityLightmap>();
 
             foreach (var guid in AssetDatabase.FindAssets("t:Texture", new[] { dirPath }))
             {
@@ -69,30 +65,17 @@ namespace Kanikama.Core.Editor
                     continue;
                 }
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                var lightmap = new BakedLightmap(lightmapType, texture, path, index);
-                switch (lightmapType)
-                {
-                    case LightmapType.Color:
-                        result.Lightmaps.Add(lightmap);
-                        break;
-                    case LightmapType.Directional:
-                        result.DirectionalLightmaps.Add(lightmap);
-                        break;
-                    case LightmapType.ShadowMask:
-                        result.ShadowMasks.Add(lightmap);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                var lightmap = new UnityLightmap(lightmapType, texture, path, index);
+                result.Add(lightmap);
             }
             return result;
         }
 
-        public static BakedLightmap CopyBakedLightmap(BakedLightmap bakedLightmap, string dstPath)
+        public static UnityLightmap CopyBakedLightmap(UnityLightmap unityLightmap, string dstPath)
         {
-            AssetDatabase.CopyAsset(bakedLightmap.Path, dstPath);
+            AssetDatabase.CopyAsset(unityLightmap.Path, dstPath);
             var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
-            return new BakedLightmap(bakedLightmap.Type, texture, dstPath, bakedLightmap.Index);
+            return new UnityLightmap(unityLightmap.Type, texture, dstPath, unityLightmap.Index);
         }
 
         public static void CreateFolderIfNecessary(string dirPath, string folderName)
@@ -132,13 +115,13 @@ namespace Kanikama.Core.Editor
 
         static readonly Regex LightmapRegex = new Regex("Lightmap-[0-9]+_comp_[light|dir|shadowmask]");
 
-        public static bool TryGetLightmapType(string path, out LightmapType lightmapType, out int lightmapIndex)
+        public static bool TryGetLightmapType(string path, out UnityLightmapType unityLightmapType, out int lightmapIndex)
         {
             var fileName = Path.GetFileNameWithoutExtension(path);
 
             if (!LightmapRegex.IsMatch(fileName))
             {
-                lightmapType = default;
+                unityLightmapType = default;
                 lightmapIndex = -1;
                 return false;
             }
@@ -153,13 +136,13 @@ namespace Kanikama.Core.Editor
             switch (list[2])
             {
                 case "light":
-                    lightmapType = LightmapType.Color;
+                    unityLightmapType = UnityLightmapType.Color;
                     break;
                 case "dir":
-                    lightmapType = LightmapType.Directional;
+                    unityLightmapType = UnityLightmapType.Directional;
                     break;
                 case "shadowmask":
-                    lightmapType = LightmapType.ShadowMask;
+                    unityLightmapType = UnityLightmapType.ShadowMask;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(list[2]);

@@ -24,6 +24,22 @@ namespace Kanikama.GI.Bakery.Editor
     {
         Color = 0,
         Directional = 1,
-        // TODO: MonoSH = 2,
+        // TODO: MonoSH L0 and L1,
+    }
+
+    public static class BakeryLightmapTypeExtension
+    {
+        public static string ToFileName(this BakeryLightmapType type)
+        {
+            switch (type)
+            {
+                case BakeryLightmapType.Color:
+                    return "final";
+                case BakeryLightmapType.Directional:
+                    return "dir";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
     }
 }

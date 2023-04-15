@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
+using UnityEngine;
 
 namespace Kanikama.GI.Editor
 {
-    public class BakingPipelineRunner
+    public sealed class BakingPipelineRunner
     {
         public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
@@ -21,20 +23,29 @@ namespace Kanikama.GI.Editor
                     handles.Add(new BakeTargetGroupElementHandle<BakeTargetGroup>(group, i));
                 }
             }
-            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
 
-            await BakingPipeline.BakeAsync(context, cancellationToken);
+            var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
+
+            var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
+
+            await UnityBakingPipeline.BakeAsync(context, cancellationToken);
         }
 
         public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor,
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
+            if (!UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
+            {
+                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
+                return;
+            }
+
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
-            var context = new BakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper());
+            var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
 
-            await BakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
+            await UnityBakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
         }
     }
 }

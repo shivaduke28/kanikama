@@ -23,14 +23,17 @@ namespace Kanikama.GI.Bakery.Editor
             public SceneAssetData SceneAssetData { get; }
             public List<IBakeTargetHandle> BakeTargetHandles { get; }
             public BakeryLightmapper Lightmapper { get; }
+            public BakeryBakingSetting Setting { get; }
 
             public Context(SceneAssetData sceneAssetData,
                 List<IBakeTargetHandle> bakeTargetHandles,
-                BakeryLightmapper lightmapper)
+                BakeryLightmapper lightmapper,
+                BakeryBakingSetting setting)
             {
                 SceneAssetData = sceneAssetData;
                 BakeTargetHandles = bakeTargetHandles;
                 Lightmapper = lightmapper;
+                Setting = setting;
             }
         }
 
@@ -64,8 +67,7 @@ namespace Kanikama.GI.Bakery.Editor
                     var sceneGIContext = BakerySceneGIContext.GetContext(Filter);
                     sceneGIContext.TurnOff();
 
-                    // TODO: setting assetをパスを共通化...
-                    var dstDir = $"{context.SceneAssetData.LightingAssetDirectoryPath}_kanikama_bakery";
+                    var dstDir = context.Setting.OutputAssetDirPath;
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
 
                     var map = new Dictionary<string, List<BakeryLightmap>>();
@@ -85,12 +87,16 @@ namespace Kanikama.GI.Bakery.Editor
                         map[handle.Id] = copied;
                     }
 
-                    var assets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
                     foreach (var kvp in map)
                     {
-                        assets.AddOrUpdate(kvp.Key, kvp.Value);
+                        context.Setting.LightmapStorage.AddOrUpdate(kvp.Key, kvp.Value);
                     }
-                    EditorUtility.SetDirty(assets);
+
+                    // NOTE: A SettingAsset object may be destroyed while awaiting baking for some reason...
+                    // So we use Setting class and update asset after baking done.
+                    var settingAssets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
+                    settingAssets.Setting = context.Setting;
+                    EditorUtility.SetDirty(settingAssets);
                     AssetDatabase.SaveAssets();
                     Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
@@ -137,7 +143,7 @@ namespace Kanikama.GI.Bakery.Editor
         {
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
-            var allLightmaps = settingAsset.GetBakeryLightmaps();
+            var allLightmaps = settingAsset.Setting.LightmapStorage.Get();
             var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Color).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
@@ -154,7 +160,7 @@ namespace Kanikama.GI.Bakery.Editor
                         TextureUtility.ResizeTexture(texture, resizeType);
                     }
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: false);
-                    var lightPath = Path.Combine(dstDirPath, $"{LightmapType.Color.ToFileName()}-{index}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{index}.asset");
                     if (lightArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
@@ -167,7 +173,7 @@ namespace Kanikama.GI.Bakery.Editor
                         TextureUtility.ResizeTexture(texture, resizeType);
                     }
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: false);
-                    var dirPath = Path.Combine(dstDirPath, $"{LightmapType.Directional.ToFileName()}-{index}.asset");
+                    var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{index}.asset");
                     if (dirArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
