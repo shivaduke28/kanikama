@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Editor
 {
-    public sealed class BakingPipelineRunner
+    public sealed class UnityBakingPipelineRunner
     {
         public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {

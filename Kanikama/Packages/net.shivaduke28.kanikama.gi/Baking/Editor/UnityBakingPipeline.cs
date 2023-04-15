@@ -83,7 +83,7 @@ namespace Kanikama.GI.Editor
                         var baked = KanikamaSceneUtility.GetLightmaps(copiedSceneHandle.SceneAssetData);
                         CopyBakedLightingAssetCollection(baked, out var copied, dstDir, handle.Id);
 
-                       context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
+                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
                     }
 
                     var settingAsset = UnityBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
@@ -102,9 +102,11 @@ namespace Kanikama.GI.Editor
                     Debug.LogFormat(KanikamaDebug.Format, "failed");
                     Debug.LogException(e);
                 }
+                finally
+                {
+                    EditorSceneManager.OpenScene(context.SceneAssetData.Path);
+                }
             }
-
-            EditorSceneManager.OpenScene(context.SceneAssetData.Path);
         }
 
         static void CopyBakedLightingAssetCollection(List<UnityLightmap> src, out List<UnityLightmap> dst, string dstDir,
