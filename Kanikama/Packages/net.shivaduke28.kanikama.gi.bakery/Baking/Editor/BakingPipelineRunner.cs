@@ -24,13 +24,11 @@ namespace Kanikama.GI.Bakery.Editor
                     handles.Add(new BakeTargetGroupElementHandle<BakeTargetGroup>(group, i));
                 }
             }
-            var asset = BakeryBakingSettingAsset.Find(sceneAssetData.Asset);
 
             var ctx = new BakeryBakingPipeline.Context(
                 sceneAssetData,
                 handles,
-                new BakeryLightmapper(),
-                asset
+                new BakeryLightmapper()
             );
 
             var _ = BakeryBakingPipeline.BakeAsync(ctx, default);
