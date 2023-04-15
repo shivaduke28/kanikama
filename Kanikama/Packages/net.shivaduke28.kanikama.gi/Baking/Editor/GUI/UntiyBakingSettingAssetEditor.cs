@@ -33,7 +33,7 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, default);
+                    var _ = UnityBakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, default);
                     return;
                 }
             }
@@ -49,7 +49,7 @@ namespace Kanikama.GI.Editor.GUI
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
-                    var _ = BakingPipelineRunner.RunAsync(baking, sceneAssetData, default);
+                    var _ = UnityBakingPipelineRunner.RunAsync(baking, sceneAssetData, default);
                 }
             }
 

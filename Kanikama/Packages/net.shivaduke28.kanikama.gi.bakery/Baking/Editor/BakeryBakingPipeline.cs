@@ -139,11 +139,14 @@ namespace Kanikama.GI.Bakery.Editor
             return $"{bakedLightmap.Type.ToString()}-{bakedLightmap.Index}-{id}{ext}";
         }
 
-        public static void CreateAssets(BakeryBakingSettingAsset settingAsset, string dstDirPath, TextureResizeType resizeType)
+        public static void CreateAssets(BakeryBakingSetting setting)
         {
+            Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
+            var dstDirPath = setting.OutputAssetDirPath;
+            var resizeType = setting.TextureResizeType;
             KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
 
-            var allLightmaps = settingAsset.Setting.LightmapStorage.Get();
+            var allLightmaps = setting.LightmapStorage.Get();
             var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Color).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
@@ -164,6 +167,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (lightArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
                 if (dir.Count > 0)
@@ -177,6 +181,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (dirArr != null)
                     {
                         KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }
             }
