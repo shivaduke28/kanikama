@@ -36,6 +36,7 @@ namespace Kanikama.GI.Bakery.Editor
 
         public static async Task BakeAsync(Context context, CancellationToken cancellationToken)
         {
+            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline start");
             using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
             {
                 try
@@ -74,6 +75,7 @@ namespace Kanikama.GI.Bakery.Editor
                     // TODO: Lightmapperのパラメータ指定があるはず
                     foreach (var handle in bakeTargetHandles)
                     {
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking... id: {handle.Id}.");
                         handle.TurnOn();
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
@@ -82,6 +84,7 @@ namespace Kanikama.GI.Bakery.Editor
                         Copy(baked, out var copied, dstDir, handle.Id);
                         map[handle.Id] = copied;
                     }
+
                     var assets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
                     foreach (var kvp in map)
                     {
@@ -89,14 +92,17 @@ namespace Kanikama.GI.Bakery.Editor
                     }
                     EditorUtility.SetDirty(assets);
                     AssetDatabase.SaveAssets();
+                    Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
                 catch (OperationCanceledException)
                 {
+                    Debug.LogFormat(KanikamaDebug.Format, "canceled");
                     throw;
                 }
                 catch (Exception e)
                 {
-                    KanikamaDebug.LogException(e);
+                    Debug.LogFormat(KanikamaDebug.Format, "failed");
+                    Debug.LogException(e);
                 }
                 finally
                 {
@@ -115,6 +121,7 @@ namespace Kanikama.GI.Bakery.Editor
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
                 var copied = new BakeryLightmap(lightmap.Type, texture, dstPath, lightmap.Index);
                 dst.Add(copied);
+                Debug.LogFormat(KanikamaDebug.Format, $"copying lightmap (index:{lightmap.Index}, type:{lightmap.Type}) {lightmap.Path} -> {dstPath}");
             }
         }
 
