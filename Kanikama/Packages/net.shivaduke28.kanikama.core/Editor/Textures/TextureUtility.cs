@@ -156,7 +156,7 @@ namespace Kanikama.Core.Editor.Textures
                 EditorUtility.CompressTexture(texture, parameter.CompressedFormat, parameter.CompressionQuality);
             }
 
-            KanikamaDebug.Log($"{path} has been saved.");
+            Debug.LogFormat(KanikamaDebug.Format, $"{path} has been saved.");
         }
 
         public static Texture2D GenerateTexture(TextureParameter textureParameter)

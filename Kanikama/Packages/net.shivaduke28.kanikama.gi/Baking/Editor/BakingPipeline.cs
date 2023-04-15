@@ -9,6 +9,7 @@ using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
@@ -32,6 +33,7 @@ namespace Kanikama.GI.Editor
 
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
         {
+            Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline start");
             using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
             {
                 try
@@ -70,6 +72,7 @@ namespace Kanikama.GI.Editor
 
                     foreach (var handle in bakeableHandles)
                     {
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking... id: {handle.Id}.");
                         handle.TurnOn();
                         lightmapper.ClearCache();
                         await lightmapper.BakeAsync(cancellationToken);
@@ -86,14 +89,17 @@ namespace Kanikama.GI.Editor
                     repository.DataBase = bakedAssetDataBase;
                     EditorUtility.SetDirty(repository);
                     AssetDatabase.SaveAssets();
+                    Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
                 catch (OperationCanceledException)
                 {
+                    Debug.LogFormat(KanikamaDebug.Format, "canceled");
                     throw;
                 }
                 catch (Exception e)
                 {
-                    KanikamaDebug.LogException(e);
+                    Debug.LogFormat(KanikamaDebug.Format, "failed");
+                    Debug.LogException(e);
                 }
             }
 
@@ -108,6 +114,7 @@ namespace Kanikama.GI.Editor
                 var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, id));
                 var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
                 dst.Lightmaps.Add(copiedLightmap);
+                Debug.LogFormat(KanikamaDebug.Format, $"copying lightmap (index:{bakedLightmap.Index}, type:{bakedLightmap.Type}) {bakedLightmap.Path} -> {outPath}");
             }
 
             foreach (var bakedLightmap in src.DirectionalLightmaps)
@@ -115,6 +122,7 @@ namespace Kanikama.GI.Editor
                 var outPath = Path.Combine(dstDir, TempLightmapName(bakedLightmap, id));
                 var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, outPath);
                 dst.DirectionalLightmaps.Add(copiedLightmap);
+                Debug.LogFormat(KanikamaDebug.Format, $"copying lightmap (index:{bakedLightmap.Index}, type:{bakedLightmap.Type}) {bakedLightmap.Path} -> {outPath}");
             }
         }
 
@@ -158,6 +166,7 @@ namespace Kanikama.GI.Editor
 
         public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
         {
+            Debug.LogFormat(KanikamaDebug.Format, $"Unity pipeline without Kanikama start");
             var handles = context.BakeTargetHandles;
 
             foreach (var handle in handles)
@@ -171,10 +180,17 @@ namespace Kanikama.GI.Editor
                 var lightmapper = context.Lightmapper;
                 lightmapper.ClearCache();
                 await lightmapper.BakeAsync(cancellationToken);
+                Debug.LogFormat(KanikamaDebug.Format, "done");
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogFormat(KanikamaDebug.Format, "canceled");
+                throw;
             }
             catch (Exception e)
             {
-                KanikamaDebug.LogException(e);
+                Debug.LogFormat(KanikamaDebug.Format, "failed");
+                Debug.LogException(e);
             }
             finally
             {
