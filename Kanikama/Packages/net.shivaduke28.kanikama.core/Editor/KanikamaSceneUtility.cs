@@ -20,18 +20,21 @@ namespace Kanikama.Core.Editor
                 return false;
             }
             var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
-            var dirPath = Path.GetDirectoryName(scene.path);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, scene.name) : string.Empty;
-            sceneAssetData = new SceneAssetData(path, sceneAsset, lightingDirPath);
+            sceneAssetData = new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
             return true;
+        }
+
+        public static string LightingAssetDirPath(SceneAsset sceneAsset)
+        {
+            var path = AssetDatabase.GetAssetPath(sceneAsset);
+            var dirPath = Path.GetDirectoryName(path);
+            return dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
         }
 
         public static SceneAssetData ToAssetData(SceneAsset sceneAsset)
         {
             var path = AssetDatabase.GetAssetPath(sceneAsset);
-            var dirPath = Path.GetDirectoryName(path);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
-            return new SceneAssetData(path, sceneAsset, lightingDirPath);
+            return new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
         }
 
         public static TemporarySceneAssetHandle CopySceneAsset(SceneAssetData sceneAssetData)
@@ -46,9 +49,7 @@ namespace Kanikama.Core.Editor
             var newPath = Path.Combine(dir, $"{file}_copy.unity");
             AssetDatabase.CopyAsset(path, newPath);
             var newAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(newPath);
-            var dirPath = Path.GetDirectoryName(newPath);
-            var lightingDirPath = dirPath != null ? Path.Combine(dirPath, newAsset.name) : string.Empty;
-            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, lightingDirPath));
+            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, LightingAssetDirPath(newAsset)));
         }
 
         public static BakedLightingAssetCollection GetBakedAssetData(SceneAssetData sceneAssetData)
