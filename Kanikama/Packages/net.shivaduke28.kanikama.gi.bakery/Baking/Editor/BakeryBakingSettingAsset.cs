@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,6 +9,7 @@ namespace Kanikama.GI.Bakery.Editor
     public sealed class BakeryBakingSettingAsset : ScriptableObject
     {
         [SerializeField] BakeryBakingSetting setting;
+
         public BakeryBakingSetting Setting
         {
             get => setting;
@@ -46,74 +43,13 @@ namespace Kanikama.GI.Bakery.Editor
 
             settingAsset = CreateInstance<BakeryBakingSettingAsset>();
             var setting = new BakeryBakingSetting();
-            setting.Set(sceneAsset);
+            setting.SetSceneAsset(sceneAsset);
             settingAsset.setting = setting;
             var dirPath = setting.OutputAssetDirPath;
             KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
             AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
             return settingAsset;
-        }
-    }
-
-    [Serializable]
-    public class BakeryBakingSetting
-    {
-        [SerializeField] SceneAsset sceneAsset;
-        [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
-        [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
-        [SerializeField] string outputAssetDirPath;
-
-        [Serializable]
-        sealed class KeyLightmapsPair
-        {
-            public string Key;
-            public List<BakeryLightmap> Lightmaps;
-        }
-
-
-        public SceneAsset SceneAsset => sceneAsset;
-        public List<BakeryLightmap> GetBakeryLightmaps() => lightmapsPairs.SelectMany(pair => pair.Lightmaps).ToList();
-        public TextureResizeType TextureResizeType => textureResizeType;
-        public string OutputAssetDirPath => outputAssetDirPath;
-
-        public void AddOrUpdate(string key, List<BakeryLightmap> lightmaps)
-        {
-            foreach (var pair in lightmapsPairs)
-            {
-                if (pair.Key == key)
-                {
-                    pair.Lightmaps = lightmaps;
-                    return;
-                }
-            }
-
-            lightmapsPairs.Add(new KeyLightmapsPair
-            {
-                Key = key, Lightmaps = lightmaps,
-            });
-        }
-
-        public void Remove(string key)
-        {
-            var index = lightmapsPairs.FindIndex(pair => pair.Key == key);
-            if (index >= 0)
-            {
-                lightmapsPairs.RemoveAt(index);
-            }
-        }
-
-        public void Set(SceneAsset scene)
-        {
-            sceneAsset = scene;
-            outputAssetDirPath = GetOutputAssetDirPath(scene);
-        }
-
-        public static string GetOutputAssetDirPath(SceneAsset sceneAsset)
-        {
-            var path = AssetDatabase.GetAssetPath(sceneAsset);
-            var dirPath = Path.GetDirectoryName(path);
-            return dirPath != null ? Path.Combine(dirPath, $"{sceneAsset.name}_kanikama_bakery") : string.Empty;
         }
     }
 }
