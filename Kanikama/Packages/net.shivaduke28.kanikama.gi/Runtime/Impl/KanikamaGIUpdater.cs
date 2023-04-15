@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Impl
@@ -41,7 +42,7 @@ namespace Kanikama.GI.Runtime.Impl
             foreach (var r in renderers)
             {
                 var i = r.lightmapIndex;
-                if (i < 0 || i > lightmapArrays.Length)
+                if (i < 0 || i >= lightmapArrays.Length)
                 {
                     Debug.LogWarning($"invalid lightmap index. {r.name}: {i}");
                     continue;

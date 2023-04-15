@@ -38,16 +38,14 @@ namespace Kanikama.GI.Runtime.Impl
 
         public override Color GetColorLinear()
         {
-            // Because we assume emissive colors are HDR,
-            // so that color values are already linear.
             if (useMaterialPropertyBlockInternal)
             {
                 renderer.GetPropertyBlock(block);
-                return block.GetColor(propertyId);
+                return block.GetColor(propertyId).linear;
             }
             else
             {
-                return instance.GetColor(propertyId);
+                return instance.GetColor(propertyId).linear;
             }
         }
 

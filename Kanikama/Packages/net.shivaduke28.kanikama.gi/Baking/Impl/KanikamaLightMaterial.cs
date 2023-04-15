@@ -9,6 +9,7 @@ namespace Kanikama.GI.Baking.Impl
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;
+        [SerializeField] string propertyName = "_EmissionColor";
         [SerializeField] Material original;
         [SerializeField] Material instance;
 
@@ -40,6 +41,7 @@ namespace Kanikama.GI.Baking.Impl
         public override void TurnOn()
         {
             KanikamaRuntimeUtility.AddBakedEmissiveFlag(instance);
+            instance.SetColor(propertyName, Color.white);
         }
 
         public override bool Includes(Object obj) => obj == renderer;

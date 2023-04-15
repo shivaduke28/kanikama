@@ -141,12 +141,18 @@ namespace Kanikama.GI.Editor
                     TextureUtility.ResizeTexture(texture, resizeType);
                 }
 
-                var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
-                var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
-                var lightPath = Path.Combine(dstDirPath, $"{LightmapType.Color.ToFileName()}-{index}.asset");
-                var dirPath = Path.Combine(dstDirPath, $"{LightmapType.Directional.ToFileName()}-{index}.asset");
-                KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
-                KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                if (light.Count > 0)
+                {
+                    var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
+                    var lightPath = Path.Combine(dstDirPath, $"{LightmapType.Color.ToFileName()}-{index}.asset");
+                    KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                }
+                if (dir.Count > 0)
+                {
+                    var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
+                    var dirPath = Path.Combine(dstDirPath, $"{LightmapType.Directional.ToFileName()}-{index}.asset");
+                    KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                }
             }
         }
 
