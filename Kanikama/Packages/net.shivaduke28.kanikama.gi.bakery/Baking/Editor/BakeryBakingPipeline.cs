@@ -72,7 +72,9 @@ namespace Kanikama.GI.Bakery.Editor
 
                     var map = new Dictionary<string, List<BakeryLightmap>>();
                     var lightmapper = context.Lightmapper;
-                    var outputDirPath = lightmapper.OutputAssetDirPath;
+                    var outputAssetDirPath = copiedSceneHandle.SceneAssetData.LightingAssetDirectoryPath;
+                    // NOTE: need to set output path explicitly to Bakery.
+                    lightmapper.SetOutputAssetDirPath(outputAssetDirPath);
 
                     // TODO: Lightmapperのパラメータ指定があるはず
                     foreach (var handle in bakeTargetHandles)
@@ -82,7 +84,7 @@ namespace Kanikama.GI.Bakery.Editor
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
-                        var baked = KanikamaBakeryUtility.GetLightmaps(outputDirPath, copiedSceneHandle.SceneAssetData.Asset.name);
+                        var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedSceneHandle.SceneAssetData.Asset.name);
                         Copy(baked, out var copied, dstDir, handle.Id);
                         map[handle.Id] = copied;
                     }

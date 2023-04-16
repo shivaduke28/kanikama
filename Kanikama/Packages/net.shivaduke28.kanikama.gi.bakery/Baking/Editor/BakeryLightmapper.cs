@@ -1,6 +1,6 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Core.Editor;
 using UnityEditor;
 
 namespace Kanikama.GI.Bakery.Editor
@@ -17,12 +17,16 @@ namespace Kanikama.GI.Bakery.Editor
             projectSetting = ftLightmaps.GetProjectSettings();
         }
 
-        public string OutputAssetDirPath => Path.Combine("Assets", ftRenderLightmap.outputPath);
+        public void SetOutputAssetDirPath(string outputAssetDirPath)
+        {
+            ftRenderLightmap.useScenePath = false;
+            ftRenderLightmap.outputPath = KanikamaSceneUtility.RemoveAssetsFromPath(outputAssetDirPath);
+        }
+
         public bool UseMipmap => projectSetting.mipmapLightmaps;
 
         public async Task BakeAsync(CancellationToken cancellationToken)
         {
-            ftRenderLightmap.outputPathFull = ftRenderLightmap.outputPath;
             bakery.RenderButton(false);
             while (ftRenderLightmap.bakeInProgress)
             {
