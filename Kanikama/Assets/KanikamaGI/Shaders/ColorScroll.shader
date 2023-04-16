@@ -11,7 +11,10 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "RenderType"="Opaque"
+        }
         LOD 100
 
         Pass
@@ -41,7 +44,7 @@
             float _Rotation;
             float _Random;
 
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -87,16 +90,11 @@
                 float y = floor(uv.y * s) / s;
                 float hue = uv.x * _Scale + y + _Time.y * _Speed;
 
-                col = hsv2rgb(float3(hue, 1, 1));
-                col *= _Emission;
-
+                col = hsv2rgb(float3(hue, 1, _Emission * (sin(_Time.y) * 0.5 + 0.5)));
                 col *= step(_Random, random(float2(_Time.y, 0.5)).x);
 
                 return fixed4(col, 1);
             }
-
-
-
             ENDCG
         }
     }
