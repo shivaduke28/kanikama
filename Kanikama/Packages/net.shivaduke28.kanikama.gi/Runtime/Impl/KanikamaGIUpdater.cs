@@ -16,6 +16,7 @@ namespace Kanikama.GI.Runtime.Impl
         static readonly int LightmapIndArray = Shader.PropertyToID("_Udon_LightmapIndArray");
         static readonly int Count = Shader.PropertyToID("_Udon_LightmapCount");
         static readonly int Colors = Shader.PropertyToID("_Udon_LightmapColors");
+        const int MaxColorCount = 64;
 
         Vector4[] colorsInternal;
         MaterialPropertyBlock block;
@@ -36,7 +37,7 @@ namespace Kanikama.GI.Runtime.Impl
                 indexedColorArrays.Add(indexedArray);
                 index += indexedArray.Length;
             }
-            colorsInternal = new Vector4[index];
+            colorsInternal = new Vector4[MaxColorCount];
 
             block = new MaterialPropertyBlock();
             foreach (var r in renderers)
