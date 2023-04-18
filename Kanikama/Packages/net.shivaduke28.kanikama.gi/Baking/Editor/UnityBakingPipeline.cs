@@ -61,11 +61,9 @@ namespace Kanikama.GI.Editor
                     // turn off all light sources but kanikama ones
                     bool Filter(Object obj) => bakeableHandles.All(l => !l.Includes(obj));
 
-                    var sceneGIContext = SceneGIContext.GetSceneGIContext(Filter);
+                    var sceneGIContext = UnitySceneGIContext.GetGIContext(Filter);
 
                     sceneGIContext.TurnOff();
-                    sceneGIContext.DisableLightProbes();
-                    sceneGIContext.DisableReflectionProbes();
 
                     var dstDir = context.Setting.OutputAssetDirPath;
                     KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);

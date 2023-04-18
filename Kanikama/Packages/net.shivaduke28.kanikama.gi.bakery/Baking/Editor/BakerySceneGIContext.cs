@@ -96,11 +96,14 @@ namespace Kanikama.GI.Bakery.Editor
 
         public void Dispose()
         {
-            var materialHolders = Object.FindObjectsOfType<RendererMaterialHolder>();
-            foreach (var holder in materialHolders)
+            if (renderers != null)
             {
-                holder.Clear();
-                Object.DestroyImmediate(holder);
+                foreach (var holder in renderers)
+                {
+                    if (holder.Value == null) continue;
+                    holder.Value.Clear();
+                    Object.DestroyImmediate(holder.Value);
+                }
             }
         }
     }
