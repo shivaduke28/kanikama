@@ -17,7 +17,7 @@ namespace Kanikama.GI.Runtime.Impl
         int propertyId;
         MaterialPropertyBlock block;
 
-        void Start()
+        void Awake()
         {
             propertyId = Shader.PropertyToID(propertyName);
             useMaterialPropertyBlockInternal = useMaterialPropertyBlock;

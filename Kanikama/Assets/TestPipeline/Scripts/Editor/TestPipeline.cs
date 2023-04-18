@@ -48,10 +48,8 @@ namespace Test.Editor
                 light.lightmapBakeType = LightmapBakeType.Baked;
 
                 // turn off other light sources
-                var sceneLightingCollection = SceneGIContext.GetSceneGIContext();
+                var sceneLightingCollection = UnitySceneGIContext.GetGIContext();
                 sceneLightingCollection.TurnOff();
-                sceneLightingCollection.DisableLightProbes();
-                sceneLightingCollection.DisableReflectionProbes();
 
                 // non directional
                 LightmapEditorSettings.lightmapsMode = LightmapsMode.NonDirectional;

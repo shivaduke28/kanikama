@@ -28,6 +28,11 @@ namespace Kanikama.Core
             return material.globalIlluminationFlags.HasFlag(MaterialGlobalIlluminationFlags.BakedEmissive);
         }
 
+        public static bool IsContributeGI(Light light)
+        {
+            return light.isActiveAndEnabled && (light.lightmapBakeType & LightmapBakeType.Realtime) == 0;
+        }
+
         public static void AddBakedEmissiveFlag(Material material)
         {
             var flags = material.globalIlluminationFlags;

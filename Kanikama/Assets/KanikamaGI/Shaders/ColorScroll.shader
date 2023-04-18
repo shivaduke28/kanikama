@@ -6,7 +6,7 @@
         _Speed("Speed", Range(-10,10) ) = 1
         _Partition("Partition", Range(1, 10)) = 2
         _Rotation("Rotation", float) = 0
-        _Emission("Emission", Range(0,10)) = 1
+        _Emission("Emission", Range(0, 20)) = 1
         _Random("Random", Range(0,1)) = 1
     }
     SubShader

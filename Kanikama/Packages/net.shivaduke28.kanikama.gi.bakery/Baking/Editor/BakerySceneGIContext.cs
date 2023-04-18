@@ -15,7 +15,7 @@ namespace Kanikama.GI.Bakery.Editor
         List<ObjectHandle<BakeryLightMesh>> bakeryLightMeshes;
 
         List<ObjectHandle<BakerySkyLight>> bakerySkyLight;
-        List<ObjectHandle<RendererMaterialInstanceHolder>> renderers;
+        List<ObjectHandle<RendererMaterialHolder>> renderers;
 
         List<ObjectHandle<LightProbeGroup>> lightProbeGroups;
         List<ObjectHandle<ReflectionProbe>> reflectionProbes;
@@ -51,8 +51,8 @@ namespace Kanikama.GI.Bakery.Editor
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Where(KanikamaEditorUtility.IsContributeGI)
-                    .Select(r => KanikamaRuntimeUtility.GetOrAddComponent<RendererMaterialInstanceHolder>(r.gameObject))
-                    .Select(h => new ObjectHandle<RendererMaterialInstanceHolder>(h))
+                    .Select(r => KanikamaRuntimeUtility.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
+                    .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
             };
             return context;
@@ -96,11 +96,14 @@ namespace Kanikama.GI.Bakery.Editor
 
         public void Dispose()
         {
-            var materialHolders = Object.FindObjectsOfType<RendererMaterialInstanceHolder>();
-            foreach (var holder in materialHolders)
+            if (renderers != null)
             {
-                holder.Dispose();
-                Object.DestroyImmediate(holder);
+                foreach (var holder in renderers)
+                {
+                    if (holder.Value == null) continue;
+                    holder.Value.Clear();
+                    Object.DestroyImmediate(holder.Value);
+                }
             }
         }
     }

@@ -5,12 +5,22 @@ using UnityEngine;
 namespace Kanikama.Core
 {
     [DisallowMultipleComponent, RequireComponent(typeof(Renderer))]
-    public sealed class RendererMaterialInstanceHolder : MonoBehaviour, IDisposable
+    public sealed class RendererMaterialHolder : MonoBehaviour
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] Material[] sharedMaterials;
         [SerializeField] Material[] materials;
         [SerializeField] bool initialized;
+
+        void OnValidate()
+        {
+            Initialize();
+        }
+
+        void Awake()
+        {
+            Initialize();
+        }
 
         void Initialize()
         {
@@ -24,14 +34,20 @@ namespace Kanikama.Core
 
         public Material[] GetMaterials()
         {
-            Initialize();
             return materials;
         }
 
-        public void Dispose()
+        public Material GetMaterial(int index)
         {
-            if (!initialized) return;
-            renderer.sharedMaterials = sharedMaterials;
+            return materials[index];
+        }
+
+        public void Clear()
+        {
+            if (sharedMaterials != null)
+            {
+                renderer.sharedMaterials = sharedMaterials;
+            }
             if (materials != null)
             {
                 foreach (var material in materials)
@@ -39,6 +55,7 @@ namespace Kanikama.Core
                     KanikamaRuntimeUtility.DestroySafe(material);
                 }
             }
+            initialized = false;
         }
     }
 }
