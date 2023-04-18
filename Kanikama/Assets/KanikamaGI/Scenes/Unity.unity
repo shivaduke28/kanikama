@@ -156,8 +156,7 @@ MonoBehaviour:
   renderer: {fileID: 114416950}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &114416950
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -289,7 +288,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ae0a0b953a6053741838518c85ae5262, type: 2}
+  - {fileID: 1460656522}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -340,7 +339,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 178402667}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: d3db891f06bc77a4d9b739328abaa032, type: 2}
   m_CullingMode: 0
@@ -366,8 +365,7 @@ MonoBehaviour:
   renderer: {fileID: 178402670}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: Untagged
 --- !u!1 &267964616
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,8 +400,7 @@ MonoBehaviour:
   renderer: {fileID: 267964618}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &267964618
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -593,8 +590,7 @@ MonoBehaviour:
   renderer: {fileID: 492756358}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &492756358
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -859,7 +855,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
-  m_Range: 2.67
+  m_Range: 5.37
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -1008,8 +1004,7 @@ MonoBehaviour:
   renderer: {fileID: 1225806354}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: Untagged
 --- !u!114 &1225806351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1135,8 +1130,7 @@ MonoBehaviour:
   renderer: {fileID: 1321448850}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &1321448850
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1408,6 +1402,81 @@ MonoBehaviour:
   - {fileID: 1640365514}
   - {fileID: 1807751650}
   - {fileID: 492756357}
+--- !u!21 &1460656522
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Emissive_Red(Clone)
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
+    m_Colors:
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1640365513
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,8 +1511,7 @@ MonoBehaviour:
   renderer: {fileID: 1640365515}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &1640365515
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1539,8 +1607,7 @@ MonoBehaviour:
   renderer: {fileID: 1690171972}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &1690171972
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1859,8 +1926,7 @@ MonoBehaviour:
   renderer: {fileID: 1807751651}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &1807751651
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1956,8 +2022,7 @@ MonoBehaviour:
   renderer: {fileID: 1816558504}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
+  tag: 
 --- !u!23 &1816558504
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2069,7 +2134,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28b033d6b9844ad47b76e4a08d809702, type: 2}
+  - {fileID: 2100000, guid: fcaaf9a9286b6024e8ae69d15457a65a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

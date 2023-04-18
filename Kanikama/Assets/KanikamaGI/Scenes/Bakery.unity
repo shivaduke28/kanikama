@@ -169,8 +169,6 @@ MonoBehaviour:
   renderer: {fileID: 143813673}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &143813673
 MeshRenderer:
@@ -296,8 +294,6 @@ MonoBehaviour:
   renderer: {fileID: 152877470}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &152877470
 MeshRenderer:
@@ -507,8 +503,6 @@ MonoBehaviour:
   renderer: {fileID: 178402670}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!1 &238312968
 GameObject:
@@ -879,8 +873,6 @@ MonoBehaviour:
   renderer: {fileID: 616377570}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &616377570
 MeshRenderer:
@@ -1216,8 +1208,6 @@ MonoBehaviour:
   renderer: {fileID: 717997358}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &717997358
 MeshRenderer:
@@ -1570,8 +1560,6 @@ MonoBehaviour:
   renderer: {fileID: 1225806354}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!114 &1225806351
 MonoBehaviour:
@@ -1908,8 +1896,6 @@ MonoBehaviour:
   renderer: {fileID: 1447743798}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &1447743798
 MeshRenderer:
@@ -2113,7 +2099,6 @@ MonoBehaviour:
   - {fileID: 18700000, guid: f035f85e083dd5d46906e725f6a7eb1a, type: 2}
   - {fileID: 18700000, guid: c2973914119452844b37788a4fd3fb96, type: 2}
   - {fileID: 18700000, guid: bc66d1ae67737c3409521e26c734120e, type: 2}
-  colorsInternal: []
 --- !u!4 &1763083955
 Transform:
   m_ObjectHideFlags: 0
@@ -2345,7 +2330,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28b033d6b9844ad47b76e4a08d809702, type: 2}
+  - {fileID: 2100000, guid: fcaaf9a9286b6024e8ae69d15457a65a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2436,8 +2421,6 @@ MonoBehaviour:
   renderer: {fileID: 1910358344}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &1910358344
 MeshRenderer:
@@ -2520,8 +2503,6 @@ MonoBehaviour:
   renderer: {fileID: 1947524955}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &1947524955
 MeshRenderer:
@@ -2782,8 +2763,6 @@ MonoBehaviour:
   renderer: {fileID: 2090316465}
   materialIndex: 0
   propertyName: _EmissionColor
-  original: {fileID: 0}
-  instance: {fileID: 0}
   tag: 
 --- !u!23 &2090316465
 MeshRenderer:
