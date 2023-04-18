@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
@@ -10,30 +9,30 @@ namespace Kanikama.Core.Editor
 {
     public sealed class SceneGIContext
     {
-        public List<LightReference> LightReferences;
-        public List<EmissiveRendererReference> EmissiveRendererReferences;
-        public List<ObjectHandle<LightProbeGroup>> LightProbeGroups;
-        public List<ObjectHandle<ReflectionProbe>> ReflectionProbes;
-        public AmbientLight AmbientLight;
+        List<LightReference> lightReferences;
+        List<EmissiveRendererReference> emissiveRendererReferences;
+        List<ObjectHandle<LightProbeGroup>> lightProbeGroups;
+        List<ObjectHandle<ReflectionProbe>> reflectionProbes;
+        AmbientLight ambientLight;
 
         public void TurnOff()
         {
-            foreach (var reference in LightReferences)
+            foreach (var reference in lightReferences)
             {
                 reference.TurnOff();
             }
 
-            foreach (var reference in EmissiveRendererReferences)
+            foreach (var reference in emissiveRendererReferences)
             {
                 reference.TurnOff();
             }
 
-            AmbientLight.TurnOff();
+            ambientLight.TurnOff();
         }
 
         public void DisableLightProbes()
         {
-            foreach (var reference in LightProbeGroups)
+            foreach (var reference in lightProbeGroups)
             {
                 reference.Value.enabled = false;
             }
@@ -41,7 +40,7 @@ namespace Kanikama.Core.Editor
 
         public void DisableReflectionProbes()
         {
-            foreach (var reference in ReflectionProbes)
+            foreach (var reference in reflectionProbes)
             {
                 reference.Value.enabled = false;
             }
@@ -51,21 +50,21 @@ namespace Kanikama.Core.Editor
         {
             var context = new SceneGIContext
             {
-                AmbientLight = new AmbientLight(),
-                LightReferences = Object.FindObjectsOfType<Light>()
+                ambientLight = new AmbientLight(),
+                lightReferences = Object.FindObjectsOfType<Light>()
                     .Where(LightReference.IsContributeGI)
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Select(l => new LightReference(l))
                     .ToList(),
-                EmissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
+                emissiveRendererReferences = Object.FindObjectsOfType<Renderer>()
                     .Where(EmissiveRendererReference.IsContributeGI)
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Select(l => new EmissiveRendererReference(l))
                     .ToList(),
-                LightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
+                lightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
                     .Select(lg => new ObjectHandle<LightProbeGroup>(lg))
                     .ToList(),
-                ReflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
+                reflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
                     .Select(rp => new ObjectHandle<ReflectionProbe>(rp))
                     .ToList(),
             };
