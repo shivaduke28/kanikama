@@ -10,8 +10,7 @@ namespace Kanikama.GI.Bakery.Baking.Impl
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
-        [SerializeField] Material materialInstance;
-        [SerializeField] Material material;
+        [SerializeField] string tag;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] float intensity;
 
@@ -25,17 +24,10 @@ namespace Kanikama.GI.Bakery.Baking.Impl
         {
             color = bakeryLightMesh.color;
             intensity = bakeryLightMesh.intensity;
-            if (materialInstance != null)
-            {
-                KanikamaRuntimeUtility.DestroySafe(materialInstance);
-            }
-            material = renderer.sharedMaterial;
-            materialInstance = Instantiate(material);
-            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(materialInstance);
-            renderer.sharedMaterial = materialInstance;
+            tag = gameObject.tag;
+            gameObject.tag = "Untagged";
         }
 
-        // TODO: enabled = falseにするの駄目そう
         public override void TurnOff()
         {
             renderer.enabled = false;
@@ -61,11 +53,7 @@ namespace Kanikama.GI.Bakery.Baking.Impl
             bakeryLightMesh.enabled = true;
             bakeryLightMesh.color = color;
             bakeryLightMesh.intensity = intensity;
-            renderer.sharedMaterial = material;
-            if (materialInstance != null)
-            {
-                DestroyImmediate(materialInstance);
-            }
+            gameObject.tag = tag;
         }
     }
 }

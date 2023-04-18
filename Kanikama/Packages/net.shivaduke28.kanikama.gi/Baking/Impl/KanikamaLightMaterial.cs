@@ -10,8 +10,7 @@ namespace Kanikama.GI.Baking.Impl
         [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
-        [SerializeField] Material original;
-        [SerializeField] Material instance;
+        [SerializeField] string tag;
 
         void OnValidate()
         {
@@ -22,42 +21,39 @@ namespace Kanikama.GI.Baking.Impl
         {
             gameObject.SetActive(true);
             renderer.enabled = true;
-            var sharedMaterials = renderer.sharedMaterials;
-            if (materialIndex < 0 || materialIndex >= sharedMaterials.Length)
+            tag = gameObject.tag;
+            if (!TryGetComponent<RendererMaterialHolder>(out _))
             {
-                return;
+                gameObject.AddComponent<RendererMaterialHolder>();
             }
-            original = sharedMaterials[materialIndex];
-            instance = Instantiate(original);
-            sharedMaterials[materialIndex] = instance;
-            renderer.sharedMaterials = sharedMaterials;
         }
 
         public override void TurnOff()
         {
-            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(instance);
+            gameObject.tag = tag;
+            var holder = GetComponent<RendererMaterialHolder>();
+            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(holder.GetMaterial(materialIndex));
         }
 
         public override void TurnOn()
         {
-            KanikamaRuntimeUtility.AddBakedEmissiveFlag(instance);
-            instance.SetColor(propertyName, Color.white);
+            gameObject.tag = "Untagged";
+            var holder = GetComponent<RendererMaterialHolder>();
+            var mat = holder.GetMaterial(materialIndex);
+            mat.SetColor(propertyName, Color.white);
+            KanikamaRuntimeUtility.AddBakedEmissiveFlag(mat);
         }
 
         public override bool Includes(Object obj) => obj == renderer;
 
         public override void Clear()
         {
-            var sharedMaterials = renderer.sharedMaterials;
-            if (materialIndex < 0 || materialIndex >= sharedMaterials.Length)
+            gameObject.tag = tag;
+            if (TryGetComponent<RendererMaterialHolder>(out var holder))
             {
-                return;
+                holder.Clear();
+                KanikamaRuntimeUtility.DestroySafe(holder);
             }
-            sharedMaterials[materialIndex] = original;
-            renderer.sharedMaterials = sharedMaterials;
-            DestroyImmediate(instance);
-            instance = null;
-            original = null;
         }
     }
 }
