@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
-    [AddComponentMenu("Kanikama/GI/Baking.KanikamaLight")]
+    [AddComponentMenu("Kanikama/Baking.KanikamaLight")]
     [EditorOnly]
     public sealed class KanikamaLight : BakeTarget
     {

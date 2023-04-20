@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Baking.Impl
 {
-    [AddComponentMenu("Kanikama/GI/Baking.KanikamaSceneDescriptor")]
+    [AddComponentMenu("Kanikama/Baking.KanikamaSceneDescriptor")]
     [EditorOnly]
     public sealed class KanikamaSceneDescriptor : MonoBehaviour, IBakingDescriptor
     {
