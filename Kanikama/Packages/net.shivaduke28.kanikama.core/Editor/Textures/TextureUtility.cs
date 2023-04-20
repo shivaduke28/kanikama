@@ -114,6 +114,14 @@ namespace Kanikama.Core.Editor.Textures
             textureImporter.SaveAndReimport();
         }
 
+        public static bool GetTextureHasMipmap(Texture2D texture)
+        {
+            var path = AssetDatabase.GetAssetPath(texture);
+            if (string.IsNullOrEmpty(path)) return false;
+            var textureImporter = (TextureImporter) AssetImporter.GetAtPath(path);
+            return textureImporter.mipmapEnabled;
+        }
+
         // https://answers.unity.com/questions/893447/get-the-real-texture-size.html
         public static void GetTextureRealWidthAndHeight(TextureImporter textureImporter, out int width, out int height)
         {

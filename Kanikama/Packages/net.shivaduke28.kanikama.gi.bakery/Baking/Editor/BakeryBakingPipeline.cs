@@ -157,14 +157,15 @@ namespace Kanikama.GI.Bakery.Editor
                 var light = lightmaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
                 var dir = directionalMaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
 
-                // TODO: mipChainは設定を見る方がいいかもしれん
                 if (light.Count > 0)
                 {
                     foreach (var texture in light)
                     {
                         TextureUtility.ResizeTexture(texture, resizeType);
                     }
-                    var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: false);
+                    // FIXME: validate all or no lightmaps have mipmap.
+                    var useMipmap = TextureUtility.GetTextureHasMipmap(light[0]);
+                    var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: useMipmap);
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{index}.asset");
                     if (lightArr != null)
                     {
@@ -178,7 +179,9 @@ namespace Kanikama.GI.Bakery.Editor
                     {
                         TextureUtility.ResizeTexture(texture, resizeType);
                     }
-                    var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: false);
+                    // FIXME: check all or no lightmaps have mipmap.
+                    var useMipmap = TextureUtility.GetTextureHasMipmap(dir[0]);
+                    var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: useMipmap);
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{index}.asset");
                     if (dirArr != null)
                     {
