@@ -35,6 +35,9 @@ namespace Kanikama.GI.Editor.GUI
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData))
             {
+                sceneAsset = null;
+                sceneDescriptor = null;
+                bakingSettingAsset = null;
                 return;
             }
 
@@ -43,6 +46,10 @@ namespace Kanikama.GI.Editor.GUI
             if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
+            }
+            else
+            {
+                bakingSettingAsset = null;
             }
         }
 
@@ -71,6 +78,7 @@ namespace Kanikama.GI.Editor.GUI
         void DrawScene()
         {
             GUILayout.Label("Scene", EditorStyles.boldLabel);
+            DrawLoadButton();
             using (new EditorGUI.DisabledGroupScope(true))
             {
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
@@ -100,30 +108,38 @@ namespace Kanikama.GI.Editor.GUI
 
             if (bakingSettingAsset == null)
             {
-                if (GUILayout.Button("Load/Create Settings Asset"))
+                if (GUILayout.Button("Create Settings Asset"))
                 {
                     bakingSettingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAsset);
                 }
-                EditorGUILayout.HelpBox("Load or Create Kanikama Settings Asset.", MessageType.Warning);
+                EditorGUILayout.HelpBox("Create Kanikama Settings Asset.", MessageType.Warning);
                 return;
             }
 
-            if (GUILayout.Button("Bake Kanikama"))
+            if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 var _ = BakeKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Bake non Kanikama"))
+            if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Create Assets"))
+            if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
                 UnityBakingPipeline.CreateAssets(bakingSettingAsset.Setting.LightmapStorage, bakingSettingAsset.Setting.OutputAssetDirPath,
                     bakingSettingAsset.Setting.TextureResizeType);
+            }
+        }
+
+        void DrawLoadButton()
+        {
+            if (GUILayout.Button("Load Active Scene"))
+            {
+                Load();
             }
         }
 
@@ -167,6 +183,19 @@ namespace Kanikama.GI.Editor.GUI
             {
                 isRunning = false;
             }
+        }
+
+        bool ValidateAndLoadOnFail()
+        {
+            var result = sceneDescriptor != null;
+            result = result && KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData);
+            result = result && sceneAssetData.Asset == sceneAsset;
+
+            if (!result)
+            {
+                Load();
+            }
+            return result;
         }
     }
 }
