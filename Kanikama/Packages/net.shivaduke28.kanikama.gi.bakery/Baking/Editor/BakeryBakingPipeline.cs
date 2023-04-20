@@ -133,6 +133,42 @@ namespace Kanikama.GI.Bakery.Editor
             }
         }
 
+        public static async Task BakeWithoutKanikamaAsync(Context context, CancellationToken cancellationToken)
+        {
+            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline without Kanikama start");
+            var handles = context.BakeTargetHandles;
+
+            foreach (var handle in handles)
+            {
+                handle.Initialize();
+                handle.TurnOff();
+            }
+
+            try
+            {
+                var lightmapper = context.Lightmapper;
+                await lightmapper.BakeAsync(cancellationToken);
+                Debug.LogFormat(KanikamaDebug.Format, "done");
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogFormat(KanikamaDebug.Format, "canceled");
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogFormat(KanikamaDebug.Format, "failed");
+                Debug.LogException(e);
+            }
+            finally
+            {
+                foreach (var handle in handles)
+                {
+                    handle.Clear();
+                }
+            }
+        }
+
         static string CopiedLightmapName(BakeryLightmap bakedLightmap, string id)
         {
             var path = bakedLightmap.Path;

@@ -114,11 +114,11 @@ namespace Kanikama.GI.Baking.Editor.GUI
                 var _ = BakeKanikamaAsync(sceneDescriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
-            // if (GUILayout.Button("Bake non Kanikama"))
-            // {
-            //     cancellationTokenSource = new CancellationTokenSource();
-            //     var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
-            // }
+            if (GUILayout.Button("Bake non Kanikama"))
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
+            }
 
             if (GUILayout.Button("Create Assets"))
             {
@@ -147,25 +147,25 @@ namespace Kanikama.GI.Baking.Editor.GUI
             }
         }
 
-        // async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
-        // {
-        //     try
-        //     {
-        //         isRunning = true;
-        //         await UnityBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
-        //     }
-        //     catch (OperationCanceledException)
-        //     {
-        //         throw;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Debug.LogException(e);
-        //     }
-        //     finally
-        //     {
-        //         isRunning = false;
-        //     }
-        // }
+        async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        {
+            try
+            {
+                isRunning = true;
+                await BakeryBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
     }
 }

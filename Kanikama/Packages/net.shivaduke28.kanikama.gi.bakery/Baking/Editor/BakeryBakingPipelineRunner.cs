@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
 using Kanikama.GI.Editor;
+using UnityEngine;
 
 namespace Kanikama.GI.Bakery.Editor
 {
@@ -32,12 +34,24 @@ namespace Kanikama.GI.Bakery.Editor
                 settingAsset.Setting
             );
 
-            await BakeryBakingPipeline.BakeAsync(ctx, default);
+            await BakeryBakingPipeline.BakeAsync(ctx, cancellationToken);
         }
 
-        public static void CreateAssets(BakeryBakingSetting setting)
+        public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor,
+            SceneAssetData sceneAssetData,
+            CancellationToken cancellationToken)
         {
-            BakeryBakingPipeline.CreateAssets(setting);
+            if (!BakeryBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
+            {
+                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(BakeryBakingSettingAsset)} is not found.");
+                return;
+            }
+
+            var bakeTargets = bakingDescriptor.GetBakeTargets();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            var context = new BakeryBakingPipeline.Context(sceneAssetData, handles, new BakeryLightmapper(), settingAsset.Setting);
+
+            await BakeryBakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
         }
     }
 }
