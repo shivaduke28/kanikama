@@ -7,6 +7,7 @@ namespace Kanikama.GI.Runtime.Impl
     [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
     public class KanikamaGIUpdater : MonoBehaviour
     {
+        [SerializeField] PreRenderEventHandler preRenderEventHandler;
         [SerializeField] KanikamaSceneDescriptor kanikamaSceneDescriptor;
         [SerializeField] Renderer[] renderers;
         [SerializeField] Texture2DArray[] lightmapArrays;
@@ -26,6 +27,24 @@ namespace Kanikama.GI.Runtime.Impl
 
         void Start()
         {
+            if (preRenderEventHandler == null)
+            {
+                var mainCamera = Camera.main;
+                if (mainCamera == null)
+                {
+                    enabled = false;
+                    return;
+                }
+                if (!mainCamera.TryGetComponent<PreRenderEventHandler>(out var handler))
+                {
+                    handler = mainCamera.gameObject.AddComponent<PreRenderEventHandler>();
+                }
+
+                // In Editor, UpdateColors will not be called if Game Window is not active.
+                preRenderEventHandler = handler;
+                preRenderEventHandler.OnPreRenderEvent += UpdateColors;
+            }
+
             lightSources = kanikamaSceneDescriptor.GetLightSources();
             var index = lightSources.Count;
             indexedColorArrays = new List<IndexedColorArray>();
@@ -59,8 +78,7 @@ namespace Kanikama.GI.Runtime.Impl
             }
         }
 
-        // TODO: update colors on post render timing...
-        void LateUpdate()
+        void UpdateColors()
         {
             for (var i = 0; i < lightSources.Count; i++)
             {
@@ -80,6 +98,14 @@ namespace Kanikama.GI.Runtime.Impl
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);
             Shader.SetGlobalInt(Count, colorsInternal.Length);
+        }
+
+        void OnDestroy()
+        {
+            if (preRenderEventHandler != null)
+            {
+                preRenderEventHandler.OnPreRenderEvent -= UpdateColors;
+            }
         }
 
         class IndexedColorArray
