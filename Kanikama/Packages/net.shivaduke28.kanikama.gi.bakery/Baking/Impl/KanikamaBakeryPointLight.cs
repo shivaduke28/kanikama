@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 namespace Kanikama.GI.Bakery.Baking.Impl
 {
     [RequireComponent(typeof(Light), typeof(BakeryPointLight))]
-    [AddComponentMenu("Kanikama/GI/Baking.KanikamaBakeryPointLight")]
+    [AddComponentMenu("Kanikama/Baking.KanikamaBakeryPointLight")]
     public sealed class KanikamaBakeryPointLight : BakeTarget
     {
         [SerializeField] new Light light;

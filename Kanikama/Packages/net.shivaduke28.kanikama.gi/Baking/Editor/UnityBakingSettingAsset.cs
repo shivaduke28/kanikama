@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Editor
 {
-    [CreateAssetMenu(menuName = "Kanikama/GI/BakingConfiguration", fileName = "KanikamaGIBakingConfiguration")]
+    [CreateAssetMenu(menuName = "Kanikama/UnityBakingSettingAsset", fileName = "UnityBakingSettingAsset")]
     public sealed class UnityBakingSettingAsset : ScriptableObject
     {
         [SerializeField] UnityBakingSetting setting;
@@ -47,7 +47,7 @@ namespace Kanikama.GI.Editor
             settingAsset.setting = setting;
             var dirPath = setting.OutputAssetDirPath;
             KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
-            AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
+            AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "UnityBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
             return settingAsset;
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Impl
 {
-    [AddComponentMenu("Kanikama/GI/Runtime.KanikamaSceneDescriptor")]
+    [AddComponentMenu("Kanikama/Runtime.KanikamaSceneDescriptor")]
     public sealed class KanikamaSceneDescriptor : MonoBehaviour
     {
         [SerializeField] List<LightSource> lightSources;

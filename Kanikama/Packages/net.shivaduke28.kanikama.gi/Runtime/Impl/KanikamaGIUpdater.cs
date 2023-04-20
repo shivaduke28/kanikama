@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Impl
 {
-    [AddComponentMenu("Kanikama/GI/Runtime.KanikamaGIUpdater")]
+    [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
     public class KanikamaGIUpdater : MonoBehaviour
     {
         [SerializeField] KanikamaSceneDescriptor kanikamaSceneDescriptor;

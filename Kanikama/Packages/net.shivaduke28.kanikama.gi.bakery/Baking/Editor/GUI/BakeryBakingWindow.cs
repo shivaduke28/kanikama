@@ -35,6 +35,9 @@ namespace Kanikama.GI.Baking.Editor.GUI
         {
             if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData))
             {
+                sceneAsset = null;
+                bakingSettingAsset = null;
+                sceneDescriptor = null;
                 return;
             }
 
@@ -43,6 +46,10 @@ namespace Kanikama.GI.Baking.Editor.GUI
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
+            }
+            else
+            {
+                bakingSettingAsset = null;
             }
         }
 
@@ -71,6 +78,8 @@ namespace Kanikama.GI.Baking.Editor.GUI
         void DrawScene()
         {
             GUILayout.Label("Scene", EditorStyles.boldLabel);
+            DrawLoadButton();
+
             using (new EditorGUI.DisabledGroupScope(true))
             {
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
@@ -104,25 +113,33 @@ namespace Kanikama.GI.Baking.Editor.GUI
                 {
                     bakingSettingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAsset);
                 }
-                EditorGUILayout.HelpBox("Load or Create Kanikama Settings Asset.", MessageType.Warning);
+                EditorGUILayout.HelpBox("Create Kanikama Settings Asset.", MessageType.Warning);
                 return;
             }
 
-            if (GUILayout.Button("Bake Kanikama"))
+            if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 var _ = BakeKanikamaAsync(sceneDescriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
-            // if (GUILayout.Button("Bake non Kanikama"))
-            // {
-            //     cancellationTokenSource = new CancellationTokenSource();
-            //     var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
-            // }
+            if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
+            }
 
-            if (GUILayout.Button("Create Assets"))
+            if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
                 BakeryBakingPipeline.CreateAssets(bakingSettingAsset.Setting);
+            }
+        }
+
+        void DrawLoadButton()
+        {
+            if (GUILayout.Button("Load Active Scene"))
+            {
+                Load();
             }
         }
 
@@ -147,25 +164,38 @@ namespace Kanikama.GI.Baking.Editor.GUI
             }
         }
 
-        // async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
-        // {
-        //     try
-        //     {
-        //         isRunning = true;
-        //         await UnityBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
-        //     }
-        //     catch (OperationCanceledException)
-        //     {
-        //         throw;
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         Debug.LogException(e);
-        //     }
-        //     finally
-        //     {
-        //         isRunning = false;
-        //     }
-        // }
+        async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        {
+            try
+            {
+                isRunning = true;
+                await BakeryBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
+
+        bool ValidateAndLoadOnFail()
+        {
+            var result = sceneDescriptor != null;
+            result = result && KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData);
+            result = result && sceneAssetData.Asset == sceneAsset;
+
+            if (!result)
+            {
+                Load();
+            }
+            return result;
+        }
     }
 }
