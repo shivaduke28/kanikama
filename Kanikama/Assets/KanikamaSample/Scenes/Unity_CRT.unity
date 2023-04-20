@@ -2638,8 +2638,10 @@ MonoBehaviour:
   renderSettingsRenderDirMode: 0
   renderSettingsShowCheckerSettings: 0
   renderSettingsSamplesWarning: 1
+  renderSettingsSuppressPopups: 0
   renderSettingsPrefabWarning: 1
   renderSettingsSplitByScene: 0
+  renderSettingsSplitByTag: 0
   renderSettingsUVPaddingMax: 0
   renderSettingsPostPacking: 1
   renderSettingsHoleFilling: 0
@@ -2660,12 +2662,13 @@ MonoBehaviour:
   renderSettingsSector: {fileID: 0}
   renderSettingsRTPVExport: 1
   renderSettingsRTPVSceneView: 0
+  renderSettingsRTPVHDR: 0
   renderSettingsRTPVWidth: 640
   renderSettingsRTPVHeight: 360
   lastBakeTime: 0
   enlightenWarningShown: 0
   enlightenWarningShown2: 0
-  lightUIDs: 
+  uniqueLights: []
   lights: []
   implicitGroups: []
   implicitGroupedObjects: []
@@ -3868,7 +3871,7 @@ Camera:
   m_StereoSeparation: 0.022
 --- !u!114 &5409906513120252820
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -3956,7 +3959,7 @@ MonoBehaviour:
   colors: []
 --- !u!114 &5597072522118192941
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -4036,34 +4039,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 5597072522118192942}
-  gridRendererPrefab: {fileID: 0}
+  gridRendererPrefab: {fileID: 5142982364245319798, guid: c83edb39890ec1144b83de405462cb05,
+    type: 3}
   partitionType: 32
   mainMonitor: {fileID: 1057995028}
   subMonitors:
-  - {fileID: 0}
+  - {fileID: 1767965260}
   cameraDetailedSettings:
     near: 0
     far: 0.2
     distance: 0.1
   traversedGrids:
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 138811610}
+    - {fileID: 341241327}
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 101977688}
+    - {fileID: 1054641463}
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 1189412978}
+    - {fileID: 1199641814}
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 1215449972}
+    - {fileID: 1733099903}
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 1594924094}
+    - {fileID: 1304002395}
   - gridRenderers:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 1373715787}
+    - {fileID: 1825997459}
 --- !u!4 &5611941370847043656
 Transform:
   m_ObjectHideFlags: 0
@@ -4078,6 +4082,22 @@ Transform:
   m_Father: {fileID: 1979903937}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5611941370847043657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5611941370847043659}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f64cf77f49e29ef44991d3146789ff85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  kanikamaLights: []
+  kanikamaRenderers: []
+  kanikamaLightSourceGroups:
+  - {fileID: 5597072522118192943}
 --- !u!1 &5611941370847043659
 GameObject:
   m_ObjectHideFlags: 0
@@ -4087,7 +4107,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5611941370847043656}
-  - component: {fileID: 5611941370847043660}
+  - component: {fileID: 5611941370847043657}
   m_Layer: 0
   m_Name: KanikamaSceneDescriptor
   m_TagString: EditorOnly
@@ -4095,21 +4115,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &5611941370847043660
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5611941370847043659}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea025e779f7e624418598337cfd8cafc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  kanikamaLights: []
-  kanikamaRenderers: []
-  kanikamaLightSourceGroups: []
 --- !u!4 &7519408313905149333
 Transform:
   m_ObjectHideFlags: 0
@@ -4154,7 +4159,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7519408313905149334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a21927aef6f1274880cad9ba8965af3, type: 3}
+  m_Script: {fileID: 11500000, guid: 28addd43541785942a5553970ab321b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   serializationData:
@@ -4205,7 +4210,7 @@ MonoBehaviour:
   - {fileID: 1240911175}
 --- !u!114 &8082962617581570712
 MonoBehaviour:
-  m_ObjectHideFlags: 2
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

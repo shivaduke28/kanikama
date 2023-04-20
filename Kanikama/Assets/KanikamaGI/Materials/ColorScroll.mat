@@ -60,7 +60,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Emission: 5.38
+    - _Emission: 20
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -68,13 +68,13 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Partition: 1.93
-    - _Random: 0
+    - _Partition: 1.68
+    - _Random: 0.078
     - _Rotation: 482.9
-    - _Scale: 0.128
+    - _Scale: 0.269
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _Speed: 0.21
+    - _Speed: 0.53
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1

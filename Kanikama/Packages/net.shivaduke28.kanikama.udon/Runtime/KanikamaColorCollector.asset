@@ -16,7 +16,7 @@ MonoBehaviour:
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: 8a21927aef6f1274880cad9ba8965af3, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 28addd43541785942a5553970ab321b7, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 2
@@ -182,7 +182,7 @@ MonoBehaviour:
       Data: 11|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaCamera[], Kanikama.Udon.Runtime
+      Data: Kanikama.Udon.KanikamaCamera[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
