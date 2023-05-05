@@ -16,7 +16,7 @@ MonoBehaviour:
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: b3509dfc64773554b8a8ce1d4a3dd16d, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: c445a9f9f57d39e41804978af6216063, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 2
@@ -236,7 +236,7 @@ MonoBehaviour:
       Data: 14|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.Udon.KanikamaColorCollector, Kanikama.Udon
+      Data: Kanikama.Udon.KanikamaColorCollector, Kanikama.Udon.Runtime
     - Name: 
       Entry: 8
       Data: 
