@@ -33,7 +33,7 @@ namespace Kanikama.GI.Editor.GUI
 
         void Load()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData))
+            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData))
             {
                 sceneAsset = null;
                 sceneDescriptor = null;
@@ -119,13 +119,13 @@ namespace Kanikama.GI.Editor.GUI
             if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(sceneDescriptor,  new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeNonKanikamaAsync(sceneDescriptor, KanikamaSceneUtility.ToAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeNonKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
@@ -188,7 +188,7 @@ namespace Kanikama.GI.Editor.GUI
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData);
+            result = result && KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 
             if (!result)

@@ -13,7 +13,7 @@ namespace Kanikama.GI.Bakery.Editor
     {
         public static async Task RunAsync(IBakingDescriptor bakingDescriptor, BakeryBakingSetting bakingSetting, CancellationToken cancellationToken)
         {
-            var sceneAssetData = KanikamaSceneUtility.ToAssetData(bakingSetting.SceneAsset);
+            var sceneAssetData = new SceneAssetData(bakingSetting.SceneAsset);
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();

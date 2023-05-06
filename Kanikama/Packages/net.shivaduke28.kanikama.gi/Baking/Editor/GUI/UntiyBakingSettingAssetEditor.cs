@@ -28,7 +28,7 @@ namespace Kanikama.GI.Editor.GUI
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
-                var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
+                var sceneAssetData = new SceneAssetData(sceneAsset);
 
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
@@ -44,7 +44,7 @@ namespace Kanikama.GI.Editor.GUI
                 var sceneAsset = config.SceneAsset;
                 if (sceneAsset == null) return;
 
-                var sceneAssetData = KanikamaSceneUtility.ToAssetData(sceneAsset);
+                var sceneAssetData = new SceneAssetData(sceneAsset);
 
                 var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)

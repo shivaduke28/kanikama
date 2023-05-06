@@ -37,7 +37,7 @@ namespace Kanikama.Core.Editor
             var newPath = Path.Combine(dir, $"{name}{suffix}.unity");
             AssetDatabase.CopyAsset(path, newPath);
             var newAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(newPath);
-            return new CopiedSceneAsset(new SceneAssetData(newPath, newAsset, KanikamaSceneUtility.LightingAssetDirPath(newAsset)), willDeleteLightingAssetDir);
+            return new CopiedSceneAsset(new SceneAssetData(newAsset), willDeleteLightingAssetDir);
         }
     }
 }

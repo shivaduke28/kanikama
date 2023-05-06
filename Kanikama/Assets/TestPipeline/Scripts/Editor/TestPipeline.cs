@@ -21,7 +21,7 @@ namespace Test.Editor
         static async Task ExecuteAsync()
         {
             // make sure the current active scene is saved as a SceneAsset
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
+            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData)) return;
 
             // get objects that you want to control in this pipeline.
             var myLightReference = Object.FindObjectOfType<MyLightReference>();
