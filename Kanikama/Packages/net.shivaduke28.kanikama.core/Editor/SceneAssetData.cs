@@ -7,7 +7,9 @@ namespace Kanikama.Core.Editor
     {
         public string Path { get; }
         public SceneAsset Asset { get; }
+
         public string LightingAssetDirectoryPath { get; }
+        // TODO: Add GUID
 
         public SceneAssetData(string path, SceneAsset asset, string lightingAssetDirectoryPath)
         {

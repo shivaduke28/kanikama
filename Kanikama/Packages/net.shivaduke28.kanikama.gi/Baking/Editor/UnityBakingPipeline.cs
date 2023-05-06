@@ -50,8 +50,7 @@ namespace Kanikama.GI.Editor
                     // initialize all light source handles **after** the copied scene is opened
                     foreach (var handle in bakeableHandles)
                     {
-                        handle.ReplaceSceneGuid(guid);
-                        handle.Initialize();
+                        handle.Initialize(guid);
                         handle.TurnOff();
                     }
 
@@ -197,8 +196,7 @@ namespace Kanikama.GI.Editor
                 // initialize all light source handles **after** the copied scene is opened
                 foreach (var handle in bakeableHandles)
                 {
-                    handle.ReplaceSceneGuid(guid);
-                    handle.Initialize();
+                    handle.Initialize(guid);
                     handle.TurnOff();
                 }
 

@@ -53,8 +53,7 @@ namespace Kanikama.GI.Bakery.Editor
                     // initialize all light source handles **after** the copied scene is opened
                     foreach (var handle in bakeTargetHandles)
                     {
-                        handle.ReplaceSceneGuid(guid);
-                        handle.Initialize();
+                        handle.Initialize(guid);
                         handle.TurnOff();
                     }
 
@@ -137,10 +136,11 @@ namespace Kanikama.GI.Bakery.Editor
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline without Kanikama start");
             var handles = context.BakeTargetHandles;
+            var guid = AssetDatabase.AssetPathToGUID(context.SceneAssetData.Path);
 
             foreach (var handle in handles)
             {
-                handle.Initialize();
+                handle.Initialize(guid);
                 handle.TurnOff();
             }
 

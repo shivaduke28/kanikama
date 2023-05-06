@@ -24,6 +24,5 @@ namespace Kanikama.Core.Editor
         }
 
         public override string ToString() => globalObjectId.ToString();
-        public string LocalFileId() => globalObjectId.targetObjectId.ToString();
     }
 }
