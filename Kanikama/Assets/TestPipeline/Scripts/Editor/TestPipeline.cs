@@ -29,16 +29,16 @@ namespace Test.Editor
 
 
             // create copy
-            using (var copiedSceneHandler = KanikamaSceneUtility.CopySceneAsset(sceneAssetData))
+            using (var copiedSceneAsset = CopiedSceneAsset.Create(sceneAssetData, true))
             {
                 // create a reference before change your scene
                 var light = myLightReference.Light;
                 var lightReference = new ObjectHandle<Light>(light);
 
-                var copiedSceneAssetData = copiedSceneHandler.SceneAssetData;
+                var copiedSceneAssetData = copiedSceneAsset.SceneAssetData;
 
                 // change to the copied scene
-                EditorSceneManager.OpenScene(copiedSceneHandler.SceneAssetData.Path);
+                EditorSceneManager.OpenScene(copiedSceneAsset.SceneAssetData.Path);
 
                 // get a reference in the copied scene (using hierarchy path)
                 light = lightReference.Value;

@@ -37,7 +37,7 @@ namespace Kanikama.GI.Editor
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline start");
-            using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
+            using (var copiedSceneHandle = CopiedSceneAsset.Create(context.SceneAssetData, true))
             {
                 try
                 {
@@ -185,37 +185,46 @@ namespace Kanikama.GI.Editor
 
         public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
         {
-            Debug.LogFormat(KanikamaDebug.Format, $"Unity pipeline without Kanikama start");
-            var handles = context.BakeTargetHandles;
+            Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline without Kanikama start");
+            using (var copied = CopiedSceneAsset.Create(context.SceneAssetData, false, "_not_kanikama_unity"))
+            {
+                // open the copied scene
+                EditorSceneManager.OpenScene(copied.SceneAssetData.Path);
 
-            foreach (var handle in handles)
-            {
-                handle.Initialize();
-                handle.TurnOff();
-            }
+                var bakeableHandles = context.BakeTargetHandles;
+                var guid = AssetDatabase.AssetPathToGUID(copied.SceneAssetData.Path);
 
-            try
-            {
-                var lightmapper = context.Lightmapper;
-                lightmapper.ClearCache();
-                await lightmapper.BakeAsync(cancellationToken);
-                Debug.LogFormat(KanikamaDebug.Format, "done");
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.LogFormat(KanikamaDebug.Format, "canceled");
-                throw;
-            }
-            catch (Exception e)
-            {
-                Debug.LogFormat(KanikamaDebug.Format, "failed");
-                Debug.LogException(e);
-            }
-            finally
-            {
-                foreach (var handle in handles)
+                // initialize all light source handles **after** the copied scene is opened
+                foreach (var handle in bakeableHandles)
                 {
-                    handle.Clear();
+                    handle.ReplaceSceneGuid(guid);
+                    handle.Initialize();
+                    handle.TurnOff();
+                }
+
+                try
+                {
+                    var lightmapper = context.Lightmapper;
+                    lightmapper.ClearCache();
+                    await lightmapper.BakeAsync(cancellationToken);
+                    var lightingDataAsset = Lightmapping.lightingDataAsset;
+                    await LightingDataAssetReplacer.ReplaceAsync(context.SceneAssetData.Asset, lightingDataAsset, cancellationToken);
+
+                    Debug.LogFormat(KanikamaDebug.Format, "done");
+                }
+                catch (OperationCanceledException)
+                {
+                    Debug.LogFormat(KanikamaDebug.Format, "canceled");
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogFormat(KanikamaDebug.Format, "failed");
+                    Debug.LogException(e);
+                }
+                finally
+                {
+                    EditorSceneManager.OpenScene(context.SceneAssetData.Path);
                 }
             }
         }

@@ -40,7 +40,7 @@ namespace Kanikama.GI.Bakery.Editor
         public static async Task BakeAsync(Context context, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline start");
-            using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
+            using (var copiedSceneHandle = CopiedSceneAsset.Create(context.SceneAssetData, true))
             {
                 try
                 {
