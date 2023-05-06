@@ -37,20 +37,20 @@ namespace Kanikama.GI.Editor
         public static async Task BakeAsync(BakingContext context, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline start");
-            using (var copiedSceneHandle = CopiedSceneAsset.Create(context.SceneAssetData, true))
+            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, true))
             {
                 try
                 {
                     // open the copied scene
-                    EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
+                    EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
 
                     var bakeableHandles = context.BakeTargetHandles;
-                    var guid = AssetDatabase.AssetPathToGUID(copiedSceneHandle.SceneAssetData.Path);
+                    var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
 
                     // initialize all light source handles **after** the copied scene is opened
                     foreach (var handle in bakeableHandles)
                     {
-                        handle.Initialize(guid);
+                        handle.Initialize(copiedSceneGuid);
                         handle.TurnOff();
                     }
 
@@ -77,7 +77,7 @@ namespace Kanikama.GI.Editor
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
-                        var baked = KanikamaSceneUtility.GetLightmaps(copiedSceneHandle.SceneAssetData);
+                        var baked = KanikamaSceneUtility.GetLightmaps(copiedScene.SceneAssetData);
                         CopyBakedLightingAssetCollection(baked, out var copied, dstDir, handle.Id);
 
                         context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
@@ -185,18 +185,18 @@ namespace Kanikama.GI.Editor
         public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline without Kanikama start");
-            using (var copied = CopiedSceneAsset.Create(context.SceneAssetData, false, "_not_kanikama_unity"))
+            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, false, "_not_kanikama_unity"))
             {
                 // open the copied scene
-                EditorSceneManager.OpenScene(copied.SceneAssetData.Path);
+                EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
 
                 var bakeableHandles = context.BakeTargetHandles;
-                var guid = AssetDatabase.AssetPathToGUID(copied.SceneAssetData.Path);
+                var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
 
                 // initialize all light source handles **after** the copied scene is opened
                 foreach (var handle in bakeableHandles)
                 {
-                    handle.Initialize(guid);
+                    handle.Initialize(copiedSceneGuid);
                     handle.TurnOff();
                 }
 
