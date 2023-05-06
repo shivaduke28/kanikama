@@ -10,46 +10,18 @@ namespace Kanikama.Core.Editor
 {
     public static class KanikamaSceneUtility
     {
-        public static bool TryGetActiveSceneAsset(out SceneAssetData sceneAssetData)
+        public static bool TryGetActiveSceneAssetData(out SceneAssetData sceneAssetData)
         {
             var scene = SceneManager.GetActiveScene();
             var path = scene.path;
             if (string.IsNullOrEmpty(path))
             {
-                sceneAssetData = new SceneAssetData(path, null, null);
+                sceneAssetData = default;
                 return false;
             }
             var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
-            sceneAssetData = new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
+            sceneAssetData = new SceneAssetData(sceneAsset);
             return true;
-        }
-
-        public static string LightingAssetDirPath(SceneAsset sceneAsset)
-        {
-            var path = AssetDatabase.GetAssetPath(sceneAsset);
-            var dirPath = Path.GetDirectoryName(path);
-            return dirPath != null ? Path.Combine(dirPath, sceneAsset.name) : string.Empty;
-        }
-
-        public static SceneAssetData ToAssetData(SceneAsset sceneAsset)
-        {
-            var path = AssetDatabase.GetAssetPath(sceneAsset);
-            return new SceneAssetData(path, sceneAsset, LightingAssetDirPath(sceneAsset));
-        }
-
-        public static TemporarySceneAssetHandle CopySceneAsset(SceneAssetData sceneAssetData)
-        {
-            var path = sceneAssetData.Path;
-            var dir = Path.GetDirectoryName(path);
-            if (dir == null)
-            {
-                throw new Exception("Directory is not found");
-            }
-            var file = Path.GetFileNameWithoutExtension(path);
-            var newPath = Path.Combine(dir, $"{file}_copy.unity");
-            AssetDatabase.CopyAsset(path, newPath);
-            var newAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(newPath);
-            return new TemporarySceneAssetHandle(new SceneAssetData(newPath, newAsset, LightingAssetDirPath(newAsset)));
         }
 
         public static List<UnityLightmap> GetLightmaps(SceneAssetData sceneAssetData)

@@ -40,21 +40,20 @@ namespace Kanikama.GI.Bakery.Editor
         public static async Task BakeAsync(Context context, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline start");
-            using (var copiedSceneHandle = KanikamaSceneUtility.CopySceneAsset(context.SceneAssetData))
+            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, true))
             {
                 try
                 {
                     // open the copied scene
-                    EditorSceneManager.OpenScene(copiedSceneHandle.SceneAssetData.Path);
+                    EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
 
                     var bakeTargetHandles = context.BakeTargetHandles;
-                    var guid = AssetDatabase.AssetPathToGUID(copiedSceneHandle.SceneAssetData.Path);
+                    var guid = copiedScene.SceneAssetData.Guid;
 
                     // initialize all light source handles **after** the copied scene is opened
                     foreach (var handle in bakeTargetHandles)
                     {
-                        handle.ReplaceSceneGuid(guid);
-                        handle.Initialize();
+                        handle.Initialize(guid);
                         handle.TurnOff();
                     }
 
@@ -72,7 +71,7 @@ namespace Kanikama.GI.Bakery.Editor
 
                     var map = new Dictionary<string, List<BakeryLightmap>>();
                     var lightmapper = context.Lightmapper;
-                    var outputAssetDirPath = copiedSceneHandle.SceneAssetData.LightingAssetDirectoryPath;
+                    var outputAssetDirPath = copiedScene.SceneAssetData.LightingAssetDirectoryPath;
                     // NOTE: need to set output path explicitly to Bakery.
                     lightmapper.SetOutputAssetDirPath(outputAssetDirPath);
 
@@ -84,7 +83,7 @@ namespace Kanikama.GI.Bakery.Editor
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
-                        var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedSceneHandle.SceneAssetData.Asset.name);
+                        var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedScene.SceneAssetData.Asset.name);
                         Copy(baked, out var copied, dstDir, handle.Id);
                         map[handle.Id] = copied;
                     }
@@ -137,10 +136,11 @@ namespace Kanikama.GI.Bakery.Editor
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline without Kanikama start");
             var handles = context.BakeTargetHandles;
+            var guid = AssetDatabase.AssetPathToGUID(context.SceneAssetData.Path);
 
             foreach (var handle in handles)
             {
-                handle.Initialize();
+                handle.Initialize(guid);
                 handle.TurnOff();
             }
 

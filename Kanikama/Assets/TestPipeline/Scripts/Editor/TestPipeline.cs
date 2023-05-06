@@ -21,7 +21,7 @@ namespace Test.Editor
         static async Task ExecuteAsync()
         {
             // make sure the current active scene is saved as a SceneAsset
-            if (!KanikamaSceneUtility.TryGetActiveSceneAsset(out var sceneAssetData)) return;
+            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData)) return;
 
             // get objects that you want to control in this pipeline.
             var myLightReference = Object.FindObjectOfType<MyLightReference>();
@@ -29,16 +29,16 @@ namespace Test.Editor
 
 
             // create copy
-            using (var copiedSceneHandler = KanikamaSceneUtility.CopySceneAsset(sceneAssetData))
+            using (var copiedSceneAsset = CopiedSceneAsset.Create(sceneAssetData, true))
             {
                 // create a reference before change your scene
                 var light = myLightReference.Light;
                 var lightReference = new ObjectHandle<Light>(light);
 
-                var copiedSceneAssetData = copiedSceneHandler.SceneAssetData;
+                var copiedSceneAssetData = copiedSceneAsset.SceneAssetData;
 
                 // change to the copied scene
-                EditorSceneManager.OpenScene(copiedSceneHandler.SceneAssetData.Path);
+                EditorSceneManager.OpenScene(copiedSceneAsset.SceneAssetData.Path);
 
                 // get a reference in the copied scene (using hierarchy path)
                 light = lightReference.Value;

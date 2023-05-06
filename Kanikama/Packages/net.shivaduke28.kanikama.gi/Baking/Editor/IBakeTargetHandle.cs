@@ -8,8 +8,7 @@ namespace Kanikama.GI.Editor
     public interface IBakeTargetHandle
     {
         string Id { get; }
-        void ReplaceSceneGuid(string sceneGuid);
-        void Initialize();
+        void Initialize(string sceneGuid);
         void TurnOff();
         void TurnOn();
         bool Includes(Object obj);
@@ -18,28 +17,26 @@ namespace Kanikama.GI.Editor
 
     public sealed class BakeTargetHandle<T> : IBakeTargetHandle where T : Object, IBakeTarget
     {
-        GlobalObjectId id;
+        readonly SceneObjectId sceneObjectId;
         ObjectHandle<T> handle;
 
-        public override string ToString() => id.ToString();
-        string IBakeTargetHandle.Id => id.targetObjectId.ToString();
+        string IBakeTargetHandle.Id => sceneObjectId.ToString();
 
         public BakeTargetHandle(T value)
         {
-            id = GlobalObjectId.GetGlobalObjectIdSlow(value);
-            handle = new ObjectHandle<T>(id);
+            var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
+            sceneObjectId = new SceneObjectId(globalObjectId);
         }
 
-        void IBakeTargetHandle.ReplaceSceneGuid(string sceneGuid)
+        void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, id.identifierType, id.targetObjectId, id.targetPrefabId, out var newId))
+            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                id = newId;
-                handle = new ObjectHandle<T>(id);
+                handle = new ObjectHandle<T>(globalObjectId);
             }
+            handle.Value.Initialize();
         }
 
-        void IBakeTargetHandle.Initialize() => handle.Value.Initialize();
         void IBakeTargetHandle.TurnOff() => handle.Value.TurnOff();
         void IBakeTargetHandle.TurnOn() => handle.Value.TurnOn();
         bool IBakeTargetHandle.Includes(Object obj) => handle.Value.Includes(obj);
@@ -48,30 +45,29 @@ namespace Kanikama.GI.Editor
 
     public sealed class BakeTargetGroupElementHandle<T> : IBakeTargetHandle where T : Object, IBakeTargetGroup
     {
-        GlobalObjectId id;
+        readonly SceneObjectId sceneObjectId;
         ObjectHandle<T> handle;
         readonly int index;
         IBakeTarget GetBakeTarget() => handle.Value.Get(index);
 
         public BakeTargetGroupElementHandle(T value, int index)
         {
-            id = GlobalObjectId.GetGlobalObjectIdSlow(value);
-            handle = new ObjectHandle<T>(id);
+            var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
+            sceneObjectId = new SceneObjectId(globalObjectId);
             this.index = index;
         }
 
-        string IBakeTargetHandle.Id => $"{id.targetObjectId}_{index}";
+        string IBakeTargetHandle.Id => $"{sceneObjectId.ToString()}_{index}";
 
-        void IBakeTargetHandle.ReplaceSceneGuid(string sceneGuid)
+        void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, id.identifierType, id.targetObjectId, id.targetPrefabId, out var newId))
+            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                id = newId;
-                handle = new ObjectHandle<T>(id);
+                handle = new ObjectHandle<T>(globalObjectId);
             }
+            GetBakeTarget().Initialize();
         }
 
-        void IBakeTargetHandle.Initialize() => GetBakeTarget().Initialize();
         void IBakeTargetHandle.TurnOff() => GetBakeTarget().TurnOff();
         void IBakeTargetHandle.TurnOn() => GetBakeTarget().TurnOn();
         bool IBakeTargetHandle.Includes(Object obj) => GetBakeTarget().Includes(obj);
