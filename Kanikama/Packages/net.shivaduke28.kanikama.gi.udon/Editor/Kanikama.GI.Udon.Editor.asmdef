@@ -1,11 +1,11 @@
 {
-    "name": "Kanikama.Udon.Editor",
+    "name": "Kanikama.GI.Udon.Editor",
     "rootNamespace": "",
     "references": [
         "VRC.Udon",
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
-        "Kanikama.Udon.Runtime",
+        "Kanikama.GI.Udon.Runtime",
         "Kanikama.Runtime",
         "Kanikama.Editor.Baking",
         "Kanikama.Editor.GUI"
