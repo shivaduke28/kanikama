@@ -44,11 +44,11 @@ namespace Kanikama.GI.Editor
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
 
-                    var bakeableHandles = context.BakeTargetHandles;
+                    var bakeTargetHandles = context.BakeTargetHandles;
                     var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
 
                     // initialize all light source handles **after** the copied scene is opened
-                    foreach (var handle in bakeableHandles)
+                    foreach (var handle in bakeTargetHandles)
                     {
                         handle.Initialize(copiedSceneGuid);
                         handle.TurnOff();
@@ -58,7 +58,7 @@ namespace Kanikama.GI.Editor
                     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
                     // turn off all light sources but kanikama ones
-                    bool Filter(Object obj) => bakeableHandles.All(l => !l.Includes(obj));
+                    bool Filter(Object obj) => bakeTargetHandles.All(l => !l.Includes(obj));
 
                     var sceneGIContext = UnitySceneGIContext.GetGIContext(Filter);
 
@@ -69,7 +69,7 @@ namespace Kanikama.GI.Editor
 
                     var lightmapper = context.Lightmapper;
 
-                    foreach (var handle in bakeableHandles)
+                    foreach (var handle in bakeTargetHandles)
                     {
                         Debug.LogFormat(KanikamaDebug.Format, $"baking... id: {handle.Id}.");
                         handle.TurnOn();
@@ -145,6 +145,7 @@ namespace Kanikama.GI.Editor
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
             IOUtility.CreateFolderIfNecessary(dstDirPath);
 
+            // TODO: reorder lightmap lists based on scene descriptors
             var allLightmaps = unityLightmapStorage.Get();
             var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Color).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Directional).ToArray();
@@ -190,11 +191,11 @@ namespace Kanikama.GI.Editor
                 // open the copied scene
                 EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
 
-                var bakeableHandles = context.BakeTargetHandles;
+                var bakeTargetHandles = context.BakeTargetHandles;
                 var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
 
                 // initialize all light source handles **after** the copied scene is opened
-                foreach (var handle in bakeableHandles)
+                foreach (var handle in bakeTargetHandles)
                 {
                     handle.Initialize(copiedSceneGuid);
                     handle.TurnOff();
