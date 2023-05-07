@@ -12,7 +12,8 @@ namespace Kanikama.GI.Editor
     {
         [SerializeField] SceneAsset sceneAsset;
         [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
-        [SerializeField] UnityLightmapStorage lightmapStorage = null;
+        [SerializeField] UnityLightmapStorage lightmapStorage;
+        [SerializeField] UnityLightmapArrayStorage lightmapArrayStorage;
         [SerializeField] string outputAssetDirPath = "Assets";
 
         public SceneAsset SceneAsset
@@ -27,6 +28,7 @@ namespace Kanikama.GI.Editor
 
         public TextureResizeType TextureResizeType => textureResizeType;
         public UnityLightmapStorage LightmapStorage => lightmapStorage;
+        public UnityLightmapArrayStorage LightmapArrayStorage => lightmapArrayStorage;
         public string OutputAssetDirPath => outputAssetDirPath;
 
 

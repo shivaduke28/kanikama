@@ -67,7 +67,7 @@ namespace Kanikama.GI.Bakery.Editor
 
             if (Color.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.Color;
+                lightmapType = BakeryLightmapType.Light;
             }
             else if (Dir.IsMatch(name))
             {

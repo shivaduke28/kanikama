@@ -114,7 +114,7 @@ namespace Kanikama.GI.Editor
             {
                 switch (lightmap.Type)
                 {
-                    case UnityLightmapType.Color:
+                    case UnityLightmapType.Light:
                         {
                             var outPath = Path.Combine(dstDir, TempLightmapName(lightmap, id));
                             var copiedLightmap = UnityLightmapUtility.CopyBakedLightmap(lightmap, outPath);
@@ -169,9 +169,11 @@ namespace Kanikama.GI.Editor
                 return;
             }
 
-            var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Color).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Light).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
+
+            bakingSetting.LightmapArrayStorage.Clear();
             for (var i = 0; i <= maxIndex; i++)
             {
                 var index = i;
@@ -191,8 +193,9 @@ namespace Kanikama.GI.Editor
                 if (light.Count > 0)
                 {
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
-                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{i}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Light.ToFileName()}-{i}.asset");
                     IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                    bakingSetting.LightmapArrayStorage.AddOrUpdate(new UnityLightmapArray(UnityLightmapType.Light, lightArr, lightPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                 }
                 if (dir.Count > 0)
@@ -200,6 +203,7 @@ namespace Kanikama.GI.Editor
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{i}.asset");
                     IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                    bakingSetting.LightmapArrayStorage.AddOrUpdate(new UnityLightmapArray(UnityLightmapType.Directional, dirArr, dirPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }

@@ -190,7 +190,7 @@ namespace Kanikama.GI.Bakery.Editor
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(BakeryLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                     hasError = true;
                 }
             }
@@ -199,7 +199,7 @@ namespace Kanikama.GI.Bakery.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, "canceled by some error.");
                 return;
             }
-            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Color).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Light).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
             for (var index = 0; index <= maxIndex; index++)
@@ -216,7 +216,7 @@ namespace Kanikama.GI.Bakery.Editor
                     // FIXME: validate all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(light[0]);
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: useMipmap);
-                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{index}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Light.ToFileName()}-{index}.asset");
                     if (lightArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
@@ -232,7 +232,7 @@ namespace Kanikama.GI.Bakery.Editor
                     // FIXME: check all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(dir[0]);
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: useMipmap);
-                    var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{index}.asset");
+                    var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Directional.ToFileName()}-{index}.asset");
                     if (dirArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
