@@ -1,5 +1,5 @@
 {
-    "name": "Kanikama.GI.Bakery.Editor",
+    "name": "Kanikama.GI.Bakery.Baking.Editor",
     "references": [
         "BakeryRuntimeAssembly",
         "BakeryEditorAssembly",
@@ -8,8 +8,7 @@
         "Kanikama.GI.Runtime",
         "Kanikama.GI.Runtime.Editor",
         "Kanikama.GI.Baking",
-        "Kanikama.GI.Baking.Editor",
-        "Kanikama.GI.Bakery"
+        "Kanikama.GI.Baking.Editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Editor
+namespace Kanikama.GI.Bakery.Baking.Editor
 {
     [Serializable]
     public sealed class BakeryLightmapArray
@@ -25,6 +25,7 @@ namespace Kanikama.GI.Bakery.Editor
     public sealed class BakeryLightmapArrayStorage
     {
         [SerializeField] List<BakeryLightmapArray> lightmapArrays = new List<BakeryLightmapArray>();
+        public IReadOnlyList<BakeryLightmapArray> LightmapArrays => lightmapArrays;
 
         public void Clear()
         {

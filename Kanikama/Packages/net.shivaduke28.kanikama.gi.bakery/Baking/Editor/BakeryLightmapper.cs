@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Kanikama.Core.Editor.Util;
 using UnityEditor;
 
-namespace Kanikama.GI.Bakery.Editor
+namespace Kanikama.GI.Bakery.Baking.Editor
 {
     public sealed class BakeryLightmapper
     {

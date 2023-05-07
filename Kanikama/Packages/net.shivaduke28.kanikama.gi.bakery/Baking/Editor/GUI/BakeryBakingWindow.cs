@@ -2,13 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Bakery.Editor;
+using Kanikama.GI.Baking;
 using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Editor.GUI
+namespace Kanikama.GI.Bakery.Baking.Editor.GUI
 {
     public sealed class BakeryBakingWindow : EditorWindow
     {

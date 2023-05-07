@@ -26,6 +26,7 @@ namespace Kanikama.GI.Editor
     public sealed class UnityLightmapArrayStorage
     {
         [SerializeField] List<UnityLightmapArray> lightmapArrays = new List<UnityLightmapArray>();
+        public IReadOnlyList<UnityLightmapArray> LightmapArrays => lightmapArrays;
 
         public void Clear()
         {
