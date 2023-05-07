@@ -11,11 +11,13 @@ namespace Kanikama.GI.Bakery.Editor
     {
         [SerializeField] SceneAsset sceneAsset;
         [SerializeField] TextureResizeType textureResizeType = TextureResizeType.One;
+        [SerializeField] BakeryLightmapStorage lightmapStorage = new BakeryLightmapStorage();
+        [SerializeField] BakeryLightmapArrayStorage lightmapArrayStorage = new BakeryLightmapArrayStorage();
         [SerializeField] string outputAssetDirPath = "Assets";
-        [SerializeField] BakeryLightmapStorage bakeryLightmapStorage = new BakeryLightmapStorage();
 
         public SceneAsset SceneAsset => sceneAsset;
-        public BakeryLightmapStorage LightmapStorage => bakeryLightmapStorage;
+        public BakeryLightmapStorage LightmapStorage => lightmapStorage;
+        public BakeryLightmapArrayStorage LightmapArrayStorage => lightmapArrayStorage;
         public TextureResizeType TextureResizeType => textureResizeType;
         public string OutputAssetDirPath => outputAssetDirPath;
 

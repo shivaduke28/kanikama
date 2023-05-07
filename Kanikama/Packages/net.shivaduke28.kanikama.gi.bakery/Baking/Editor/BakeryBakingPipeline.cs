@@ -199,6 +199,8 @@ namespace Kanikama.GI.Bakery.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, "canceled by some error.");
                 return;
             }
+
+            setting.LightmapArrayStorage.Clear();
             var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Light).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
@@ -220,6 +222,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (lightArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Light, lightArr, lightPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
@@ -236,6 +239,7 @@ namespace Kanikama.GI.Bakery.Editor
                     if (dirArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Directional, dirArr, dirPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }
