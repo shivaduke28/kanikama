@@ -1,8 +1,6 @@
-﻿using Kanikama;
-using UdonSharpEditor;
+﻿using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
-using Kanikama.Editor;
 using UdonSharp;
 
 namespace Kanikama.GI.Udon.Editor
@@ -29,15 +27,15 @@ namespace Kanikama.GI.Udon.Editor
             if (UdonSharpEditorUtility.IsProxyBehaviour(proxy))
             {
                 base.OnInspectorGUI();
-                colorsFold = KanikamaEditorGUI.ArrayField(colorsProperty, colorsFold, true);
+                // colorsFold = KanikamaEditorGUI.ArrayField(colorsProperty, colorsFold, true);
 
                 EditorGUILayout.Space();
                 EditorGUI.BeginDisabledGroup(Application.isPlaying);
                 EditorGUILayout.Space();
-                if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorController)}"))
-                {
-                    Setup();
-                }
+                // if (GUILayout.Button($"Setup by {nameof(KanikamaMonitorController)}"))
+                // {
+                //     Setup();
+                // }
                 EditorGUI.EndDisabledGroup();
             }
             else
@@ -56,25 +54,25 @@ namespace Kanikama.GI.Udon.Editor
 
         void Setup()
         {
-            var monitorControl = proxy.GetComponent<KanikamaMonitorController>();
-            if (monitorControl == null)
-            {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object is not found.");
-                return;
-            }
-            var partitionType = (int)monitorControl.PartitionType;
-            var mainMonitor = monitorControl.MainMonitor;
-            if (mainMonitor == null)
-            {
-                Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object has no main monitor.");
-                return;
-            }
-            var size = mainMonitor.GetUnrotatedBounds().size;
-
-            partitionTypeProperty.intValue = partitionType;
-            aspectRatioProperty.floatValue = size.x / size.y;
-            serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(proxy);
+            // var monitorControl = proxy.GetComponent<KanikamaMonitorController>();
+            // if (monitorControl == null)
+            // {
+            //     Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object is not found.");
+            //     return;
+            // }
+            // var partitionType = (int)monitorControl.PartitionType;
+            // var mainMonitor = monitorControl.MainMonitor;
+            // if (mainMonitor == null)
+            // {
+            //     Debug.LogError($"[Kanikama] {nameof(KanikamaMonitorController)} object has no main monitor.");
+            //     return;
+            // }
+            // var size = mainMonitor.GetUnrotatedBounds().size;
+            //
+            // partitionTypeProperty.intValue = partitionType;
+            // aspectRatioProperty.floatValue = size.x / size.y;
+            // serializedObject.ApplyModifiedProperties();
+            // UdonSharpEditorUtility.CopyProxyToUdon(proxy);
         }
     }
 }

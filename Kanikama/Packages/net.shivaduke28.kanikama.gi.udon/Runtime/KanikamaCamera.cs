@@ -4,11 +4,12 @@ using UnityEngine;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    [AddComponentMenu("Kanikama/Udon.KanikamaMonitorCamera")]
     public class KanikamaCamera : UdonSharpBehaviour
     {
         [SerializeField] Texture2D readingTexture;
         [SerializeField] int partitionType;
-        [SerializeField] Camera camera;
+        [SerializeField] new Camera camera;
         [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
         [ColorUsage(false, true), SerializeField, HideInInspector] Color[] colors;
@@ -101,7 +102,7 @@ namespace Kanikama.GI.Udon
         {
             camera.aspect = aspectRatio;
             var countX = partitionType % 10;
-            var countY = Mathf.FloorToInt(partitionType / 10);
+            var countY = Mathf.FloorToInt(partitionType / 10f);
             lightCount = countX * countY;
             colors = new Color[lightCount];
 
@@ -126,7 +127,7 @@ namespace Kanikama.GI.Udon
                     isUniform = false;
                     break;
                 default:
-                    Debug.LogError("partionTypeの値が不正です。");
+                    Debug.LogError($"[Kanikama] invalid partition type {partitionType}");
                     return;
             }
             isInitialized = true;
