@@ -1,6 +1,5 @@
 ﻿using System.IO;
-using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
+using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEngine;
 
@@ -46,7 +45,7 @@ namespace Kanikama.GI.Editor
             var setting = new UnityBakingSetting(sceneAsset, TextureResizeType.One);
             settingAsset.setting = setting;
             var dirPath = setting.OutputAssetDirPath;
-            KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
+            IOUtility.CreateFolderIfNecessary(dirPath);
             AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "UnityBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
             return settingAsset;

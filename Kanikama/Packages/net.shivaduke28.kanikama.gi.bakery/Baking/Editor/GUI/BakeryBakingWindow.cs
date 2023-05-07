@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Bakery.Editor;
 using Kanikama.GI.Baking.Impl;
 using UnityEditor;
@@ -33,7 +34,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
 
         void Load()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData))
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
                 bakingSettingAsset = null;
@@ -123,15 +124,15 @@ namespace Kanikama.GI.Baking.Editor.GUI
                 var _ = BakeKanikamaAsync(sceneDescriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
+            if (GUILayout.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeNonKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                BakeryBakingPipeline.CreateAssets(bakingSettingAsset.Setting);
+                BakeryBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
             }
         }
 
@@ -148,7 +149,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
             try
             {
                 isRunning = true;
-                await BakeryBakingPipelineRunner.RunAsync(bakingDescriptor, setting, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeAsync(bakingDescriptor, setting, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -164,12 +165,12 @@ namespace Kanikama.GI.Baking.Editor.GUI
             }
         }
 
-        async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                await BakeryBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -188,7 +189,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData);
+            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 
             if (!result)

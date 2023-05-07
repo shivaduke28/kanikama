@@ -33,7 +33,7 @@ namespace Kanikama.GI.Editor.GUI
 
         void Load()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData))
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
                 sceneDescriptor = null;
@@ -119,19 +119,18 @@ namespace Kanikama.GI.Editor.GUI
             if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor,  new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
+            if (GUILayout.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeNonKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                UnityBakingPipeline.CreateAssets(bakingSettingAsset.Setting.LightmapStorage, bakingSettingAsset.Setting.OutputAssetDirPath,
-                    bakingSettingAsset.Setting.TextureResizeType);
+                UnityBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
             }
         }
 
@@ -148,7 +147,7 @@ namespace Kanikama.GI.Editor.GUI
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.RunAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await UnityBakingPipelineRunner.BakeAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -164,12 +163,12 @@ namespace Kanikama.GI.Editor.GUI
             }
         }
 
-        async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await UnityBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -188,7 +187,7 @@ namespace Kanikama.GI.Editor.GUI
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData);
+            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 
             if (!result)

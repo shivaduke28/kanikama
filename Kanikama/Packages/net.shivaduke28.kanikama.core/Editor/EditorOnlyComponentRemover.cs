@@ -1,11 +1,12 @@
 using System.Reflection;
+using Kanikama.Core.Attributes;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Core.Editor.EditorOnly
+namespace Kanikama.Core.Editor
 {
     public class EditorOnlyComponentRemover : IProcessSceneWithReport
     {

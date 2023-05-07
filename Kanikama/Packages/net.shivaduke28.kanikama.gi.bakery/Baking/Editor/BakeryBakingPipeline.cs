@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -67,9 +67,8 @@ namespace Kanikama.GI.Bakery.Editor
                     sceneGIContext.TurnOff();
 
                     var dstDir = context.Setting.OutputAssetDirPath;
-                    KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                    IOUtility.CreateFolderIfNecessary(dstDir);
 
-                    var map = new Dictionary<string, List<BakeryLightmap>>();
                     var lightmapper = context.Lightmapper;
                     var outputAssetDirPath = copiedScene.SceneAssetData.LightingAssetDirectoryPath;
                     // NOTE: need to set output path explicitly to Bakery.
@@ -78,19 +77,14 @@ namespace Kanikama.GI.Bakery.Editor
                     // TODO: Lightmapperのパラメータ指定があるはず
                     foreach (var handle in bakeTargetHandles)
                     {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking... id: {handle.Id}.");
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking... name:{handle.Name}, id: {handle.Id}.");
                         handle.TurnOn();
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
                         var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedScene.SceneAssetData.Asset.name);
                         Copy(baked, out var copied, dstDir, handle.Id);
-                        map[handle.Id] = copied;
-                    }
-
-                    foreach (var kvp in map)
-                    {
-                        context.Setting.LightmapStorage.AddOrUpdate(kvp.Key, kvp.Value);
+                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
                     }
 
                     // NOTE: A SettingAsset object may be destroyed while awaiting baking for some reason...
@@ -132,9 +126,9 @@ namespace Kanikama.GI.Bakery.Editor
             }
         }
 
-        public static async Task BakeWithoutKanikamaAsync(Context context, CancellationToken cancellationToken)
+        public static async Task BakeStaticAsync(Context context, CancellationToken cancellationToken)
         {
-            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline without Kanikama start");
+            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline non Kanikama start");
             var handles = context.BakeTargetHandles;
             var guid = AssetDatabase.AssetPathToGUID(context.SceneAssetData.Path);
 
@@ -177,14 +171,34 @@ namespace Kanikama.GI.Bakery.Editor
             return $"{bakedLightmap.Type.ToString()}-{bakedLightmap.Index}-{id}{ext}";
         }
 
-        public static void CreateAssets(BakeryBakingSetting setting)
+        public static void CreateAssets(IEnumerable<IBakeTargetHandle> bakeTargetHandles, BakeryBakingSetting setting)
         {
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
-            KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
+            var lightmapStorage = setting.LightmapStorage;
+            IOUtility.CreateFolderIfNecessary(dstDirPath);
 
-            var allLightmaps = setting.LightmapStorage.Get();
+            // check lightmaps are stored in storage
+            var allLightmaps = new List<BakeryLightmap>();
+            var hasError = false;
+            foreach (var handle in bakeTargetHandles)
+            {
+                if (lightmapStorage.TryGet(handle.Id, out var lm))
+                {
+                    allLightmaps.AddRange(lm);
+                }
+                else
+                {
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    hasError = true;
+                }
+            }
+            if (hasError)
+            {
+                Debug.LogErrorFormat(KanikamaDebug.Format, "canceled by some error.");
+                return;
+            }
             var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Color).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
@@ -205,7 +219,7 @@ namespace Kanikama.GI.Bakery.Editor
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{index}.asset");
                     if (lightArr != null)
                     {
-                        KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
@@ -221,7 +235,7 @@ namespace Kanikama.GI.Bakery.Editor
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{index}.asset");
                     if (dirArr != null)
                     {
-                        KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }

@@ -1,12 +1,15 @@
-﻿using Kanikama.Core.Editor;
+﻿using System;
+using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
 using UnityEditor;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Editor
 {
     public interface IBakeTargetHandle
     {
+        string Name { get; }
         string Id { get; }
         void Initialize(string sceneGuid);
         void TurnOff();
@@ -18,19 +21,22 @@ namespace Kanikama.GI.Editor
     public sealed class BakeTargetHandle<T> : IBakeTargetHandle where T : Object, IBakeTarget
     {
         readonly SceneObjectId sceneObjectId;
+        readonly string name;
         ObjectHandle<T> handle;
 
         string IBakeTargetHandle.Id => sceneObjectId.ToString();
+        string IBakeTargetHandle.Name => name;
 
         public BakeTargetHandle(T value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
+            name = value.name;
         }
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }
@@ -46,8 +52,9 @@ namespace Kanikama.GI.Editor
     public sealed class BakeTargetGroupElementHandle<T> : IBakeTargetHandle where T : Object, IBakeTargetGroup
     {
         readonly SceneObjectId sceneObjectId;
-        ObjectHandle<T> handle;
+        readonly string name;
         readonly int index;
+        ObjectHandle<T> handle;
         IBakeTarget GetBakeTarget() => handle.Value.Get(index);
 
         public BakeTargetGroupElementHandle(T value, int index)
@@ -55,13 +62,16 @@ namespace Kanikama.GI.Editor
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
             this.index = index;
+            name = $"{value.name}_{index}";
         }
 
         string IBakeTargetHandle.Id => $"{sceneObjectId.ToString()}_{index}";
+        string IBakeTargetHandle.Name => name;
+
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }

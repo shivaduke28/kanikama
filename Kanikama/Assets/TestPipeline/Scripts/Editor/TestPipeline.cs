@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
+using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -21,7 +21,7 @@ namespace Test.Editor
         static async Task ExecuteAsync()
         {
             // make sure the current active scene is saved as a SceneAsset
-            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData)) return;
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData)) return;
 
             // get objects that you want to control in this pipeline.
             var myLightReference = Object.FindObjectOfType<MyLightReference>();
@@ -56,7 +56,7 @@ namespace Test.Editor
 
 
                 var dstDir = $"{sceneAssetData.LightingAssetDirectoryPath}_dst";
-                KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                IOUtility.CreateFolderIfNecessary(dstDir);
                 var bakedAssetDataBase = new UnityLightmapStorage();
 
                 var context = new Context
@@ -88,7 +88,7 @@ namespace Test.Editor
                     var compressed = TextureUtility.CompressToBC6H(rt, false, true, TextureCompressionQuality.Best);
 
                     var path = Path.Combine(context.DstDir, $"subtract_{indirectLightmaps[i].Index}.asset");
-                    KanikamaSceneUtility.CreateOrReplaceAsset(ref compressed, path);
+                    IOUtility.CreateOrReplaceAsset(ref compressed, path);
                 }
 
                 var bakedAssetRepository = UnityLightmapStorageAsset.FindOrCreate(Path.Combine(dstDir, UnityLightmapStorageAsset.DefaultFileName));
@@ -120,7 +120,7 @@ namespace Test.Editor
             context.Light.bounceIntensity = 1;
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
+            var bakedLightingAssetCollection = UnityLightmapUtility.GetLightmaps(context.Copied);
 
 
             // copy baked lightmaps
@@ -135,7 +135,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
-                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = UnityLightmapUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
@@ -149,7 +149,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
+            var bakedLightingAssetCollection = UnityLightmapUtility.GetLightmaps(context.Copied);
 
             string RenameFunc(UnityLightmap bakedLightmap)
             {
@@ -162,7 +162,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
-                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = UnityLightmapUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 
@@ -176,7 +176,7 @@ namespace Test.Editor
 
             Lightmapping.ClearDiskCache();
             await context.UnityLightmapper.BakeAsync(default);
-            var bakedLightingAssetCollection = KanikamaSceneUtility.GetLightmaps(context.Copied);
+            var bakedLightingAssetCollection = UnityLightmapUtility.GetLightmaps(context.Copied);
 
             string RenameFunc(UnityLightmap bakedLightmap)
             {
@@ -189,7 +189,7 @@ namespace Test.Editor
 
             foreach (var bakedLightmap in bakedLightingAssetCollection)
             {
-                var copied = KanikamaSceneUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
+                var copied = UnityLightmapUtility.CopyBakedLightmap(bakedLightmap, RenameFunc(bakedLightmap));
                 result.Add(copied);
             }
 

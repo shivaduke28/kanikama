@@ -39,11 +39,11 @@ namespace Kanikama.GI.Runtime.Impl
                 {
                     handler = mainCamera.gameObject.AddComponent<PreRenderEventHandler>();
                 }
-
-                // In Editor, UpdateColors will not be called if Game Window is not active.
                 preRenderEventHandler = handler;
-                preRenderEventHandler.OnPreRenderEvent += UpdateColors;
             }
+
+            // In Editor, UpdateColors may not be called if Game Window is not active.
+            preRenderEventHandler.OnPreRenderEvent += UpdateColors;
 
             lightSources = kanikamaSceneDescriptor.GetLightSources();
             var index = lightSources.Count;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Kanikama.Core.Editor
@@ -10,6 +11,8 @@ namespace Kanikama.Core.Editor
         [SerializeField] public Texture2D Texture;
         [SerializeField] public string Path;
         [SerializeField] public int Index;
+
+        public static readonly Regex FileNameRegex = new Regex("Lightmap-[0-9]+_comp_[light|dir|shadowmask]");
 
         public UnityLightmap(UnityLightmapType type, Texture2D texture, string path, int index)
         {
@@ -25,23 +28,5 @@ namespace Kanikama.Core.Editor
         Color = 0,
         Directional = 1,
         ShadowMask = 2,
-    }
-
-    public static class LightmapTypeExtension
-    {
-        public static string ToFileName(this UnityLightmapType unityLightmapType)
-        {
-            switch (unityLightmapType)
-            {
-                case UnityLightmapType.Color:
-                    return "light";
-                case UnityLightmapType.Directional:
-                    return "dir";
-                case UnityLightmapType.ShadowMask:
-                    return "shadowmask";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(unityLightmapType), unityLightmapType, null);
-            }
-        }
     }
 }

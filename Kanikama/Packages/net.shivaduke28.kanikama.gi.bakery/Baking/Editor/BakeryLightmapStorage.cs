@@ -11,6 +11,7 @@ namespace Kanikama.GI.Bakery.Editor
         [Serializable]
         sealed class KeyLightmapsPair
         {
+            public string Name;
             public string Key;
             public List<BakeryLightmap> Lightmaps;
         }
@@ -18,12 +19,13 @@ namespace Kanikama.GI.Bakery.Editor
         [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
         public List<BakeryLightmap> Get() => lightmapsPairs.SelectMany(x => x.Lightmaps).ToList();
 
-        public void AddOrUpdate(string key, List<BakeryLightmap> lightmaps)
+        public void AddOrUpdate(string key, List<BakeryLightmap> lightmaps, string name = "")
         {
             foreach (var pair in lightmapsPairs)
             {
                 if (pair.Key == key)
                 {
+                    pair.Name = name;
                     pair.Lightmaps = lightmaps;
                     return;
                 }
@@ -31,7 +33,7 @@ namespace Kanikama.GI.Bakery.Editor
 
             lightmapsPairs.Add(new KeyLightmapsPair
             {
-                Key = key, Lightmaps = lightmaps,
+                Key = key, Lightmaps = lightmaps, Name = name,
             });
         }
 

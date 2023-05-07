@@ -1,10 +1,10 @@
 ﻿using UnityEditor;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Core.Editor.Util
 {
-    public static class ObjectUtility
+    public static class GlobalObjectIdHelper
     {
-        public static bool TryCreateGlobalObjectId(string assetGUID, int identifierType, ulong targetObjectId, ulong targetPrefabId, out GlobalObjectId id)
+        public static bool TryParse(string assetGUID, int identifierType, ulong targetObjectId, ulong targetPrefabId, out GlobalObjectId id)
         {
             id = default;
             var str = $"GlobalObjectId_V1-{identifierType}-{assetGUID}-{targetObjectId}-{targetPrefabId}";

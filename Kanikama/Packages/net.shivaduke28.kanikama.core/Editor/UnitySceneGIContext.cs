@@ -21,14 +21,14 @@ namespace Kanikama.Core.Editor
             {
                 ambientLight = new AmbientLight(),
                 lights = Object.FindObjectsOfType<Light>()
-                    .Where(KanikamaRuntimeUtility.IsContributeGI)
+                    .Where(l => l.IsContributeGI())
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Select(l => new ObjectHandle<Light>(l))
                     .ToList(),
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
-                    .Where(KanikamaEditorUtility.IsContributeGI)
-                    .Select(r => KanikamaRuntimeUtility.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
+                    .Where(r => r.IsEmissiveAndContributeGI())
+                    .Select(r => r.gameObject.GetOrAddComponent<RendererMaterialHolder>())
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
                 lightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()
@@ -53,7 +53,7 @@ namespace Kanikama.Core.Editor
                 var materials = handle.Value.GetMaterials();
                 foreach (var material in materials)
                 {
-                    KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(material);
+                    material.RemoveBakedEmissiveFlag();
                 }
             }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kanikama.Core;
+using Kanikama.Core.Attributes;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

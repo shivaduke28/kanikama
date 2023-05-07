@@ -32,7 +32,7 @@ namespace Kanikama.GI.Baking.Impl
         {
             gameObject.tag = tag;
             var holder = GetComponent<RendererMaterialHolder>();
-            KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(holder.GetMaterial(materialIndex));
+            holder.GetMaterial(materialIndex).RemoveBakedEmissiveFlag();
         }
 
         public override void TurnOn()
@@ -41,7 +41,7 @@ namespace Kanikama.GI.Baking.Impl
             var holder = GetComponent<RendererMaterialHolder>();
             var mat = holder.GetMaterial(materialIndex);
             mat.SetColor(propertyName, Color.white);
-            KanikamaRuntimeUtility.AddBakedEmissiveFlag(mat);
+            mat.AddBakedEmissiveFlag();
         }
 
         public override bool Includes(Object obj) => obj == renderer;
@@ -52,7 +52,7 @@ namespace Kanikama.GI.Baking.Impl
             if (TryGetComponent<RendererMaterialHolder>(out var holder))
             {
                 holder.Clear();
-                KanikamaRuntimeUtility.DestroySafe(holder);
+                holder.DestroySafely();
             }
         }
     }
