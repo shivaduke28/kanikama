@@ -132,7 +132,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                BakeryBakingPipeline.CreateAssets(bakingSettingAsset.Setting);
+                BakeryBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
             }
         }
 

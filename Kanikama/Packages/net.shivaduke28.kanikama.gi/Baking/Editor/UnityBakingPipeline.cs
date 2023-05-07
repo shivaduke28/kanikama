@@ -71,7 +71,7 @@ namespace Kanikama.GI.Editor
 
                     foreach (var handle in bakeTargetHandles)
                     {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking... id: {handle.Id}.");
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking... name: {handle.Name}, id: {handle.Id}.");
                         handle.TurnOn();
                         lightmapper.ClearCache();
                         await lightmapper.BakeAsync(cancellationToken);
@@ -80,7 +80,7 @@ namespace Kanikama.GI.Editor
                         var baked = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData);
                         CopyBakedLightingAssetCollection(baked, out var copied, dstDir, handle.Id);
 
-                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
+                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
                     }
 
                     var settingAsset = UnityBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
@@ -140,13 +140,35 @@ namespace Kanikama.GI.Editor
             }
         }
 
-        public static void CreateAssets(UnityLightmapStorage unityLightmapStorage, string dstDirPath, TextureResizeType resizeType)
+        public static void CreateAssets(IEnumerable<IBakeTargetHandle> bakeTargetHandles, UnityBakingSetting bakingSetting)
         {
+            var resizeType = bakingSetting.TextureResizeType;
+            var dstDirPath = bakingSetting.OutputAssetDirPath;
+            var lightmapStorage = bakingSetting.LightmapStorage;
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
             IOUtility.CreateFolderIfNecessary(dstDirPath);
 
-            // TODO: reorder lightmap lists based on scene descriptors
-            var allLightmaps = unityLightmapStorage.Get();
+            // check lightmaps are stored in storage
+            var allLightmaps = new List<UnityLightmap>();
+            var hasError = false;
+            foreach (var handle in bakeTargetHandles)
+            {
+                if (lightmapStorage.TryGet(handle.Id, out var lm))
+                {
+                    allLightmaps.AddRange(lm);
+                }
+                else
+                {
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    hasError = true;
+                }
+            }
+            if (hasError)
+            {
+                Debug.LogErrorFormat(KanikamaDebug.Format, "canceled by some error.");
+                return;
+            }
+
             var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Color).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);

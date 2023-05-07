@@ -119,7 +119,7 @@ namespace Kanikama.GI.Editor.GUI
             if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor,  new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
@@ -130,8 +130,7 @@ namespace Kanikama.GI.Editor.GUI
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                UnityBakingPipeline.CreateAssets(bakingSettingAsset.Setting.LightmapStorage, bakingSettingAsset.Setting.OutputAssetDirPath,
-                    bakingSettingAsset.Setting.TextureResizeType);
+                UnityBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
             }
         }
 

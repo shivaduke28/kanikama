@@ -11,6 +11,7 @@ namespace Kanikama.Core.Editor
         [Serializable]
         sealed class KeyLightmapsPair
         {
+            public string Name;
             public string Key;
             public List<UnityLightmap> Lightmaps;
         }
@@ -18,20 +19,21 @@ namespace Kanikama.Core.Editor
         [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
         public List<UnityLightmap> Get() => lightmapsPairs.SelectMany(x => x.Lightmaps).ToList();
 
-        public void AddOrUpdate(string key, List<UnityLightmap> lightmaps)
+        public void AddOrUpdate(string key,  List<UnityLightmap> lightmaps, string name = "")
         {
             foreach (var pair in lightmapsPairs)
             {
                 if (pair.Key == key)
                 {
                     pair.Lightmaps = lightmaps;
+                    pair.Name = name;
                     return;
                 }
             }
 
             lightmapsPairs.Add(new KeyLightmapsPair
             {
-                Key = key, Lightmaps = lightmaps,
+                Name = name, Key = key, Lightmaps = lightmaps,
             });
         }
 

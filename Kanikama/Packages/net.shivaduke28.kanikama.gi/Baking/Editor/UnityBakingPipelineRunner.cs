@@ -1,11 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Core;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
-using UnityEngine;
 
 namespace Kanikama.GI.Editor
 {
@@ -13,22 +11,9 @@ namespace Kanikama.GI.Editor
     {
         public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
-            var bakeTargets = bakingDescriptor.GetBakeTargets();
-            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
-            var groups = bakingDescriptor.GetBakeTargetGroups();
-            foreach (var group in groups)
-            {
-                var list = group.GetAll();
-                for (var i = 0; i < list.Count; i++)
-                {
-                    handles.Add(new BakeTargetGroupElementHandle<BakeTargetGroup>(group, i));
-                }
-            }
-
+            var handles = CreateHandles(bakingDescriptor);
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-
             var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
-
             await UnityBakingPipeline.BakeAsync(context, cancellationToken);
         }
 
@@ -36,17 +21,32 @@ namespace Kanikama.GI.Editor
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
-            if (!UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
-            {
-                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
-                return;
-            }
-
-            var bakeTargets = bakingDescriptor.GetBakeTargets();
-            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            var handles = CreateHandles(bakingDescriptor);
+            var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
 
             await UnityBakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
+        }
+
+        public static void CreateAssets(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData)
+        {
+            var handles = CreateHandles(bakingDescriptor);
+            var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
+            var setting = settingAsset.Setting;
+            UnityBakingPipeline.CreateAssets(handles, setting);
+        }
+
+        static List<IBakeTargetHandle> CreateHandles(IBakingDescriptor bakingDescriptor)
+        {
+            var bakeTargets = bakingDescriptor.GetBakeTargets();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
+            return handles;
+
+            IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
+            {
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
+            }
         }
     }
 }
