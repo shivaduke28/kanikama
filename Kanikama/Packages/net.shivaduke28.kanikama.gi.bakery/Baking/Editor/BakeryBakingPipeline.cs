@@ -244,6 +244,7 @@ namespace Kanikama.GI.Bakery.Editor
                     }
                 }
             }
+            Debug.LogFormat(KanikamaDebug.Format, "done");
         }
     }
 }

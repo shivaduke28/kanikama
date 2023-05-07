@@ -207,6 +207,7 @@ namespace Kanikama.GI.Editor
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }
+            Debug.LogFormat(KanikamaDebug.Format, "done");
         }
 
         public static async Task BakeStaticAsync(BakingContext context, CancellationToken cancellationToken)
