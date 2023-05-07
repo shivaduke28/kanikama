@@ -9,7 +9,7 @@ namespace Kanikama.GI.Editor
 {
     public sealed class UnityBakingPipelineRunner
     {
-        public static async Task RunAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        public static async Task BakeAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             var handles = CreateHandles(bakingDescriptor);
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
@@ -17,7 +17,7 @@ namespace Kanikama.GI.Editor
             await UnityBakingPipeline.BakeAsync(context, cancellationToken);
         }
 
-        public static async Task RunWithoutKanikamaAsync(IBakingDescriptor bakingDescriptor,
+        public static async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor,
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
@@ -25,7 +25,7 @@ namespace Kanikama.GI.Editor
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
 
-            await UnityBakingPipeline.BakeWithoutKanikamaAsync(context, cancellationToken);
+            await UnityBakingPipeline.BakeStaticAsync(context, cancellationToken);
         }
 
         public static void CreateAssets(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData)

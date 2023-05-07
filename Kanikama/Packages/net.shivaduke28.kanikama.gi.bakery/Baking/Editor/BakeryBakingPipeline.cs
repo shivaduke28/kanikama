@@ -126,9 +126,9 @@ namespace Kanikama.GI.Bakery.Editor
             }
         }
 
-        public static async Task BakeWithoutKanikamaAsync(Context context, CancellationToken cancellationToken)
+        public static async Task BakeStaticAsync(Context context, CancellationToken cancellationToken)
         {
-            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline without Kanikama start");
+            Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline non Kanikama start");
             var handles = context.BakeTargetHandles;
             var guid = AssetDatabase.AssetPathToGUID(context.SceneAssetData.Path);
 

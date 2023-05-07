@@ -205,10 +205,10 @@ namespace Kanikama.GI.Editor
             }
         }
 
-        public static async Task BakeWithoutKanikamaAsync(BakingContext context, CancellationToken cancellationToken)
+        public static async Task BakeStaticAsync(BakingContext context, CancellationToken cancellationToken)
         {
-            Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline without Kanikama start");
-            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, false, "_not_kanikama_unity"))
+            Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline (static) start");
+            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, false, "_kanikama_static_unity"))
             {
                 // open the copied scene
                 EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);

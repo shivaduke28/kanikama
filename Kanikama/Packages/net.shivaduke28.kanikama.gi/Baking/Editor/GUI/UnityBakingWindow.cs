@@ -122,10 +122,10 @@ namespace Kanikama.GI.Editor.GUI
                 var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Bake non Kanikama") && ValidateAndLoadOnFail())
+            if (GUILayout.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeNonKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
@@ -147,7 +147,7 @@ namespace Kanikama.GI.Editor.GUI
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.RunAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await UnityBakingPipelineRunner.BakeAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -163,12 +163,12 @@ namespace Kanikama.GI.Editor.GUI
             }
         }
 
-        async Task BakeNonKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.RunWithoutKanikamaAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await UnityBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {
