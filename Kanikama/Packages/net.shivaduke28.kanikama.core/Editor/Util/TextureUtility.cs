@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Core.Editor.Textures
+namespace Kanikama.Core.Editor.Util
 {
     public static class TextureUtility
     {
@@ -176,7 +176,7 @@ namespace Kanikama.Core.Editor.Textures
         {
             var rt = new RenderTexture(parameter);
             var path = Path.Combine(dirPath, $"{name}.renderTexture");
-            KanikamaSceneUtility.CreateOrReplaceAsset(ref rt, path);
+            IOUtility.CreateOrReplaceAsset(ref rt, path);
             return rt;
         }
     }

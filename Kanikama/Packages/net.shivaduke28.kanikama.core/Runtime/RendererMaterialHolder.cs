@@ -52,7 +52,7 @@ namespace Kanikama.Core
             {
                 foreach (var material in materials)
                 {
-                    KanikamaRuntimeUtility.DestroySafe(material);
+                    material.DestroySafely();
                 }
             }
             initialized = false;

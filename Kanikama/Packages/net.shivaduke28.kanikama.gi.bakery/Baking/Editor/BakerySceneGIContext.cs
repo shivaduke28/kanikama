@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -50,8 +51,8 @@ namespace Kanikama.GI.Bakery.Editor
                     .ToList(),
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
-                    .Where(KanikamaEditorUtility.IsContributeGI)
-                    .Select(r => KanikamaRuntimeUtility.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
+                    .Where(r => r.IsEmissiveAndContributeGI())
+                    .Select(r => r.gameObject.GetOrAddComponent<RendererMaterialHolder>())
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
             };
@@ -89,7 +90,7 @@ namespace Kanikama.GI.Bakery.Editor
                 var materials = handle.Value.GetMaterials();
                 foreach (var material in materials)
                 {
-                    KanikamaRuntimeUtility.RemoveBakedEmissiveFlag(material);
+                    material.RemoveBakedEmissiveFlag();
                 }
             }
         }

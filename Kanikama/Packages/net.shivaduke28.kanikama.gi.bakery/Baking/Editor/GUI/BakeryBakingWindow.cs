@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Bakery.Editor;
 using Kanikama.GI.Baking.Impl;
 using UnityEditor;
@@ -33,7 +34,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
 
         void Load()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData))
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
                 bakingSettingAsset = null;
@@ -188,7 +189,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData);
+            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 
             if (!result)

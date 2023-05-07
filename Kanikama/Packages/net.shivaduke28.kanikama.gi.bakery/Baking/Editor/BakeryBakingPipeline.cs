@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -67,7 +67,7 @@ namespace Kanikama.GI.Bakery.Editor
                     sceneGIContext.TurnOff();
 
                     var dstDir = context.Setting.OutputAssetDirPath;
-                    KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                    IOUtility.CreateFolderIfNecessary(dstDir);
 
                     var map = new Dictionary<string, List<BakeryLightmap>>();
                     var lightmapper = context.Lightmapper;
@@ -182,7 +182,7 @@ namespace Kanikama.GI.Bakery.Editor
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
-            KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
+            IOUtility.CreateFolderIfNecessary(dstDirPath);
 
             var allLightmaps = setting.LightmapStorage.Get();
             var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Color).ToArray();
@@ -205,7 +205,7 @@ namespace Kanikama.GI.Bakery.Editor
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{index}.asset");
                     if (lightArr != null)
                     {
-                        KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
@@ -221,7 +221,7 @@ namespace Kanikama.GI.Bakery.Editor
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{index}.asset");
                     if (dirArr != null)
                     {
-                        KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }

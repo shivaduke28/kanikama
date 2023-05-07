@@ -46,7 +46,7 @@ namespace Kanikama.GI.Bakery.Editor
             setting.SetSceneAsset(sceneAsset);
             settingAsset.setting = setting;
             var dirPath = setting.OutputAssetDirPath;
-            KanikamaSceneUtility.CreateFolderIfNecessary(dirPath);
+            IOUtility.CreateFolderIfNecessary(dirPath);
             AssetDatabase.CreateAsset(settingAsset, Path.Combine(dirPath, "BakeryBakingSettingAsset.asset"));
             AssetDatabase.Refresh();
             return settingAsset;

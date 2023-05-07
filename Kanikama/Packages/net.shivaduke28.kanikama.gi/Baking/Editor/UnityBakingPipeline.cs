@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
-using Kanikama.Core.Editor.Textures;
+using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -65,7 +65,7 @@ namespace Kanikama.GI.Editor
                     sceneGIContext.TurnOff();
 
                     var dstDir = context.Setting.OutputAssetDirPath;
-                    KanikamaSceneUtility.CreateFolderIfNecessary(dstDir);
+                    IOUtility.CreateFolderIfNecessary(dstDir);
 
                     var lightmapper = context.Lightmapper;
 
@@ -77,7 +77,7 @@ namespace Kanikama.GI.Editor
                         await lightmapper.BakeAsync(cancellationToken);
                         handle.TurnOff();
 
-                        var baked = KanikamaSceneUtility.GetLightmaps(copiedScene.SceneAssetData);
+                        var baked = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData);
                         CopyBakedLightingAssetCollection(baked, out var copied, dstDir, handle.Id);
 
                         context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied);
@@ -117,7 +117,7 @@ namespace Kanikama.GI.Editor
                     case UnityLightmapType.Color:
                         {
                             var outPath = Path.Combine(dstDir, TempLightmapName(lightmap, id));
-                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(lightmap, outPath);
+                            var copiedLightmap = UnityLightmapUtility.CopyBakedLightmap(lightmap, outPath);
                             dst.Add(copiedLightmap);
                             Debug.LogFormat(KanikamaDebug.Format,
                                 $"copying lightmap (index:{lightmap.Index}, type:{lightmap.Type}) {lightmap.Path} -> {outPath}");
@@ -126,7 +126,7 @@ namespace Kanikama.GI.Editor
                     case UnityLightmapType.Directional:
                         {
                             var outPath = Path.Combine(dstDir, TempLightmapName(lightmap, id));
-                            var copiedLightmap = KanikamaSceneUtility.CopyBakedLightmap(lightmap, outPath);
+                            var copiedLightmap = UnityLightmapUtility.CopyBakedLightmap(lightmap, outPath);
                             dst.Add(copiedLightmap);
                             Debug.LogFormat(KanikamaDebug.Format,
                                 $"copying lightmap (index:{lightmap.Index}, type:{lightmap.Type}) {lightmap.Path} -> {outPath}");
@@ -143,7 +143,7 @@ namespace Kanikama.GI.Editor
         public static void CreateAssets(UnityLightmapStorage unityLightmapStorage, string dstDirPath, TextureResizeType resizeType)
         {
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
-            KanikamaSceneUtility.CreateFolderIfNecessary(dstDirPath);
+            IOUtility.CreateFolderIfNecessary(dstDirPath);
 
             var allLightmaps = unityLightmapStorage.Get();
             var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Color).ToArray();
@@ -169,14 +169,14 @@ namespace Kanikama.GI.Editor
                 {
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Color.ToFileName()}-{i}.asset");
-                    KanikamaSceneUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                    IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                 }
                 if (dir.Count > 0)
                 {
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{i}.asset");
-                    KanikamaSceneUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                    IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }

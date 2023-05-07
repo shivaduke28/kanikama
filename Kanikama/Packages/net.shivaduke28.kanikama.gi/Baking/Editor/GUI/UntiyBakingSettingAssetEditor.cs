@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
 using UnityEditor;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace Kanikama.GI.Editor.GUI
 
                 var sceneAssetData = new SceneAssetData(sceneAsset);
 
-                var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
+                var baking = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
                     var _ = UnityBakingPipelineRunner.RunWithoutKanikamaAsync(baking, sceneAssetData, default);
@@ -46,7 +47,7 @@ namespace Kanikama.GI.Editor.GUI
 
                 var sceneAssetData = new SceneAssetData(sceneAsset);
 
-                var baking = KanikamaSceneUtility.FindObjectOfType<IBakingDescriptor>();
+                var baking = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
                 if (baking != null)
                 {
                     var _ = UnityBakingPipelineRunner.RunAsync(baking, sceneAssetData, default);

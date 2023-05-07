@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using UnityEngine.SceneManagement;
 
 namespace Kanikama.Core.Editor
 {
@@ -18,6 +19,20 @@ namespace Kanikama.Core.Editor
 
             var assetDirPath = System.IO.Path.GetDirectoryName(Path);
             LightingAssetDirectoryPath = assetDirPath != null ? System.IO.Path.Combine(assetDirPath, sceneAsset.name) : string.Empty;
+        }
+
+        public static bool TryFindFromActiveScene(out SceneAssetData sceneAssetData)
+        {
+            var scene = SceneManager.GetActiveScene();
+            var path = scene.path;
+            if (string.IsNullOrEmpty(path))
+            {
+                sceneAssetData = default;
+                return false;
+            }
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scene.path);
+            sceneAssetData = new SceneAssetData(sceneAsset);
+            return true;
         }
     }
 }

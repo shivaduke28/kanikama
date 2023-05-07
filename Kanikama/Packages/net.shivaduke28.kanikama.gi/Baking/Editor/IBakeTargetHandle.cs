@@ -1,4 +1,5 @@
 ﻿using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
 using UnityEditor;
 using UnityEngine;
@@ -30,7 +31,7 @@ namespace Kanikama.GI.Editor
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }
@@ -61,7 +62,7 @@ namespace Kanikama.GI.Editor
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (ObjectUtility.TryCreateGlobalObjectId(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }

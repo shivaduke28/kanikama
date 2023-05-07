@@ -33,7 +33,7 @@ namespace Kanikama.GI.Editor.GUI
 
         void Load()
         {
-            if (!KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData))
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
                 sceneDescriptor = null;
@@ -188,7 +188,7 @@ namespace Kanikama.GI.Editor.GUI
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && KanikamaSceneUtility.TryGetActiveSceneAssetData(out var sceneAssetData);
+            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 
             if (!result)
