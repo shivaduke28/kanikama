@@ -6,7 +6,7 @@ using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
 using Kanikama.GI.Editor;
 
-namespace Kanikama.GI.Bakery.Editor
+namespace Kanikama.GI.Bakery.Baking.Editor
 {
     public static class BakeryBakingPipelineRunner
     {

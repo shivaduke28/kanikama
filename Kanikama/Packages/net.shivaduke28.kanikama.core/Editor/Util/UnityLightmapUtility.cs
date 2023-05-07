@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,11 +9,13 @@ namespace Kanikama.Core.Editor.Util
 {
     public static class UnityLightmapUtility
     {
+        public static readonly Regex FileNameRegex = new Regex("Lightmap-[0-9]+_comp_[light|dir|shadowmask]");
+
         public static bool TryGetLightmapType(string assetPath, out UnityLightmapType unityLightmapType, out int lightmapIndex)
         {
             var fileName = Path.GetFileNameWithoutExtension(assetPath);
 
-            if (!UnityLightmap.FileNameRegex.IsMatch(fileName))
+            if (!FileNameRegex.IsMatch(fileName))
             {
                 unityLightmapType = default;
                 lightmapIndex = -1;
@@ -29,7 +32,7 @@ namespace Kanikama.Core.Editor.Util
             switch (list[2])
             {
                 case "light":
-                    unityLightmapType = UnityLightmapType.Color;
+                    unityLightmapType = UnityLightmapType.Light;
                     break;
                 case "dir":
                     unityLightmapType = UnityLightmapType.Directional;
@@ -73,7 +76,7 @@ namespace Kanikama.Core.Editor.Util
         {
             switch (unityLightmapType)
             {
-                case UnityLightmapType.Color:
+                case UnityLightmapType.Light:
                     return "light";
                 case UnityLightmapType.Directional:
                     return "dir";

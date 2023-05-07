@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Editor
+namespace Kanikama.GI.Bakery.Baking.Editor
 {
     public static class KanikamaBakeryUtility
     {
@@ -67,7 +67,7 @@ namespace Kanikama.GI.Bakery.Editor
 
             if (Color.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.Color;
+                lightmapType = BakeryLightmapType.Light;
             }
             else if (Dir.IsMatch(name))
             {

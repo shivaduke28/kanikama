@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Editor
+namespace Kanikama.GI.Bakery.Baking.Editor
 {
     [Serializable]
     public sealed class BakeryLightmap
@@ -22,7 +22,7 @@ namespace Kanikama.GI.Bakery.Editor
 
     public enum BakeryLightmapType
     {
-        Color = 0,
+        Light = 0,
         Directional = 1,
         // TODO: MonoSH L0 and L1,
     }
@@ -33,8 +33,8 @@ namespace Kanikama.GI.Bakery.Editor
         {
             switch (type)
             {
-                case BakeryLightmapType.Color:
-                    return "final";
+                case BakeryLightmapType.Light:
+                    return "light";
                 case BakeryLightmapType.Directional:
                     return "dir";
                 default:

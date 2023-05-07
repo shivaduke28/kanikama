@@ -119,8 +119,6 @@ namespace Kanikama.GI.Runtime.Impl
             var bounds = GetUnRotatedBounds(monitorRenderer);
             camera.orthographicSize = bounds.extents.y;
             var extents = bounds.extents;
-            Debug.Log(extents.x);
-            Debug.Log(extents.y);
             aspectRatio = extents.x / extents.y;
         }
 

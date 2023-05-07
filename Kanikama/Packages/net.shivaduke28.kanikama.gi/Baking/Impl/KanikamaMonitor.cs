@@ -41,7 +41,7 @@ namespace Kanikama.GI.Baking.Impl
             var localScale = transform.localScale;
             transform.localScale = Vector3.one;
 
-            var children = transform.Cast<Transform>().ToArray();
+            var children = transform.Cast<Transform>().Where(t => t.TryGetComponent<BakeTarget>(out _)).ToArray();
             foreach (var child in children)
             {
                 DestroyImmediate(child.gameObject);
