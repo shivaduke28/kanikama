@@ -6,7 +6,7 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.GI.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaRealtimeSceneLight))]
     public class KanikamaRealtimeSceneLightEditor : UnityEditor.Editor

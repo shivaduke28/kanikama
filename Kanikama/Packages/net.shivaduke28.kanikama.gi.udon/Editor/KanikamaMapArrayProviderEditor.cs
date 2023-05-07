@@ -5,7 +5,7 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.GI.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaMapArrayProvider))]
     public class KanikamaMapArrayProviderEditor : UnityEditor.Editor

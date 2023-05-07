@@ -1,4 +1,4 @@
-﻿using Kanikama.Udon;
+﻿using Kanikama.GI.Udon;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;

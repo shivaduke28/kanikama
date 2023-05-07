@@ -4,7 +4,7 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.GI.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaColorCollector))]
     public class KanikamaColorCollectorEditor : UnityEditor.Editor
