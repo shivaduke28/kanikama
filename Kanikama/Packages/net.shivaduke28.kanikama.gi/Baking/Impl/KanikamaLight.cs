@@ -1,4 +1,4 @@
-﻿using Kanikama.Core;
+﻿using Kanikama.Core.Attributes;
 using UnityEngine;
 
 namespace Kanikama.GI.Baking.Impl

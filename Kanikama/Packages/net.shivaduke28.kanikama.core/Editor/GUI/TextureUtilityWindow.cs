@@ -14,7 +14,7 @@ namespace Kanikama.Core.Editor.GUI
         SerializedProperty textureParameterProperty;
         SerializedProperty textureImportParameterProperty;
 
-        [MenuItem("Kanikama/Texture Utility Window")]
+        [MenuItem("Window/Kanikama/Texture Utility Window")]
         static void ShowWindow()
         {
             var window = (TextureUtilityWindow) GetWindow(typeof(TextureUtilityWindow));
@@ -23,7 +23,7 @@ namespace Kanikama.Core.Editor.GUI
 
         void Initialize()
         {
-            titleContent.text = "Texture Utility";
+            titleContent.text = "Kanikama Texture Utility";
             serializedObject = new SerializedObject(this);
             textureParameterProperty = serializedObject.FindProperty(nameof(textureParameter));
             textureImportParameterProperty = serializedObject.FindProperty(nameof(textureImportParameter));
