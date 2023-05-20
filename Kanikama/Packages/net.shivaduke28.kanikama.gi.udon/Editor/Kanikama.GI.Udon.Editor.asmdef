@@ -7,7 +7,7 @@
         "UdonSharp.Editor",
         "Kanikama.Core",
         "Kanikama.Core.Editor",
-        "Kanikama.GI.Udon.Runtime",
+        "Kanikama.GI.Udon",
         "Kanikama.GI.Baking.Editor"
     ],
     "includePlatforms": [
