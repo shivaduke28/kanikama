@@ -50,19 +50,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: kanikamaCamera
+      Data: kanikamaMonitorCamera
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: kanikamaCamera
+      Data: kanikamaMonitorCamera
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaCamera, Kanikama.GI.Udon.Runtime
+      Data: Kanikama.GI.Udon.KanikamaMonitorCamera, Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 

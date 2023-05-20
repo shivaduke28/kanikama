@@ -1,23 +1,38 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
 
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     [AddComponentMenu("Kanikama/Udon.KanikamaMonitorCamera")]
-    public class KanikamaCamera : UdonSharpBehaviour
+    public sealed class KanikamaMonitorCamera : UdonSharpBehaviour
     {
+        [SerializeField] Renderer monitorRenderer;
         [SerializeField] Texture2D readingTexture;
-        [SerializeField] int partitionType;
+        [SerializeField] KanikamaMonitorPartitionType partitionType;
+        [SerializeField] float cameraNear = 0f;
+        [SerializeField] float cameraFar = 0.2f;
+        [SerializeField] float cameraDistance = 0.1f;
         [SerializeField] new Camera camera;
         [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
-        [ColorUsage(false, true), SerializeField, HideInInspector] Color[] colors;
+
+        [ColorUsage(false, true), SerializeField]
+        Color[] colors;
 
         int lightCount;
         int mipmapLevel;
         bool isUniform;
         bool isInitialized;
+
+        void OnValidate()
+        {
+            if (camera != null)
+            {
+                camera = GetComponent<Camera>();
+            }
+        }
 
         void Start()
         {
@@ -54,7 +69,7 @@ namespace Kanikama.GI.Udon
             {
                 switch (partitionType)
                 {
-                    case 32:
+                    case KanikamaMonitorPartitionType.Grid3x2:
                         colors[0] = (pixels[0] + pixels[4]) * 0.5f * intensity;
                         colors[1] = (pixels[1] + pixels[2] + pixels[5] + pixels[6]) * 0.25f * intensity;
                         colors[2] = (pixels[3] + pixels[7]) * 0.5f * intensity;
@@ -63,7 +78,7 @@ namespace Kanikama.GI.Udon
                         colors[4] = (pixels[9] + pixels[10] + pixels[13] + pixels[14]) * 0.25f * intensity;
                         colors[5] = (pixels[11] + pixels[15]) * 0.5f * intensity;
                         break;
-                    case 33:
+                    case KanikamaMonitorPartitionType.Grid3x3:
                         colors[0] = pixels[0] * intensity;
                         colors[1] = (pixels[1] + pixels[2]) * 0.5f * intensity;
                         colors[2] = pixels[3] * intensity;
@@ -76,7 +91,7 @@ namespace Kanikama.GI.Udon
                         colors[7] = (pixels[13] + pixels[14]) * 0.5f * intensity;
                         colors[8] = pixels[15] * intensity;
                         break;
-                    case 43:
+                    case KanikamaMonitorPartitionType.Grid4x3:
                         colors[0] = pixels[0] * intensity;
                         colors[1] = pixels[1] * intensity;
                         colors[2] = pixels[2] * intensity;
@@ -101,36 +116,83 @@ namespace Kanikama.GI.Udon
         void Initialize()
         {
             camera.aspect = aspectRatio;
-            var countX = partitionType % 10;
-            var countY = Mathf.FloorToInt(partitionType / 10f);
-            lightCount = countX * countY;
-            colors = new Color[lightCount];
 
             switch (partitionType)
             {
-                case 11:
+                case KanikamaMonitorPartitionType.Grid1x1:
+                    isUniform = true;
+                    lightCount = 1;
                     mipmapLevel = 8;
-                    isUniform = true;
                     break;
-                case 22:
+                case KanikamaMonitorPartitionType.Grid2x2:
+                    isUniform = true;
+                    lightCount = 4;
                     mipmapLevel = 7;
-                    isUniform = true;
                     break;
-                case 44:
-                    mipmapLevel = 6;
+                case KanikamaMonitorPartitionType.Grid4x4:
                     isUniform = true;
-                    break;
-                case 32:
-                case 33:
-                case 43:
+                    lightCount = 16;
                     mipmapLevel = 6;
+                    break;
+                case KanikamaMonitorPartitionType.Grid3x2:
+                    lightCount = 6;
                     isUniform = false;
+                    mipmapLevel = 6;
+                    break;
+                case KanikamaMonitorPartitionType.Grid3x3:
+                    lightCount = 9;
+                    isUniform = false;
+                    mipmapLevel = 6;
+                    break;
+                case KanikamaMonitorPartitionType.Grid4x3:
+                    lightCount = 12;
+                    isUniform = false;
+                    mipmapLevel = 6;
                     break;
                 default:
-                    Debug.LogError($"[Kanikama] invalid partition type {partitionType}");
                     return;
             }
+            colors = new Color[lightCount];
             isInitialized = true;
         }
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        /// <summary>
+        /// Setup Camera position. Supposed to be called from Editor scripts.
+        /// </summary>
+        public void Setup()
+        {
+            var cameraTrans = camera.transform;
+            var rendererTrans = monitorRenderer.transform;
+            var pos = rendererTrans.position - rendererTrans.forward * cameraDistance;
+            cameraTrans.SetPositionAndRotation(pos, rendererTrans.rotation);
+            camera.nearClipPlane = cameraNear;
+            camera.farClipPlane = cameraFar;
+            var bounds = GetUnRotatedBounds(monitorRenderer);
+            camera.orthographicSize = bounds.extents.y;
+            var extents = bounds.extents;
+            aspectRatio = extents.x / extents.y;
+        }
+
+        static Bounds GetUnRotatedBounds(Renderer renderer)
+        {
+            var t = renderer.transform;
+            var rotation = t.rotation;
+            t.rotation = Quaternion.identity;
+            var bounds = renderer.bounds;
+            t.rotation = rotation;
+            return bounds;
+        }
+#endif
+    }
+
+    public enum KanikamaMonitorPartitionType
+    {
+        Grid1x1 = 11,
+        Grid2x2 = 22,
+        Grid3x2 = 32,
+        Grid3x3 = 33,
+        Grid4x3 = 43,
+        Grid4x4 = 44,
     }
 }

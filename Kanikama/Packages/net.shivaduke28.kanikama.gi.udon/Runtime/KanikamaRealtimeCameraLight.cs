@@ -7,7 +7,7 @@ namespace Kanikama.GI.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaRealtimeCameraLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaCamera kanikamaCamera;
+        [SerializeField] KanikamaMonitorCamera kanikamaMonitorCamera;
         [SerializeField] Light light;
         [SerializeField] public float intensity = 1;
 
@@ -16,7 +16,7 @@ namespace Kanikama.GI.Udon
 
         void OnEnable()
         {
-            colors = kanikamaCamera.GetColors();
+            colors = kanikamaMonitorCamera.GetColors();
             count = colors.Length;
             if (count == 0)
             {
