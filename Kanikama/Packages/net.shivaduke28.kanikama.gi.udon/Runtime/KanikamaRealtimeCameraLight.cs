@@ -1,24 +1,22 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-namespace Kanikama.Udon
+namespace Kanikama.GI.Udon
 {
     // should be attached to KanikamaProvider GameObject.
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public class KanikamaRealtimeSceneLight : UdonSharpBehaviour
+    public class KanikamaRealtimeCameraLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaColorCollector colorCollector;
+        [SerializeField] KanikamaCamera kanikamaCamera;
         [SerializeField] Light light;
         [SerializeField] public float intensity = 1;
-        [SerializeField] bool weightEnable = false;
-        [SerializeField] float[] weights;
 
-        Vector4[] colors;
+        Color[] colors;
         int count;
 
         void OnEnable()
         {
-            colors = colorCollector.GetColors();
+            colors = kanikamaCamera.GetColors();
             count = colors.Length;
             if (count == 0)
             {
@@ -27,18 +25,15 @@ namespace Kanikama.Udon
         }
 
         // Note:
-        // Colors are updated by KanikamaColorCollector on OnPreCull.
+        // Colors are updated by KanikamaCamera on OnPostRender of a Camera capturing a monitor.
         void OnPreRender()
         {
             var color = Color.black;
-            var totalWeight = 0f;
             for (var i = 0; i < count; i++)
             {
-                var weight = weightEnable ? weights[i] : 1f;
-                color += (Color)colors[i] * weight;
-                totalWeight += weight;
+                color += colors[i];
             }
-            color /= totalWeight;
+            color /= count;
             var max = color.maxColorComponent;
 
             light.color = color / max;

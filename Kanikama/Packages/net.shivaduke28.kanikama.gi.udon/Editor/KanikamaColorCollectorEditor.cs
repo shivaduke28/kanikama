@@ -4,7 +4,7 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.GI.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaColorCollector))]
     public class KanikamaColorCollectorEditor : UnityEditor.Editor
@@ -59,10 +59,10 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 using (new EditorGUI.DisabledGroupScope(Application.isPlaying))
                 {
-                    if (GUILayout.Button($"Setup by {nameof(KanikamaSceneDescriptor)}"))
-                    {
-                        Setup();
-                    }
+                    // if (GUILayout.Button($"Setup by {nameof(KanikamaSceneDescriptor)}"))
+                    // {
+                    //     Setup();
+                    // }
                 }
                 serializedObject.ApplyModifiedProperties();
             }
@@ -77,45 +77,45 @@ namespace Kanikama.Udon.Editor
 
         void Setup()
         {
-            var sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
-            if (sceneDescriptor == null)
-            {
-                Debug.LogError($"[Kanikama] {nameof(sceneDescriptor)} object is not found.");
-                return;
-            }
-
-            var lights = sceneDescriptor.KanikamaLights;
-            lightsProperty.ClearArray();
-            lightsProperty.arraySize = lights.Count;
-            for (var i = 0; i < lights.Count; i++)
-            {
-                var prop = lightsProperty.GetArrayElementAtIndex(i);
-                prop.objectReferenceValue = lights[i].GetSource();
-            }
-
-            var rendererGroups = sceneDescriptor.KanikamaRendererGroups;
-            emissiveRenderersProperty.ClearArray();
-            emissiveRenderersProperty.arraySize = rendererGroups.Count;
-            for (var i = 0; i < rendererGroups.Count; i++)
-            {
-                var prop = emissiveRenderersProperty.GetArrayElementAtIndex(i);
-                prop.objectReferenceValue = rendererGroups[i].GetSource();
-            }
-
-            var kanikamaCameras = sceneDescriptor.KanikamaLightSourceGroups
-                .Where(x => x is KanikamaMonitorController)
-                .Select(x => ((KanikamaMonitorController)x).Camera.GetComponent<KanikamaCamera>())
-                .ToArray();
-            kanikamaCamerasProperty.ClearArray();
-            kanikamaCamerasProperty.arraySize = kanikamaCameras.Length;
-            for (var i = 0; i < kanikamaCameras.Length; i++)
-            {
-                var prop = kanikamaCamerasProperty.GetArrayElementAtIndex(i);
-                prop.objectReferenceValue = kanikamaCameras[i];
-            }
-
-            serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(proxy);
+            // var sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
+            // if (sceneDescriptor == null)
+            // {
+            //     Debug.LogError($"[Kanikama] {nameof(sceneDescriptor)} object is not found.");
+            //     return;
+            // }
+            //
+            // var lights = sceneDescriptor.KanikamaLights;
+            // lightsProperty.ClearArray();
+            // lightsProperty.arraySize = lights.Count;
+            // for (var i = 0; i < lights.Count; i++)
+            // {
+            //     var prop = lightsProperty.GetArrayElementAtIndex(i);
+            //     prop.objectReferenceValue = lights[i].GetSource();
+            // }
+            //
+            // var rendererGroups = sceneDescriptor.KanikamaRendererGroups;
+            // emissiveRenderersProperty.ClearArray();
+            // emissiveRenderersProperty.arraySize = rendererGroups.Count;
+            // for (var i = 0; i < rendererGroups.Count; i++)
+            // {
+            //     var prop = emissiveRenderersProperty.GetArrayElementAtIndex(i);
+            //     prop.objectReferenceValue = rendererGroups[i].GetSource();
+            // }
+            //
+            // var kanikamaCameras = sceneDescriptor.KanikamaLightSourceGroups
+            //     .Where(x => x is KanikamaMonitorController)
+            //     .Select(x => ((KanikamaMonitorController)x).Camera.GetComponent<KanikamaCamera>())
+            //     .ToArray();
+            // kanikamaCamerasProperty.ClearArray();
+            // kanikamaCamerasProperty.arraySize = kanikamaCameras.Length;
+            // for (var i = 0; i < kanikamaCameras.Length; i++)
+            // {
+            //     var prop = kanikamaCamerasProperty.GetArrayElementAtIndex(i);
+            //     prop.objectReferenceValue = kanikamaCameras[i];
+            // }
+            //
+            // serializedObject.ApplyModifiedProperties();
+            // UdonSharpEditorUtility.CopyProxyToUdon(proxy);
         }
     }
 }
