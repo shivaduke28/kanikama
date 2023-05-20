@@ -1,4 +1,5 @@
-﻿using Kanikama.GI.Baking.Impl;
+﻿using Kanikama.Core.Editor.Util;
+using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace Kanikama.GI.Editor.GUI
             var kanikamaMonitorGroup = (KanikamaMonitorGroup) target;
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUILayout.Space();
-            if (GUILayout.Button("Setup Lights"))
+            if (KanikamaGUI.Button("Setup Lights"))
             {
                 Undo.RecordObject(kanikamaMonitorGroup, "Setup Kanikama Monitor Group");
                 kanikamaMonitorGroup.Setup();

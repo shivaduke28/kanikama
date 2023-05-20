@@ -2,32 +2,33 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
+using Kanikama.GI.Baking.Editor.GUI;
 using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Editor.GUI
+namespace Kanikama.GI.Bakery.Baking.Editor.GUI
 {
-    public sealed class UnityBakingWindow : UnityEditor.EditorWindow
+    public sealed class BakeryBakingDrawer : KanikamaGIWindow.IGUIDrawer
     {
+        [InitializeOnLoadMethod]
+        static void RegisterDrawer()
+        {
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Baking, () => new BakeryBakingDrawer(), 2);
+        }
+
         SceneAsset sceneAsset;
         KanikamaSceneDescriptor sceneDescriptor;
-        UnityBakingSettingAsset bakingSettingAsset;
-        Vector2 scrollPosition = new Vector2(0, 0);
+        BakeryBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
 
-        [MenuItem("Window/Kanikama/Baking (Unity)")]
-        static void Initialize()
-        {
-            var window = GetWindow<UnityBakingWindow>();
-            window.Show();
-        }
 
-        void OnEnable()
+        BakeryBakingDrawer()
         {
-            titleContent.text = "Kanikama Baking (Unity)";
             Load();
         }
 
@@ -36,14 +37,14 @@ namespace Kanikama.GI.Editor.GUI
             if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
-                sceneDescriptor = null;
                 bakingSettingAsset = null;
+                sceneDescriptor = null;
                 return;
             }
 
             sceneAsset = sceneAssetData.Asset;
-            sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
-            if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
+            sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
             }
@@ -53,15 +54,14 @@ namespace Kanikama.GI.Editor.GUI
             }
         }
 
-        void OnGUI()
+        void KanikamaGIWindow.IGUIDrawer.Draw()
         {
-            using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPosition))
+            GUILayout.Label("Bakery", EditorStyles.boldLabel);
+            using (new EditorGUI.IndentLevelScope())
             {
-                scrollPosition = scroll.scrollPosition;
-
                 if (isRunning)
                 {
-                    if (GUILayout.Button("Cancel"))
+                    if (KanikamaGUI.Button("Cancel"))
                     {
                         cancellationTokenSource.Cancel();
                         cancellationTokenSource.Dispose();
@@ -71,14 +71,17 @@ namespace Kanikama.GI.Editor.GUI
                 else
                 {
                     DrawScene();
+
+                    if (KanikamaGUI.Button("Load Active Scene"))
+                    {
+                        Load();
+                    }
                 }
             }
         }
 
         void DrawScene()
         {
-            GUILayout.Label("Scene", EditorStyles.boldLabel);
-            DrawLoadButton();
             using (new EditorGUI.DisabledGroupScope(true))
             {
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
@@ -86,13 +89,13 @@ namespace Kanikama.GI.Editor.GUI
 
             if (sceneDescriptor == null)
             {
-                sceneDescriptor = FindObjectOfType<KanikamaSceneDescriptor>();
+                sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
             }
 
             sceneDescriptor = (KanikamaSceneDescriptor) EditorGUILayout.ObjectField("Scene Descriptor",
                 sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
             bakingSettingAsset =
-                (UnityBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(UnityBakingSettingAsset), false);
+                (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(BakeryBakingSettingAsset), false);
 
             if (sceneAsset == null)
             {
@@ -108,46 +111,38 @@ namespace Kanikama.GI.Editor.GUI
 
             if (bakingSettingAsset == null)
             {
-                if (GUILayout.Button("Create Settings Asset"))
+                if (KanikamaGUI.Button("Load/Create Settings Asset"))
                 {
-                    bakingSettingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAsset);
+                    bakingSettingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAsset);
                 }
                 EditorGUILayout.HelpBox("Create Kanikama Settings Asset.", MessageType.Warning);
                 return;
             }
 
-            if (GUILayout.Button("Bake Kanikama") && ValidateAndLoadOnFail())
+            if (KanikamaGUI.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(sceneDescriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Bake static") && ValidateAndLoadOnFail())
+            if (KanikamaGUI.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
-            if (GUILayout.Button("Create Assets") && ValidateAndLoadOnFail())
+            if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                UnityBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
+                BakeryBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
             }
         }
 
-        void DrawLoadButton()
-        {
-            if (GUILayout.Button("Load Active Scene"))
-            {
-                Load();
-            }
-        }
-
-        async Task BakeKanikamaAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeKanikamaAsync(IBakingDescriptor bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.BakeAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeAsync(bakingDescriptor, setting, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -168,7 +163,7 @@ namespace Kanikama.GI.Editor.GUI
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
             }
             catch (OperationCanceledException)
             {

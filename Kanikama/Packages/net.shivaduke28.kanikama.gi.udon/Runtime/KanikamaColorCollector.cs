@@ -9,7 +9,7 @@ namespace Kanikama.GI.Udon
     {
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
-        [SerializeField] KanikamaCamera[] kanikamaCameras;
+        [SerializeField] KanikamaMonitorCamera[] kanikamaCameras;
 
         [Space]
         [Range(0, 20f)] public float intensity = 1f;

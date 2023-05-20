@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
+using Kanikama.GI.Baking.Editor.GUI;
 using Kanikama.GI.Editor;
 using Kanikama.GI.Runtime.Impl;
 using UnityEditor;
@@ -8,18 +10,31 @@ using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Editor
 {
-    [CustomEditor(typeof(KanikamaGIUpdater))]
-    public class KanikamaGIUpdaterEditor : UnityEditor.Editor
+    internal sealed class KanikamaGIUpdaterDrawer : KanikamaGIWindow.IGUIDrawer
     {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
+        KanikamaGIUpdater giUpdater;
+        SerializedObject serializedObject;
 
-            if (GUILayout.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+        [InitializeOnLoadMethod]
+        static void RegisterDrawer()
+        {
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaGIUpdaterDrawer(), 1);
+        }
+
+        KanikamaGIUpdaterDrawer()
+        {
+            Load();
+        }
+
+        void Load()
+        {
+            giUpdater = Object.FindObjectOfType<KanikamaGIUpdater>();
+            if (giUpdater != null)
             {
-                Setup();
+                serializedObject = new SerializedObject(giUpdater);
             }
         }
+
 
         void Setup()
         {
@@ -52,6 +67,33 @@ namespace Kanikama.GI.Runtime.Editor
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
             serializedObject.ApplyModifiedProperties();
+        }
+
+        void KanikamaGIWindow.IGUIDrawer.Draw()
+        {
+            GUILayout.Label($"{nameof(KanikamaGIUpdater)} (Unity)", EditorStyles.boldLabel);
+
+            using (new EditorGUI.IndentLevelScope())
+            {
+                giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
+                    giUpdater, typeof(KanikamaGIUpdater), true);
+
+                if (giUpdater == null)
+                {
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaGIUpdater)} is not found.", MessageType.Warning);
+                }
+                else
+                {
+                    if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+                    {
+                        Setup();
+                    }
+                }
+                if (KanikamaGUI.Button("Load Active Scene"))
+                {
+                    Load();
+                }
+            }
         }
     }
 }

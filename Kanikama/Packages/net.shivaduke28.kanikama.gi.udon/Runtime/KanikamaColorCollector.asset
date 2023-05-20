@@ -182,7 +182,7 @@ MonoBehaviour:
       Data: 11|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaCamera[], Kanikama.GI.Udon.Runtime
+      Data: Kanikama.GI.Udon.KanikamaMonitorCamera[], Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 
