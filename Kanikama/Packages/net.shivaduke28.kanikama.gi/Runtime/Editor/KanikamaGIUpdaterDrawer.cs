@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking.Editor.GUI;
 using Kanikama.GI.Editor;
 using Kanikama.GI.Runtime.Impl;
@@ -70,23 +71,27 @@ namespace Kanikama.GI.Runtime.Editor
 
         void KanikamaGIWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label(nameof(KanikamaGIUpdater), EditorStyles.boldLabel);
-            if (GUILayout.Button("Load Active Scene"))
-            {
-                Load();
-            }
-            giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
-                giUpdater, typeof(KanikamaGIUpdater), true);
+            GUILayout.Label($"{nameof(KanikamaGIUpdater)} (Unity)", EditorStyles.boldLabel);
 
-            if (giUpdater == null)
+            using (new EditorGUI.IndentLevelScope())
             {
-                EditorGUILayout.HelpBox($"{nameof(KanikamaGIUpdater)} is not found.", MessageType.Warning);
-            }
-            else
-            {
-                if (GUILayout.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+                giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
+                    giUpdater, typeof(KanikamaGIUpdater), true);
+
+                if (giUpdater == null)
                 {
-                    Setup();
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaGIUpdater)} is not found.", MessageType.Warning);
+                }
+                else
+                {
+                    if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+                    {
+                        Setup();
+                    }
+                }
+                if (KanikamaGUI.Button("Load Active Scene"))
+                {
+                    Load();
                 }
             }
         }

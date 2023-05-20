@@ -5,7 +5,10 @@
         "VRC.Udon",
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
-        "Kanikama.GI.Udon.Runtime"
+        "Kanikama.Core",
+        "Kanikama.Core.Editor",
+        "Kanikama.GI.Udon.Runtime",
+        "Kanikama.GI.Baking.Editor"
     ],
     "includePlatforms": [
         "Editor"
