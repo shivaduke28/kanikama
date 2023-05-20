@@ -71,6 +71,11 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
                 else
                 {
                     DrawScene();
+
+                    if (KanikamaGUI.Button("Load Active Scene"))
+                    {
+                        Load();
+                    }
                 }
             }
         }
@@ -129,11 +134,6 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
                 BakeryBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
-            }
-
-            if (KanikamaGUI.Button("Load Active Scene"))
-            {
-                Load();
             }
         }
 
