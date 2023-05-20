@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
+using Kanikama.GI.Bakery.Baking.Editor;
 using Kanikama.GI.Baking.Editor.GUI;
-using Kanikama.GI.Editor;
 using Kanikama.GI.Runtime.Impl;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Runtime.Editor
+namespace Kanikama.GI.Bakery.Runtime.Editor
 {
-    internal sealed class KanikamaGIUpdaterDrawer : KanikamaGIWindow.IGUIDrawer
+    internal sealed class KanikamaGIUpdaterBakeryAdapter : KanikamaGIWindow.IGUIDrawer
     {
         KanikamaGIUpdater giUpdater;
         SerializedObject serializedObject;
@@ -17,10 +17,10 @@ namespace Kanikama.GI.Runtime.Editor
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaGIUpdaterDrawer(), 1);
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaGIUpdaterBakeryAdapter(), 2);
         }
 
-        KanikamaGIUpdaterDrawer()
+        KanikamaGIUpdaterBakeryAdapter()
         {
             Load();
         }
@@ -42,16 +42,16 @@ namespace Kanikama.GI.Runtime.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, "The current active scene is not saved as an asset.");
                 return;
             }
-            if (!UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
+            if (!BakeryBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
             {
-                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
+                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(BakeryBakingSettingAsset)} is not found.");
                 return;
             }
             var arrayStorage = settingAsset.Setting.LightmapArrayStorage;
             var lightmapArrayList = arrayStorage.LightmapArrays;
 
-            var lights = lightmapArrayList.Where(x => x.Type == UnityLightmapType.Light).OrderBy(x => x.Index).ToArray();
-            var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmapType.Directional).OrderBy(x => x.Index).ToArray();
+            var lights = lightmapArrayList.Where(x => x.Type == BakeryLightmapType.Light).OrderBy(x => x.Index).ToArray();
+            var directionals = lightmapArrayList.Where(x => x.Type == BakeryLightmapType.Directional).OrderBy(x => x.Index).ToArray();
 
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             lightmapArrays.arraySize = lights.Length;
@@ -70,13 +70,12 @@ namespace Kanikama.GI.Runtime.Editor
 
         void KanikamaGIWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label(nameof(KanikamaGIUpdater), EditorStyles.boldLabel);
+            GUILayout.Label($"{nameof(KanikamaGIUpdater)} for Bakery", EditorStyles.boldLabel);
             if (GUILayout.Button("Load Active Scene"))
             {
                 Load();
             }
-            giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
-                giUpdater, typeof(KanikamaGIUpdater), true);
+            giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor", giUpdater, typeof(KanikamaGIUpdater), true);
 
             if (giUpdater == null)
             {
@@ -84,7 +83,7 @@ namespace Kanikama.GI.Runtime.Editor
             }
             else
             {
-                if (GUILayout.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+                if (GUILayout.Button($"Setup by {nameof(BakeryBakingSettingAsset)} asset"))
                 {
                     Setup();
                 }
