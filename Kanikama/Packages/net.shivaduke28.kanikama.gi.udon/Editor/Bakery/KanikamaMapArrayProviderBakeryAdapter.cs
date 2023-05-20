@@ -13,7 +13,7 @@ namespace Kanikama.GI.Udon.Editor.Bakery
 {
     internal sealed class KanikamaMapArrayProviderBakeryAdapter : KanikamaGIWindow.IGUIDrawer
     {
-         KanikamaMapArrayProvider kanikamaMapArrayProvider;
+        KanikamaMapArrayProvider kanikamaMapArrayProvider;
         SerializedObject serializedObject;
 
         [InitializeOnLoadMethod]

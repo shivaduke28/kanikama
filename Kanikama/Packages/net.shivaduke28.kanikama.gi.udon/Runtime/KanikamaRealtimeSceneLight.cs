@@ -24,6 +24,20 @@ namespace Kanikama.GI.Udon
             {
                 enabled = false;
             }
+            if (weightEnable && weights.Length != count)
+            {
+                var newWeights = new float[count];
+                var i = 0;
+                for (; i < weights.Length && i < count; i++)
+                {
+                    newWeights[i] = weights[i];
+                }
+                for (; i < count; i++)
+                {
+                    newWeights[i] = 1;
+                }
+                weights = newWeights;
+            }
         }
 
         // Note:
@@ -35,7 +49,7 @@ namespace Kanikama.GI.Udon
             for (var i = 0; i < count; i++)
             {
                 var weight = weightEnable ? weights[i] : 1f;
-                color += (Color)colors[i] * weight;
+                color += (Color) colors[i] * weight;
                 totalWeight += weight;
             }
             color /= totalWeight;
