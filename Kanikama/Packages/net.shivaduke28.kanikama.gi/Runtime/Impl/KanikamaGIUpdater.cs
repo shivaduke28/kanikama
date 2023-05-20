@@ -7,7 +7,8 @@ namespace Kanikama.GI.Runtime.Impl
     public class KanikamaGIUpdater : MonoBehaviour
     {
         [SerializeField] PreRenderEventHandler preRenderEventHandler;
-        [SerializeField] KanikamaSceneDescriptor kanikamaSceneDescriptor;
+        [SerializeField] List<LightSource> lightSources;
+        [SerializeField] List<LightSourceGroup> lightSourceGroups;
         [SerializeField] Renderer[] renderers;
         [SerializeField] Texture2DArray[] lightmapArrays;
         [SerializeField] Texture2DArray[] directionalLightmapArrays;
@@ -20,8 +21,6 @@ namespace Kanikama.GI.Runtime.Impl
 
         Vector4[] colorsInternal;
         MaterialPropertyBlock block;
-        List<ILightSource> lightSources;
-        List<ILightSourceGroup> lightSourceGroups;
         List<IndexedColorArray> indexedColorArrays;
 
         void Start()
@@ -44,11 +43,10 @@ namespace Kanikama.GI.Runtime.Impl
             // In Editor, UpdateColors may not be called if Game Window is not active.
             preRenderEventHandler.OnPreRenderEvent += UpdateColors;
 
-            lightSources = kanikamaSceneDescriptor.GetLightSources();
             var index = lightSources.Count;
             indexedColorArrays = new List<IndexedColorArray>();
 
-            foreach (var lightSourceGroup in kanikamaSceneDescriptor.GetLightSourceGroups)
+            foreach (var lightSourceGroup in lightSourceGroups)
             {
                 var colors = lightSourceGroup.GetColors();
                 var indexedArray = new IndexedColorArray(colors, index);
