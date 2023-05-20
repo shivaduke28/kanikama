@@ -16,7 +16,7 @@ namespace Kanikama.GI.Editor.GUI
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Baking, "Unity", () => new UnityBakingDrawer(), 1);
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Baking, () => new UnityBakingDrawer(), 1);
         }
 
         SceneAsset sceneAsset;

@@ -15,13 +15,11 @@ namespace Kanikama.GI.Baking.Editor.GUI
 
         sealed class DrawerFactory
         {
-            public string Name { get; }
             public int SortingOrder { get; }
             readonly Func<IGUIDrawer> createFunc;
 
-            public DrawerFactory(string name, Func<IGUIDrawer> createFunc, int sortingOrder)
+            public DrawerFactory(Func<IGUIDrawer> createFunc, int sortingOrder)
             {
-                Name = name;
                 SortingOrder = sortingOrder;
                 this.createFunc = createFunc;
             }
@@ -46,7 +44,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
             new GUIContent("Others")
         };
 
-        public static void AddDrawer(Category category, string name, Func<IGUIDrawer> createFunc, int sortingOrder = 10)
+        public static void AddDrawer(Category category, Func<IGUIDrawer> createFunc, int sortingOrder = 10)
         {
             if (!Factories.TryGetValue(category, out var factories))
             {
@@ -54,7 +52,7 @@ namespace Kanikama.GI.Baking.Editor.GUI
                 Factories[category] = factories;
             }
 
-            factories.Add(new DrawerFactory(name, createFunc, sortingOrder));
+            factories.Add(new DrawerFactory(createFunc, sortingOrder));
         }
 
         [MenuItem("Window/Kanikama/GI")]
