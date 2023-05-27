@@ -3,7 +3,7 @@ using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Editor.GUI
+namespace Kanikama.GI.Baking.Editor
 {
     [CustomEditor(typeof(KanikamaMonitorGroup))]
     public class KanikamaMonitorGroupEditor : UnityEditor.Editor

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Kanikama.Core.Editor;
 using Kanikama.GI.Baking;
 
-namespace Kanikama.GI.Editor
+namespace Kanikama.GI.Baking.Editor
 {
     public sealed class UnityBakingPipelineRunner
     {
