@@ -6,7 +6,6 @@
     "Kanikama.GI.Runtime",
     "Kanikama.GI.Baking",
     "Kanikama.GI.Baking.Editor",
-    "Kanikama.GI.Runtime.Bakery",
     "Kanikama.GI.Bakery.Baking",
     "Kanikama.GI.Bakery.Baking.Editor"
   ],
