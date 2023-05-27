@@ -157,6 +157,7 @@ namespace Kanikama.GI.Runtime.Impl
             var rendererTrans = monitorRenderer.transform;
             var pos = rendererTrans.position - rendererTrans.forward * cameraSettings.distance;
             cameraTrans.SetPositionAndRotation(pos, rendererTrans.rotation);
+            targetCamera.orthographic = true;
             targetCamera.nearClipPlane = cameraSettings.near;
             targetCamera.farClipPlane = cameraSettings.far;
             var bounds = GetUnRotatedBounds(monitorRenderer);
