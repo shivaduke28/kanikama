@@ -1,11 +1,9 @@
-﻿using Kanikama.Core.Attributes;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
     [AddComponentMenu("Kanikama/Baking.KanikamaLight")]
-    [EditorOnly]
     public sealed class KanikamaLight : BakeTarget
     {
         [SerializeField] new Light light;

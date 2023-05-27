@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kanikama.Core.Attributes;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Baking.Impl
 {
     [AddComponentMenu("Kanikama/Baking.KanikamaMonitorGroup")]
-    [EditorOnly]
     public sealed class KanikamaMonitorGroup : BakeTargetGroup
     {
         [SerializeField] KanikamaMonitor mainMonitor;

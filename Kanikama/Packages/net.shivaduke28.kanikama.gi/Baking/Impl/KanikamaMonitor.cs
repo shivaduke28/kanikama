@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Kanikama.Core.Attributes;
 using UnityEngine;
 
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
     [AddComponentMenu("Kanikama/Baking.KanikamaMonitor")]
-    [EditorOnly]
     public sealed class KanikamaMonitor : BakeTargetGroup
     {
         [SerializeField] Renderer monitorRenderer;
