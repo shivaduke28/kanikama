@@ -5,6 +5,7 @@ namespace Kanikama.GI.Udon
 {
     // should be attached to KanikamaProvider GameObject.
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    [AddComponentMenu("Kanikama/Udon.KanikamaRealtimeSceneLight")]
     public class KanikamaRealtimeSceneLight : UdonSharpBehaviour
     {
         [SerializeField] KanikamaColorCollector colorCollector;

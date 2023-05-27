@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    [AddComponentMenu("Kanikama/Udon.KanikamaColorCollector")]
     public class KanikamaColorCollector : UdonSharpBehaviour
     {
         [SerializeField] Light[] lights;
