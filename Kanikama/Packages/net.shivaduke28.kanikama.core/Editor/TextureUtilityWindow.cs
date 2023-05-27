@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Core.Editor.GUI
+namespace Kanikama.Core.Editor
 {
     internal sealed class TextureUtilityWindow : EditorWindow
     {

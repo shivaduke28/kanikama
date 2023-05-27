@@ -2,8 +2,7 @@
 using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Baking.Editor.GUI;
-using Kanikama.GI.Editor;
+using Kanikama.GI.Baking.Editor;
 using Kanikama.GI.Runtime.Impl;
 using UnityEditor;
 using UnityEngine;

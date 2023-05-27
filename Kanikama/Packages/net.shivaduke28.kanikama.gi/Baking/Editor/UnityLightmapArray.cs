@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Kanikama.Core.Editor;
 using UnityEngine;
 
-namespace Kanikama.GI.Editor
+namespace Kanikama.GI.Baking.Editor
 {
     [Serializable]
     public sealed class UnityLightmapArray

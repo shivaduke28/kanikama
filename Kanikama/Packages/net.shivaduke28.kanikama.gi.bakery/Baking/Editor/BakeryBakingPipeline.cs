@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Editor;
+using Kanikama.GI.Baking.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
