@@ -8,13 +8,7 @@ namespace Kanikama.GI.Runtime.Impl
     [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
     public class KanikamaGIUpdater : MonoBehaviour
     {
-        enum RenderingPipeline
-        {
-            BuiltInRenderingPipeline,
-            UniversalRenderingPipeline
-        }
-
-        [SerializeField] RenderingPipeline renderingPipeline;
+        [SerializeField] bool isSRP;
         [SerializeField] Camera targetCamera;
         [SerializeField] List<LightSource> lightSources;
         [SerializeField] List<LightSourceGroup> lightSourceGroups;
@@ -40,7 +34,7 @@ namespace Kanikama.GI.Runtime.Impl
             }
         }
 
-        void OnPreRender(Camera camera)
+        void OnPreRenderCallback(Camera camera)
         {
             if (camera == targetCamera)
             {
@@ -48,7 +42,31 @@ namespace Kanikama.GI.Runtime.Impl
             }
         }
 
-        void Start()
+        void OnEnable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+            }
+            else
+            {
+                Camera.onPreRender += OnPreRenderCallback;
+            }
+        }
+
+        void OnDisable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+            }
+            else
+            {
+                Camera.onPreRender -= OnPreRenderCallback;
+            }
+        }
+
+        void Awake()
         {
             if (targetCamera == null)
             {
@@ -59,19 +77,6 @@ namespace Kanikama.GI.Runtime.Impl
                     return;
                 }
             }
-
-            switch (renderingPipeline)
-            {
-                case RenderingPipeline.BuiltInRenderingPipeline:
-                    Camera.onPreRender += OnPreRender;
-                    break;
-                case RenderingPipeline.UniversalRenderingPipeline:
-                    RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
 
             var index = lightSources.Count;
             indexedColorArrays = new List<IndexedColorArray>();
@@ -125,21 +130,6 @@ namespace Kanikama.GI.Runtime.Impl
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);
             Shader.SetGlobalInt(Count, colorsInternal.Length);
-        }
-
-        void OnDestroy()
-        {
-            switch (renderingPipeline)
-            {
-                case RenderingPipeline.BuiltInRenderingPipeline:
-                    Camera.onPreRender -= OnPreRender;
-                    break;
-                case RenderingPipeline.UniversalRenderingPipeline:
-                    RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         class IndexedColorArray
