@@ -1,12 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Kanikama.GI.Runtime.Impl
 {
     [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
     public class KanikamaGIUpdater : MonoBehaviour
     {
-        [SerializeField] PreRenderEventHandler preRenderEventHandler;
+        enum RenderingPipeline
+        {
+            BuiltInRenderingPipeline,
+            UniversalRenderingPipeline
+        }
+
+        [SerializeField] RenderingPipeline renderingPipeline;
+        [SerializeField] Camera targetCamera;
         [SerializeField] List<LightSource> lightSources;
         [SerializeField] List<LightSourceGroup> lightSourceGroups;
         [SerializeField] Renderer[] renderers;
@@ -23,25 +32,46 @@ namespace Kanikama.GI.Runtime.Impl
         MaterialPropertyBlock block;
         List<IndexedColorArray> indexedColorArrays;
 
+        void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera)
+        {
+            if (camera == targetCamera)
+            {
+                UpdateColors();
+            }
+        }
+
+        void OnPreRender(Camera camera)
+        {
+            if (camera == targetCamera)
+            {
+                UpdateColors();
+            }
+        }
+
         void Start()
         {
-            if (preRenderEventHandler == null)
+            if (targetCamera == null)
             {
-                var mainCamera = Camera.main;
-                if (mainCamera == null)
+                targetCamera = Camera.main;
+                if (targetCamera == null)
                 {
                     enabled = false;
                     return;
                 }
-                if (!mainCamera.TryGetComponent<PreRenderEventHandler>(out var handler))
-                {
-                    handler = mainCamera.gameObject.AddComponent<PreRenderEventHandler>();
-                }
-                preRenderEventHandler = handler;
             }
 
-            // In Editor, UpdateColors may not be called if Game Window is not active.
-            preRenderEventHandler.OnPreRenderEvent += UpdateColors;
+            switch (renderingPipeline)
+            {
+                case RenderingPipeline.BuiltInRenderingPipeline:
+                    Camera.onPreRender += OnPreRender;
+                    break;
+                case RenderingPipeline.UniversalRenderingPipeline:
+                    RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
 
             var index = lightSources.Count;
             indexedColorArrays = new List<IndexedColorArray>();
@@ -99,9 +129,16 @@ namespace Kanikama.GI.Runtime.Impl
 
         void OnDestroy()
         {
-            if (preRenderEventHandler != null)
+            switch (renderingPipeline)
             {
-                preRenderEventHandler.OnPreRenderEvent -= UpdateColors;
+                case RenderingPipeline.BuiltInRenderingPipeline:
+                    Camera.onPreRender -= OnPreRender;
+                    break;
+                case RenderingPipeline.UniversalRenderingPipeline:
+                    RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
