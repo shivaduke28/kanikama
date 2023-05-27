@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Kanikama.GI.Runtime.Impl
 {
     [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
     public class KanikamaGIUpdater : MonoBehaviour
     {
-        [SerializeField] PreRenderEventHandler preRenderEventHandler;
+        [SerializeField] bool isSRP;
+        [SerializeField] Camera targetCamera;
         [SerializeField] List<LightSource> lightSources;
         [SerializeField] List<LightSourceGroup> lightSourceGroups;
         [SerializeField] Renderer[] renderers;
@@ -23,25 +26,57 @@ namespace Kanikama.GI.Runtime.Impl
         MaterialPropertyBlock block;
         List<IndexedColorArray> indexedColorArrays;
 
-        void Start()
+        void OnBeginCameraRendering(ScriptableRenderContext context, Camera camera)
         {
-            if (preRenderEventHandler == null)
+            if (camera == targetCamera)
             {
-                var mainCamera = Camera.main;
-                if (mainCamera == null)
+                UpdateColors();
+            }
+        }
+
+        void OnPreRenderCallback(Camera camera)
+        {
+            if (camera == targetCamera)
+            {
+                UpdateColors();
+            }
+        }
+
+        void OnEnable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+            }
+            else
+            {
+                Camera.onPreRender += OnPreRenderCallback;
+            }
+        }
+
+        void OnDisable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+            }
+            else
+            {
+                Camera.onPreRender -= OnPreRenderCallback;
+            }
+        }
+
+        void Awake()
+        {
+            if (targetCamera == null)
+            {
+                targetCamera = Camera.main;
+                if (targetCamera == null)
                 {
                     enabled = false;
                     return;
                 }
-                if (!mainCamera.TryGetComponent<PreRenderEventHandler>(out var handler))
-                {
-                    handler = mainCamera.gameObject.AddComponent<PreRenderEventHandler>();
-                }
-                preRenderEventHandler = handler;
             }
-
-            // In Editor, UpdateColors may not be called if Game Window is not active.
-            preRenderEventHandler.OnPreRenderEvent += UpdateColors;
 
             var index = lightSources.Count;
             indexedColorArrays = new List<IndexedColorArray>();
@@ -95,14 +130,6 @@ namespace Kanikama.GI.Runtime.Impl
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);
             Shader.SetGlobalInt(Count, colorsInternal.Length);
-        }
-
-        void OnDestroy()
-        {
-            if (preRenderEventHandler != null)
-            {
-                preRenderEventHandler.OnPreRenderEvent -= UpdateColors;
-            }
         }
 
         class IndexedColorArray

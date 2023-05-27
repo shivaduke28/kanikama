@@ -1,6 +1,7 @@
 ﻿using System;
 using Kanikama.GI.Baking.Impl;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Kanikama.GI.Runtime.Impl
 {
@@ -8,9 +9,10 @@ namespace Kanikama.GI.Runtime.Impl
     [AddComponentMenu("Kanikama/Runtime.KanikamaMonitorCamera")]
     public sealed class KanikamaMonitorCamera : LightSourceGroup
     {
+        [SerializeField] bool isSRP;
         [SerializeField] Renderer monitorRenderer;
-        [SerializeField] KanikamaMonitor.PartitionType partitionType;
-        [SerializeField] new Camera camera;
+        [SerializeField] KanikamaMonitor.PartitionType partitionType = KanikamaMonitor.PartitionType.Grid1x1;
+        [SerializeField] Camera targetCamera;
         [SerializeField] CameraSettings cameraSettings;
         [SerializeField] Texture2D readingTexture;
         [SerializeField] Color[] colors;
@@ -43,11 +45,27 @@ namespace Kanikama.GI.Runtime.Impl
             return colors;
         }
 
+        void OnEndCameraRendering(ScriptableRenderContext context, Camera camera)
+        {
+            if (camera == targetCamera)
+            {
+                UpdateColors();
+            }
+        }
+
+        void OnPostRenderCallback(Camera camera)
+        {
+            if (camera == targetCamera)
+            {
+                UpdateColors();
+            }
+        }
+
         void OnValidate()
         {
-            if (camera == null)
+            if (targetCamera == null)
             {
-                camera = GetComponent<Camera>();
+                targetCamera = GetComponent<Camera>();
             }
         }
 
@@ -56,9 +74,33 @@ namespace Kanikama.GI.Runtime.Impl
             if (!isInitialized) Initialize();
         }
 
+        void OnEnable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.endCameraRendering += OnEndCameraRendering;
+            }
+            else
+            {
+                Camera.onPostRender += OnPostRenderCallback;
+            }
+        }
+
+        void OnDisable()
+        {
+            if (isSRP)
+            {
+                RenderPipelineManager.endCameraRendering -= OnEndCameraRendering;
+            }
+            else
+            {
+                Camera.onPostRender -= OnPostRenderCallback;
+            }
+        }
+
         void Initialize()
         {
-            camera.aspect = aspectRatio;
+            targetCamera.aspect = aspectRatio;
             switch (partitionType)
             {
                 case KanikamaMonitor.PartitionType.Grid1x1:
@@ -111,14 +153,15 @@ namespace Kanikama.GI.Runtime.Impl
         /// </summary>
         public void Setup()
         {
-            var cameraTrans = camera.transform;
+            var cameraTrans = targetCamera.transform;
             var rendererTrans = monitorRenderer.transform;
             var pos = rendererTrans.position - rendererTrans.forward * cameraSettings.distance;
             cameraTrans.SetPositionAndRotation(pos, rendererTrans.rotation);
-            camera.nearClipPlane = cameraSettings.near;
-            camera.farClipPlane = cameraSettings.far;
+            targetCamera.orthographic = true;
+            targetCamera.nearClipPlane = cameraSettings.near;
+            targetCamera.farClipPlane = cameraSettings.far;
             var bounds = GetUnRotatedBounds(monitorRenderer);
-            camera.orthographicSize = bounds.extents.y;
+            targetCamera.orthographicSize = bounds.extents.y;
             var extents = bounds.extents;
             aspectRatio = extents.x / extents.y;
         }
@@ -128,7 +171,7 @@ namespace Kanikama.GI.Runtime.Impl
             return new Color(Mathf.HalfToFloat(uShort4.x), Mathf.HalfToFloat(uShort4.y), Mathf.HalfToFloat(uShort4.z));
         }
 
-        void OnPostRender()
+        void UpdateColors()
         {
             readingTexture.ReadPixels(new Rect(0, 0, 256, 256), 0, 0, true);
             var rawData = readingTexture.GetRawTextureData<UShort4>();

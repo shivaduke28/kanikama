@@ -14,7 +14,7 @@ namespace Kanikama.GI.Baking.Impl
         [SerializeField] KanikamaMonitor mainMonitor;
         [SerializeField] KanikamaMonitor[] subMonitors;
         [SerializeField] BakeTarget bakeTargetPrefab;
-        [SerializeField] KanikamaMonitor.PartitionType partitionType;
+        [SerializeField] KanikamaMonitor.PartitionType partitionType = KanikamaMonitor.PartitionType.Grid1x1;
         [SerializeField] List<MonitorGridFiber> monitorGridFibers;
 
 
