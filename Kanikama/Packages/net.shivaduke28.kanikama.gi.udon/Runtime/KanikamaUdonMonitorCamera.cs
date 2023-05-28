@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    [AddComponentMenu("Kanikama/Udon.KanikamaMonitorCamera")]
-    public sealed class KanikamaMonitorCamera : UdonSharpBehaviour
+    [AddComponentMenu("Udon.KanikamaMonitorCamera")]
+    public sealed class KanikamaUdonMonitorCamera : UdonSharpBehaviour
     {
         [SerializeField] Renderer monitorRenderer;
         [SerializeField] Texture2D readingTexture;

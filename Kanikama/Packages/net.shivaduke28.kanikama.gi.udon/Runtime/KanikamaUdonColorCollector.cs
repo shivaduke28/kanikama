@@ -5,12 +5,11 @@ using UnityEngine;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    [AddComponentMenu("Kanikama/Udon.KanikamaColorCollector")]
-    public class KanikamaColorCollector : UdonSharpBehaviour
+    public class KanikamaUdonColorCollector : UdonSharpBehaviour
     {
         [SerializeField] Light[] lights;
         [SerializeField] Renderer[] emissiveRenderers;
-        [SerializeField] KanikamaMonitorCamera[] kanikamaCameras;
+        [SerializeField] KanikamaUdonMonitorCamera[] kanikamaCameras;
 
         [Space]
         [Range(0, 20f)] public float intensity = 1f;
@@ -98,7 +97,7 @@ namespace Kanikama.GI.Udon
 
         // Note:
         // Colors are updated on OnPreCull in every frame,
-        // KanikamaProviders (and other scripts) attached to the same GameObject should use them on or after OnPreRender.
+        // KanikamaUdonGIUpdater (and other scripts) attached to the same GameObject should use them on or after OnPreRender.
         void OnPreCull()
         {
             if (frameCount >= Time.frameCount) return;

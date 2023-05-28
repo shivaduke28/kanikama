@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace Kanikama.GI.Udon.Editor
 {
-    [CustomEditor(typeof(KanikamaColorCollector))]
-    public class KanikamaColorCollectorEditor : UnityEditor.Editor
+    [CustomEditor(typeof(KanikamaUdonColorCollector))]
+    public class KanikamaUdonColorCollectorEditor : UnityEditor.Editor
     {
         UdonSharpBehaviour proxy;
         SerializedProperty lightsProperty;

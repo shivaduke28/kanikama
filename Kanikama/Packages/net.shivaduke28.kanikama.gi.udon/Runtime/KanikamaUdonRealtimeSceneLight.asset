@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: KanikamaRealtimeSceneLight
+  m_Name: KanikamaUdonRealtimeSceneLight
   m_EditorClassIdentifier: 
   serializedUdonProgramAsset: {fileID: 11400000, guid: eb32d89e91a5bf84dbb7aea8f7616d6c,
     type: 2}
@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: -8193520622304846439
+  scriptID: -5720971057706387523
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaColorCollector, Kanikama.GI.Udon
+      Data: Kanikama.GI.Udon.KanikamaUdonColorCollector, Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 

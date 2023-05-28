@@ -5,13 +5,12 @@ using VRC.SDKBase;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    [AddComponentMenu("Kanikama/Udon.KanikamaMapArrayProvider")]
-    public class KanikamaMapArrayProvider : UdonSharpBehaviour
+    public class KanikamaUdonGIUpdater : UdonSharpBehaviour
     {
         [SerializeField] Texture[] lightmapArrays;
         [SerializeField] Texture[] directionalLightmapArrays;
         [SerializeField] int sliceCount;
-        [SerializeField] KanikamaColorCollector colorCollector;
+        [SerializeField] KanikamaUdonColorCollector colorCollector;
         [Space] [SerializeField] Renderer[] receivers;
 
         Vector4[] colors; // linear
