@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace Kanikama.GI.Runtime.Editor
 {
-    [CustomEditor(typeof(KanikamaMonitorCamera))]
+    [CustomEditor(typeof(KanikamaRuntimeMonitorCamera))]
     public class KanikamaMonitorCameraEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            var kanikamaMonitorCamera = (KanikamaMonitorCamera) target;
+            var kanikamaMonitorCamera = (KanikamaRuntimeMonitorCamera) target;
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUILayout.Space();
             if (KanikamaGUI.Button("Setup Camera"))

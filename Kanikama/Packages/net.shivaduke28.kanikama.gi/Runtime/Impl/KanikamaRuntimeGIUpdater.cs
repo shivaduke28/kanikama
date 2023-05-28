@@ -5,8 +5,7 @@ using UnityEngine.Rendering;
 
 namespace Kanikama.GI.Runtime.Impl
 {
-    [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
-    public class KanikamaGIUpdater : MonoBehaviour
+    public sealed class KanikamaRuntimeGIUpdater : MonoBehaviour
     {
         [SerializeField] bool isSRP;
         [SerializeField] Camera targetCamera;

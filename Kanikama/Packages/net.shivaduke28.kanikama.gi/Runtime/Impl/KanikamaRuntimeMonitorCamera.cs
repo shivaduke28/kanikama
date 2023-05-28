@@ -6,12 +6,11 @@ using UnityEngine.Rendering;
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Camera))]
-    [AddComponentMenu("Kanikama/Runtime.KanikamaMonitorCamera")]
-    public sealed class KanikamaMonitorCamera : LightSourceGroup
+    public sealed class KanikamaRuntimeMonitorCamera : LightSourceGroup
     {
         [SerializeField] bool isSRP;
         [SerializeField] Renderer monitorRenderer;
-        [SerializeField] KanikamaMonitor.PartitionType partitionType = KanikamaMonitor.PartitionType.Grid1x1;
+        [SerializeField] KanikamaBakeTargetMonitor.PartitionType partitionType = KanikamaBakeTargetMonitor.PartitionType.Grid1x1;
         [SerializeField] Camera targetCamera;
         [SerializeField] CameraSettings cameraSettings;
         [SerializeField] Texture2D readingTexture;
@@ -103,37 +102,37 @@ namespace Kanikama.GI.Runtime.Impl
             targetCamera.aspect = aspectRatio;
             switch (partitionType)
             {
-                case KanikamaMonitor.PartitionType.Grid1x1:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid1x1:
                     isUniform = true;
                     lightCount = 1;
                     bufferCount = lightCount;
                     mipmapStartIndex = Mipmap8StartIndex;
                     break;
-                case KanikamaMonitor.PartitionType.Grid2x2:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid2x2:
                     isUniform = true;
                     lightCount = 4;
                     bufferCount = lightCount;
                     mipmapStartIndex = Mipmap7StartIndex;
                     break;
-                case KanikamaMonitor.PartitionType.Grid4x4:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid4x4:
                     isUniform = true;
                     lightCount = 16;
                     bufferCount = lightCount;
                     mipmapStartIndex = Mipmap6StartIndex;
                     break;
-                case KanikamaMonitor.PartitionType.Grid3x2:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid3x2:
                     lightCount = 6;
                     bufferCount = 16;
                     isUniform = false;
                     mipmapStartIndex = Mipmap6StartIndex;
                     break;
-                case KanikamaMonitor.PartitionType.Grid3x3:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid3x3:
                     lightCount = 9;
                     bufferCount = 16;
                     isUniform = false;
                     mipmapStartIndex = Mipmap6StartIndex;
                     break;
-                case KanikamaMonitor.PartitionType.Grid4x3:
+                case KanikamaBakeTargetMonitor.PartitionType.Grid4x3:
                     lightCount = 12;
                     bufferCount = 16;
                     isUniform = false;
@@ -195,7 +194,7 @@ namespace Kanikama.GI.Runtime.Impl
 
                 switch (partitionType)
                 {
-                    case KanikamaMonitor.PartitionType.Grid3x2:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid3x2:
                         colors[0] = (colorsBuffer[0] + colorsBuffer[4]) * 0.5f;
                         colors[1] = (colorsBuffer[1] + colorsBuffer[2] + colorsBuffer[5] + colorsBuffer[6]) * 0.25f;
                         colors[2] = (colorsBuffer[3] + colorsBuffer[7]) * 0.5f;
@@ -204,7 +203,7 @@ namespace Kanikama.GI.Runtime.Impl
                         colors[4] = (colorsBuffer[9] + colorsBuffer[10] + colorsBuffer[13] + colorsBuffer[14]) * 0.25f;
                         colors[5] = (colorsBuffer[11] + colorsBuffer[15]) * 0.5f;
                         break;
-                    case KanikamaMonitor.PartitionType.Grid3x3:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid3x3:
                         colors[0] = colorsBuffer[0];
                         colors[1] = (colorsBuffer[1] + colorsBuffer[2]) * 0.5f;
                         colors[2] = colorsBuffer[3];
@@ -217,7 +216,7 @@ namespace Kanikama.GI.Runtime.Impl
                         colors[7] = (colorsBuffer[13] + colorsBuffer[14]) * 0.5f;
                         colors[8] = colorsBuffer[15];
                         break;
-                    case KanikamaMonitor.PartitionType.Grid4x3:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid4x3:
                         colors[0] = colorsBuffer[0];
                         colors[1] = colorsBuffer[1];
                         colors[2] = colorsBuffer[2];
@@ -233,9 +232,9 @@ namespace Kanikama.GI.Runtime.Impl
                         colors[10] = colorsBuffer[14];
                         colors[11] = colorsBuffer[15];
                         break;
-                    case KanikamaMonitor.PartitionType.Grid1x1:
-                    case KanikamaMonitor.PartitionType.Grid2x2:
-                    case KanikamaMonitor.PartitionType.Grid4x4:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid1x1:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid2x2:
+                    case KanikamaBakeTargetMonitor.PartitionType.Grid4x4:
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

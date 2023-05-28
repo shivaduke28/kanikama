@@ -3,8 +3,7 @@
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Light))]
-    [AddComponentMenu("Kanikama/Runtime.KanikamaLight")]
-    public sealed class KanikamaLight : LightSource
+    public sealed class KanikamaRuntimeLight : LightSource
     {
         [SerializeField] new Light light;
 

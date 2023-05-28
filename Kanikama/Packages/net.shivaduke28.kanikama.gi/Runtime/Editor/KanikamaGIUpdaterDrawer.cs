@@ -11,7 +11,7 @@ namespace Kanikama.GI.Runtime.Editor
 {
     internal sealed class KanikamaGIUpdaterDrawer : KanikamaGIWindow.IGUIDrawer
     {
-        KanikamaGIUpdater giUpdater;
+        KanikamaRuntimeGIUpdater giUpdater;
         SerializedObject serializedObject;
 
         [InitializeOnLoadMethod]
@@ -27,7 +27,7 @@ namespace Kanikama.GI.Runtime.Editor
 
         void Load()
         {
-            giUpdater = Object.FindObjectOfType<KanikamaGIUpdater>();
+            giUpdater = Object.FindObjectOfType<KanikamaRuntimeGIUpdater>();
             if (giUpdater != null)
             {
                 serializedObject = new SerializedObject(giUpdater);
@@ -70,16 +70,16 @@ namespace Kanikama.GI.Runtime.Editor
 
         void KanikamaGIWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label($"{nameof(KanikamaGIUpdater)} (Unity)", EditorStyles.boldLabel);
+            GUILayout.Label($"{nameof(KanikamaRuntimeGIUpdater)} (Unity)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {
-                giUpdater = (KanikamaGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
-                    giUpdater, typeof(KanikamaGIUpdater), true);
+                giUpdater = (KanikamaRuntimeGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
+                    giUpdater, typeof(KanikamaRuntimeGIUpdater), true);
 
                 if (giUpdater == null)
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaGIUpdater)} is not found.", MessageType.Warning);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} is not found.", MessageType.Warning);
                 }
                 else
                 {
