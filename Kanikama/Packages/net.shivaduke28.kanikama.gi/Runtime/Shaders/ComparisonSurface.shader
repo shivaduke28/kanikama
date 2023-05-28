@@ -1,4 +1,4 @@
-﻿Shader "Kanikama/StandardSurface"
+﻿Shader "Kanikama/Debug/ComparisonSurface"
 {
     Properties
     {
@@ -11,6 +11,7 @@
         [KeywordEnum(Array, Directional)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
+        _ComparingParam("Compare (0=Ground Truth, 1=PRT)", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -27,7 +28,7 @@
         #pragma target 3.0
 
         #include "UnityPBSLighting.cginc"
-        #include "./KanikamaGI.hlsl"
+        #include "Packages/net.shivaduke28.kanikama.gi/Runtime/Shaders/KanikamaGI.hlsl"
 
         sampler2D _MainTex;
         sampler2D _BumpMap;
@@ -36,6 +37,7 @@
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
+        half _ComparingParam;
 
 
         struct Input
@@ -59,7 +61,9 @@
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
-            gi.indirect.diffuse += KanikamaGISample(data.lightmapUV, s.Normal);
+            half3 lm = gi.indirect.diffuse;
+            half3 prt = KanikamaGISample(data.lightmapUV, s.Normal);
+            gi.indirect.diffuse = lerp(lm, prt, _ComparingParam);
         }
 
         void vert(inout appdata_full v, out Input o)
