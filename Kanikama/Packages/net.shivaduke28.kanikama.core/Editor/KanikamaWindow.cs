@@ -4,9 +4,9 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Core.Editor
 {
-    public sealed class KanikamaGIWindow : EditorWindow
+    public sealed class KanikamaWindow : EditorWindow
     {
         public interface IGUIDrawer
         {
@@ -55,10 +55,10 @@ namespace Kanikama.GI.Baking.Editor
             factories.Add(new DrawerFactory(createFunc, sortingOrder));
         }
 
-        [MenuItem("Window/Kanikama/GI")]
+        [MenuItem("Window/Kanikama")]
         static void Initialize()
         {
-            var window = GetWindow<KanikamaGIWindow>();
+            var window = GetWindow<KanikamaWindow>();
             window.Show();
         }
 
@@ -69,7 +69,7 @@ namespace Kanikama.GI.Baking.Editor
 
         void OnEnable()
         {
-            titleContent.text = "Kanikama GI";
+            titleContent.text = "Kanikama";
             if (Factories.Count == 0) return;
 
             drawers.Clear();

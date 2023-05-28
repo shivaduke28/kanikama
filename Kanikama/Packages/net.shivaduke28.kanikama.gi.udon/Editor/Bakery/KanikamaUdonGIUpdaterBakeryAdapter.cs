@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Udon.Editor.Bakery
 {
-    internal sealed class KanikamaUdonGIUpdaterBakeryAdapter : KanikamaGIWindow.IGUIDrawer
+    internal sealed class KanikamaUdonGIUpdaterBakeryAdapter : KanikamaWindow.IGUIDrawer
     {
         KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
         SerializedObject serializedObject;
@@ -18,7 +18,7 @@ namespace Kanikama.GI.Udon.Editor.Bakery
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaUdonGIUpdaterBakeryAdapter(), 101);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Runtime, () => new KanikamaUdonGIUpdaterBakeryAdapter(), 101);
         }
 
         KanikamaUdonGIUpdaterBakeryAdapter()
@@ -79,7 +79,7 @@ namespace Kanikama.GI.Udon.Editor.Bakery
             UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
         }
 
-        void KanikamaGIWindow.IGUIDrawer.Draw()
+        void KanikamaWindow.IGUIDrawer.Draw()
         {
             GUILayout.Label($"{nameof(KanikamaUdonGIUpdater)} (Udon) (Bakery)", EditorStyles.boldLabel);
 

@@ -9,12 +9,12 @@ using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Baking.Editor
 {
-    public sealed class UnityBakingDrawer : KanikamaGIWindow.IGUIDrawer
+    public sealed class UnityBakingDrawer : KanikamaWindow.IGUIDrawer
     {
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Baking, () => new UnityBakingDrawer(), 1);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityBakingDrawer(), 1);
         }
 
         SceneAsset sceneAsset;
@@ -51,7 +51,7 @@ namespace Kanikama.GI.Baking.Editor
             }
         }
 
-        void KanikamaGIWindow.IGUIDrawer.Draw()
+        void KanikamaWindow.IGUIDrawer.Draw()
         {
             GUILayout.Label("Unity", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Kanikama.GI.Bakery.Runtime.Editor
 {
-    internal sealed class KanikamaGIUpdaterBakeryAdapter : KanikamaGIWindow.IGUIDrawer
+    internal sealed class KanikamaGIUpdaterBakeryAdapter : KanikamaWindow.IGUIDrawer
     {
         KanikamaRuntimeGIUpdater giUpdater;
         SerializedObject serializedObject;
@@ -18,7 +18,7 @@ namespace Kanikama.GI.Bakery.Runtime.Editor
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaGIUpdaterBakeryAdapter(), 2);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Runtime, () => new KanikamaGIUpdaterBakeryAdapter(), 2);
         }
 
         KanikamaGIUpdaterBakeryAdapter()
@@ -69,7 +69,7 @@ namespace Kanikama.GI.Bakery.Runtime.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
-        void KanikamaGIWindow.IGUIDrawer.Draw()
+        void KanikamaWindow.IGUIDrawer.Draw()
         {
             GUILayout.Label($"{nameof(KanikamaRuntimeGIUpdater)} (Bakery)", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
