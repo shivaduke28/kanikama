@@ -108,6 +108,7 @@ namespace Kanikama.GI.Runtime.Impl
                 }
                 r.SetPropertyBlock(block);
             }
+            Shader.SetGlobalInt(Count, colorsInternal.Length);
         }
 
         void UpdateColors()
@@ -129,7 +130,6 @@ namespace Kanikama.GI.Runtime.Impl
             }
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);
-            Shader.SetGlobalInt(Count, colorsInternal.Length);
         }
 
         class IndexedColorArray
