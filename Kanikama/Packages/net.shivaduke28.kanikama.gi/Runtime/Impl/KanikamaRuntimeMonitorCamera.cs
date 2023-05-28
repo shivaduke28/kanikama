@@ -38,7 +38,7 @@ namespace Kanikama.GI.Runtime.Impl
         const int Mipmap7StartIndex = 256 * 256 + 128 * 128 + 64 * 64 + 32 * 32 + 16 * 16 + 8 * 8 + 4 * 4;
         const int Mipmap8StartIndex = 256 * 256 + 128 * 128 + 64 * 64 + 32 * 32 + 16 * 16 + 8 * 8 + 4 * 4 + 2 * 2;
 
-        public override Color[] GetColors()
+        public override Color[] GetLinearColors()
         {
             if (!isInitialized) Initialize();
             return colors;

@@ -12,7 +12,7 @@ namespace Kanikama.GI.Runtime.Impl
             light = GetComponent<Light>();
         }
 
-        public override Color GetColorLinear()
+        public override Color GetLinearColor()
         {
             return light.color.linear * light.intensity;
         }

@@ -35,7 +35,7 @@ namespace Kanikama.GI.Runtime.Impl
             renderer = GetComponent<Renderer>();
         }
 
-        public override Color GetColorLinear()
+        public override Color GetLinearColor()
         {
             if (useMaterialPropertyBlockInternal)
             {
