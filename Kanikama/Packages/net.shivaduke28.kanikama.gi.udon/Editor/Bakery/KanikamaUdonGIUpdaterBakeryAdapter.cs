@@ -4,14 +4,13 @@ using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Bakery.Baking.Editor;
 using Kanikama.GI.Baking.Editor;
-using Kanikama.GI.Baking.Editor;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.GI.Udon.Editor.Bakery
 {
-    internal sealed class KanikamaMapArrayProviderBakeryAdapter : KanikamaGIWindow.IGUIDrawer
+    internal sealed class KanikamaUdonGIUpdaterBakeryAdapter : KanikamaGIWindow.IGUIDrawer
     {
         KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
         SerializedObject serializedObject;
@@ -19,10 +18,10 @@ namespace Kanikama.GI.Udon.Editor.Bakery
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaMapArrayProviderBakeryAdapter(), 101);
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaUdonGIUpdaterBakeryAdapter(), 101);
         }
 
-        KanikamaMapArrayProviderBakeryAdapter()
+        KanikamaUdonGIUpdaterBakeryAdapter()
         {
             Load();
         }
