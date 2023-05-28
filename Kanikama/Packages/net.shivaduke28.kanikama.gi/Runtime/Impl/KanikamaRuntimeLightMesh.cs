@@ -3,7 +3,7 @@
 namespace Kanikama.GI.Runtime.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaRuntimeLightMaterial : LightSource
+    public sealed class KanikamaRuntimeLightMesh : LightSource
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;
