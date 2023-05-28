@@ -4,8 +4,7 @@ using UnityEngine;
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    [AddComponentMenu("Kanikama/Baking.KanikamaLightMaterial")]
-    public sealed class KanikamaLightMaterial : BakeTarget
+    public sealed class KanikamaBakeTargetLightMesh : BakeTarget
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;

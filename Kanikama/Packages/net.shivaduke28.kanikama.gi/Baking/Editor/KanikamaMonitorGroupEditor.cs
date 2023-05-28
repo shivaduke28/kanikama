@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace Kanikama.GI.Baking.Editor
 {
-    [CustomEditor(typeof(KanikamaMonitorGroup))]
+    [CustomEditor(typeof(KanikamaBakeTargetMonitorGroup))]
     public class KanikamaMonitorGroupEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            var kanikamaMonitorGroup = (KanikamaMonitorGroup) target;
+            var kanikamaMonitorGroup = (KanikamaBakeTargetMonitorGroup) target;
             EditorGUI.BeginDisabledGroup(Application.isPlaying);
             EditorGUILayout.Space();
             if (KanikamaGUI.Button("Setup Lights"))

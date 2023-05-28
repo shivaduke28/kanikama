@@ -3,8 +3,7 @@
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
-    [AddComponentMenu("Kanikama/Baking.KanikamaLight")]
-    public sealed class KanikamaLight : BakeTarget
+    public sealed class KanikamaBakeTargetLight : BakeTarget
     {
         [SerializeField] new Light light;
         [SerializeField, HideInInspector] Color color;
