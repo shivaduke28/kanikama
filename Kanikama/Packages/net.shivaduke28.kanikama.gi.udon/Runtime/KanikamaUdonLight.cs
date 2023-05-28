@@ -5,7 +5,7 @@ namespace Kanikama.GI.Udon
     [RequireComponent(typeof(Light))]
     public class KanikamaUdonLight : KanikamaUdonLightSource
     {
-        [SerializeField] Light light;
+        [SerializeField] new Light light;
 
         void OnValidate()
         {
@@ -17,6 +17,7 @@ namespace Kanikama.GI.Udon
 
         public override Color GetLinearColor()
         {
+            if (!gameObject.activeSelf) return Color.black;
             return light.color.linear * light.intensity;
         }
     }

@@ -16,7 +16,7 @@ namespace Kanikama.GI.Udon
         Vector4[] colors;
         int count;
 
-        void OnEnable()
+        void Start()
         {
             colors = colorCollector.GetColors();
             count = colors.Length;

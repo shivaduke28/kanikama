@@ -12,16 +12,14 @@ namespace Kanikama.GI.Udon
         [SerializeField] Material instance;
         [SerializeField] bool useMaterialPropertyBlock = true;
 
-        bool useMaterialPropertyBlockInternal;
-
         int propertyId;
         MaterialPropertyBlock block;
+        bool initialized;
 
-        void Awake()
+        void Start()
         {
             propertyId = VRCShader.PropertyToID(propertyName);
-            useMaterialPropertyBlockInternal = useMaterialPropertyBlock;
-            if (useMaterialPropertyBlockInternal)
+            if (useMaterialPropertyBlock)
             {
                 block = new MaterialPropertyBlock();
             }
@@ -29,16 +27,21 @@ namespace Kanikama.GI.Udon
             {
                 instance = renderer.materials[materialIndex];
             }
+            initialized = true;
         }
 
         void OnValidate()
         {
-            renderer = GetComponent<Renderer>();
+            if (renderer == null)
+            {
+                renderer = GetComponent<Renderer>();
+            }
         }
 
         public override Color GetLinearColor()
         {
-            if (useMaterialPropertyBlockInternal)
+            if (!gameObject.activeSelf || !initialized) return Color.black;
+            if (useMaterialPropertyBlock)
             {
                 renderer.GetPropertyBlock(block);
                 return block.GetColor(propertyId).linear;
