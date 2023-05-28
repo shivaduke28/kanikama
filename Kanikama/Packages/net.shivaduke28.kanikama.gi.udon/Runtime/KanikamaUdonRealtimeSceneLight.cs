@@ -5,9 +5,9 @@ namespace Kanikama.GI.Udon
 {
     // should be attached to KanikamaProvider GameObject.
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public class KanikamaRealtimeSceneLight : UdonSharpBehaviour
+    public class KanikamaUdonRealtimeSceneLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaColorCollector colorCollector;
+        [SerializeField] KanikamaUdonColorCollector colorCollector;
         [SerializeField] Light light;
         [SerializeField] public float intensity = 1;
         [SerializeField] bool weightEnable = false;
@@ -16,7 +16,7 @@ namespace Kanikama.GI.Udon
         Vector4[] colors;
         int count;
 
-        void OnEnable()
+        void Start()
         {
             colors = colorCollector.GetColors();
             count = colors.Length;

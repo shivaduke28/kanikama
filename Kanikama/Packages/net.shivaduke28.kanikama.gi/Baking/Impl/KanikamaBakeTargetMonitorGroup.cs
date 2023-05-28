@@ -6,13 +6,12 @@ using Object = UnityEngine.Object;
 
 namespace Kanikama.GI.Baking.Impl
 {
-    [AddComponentMenu("Kanikama/Baking.KanikamaMonitorGroup")]
-    public sealed class KanikamaMonitorGroup : BakeTargetGroup
+    public sealed class KanikamaBakeTargetMonitorGroup : BakeTargetGroup
     {
-        [SerializeField] KanikamaMonitor mainMonitor;
-        [SerializeField] KanikamaMonitor[] subMonitors;
+        [SerializeField] KanikamaBakeTargetMonitor mainMonitor;
+        [SerializeField] KanikamaBakeTargetMonitor[] subMonitors;
         [SerializeField] BakeTarget bakeTargetPrefab;
-        [SerializeField] KanikamaMonitor.PartitionType partitionType = KanikamaMonitor.PartitionType.Grid1x1;
+        [SerializeField] KanikamaBakeTargetMonitor.PartitionType partitionType = KanikamaBakeTargetMonitor.PartitionType.Grid1x1;
         [SerializeField] List<MonitorGridFiber> monitorGridFibers;
 
 

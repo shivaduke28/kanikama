@@ -3,35 +3,34 @@ using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking.Editor;
-using Kanikama.GI.Baking.Editor;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.GI.Udon.Editor
 {
-    internal class KanikamaMapArrayProviderDrawer : KanikamaGIWindow.IGUIDrawer
+    internal sealed class KanikamaUdonGIUpdaterDrawer : KanikamaGIWindow.IGUIDrawer
     {
-        KanikamaMapArrayProvider kanikamaMapArrayProvider;
+        KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
         SerializedObject serializedObject;
 
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaMapArrayProviderDrawer(), 100);
+            KanikamaGIWindow.AddDrawer(KanikamaGIWindow.Category.Runtime, () => new KanikamaUdonGIUpdaterDrawer(), 100);
         }
 
-        KanikamaMapArrayProviderDrawer()
+        KanikamaUdonGIUpdaterDrawer()
         {
             Load();
         }
 
         void Load()
         {
-            kanikamaMapArrayProvider = Object.FindObjectOfType<KanikamaMapArrayProvider>();
-            if (kanikamaMapArrayProvider != null)
+            kanikamaUdonGIUpdater = Object.FindObjectOfType<KanikamaUdonGIUpdater>();
+            if (kanikamaUdonGIUpdater != null)
             {
-                serializedObject = new SerializedObject(kanikamaMapArrayProvider);
+                serializedObject = new SerializedObject(kanikamaUdonGIUpdater);
             }
             else
             {
@@ -76,21 +75,21 @@ namespace Kanikama.GI.Udon.Editor
             sliceCount.intValue = lights.Length > 0 ? lights[0].Texture.depth : 0;
 
             serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaMapArrayProvider);
+            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
         }
 
         void KanikamaGIWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label($"{nameof(KanikamaMapArrayProvider)} (Udon)", EditorStyles.boldLabel);
+            GUILayout.Label($"{nameof(KanikamaUdonGIUpdater)} (Udon)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {
-                kanikamaMapArrayProvider = (KanikamaMapArrayProvider) EditorGUILayout.ObjectField("Provider",
-                    kanikamaMapArrayProvider, typeof(KanikamaMapArrayProvider), true);
+                kanikamaUdonGIUpdater = (KanikamaUdonGIUpdater) EditorGUILayout.ObjectField("Provider",
+                    kanikamaUdonGIUpdater, typeof(KanikamaUdonGIUpdater), true);
 
-                if (kanikamaMapArrayProvider == null)
+                if (kanikamaUdonGIUpdater == null)
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaMapArrayProvider)} is not found.", MessageType.Warning);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
                 }
                 else
                 {

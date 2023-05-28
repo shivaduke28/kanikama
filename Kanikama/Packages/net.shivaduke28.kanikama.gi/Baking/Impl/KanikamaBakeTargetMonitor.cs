@@ -5,8 +5,7 @@ using UnityEngine;
 namespace Kanikama.GI.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    [AddComponentMenu("Kanikama/Baking.KanikamaMonitor")]
-    public sealed class KanikamaMonitor : BakeTargetGroup
+    public sealed class KanikamaBakeTargetMonitor : BakeTargetGroup
     {
         [SerializeField] Renderer monitorRenderer;
         [SerializeField] List<BakeTarget> bakeTargets;

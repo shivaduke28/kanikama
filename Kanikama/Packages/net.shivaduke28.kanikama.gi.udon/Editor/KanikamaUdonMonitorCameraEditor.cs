@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Kanikama.GI.Udon.Editor
 {
-    [CustomEditor(typeof(KanikamaMonitorCamera))]
-    public class KanikamaMonitorCameraEditor : UnityEditor.Editor
+    [CustomEditor(typeof(KanikamaUdonMonitorCamera))]
+    public sealed class KanikamaUdonMonitorCameraEditor : UnityEditor.Editor
     {
-        KanikamaMonitorCamera kanikamaMonitorCamera;
+        KanikamaUdonMonitorCamera kanikamaMonitorCamera;
 
         void OnEnable()
         {
             if (target == null) return;
-            kanikamaMonitorCamera = (KanikamaMonitorCamera) target;
+            kanikamaMonitorCamera = (KanikamaUdonMonitorCamera) target;
         }
 
         public override void OnInspectorGUI()

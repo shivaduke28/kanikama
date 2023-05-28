@@ -21,7 +21,7 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
         }
 
         SceneAsset sceneAsset;
-        KanikamaSceneDescriptor sceneDescriptor;
+        IBakingDescriptor sceneDescriptor;
         BakeryBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -43,7 +43,7 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
             }
 
             sceneAsset = sceneAssetData.Asset;
-            sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
@@ -87,13 +87,17 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
 
+
             if (sceneDescriptor == null)
             {
-                sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+                sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
+            }
+            
+            if (sceneDescriptor is Object sceneDescriptorObject)
+            {
+                sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptorObject, typeof(MonoBehaviour), true);
             }
 
-            sceneDescriptor = (KanikamaSceneDescriptor) EditorGUILayout.ObjectField("Scene Descriptor",
-                sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
             bakingSettingAsset =
                 (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(BakeryBakingSettingAsset), false);
 
@@ -105,7 +109,7 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
 
             if (sceneDescriptor == null)
             {
-                EditorGUILayout.HelpBox("KanikamaSceneDescriptor is not found.", MessageType.Warning);
+                EditorGUILayout.HelpBox("BakingSceneDescriptor is not found.", MessageType.Warning);
                 return;
             }
 

@@ -3,9 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Baking;
-using Kanikama.GI.Baking.Editor;
-using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -21,7 +18,7 @@ namespace Kanikama.GI.Baking.Editor
         }
 
         SceneAsset sceneAsset;
-        KanikamaSceneDescriptor sceneDescriptor;
+        IBakingDescriptor sceneDescriptor;
         UnityBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -43,7 +40,7 @@ namespace Kanikama.GI.Baking.Editor
             }
 
             sceneAsset = sceneAssetData.Asset;
-            sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+            sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
@@ -89,11 +86,14 @@ namespace Kanikama.GI.Baking.Editor
 
             if (sceneDescriptor == null)
             {
-                sceneDescriptor = Object.FindObjectOfType<KanikamaSceneDescriptor>();
+                sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             }
 
-            sceneDescriptor = (KanikamaSceneDescriptor) EditorGUILayout.ObjectField("Scene Descriptor",
-                sceneDescriptor, typeof(KanikamaSceneDescriptor), true);
+            if (sceneDescriptor is Object sceneDescriptorObject)
+            {
+                sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptorObject, typeof(MonoBehaviour), true);
+            }
+
             bakingSettingAsset =
                 (UnityBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(UnityBakingSettingAsset), false);
 
@@ -105,7 +105,7 @@ namespace Kanikama.GI.Baking.Editor
 
             if (sceneDescriptor == null)
             {
-                EditorGUILayout.HelpBox("KanikamaSceneDescriptor is not found.", MessageType.Warning);
+                EditorGUILayout.HelpBox("BakingSceneDescriptor is not found.", MessageType.Warning);
                 return;
             }
 

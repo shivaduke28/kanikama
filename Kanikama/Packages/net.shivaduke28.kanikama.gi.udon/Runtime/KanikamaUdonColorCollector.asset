@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: KanikamaRealtimeCameraLight
+  m_Name: KanikamaUdonColorCollector
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 1ecf6f6de993b2b46aee057117abb43d,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: a96a406992721fc4f922fdf83bf2d3df,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: ec0ceafcd210723488f4330be46bb154, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: 8a21927aef6f1274880cad9ba8965af3, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: -6417684784943320878
+  scriptID: 1142506994869582792
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -44,25 +44,25 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 12
-      Data: 5
+      Data: 6
     - Name: 
       Entry: 7
       Data: 
     - Name: $k
       Entry: 1
-      Data: kanikamaMonitorCamera
+      Data: lightSources
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: kanikamaMonitorCamera
+      Data: lightSources
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaMonitorCamera, Kanikama.GI.Udon
+      Data: Kanikama.GI.Udon.KanikamaUdonLightSource[], Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 
@@ -71,7 +71,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: VRC.Udon.UdonBehaviour, VRC.Udon
+      Data: UnityEngine.Component[], UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
@@ -116,25 +116,25 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: light
+      Data: lightSourceGroups
     - Name: $v
       Entry: 7
       Data: 7|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: light
+      Data: lightSourceGroups
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 8|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: UnityEngine.Light, UnityEngine.CoreModule
+      Data: Kanikama.GI.Udon.KanikamaUdonLightSourceGroup[], Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 
     - Name: <SystemType>k__BackingField
       Entry: 9
-      Data: 8
+      Data: 4
     - Name: <SyncMode>k__BackingField
       Entry: 7
       Data: System.Nullable`1[[UdonSharp.UdonSyncMode, UdonSharp.Runtime]], mscorlib
@@ -176,19 +176,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: intensity
+      Data: colors
     - Name: $v
       Entry: 7
       Data: 11|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: intensity
+      Data: colors
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 12|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: System.Single, mscorlib
+      Data: UnityEngine.Vector4[], UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
@@ -236,19 +236,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: colors
+      Data: isInitialized
     - Name: $v
       Entry: 7
       Data: 15|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: colors
+      Data: isInitialized
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 16|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: UnityEngine.Color[], UnityEngine.CoreModule
+      Data: System.Boolean, mscorlib
     - Name: 
       Entry: 8
       Data: 
@@ -290,25 +290,31 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: count
+      Data: lightSourceGroupColors
     - Name: $v
       Entry: 7
       Data: 18|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: count
+      Data: lightSourceGroupColors
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 19|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: System.Int32, mscorlib
+      Data: UnityEngine.Color[][], UnityEngine.CoreModule
     - Name: 
       Entry: 8
       Data: 
     - Name: <SystemType>k__BackingField
-      Entry: 9
-      Data: 19
+      Entry: 7
+      Data: 20|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: System.Object[], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: <SyncMode>k__BackingField
       Entry: 7
       Data: System.Nullable`1[[UdonSharp.UdonSyncMode, UdonSharp.Runtime]], mscorlib
@@ -323,7 +329,61 @@ MonoBehaviour:
       Data: false
     - Name: _fieldAttributes
       Entry: 7
-      Data: 20|System.Collections.Generic.List`1[[System.Attribute, mscorlib]], mscorlib
+      Data: 21|System.Collections.Generic.List`1[[System.Attribute, mscorlib]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: lightSourceGroupStartIndex
+    - Name: $v
+      Entry: 7
+      Data: 22|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
+    - Name: <Name>k__BackingField
+      Entry: 1
+      Data: lightSourceGroupStartIndex
+    - Name: <UserType>k__BackingField
+      Entry: 7
+      Data: 23|System.RuntimeType, mscorlib
+    - Name: 
+      Entry: 1
+      Data: System.Int32[], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: <SystemType>k__BackingField
+      Entry: 9
+      Data: 23
+    - Name: <SyncMode>k__BackingField
+      Entry: 7
+      Data: System.Nullable`1[[UdonSharp.UdonSyncMode, UdonSharp.Runtime]], mscorlib
+    - Name: 
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: <IsSerialized>k__BackingField
+      Entry: 5
+      Data: false
+    - Name: _fieldAttributes
+      Entry: 7
+      Data: 24|System.Collections.Generic.List`1[[System.Attribute, mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 0

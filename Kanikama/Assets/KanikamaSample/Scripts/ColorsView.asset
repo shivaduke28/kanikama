@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaMonitorCamera, Kanikama.GI.Udon
+      Data: Kanikama.GI.Udon.KanikamaUdonMonitorCamera, Kanikama.GI.Udon
     - Name: 
       Entry: 8
       Data: 

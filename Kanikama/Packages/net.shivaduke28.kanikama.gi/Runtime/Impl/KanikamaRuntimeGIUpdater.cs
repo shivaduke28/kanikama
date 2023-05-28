@@ -5,8 +5,7 @@ using UnityEngine.Rendering;
 
 namespace Kanikama.GI.Runtime.Impl
 {
-    [AddComponentMenu("Kanikama/Runtime.KanikamaGIUpdater")]
-    public class KanikamaGIUpdater : MonoBehaviour
+    public sealed class KanikamaRuntimeGIUpdater : MonoBehaviour
     {
         [SerializeField] bool isSRP;
         [SerializeField] Camera targetCamera;
@@ -83,7 +82,7 @@ namespace Kanikama.GI.Runtime.Impl
 
             foreach (var lightSourceGroup in lightSourceGroups)
             {
-                var colors = lightSourceGroup.GetColors();
+                var colors = lightSourceGroup.GetLinearColors();
                 var indexedArray = new IndexedColorArray(colors, index);
                 indexedColorArrays.Add(indexedArray);
                 index += indexedArray.Length;
@@ -108,13 +107,14 @@ namespace Kanikama.GI.Runtime.Impl
                 }
                 r.SetPropertyBlock(block);
             }
+            Shader.SetGlobalInt(Count, colorsInternal.Length);
         }
 
         void UpdateColors()
         {
             for (var i = 0; i < lightSources.Count; i++)
             {
-                colorsInternal[i] = lightSources[i].GetColorLinear();
+                colorsInternal[i] = lightSources[i].GetLinearColor();
             }
 
             foreach (var indexedColorArray in indexedColorArrays)
@@ -129,7 +129,6 @@ namespace Kanikama.GI.Runtime.Impl
             }
 
             Shader.SetGlobalVectorArray(Colors, colorsInternal);
-            Shader.SetGlobalInt(Count, colorsInternal.Length);
         }
 
         class IndexedColorArray

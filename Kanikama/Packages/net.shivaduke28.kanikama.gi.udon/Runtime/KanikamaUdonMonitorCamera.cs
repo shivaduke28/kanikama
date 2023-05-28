@@ -5,8 +5,8 @@ using UnityEngine;
 namespace Kanikama.GI.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    [AddComponentMenu("Kanikama/Udon.KanikamaMonitorCamera")]
-    public sealed class KanikamaMonitorCamera : UdonSharpBehaviour
+    [AddComponentMenu("Udon.KanikamaMonitorCamera")]
+    public sealed class KanikamaUdonMonitorCamera : KanikamaUdonLightSourceGroup
     {
         [SerializeField] Renderer monitorRenderer;
         [SerializeField] Texture2D readingTexture;
@@ -39,7 +39,7 @@ namespace Kanikama.GI.Udon
             if (!isInitialized) Initialize();
         }
 
-        public Color[] GetColors()
+        public override Color[] GetLinearColors()
         {
             if (!isInitialized) Initialize();
             return colors;
