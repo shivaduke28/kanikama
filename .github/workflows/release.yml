@@ -1,0 +1,100 @@
+name: Build Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+     - 'v*.*.*'
+
+env:
+  projectName: "Kanikama"
+  packageName0: "net.shivaduke28.kanikama.core"
+  packageName1: "net.shivaduke28.kanikama.gi"
+  packageName2: "net.shivaduke28.kanikama.gi.bakery"
+  packageName3: "net.shivaduke28.kanikama.gi.udon"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set Tag
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Get Version0
+        id: version0
+        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+        with:
+          path: "${{env.projectName}}/Packages/${{env.packageName0}/package.json"
+          prop_path: "version"
+
+      - name: Get Version1
+        id: version1
+        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+        with:
+          path: "${{env.projectName}}/Packages/${{env.packageName1}/package.json"
+          prop_path: "version"
+
+      - name: Get Version2
+        id: version2
+        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+        with:
+          path: "${{env.projectName}}/Packages/${{env.packageName2}/package.json"
+          prop_path: "version"
+
+      - name: Get Version3
+        id: version3
+        uses: notiz-dev/github-action-json-property@7c8cf5cc36eb85d8d287a8086a39dac59628eb31
+        with:
+          path: "${{env.projectName}}/Packages/${{env.packageName3}/package.json"
+          prop_path: "version"
+
+      - name: Set Environment Variables
+        run: |
+          echo "zipFile0=${{ env.packageName0 }}-${{ steps.version0.outputs.prop }}".zip >> $GITHUB_ENV
+          echo "zipFile1=${{ env.packageName1 }}-${{ steps.version1.outputs.prop }}".zip >> $GITHUB_ENV
+          echo "zipFile2=${{ env.packageName2 }}-${{ steps.version2.outputs.prop }}".zip >> $GITHUB_ENV
+          echo "zipFile3=${{ env.packageName3 }}-${{ steps.version3.outputs.prop }}".zip >> $GITHUB_ENV
+
+      - name: Create Zip0
+        uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
+        with:
+          type: "zip"
+          directory: "${{env.projectName}}/Packages/${{env.packageName0}}/"
+          filename: "../../../${{env.zipFile0}}"
+
+      - name: Create Zip1
+        uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
+        with:
+          type: "zip"
+          directory: "${{env.projectName}}/Packages/${{env.packageName1}}/"
+          filename: "../../../${{env.zipFile1}}"
+
+      - name: Create Zip2
+        uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
+        with:
+          type: "zip"
+          directory: "${{env.projectName}}/Packages/${{env.packageName2}}/"
+          filename: "../../../${{env.zipFile2}}"
+
+      - name: Create Zip3
+        uses: thedoctor0/zip-release@09336613be18a8208dfa66bd57efafd9e2685657
+        with:
+          type: "zip"
+          directory: "${{env.projectName}}/Packages/${{env.packageName3}}/"
+          filename: "../../../${{env.zipFile3}}"
+
+      - name: Make Release
+        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          files: |
+            ${{ env.zipFile0 }}
+            ${{ env.zipFile1 }}
+            ${{ env.zipFile2 }}
+            ${{ env.zipFile3 }}
