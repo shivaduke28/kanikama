@@ -81,7 +81,7 @@ namespace Kanikama.GI.Udon.Editor.Bakery
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label($"{nameof(KanikamaUdonGIUpdater)} (Udon) (Bakery)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaUdonGIUpdater)} (Udon) (Bakery)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {

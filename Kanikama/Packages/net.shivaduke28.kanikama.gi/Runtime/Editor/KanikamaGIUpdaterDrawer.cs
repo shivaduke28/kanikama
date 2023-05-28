@@ -70,7 +70,7 @@ namespace Kanikama.GI.Runtime.Editor
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label($"{nameof(KanikamaRuntimeGIUpdater)} (Unity)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaRuntimeGIUpdater)} (Unity)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {

@@ -71,7 +71,7 @@ namespace Kanikama.GI.Bakery.Runtime.Editor
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label($"{nameof(KanikamaRuntimeGIUpdater)} (Bakery)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaRuntimeGIUpdater)} (Bakery)", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
                 giUpdater = (KanikamaRuntimeGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor", giUpdater, typeof(KanikamaRuntimeGIUpdater), true);

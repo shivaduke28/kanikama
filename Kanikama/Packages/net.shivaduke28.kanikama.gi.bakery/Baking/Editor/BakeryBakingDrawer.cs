@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Baking;
-using Kanikama.GI.Baking.Editor;
-using Kanikama.GI.Baking.Impl;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -56,7 +54,7 @@ namespace Kanikama.GI.Bakery.Baking.Editor.GUI
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label("Bakery", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Bakery", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
                 if (isRunning)

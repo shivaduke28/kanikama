@@ -53,7 +53,7 @@ namespace Kanikama.GI.Baking.Editor
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            GUILayout.Label("Unity", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Unity", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
                 if (isRunning)
