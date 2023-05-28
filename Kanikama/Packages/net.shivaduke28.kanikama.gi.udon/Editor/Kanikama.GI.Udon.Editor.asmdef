@@ -1,0 +1,29 @@
+{
+    "name": "Kanikama.GI.Udon.Editor",
+    "rootNamespace": "",
+    "references": [
+        "VRC.Udon",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor",
+        "Kanikama.Core",
+        "Kanikama.Core.Editor",
+        "Kanikama.GI.Runtime",
+        "Kanikama.GI.Baking",
+        "Kanikama.GI.Baking.Editor",
+        "Kanikama.GI.Udon"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UDONSHARP",
+        "UNITY_EDITOR_WIN"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

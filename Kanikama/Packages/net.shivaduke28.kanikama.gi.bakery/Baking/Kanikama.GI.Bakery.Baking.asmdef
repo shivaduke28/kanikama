@@ -1,0 +1,19 @@
+{
+    "name": "Kanikama.GI.Bakery.Baking",
+    "references": [
+        "BakeryRuntimeAssembly",
+        "Kanikama.Core",
+        "Kanikama.GI.Baking"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
