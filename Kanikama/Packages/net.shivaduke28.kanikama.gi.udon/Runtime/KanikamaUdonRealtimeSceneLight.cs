@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     // should be attached to KanikamaProvider GameObject.
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]

@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: 1142506994869582792
+  scriptID: -9029094289491435344
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -62,7 +62,7 @@ MonoBehaviour:
       Data: 3|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaUdonLightSource[], Kanikama.GI.Udon
+      Data: Kanikama.Udon.KanikamaUdonLightSource[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
@@ -128,7 +128,7 @@ MonoBehaviour:
       Data: 8|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaUdonLightSourceGroup[], Kanikama.GI.Udon
+      Data: Kanikama.Udon.KanikamaUdonLightSourceGroup[], Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 

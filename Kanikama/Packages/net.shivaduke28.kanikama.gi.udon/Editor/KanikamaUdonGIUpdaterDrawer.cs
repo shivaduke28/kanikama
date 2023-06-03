@@ -6,7 +6,7 @@ using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon.Editor
+namespace Kanikama.Udon.Editor
 {
     internal sealed class KanikamaUdonGIUpdaterDrawer : KanikamaWindow.IGUIDrawer
     {

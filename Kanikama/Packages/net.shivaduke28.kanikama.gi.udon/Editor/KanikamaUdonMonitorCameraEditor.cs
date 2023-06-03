@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon.Editor
+namespace Kanikama.Udon.Editor
 {
     [CustomEditor(typeof(KanikamaUdonMonitorCamera))]
     public sealed class KanikamaUdonMonitorCameraEditor : UnityEditor.Editor

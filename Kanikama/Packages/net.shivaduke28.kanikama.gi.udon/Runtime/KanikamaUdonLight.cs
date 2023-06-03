@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Light))]
     public class KanikamaUdonLight : KanikamaUdonLightSource

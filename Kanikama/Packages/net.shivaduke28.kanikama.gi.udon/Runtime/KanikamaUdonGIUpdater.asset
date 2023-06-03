@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: 7426574023789367021
+  scriptID: -4446266565438990467
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -236,7 +236,7 @@ MonoBehaviour:
       Data: 14|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaUdonColorCollector, Kanikama.GI.Udon
+      Data: Kanikama.Udon.KanikamaUdonColorCollector, Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 

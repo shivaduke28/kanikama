@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaUdonColorCollector : UdonSharpBehaviour

@@ -2,7 +2,7 @@
 using UdonSharp;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     [AddComponentMenu("Udon.KanikamaMonitorCamera")]

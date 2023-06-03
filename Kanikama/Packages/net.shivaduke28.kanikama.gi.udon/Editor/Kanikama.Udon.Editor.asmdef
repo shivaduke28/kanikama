@@ -1,5 +1,5 @@
 {
-    "name": "Kanikama.GI.Udon.Editor",
+    "name": "Kanikama.Udon.Editor",
     "rootNamespace": "",
     "references": [
         "VRC.Udon",
@@ -8,7 +8,7 @@
         "Kanikama.GI.Runtime",
         "Kanikama.Baking",
         "Kanikama.Editor.Baking",
-        "Kanikama.GI.Udon"
+        "Kanikama.Udon"
     ],
     "includePlatforms": [
         "Editor"

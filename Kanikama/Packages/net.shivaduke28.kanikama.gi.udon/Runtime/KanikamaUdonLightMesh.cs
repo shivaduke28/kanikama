@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using VRC.SDKBase;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Renderer))]
     public class KanikamaUdonLightMesh : KanikamaUdonLightSource

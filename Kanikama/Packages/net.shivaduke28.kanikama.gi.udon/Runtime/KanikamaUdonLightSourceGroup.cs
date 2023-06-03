@@ -1,7 +1,7 @@
 ﻿using UdonSharp;
 using UnityEngine;
 
-namespace Kanikama.GI.Udon
+namespace Kanikama.Udon
 {
     public abstract class KanikamaUdonLightSourceGroup : UdonSharpBehaviour
     {

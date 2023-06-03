@@ -1,5 +1,5 @@
 {
-    "name": "Kanikama.GI.Udon",
+    "name": "Kanikama.Udon",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon"

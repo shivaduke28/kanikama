@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: 6119985234910207846
+  scriptID: -633080818218089000
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -182,7 +182,7 @@ MonoBehaviour:
       Data: 11|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: Kanikama.GI.Udon.KanikamaMonitorPartitionType, Kanikama.GI.Udon
+      Data: Kanikama.Udon.KanikamaMonitorPartitionType, Kanikama.Udon
     - Name: 
       Entry: 8
       Data: 
