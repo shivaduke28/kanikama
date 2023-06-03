@@ -153,7 +153,7 @@ namespace Kanikama.Editor.Baking
                 bytes = texture.EncodeToEXR();
             }
 
-            var path = Path.Combine(dirPath, $"{name}.{ext}");
+            var path = AssetDatabase.GenerateUniqueAssetPath(Path.Combine(dirPath, $"{name}.{ext}"));
             File.WriteAllBytes(path, bytes);
             AssetDatabase.ImportAsset(path);
             var textureImporter = (TextureImporter) AssetImporter.GetAtPath(path);
