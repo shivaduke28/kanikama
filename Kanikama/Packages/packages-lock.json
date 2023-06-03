@@ -230,12 +230,6 @@
       "source": "embedded",
       "dependencies": {}
     },
-    "net.shivaduke28.kanikama.core": {
-      "version": "file:net.shivaduke28.kanikama.core",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "net.shivaduke28.kanikama.gi.bakery": {
       "version": "file:net.shivaduke28.kanikama.gi.bakery",
       "depth": 0,
