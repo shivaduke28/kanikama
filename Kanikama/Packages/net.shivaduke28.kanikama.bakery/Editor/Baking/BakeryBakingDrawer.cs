@@ -52,6 +52,8 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             }
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField("Bakery", EditorStyles.boldLabel);
@@ -69,11 +71,6 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
                 else
                 {
                     DrawScene();
-
-                    if (KanikamaGUI.Button("Load Active Scene"))
-                    {
-                        Load();
-                    }
                 }
             }
         }
@@ -90,7 +87,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             {
                 sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             }
-            
+
             if (sceneDescriptor is Object sceneDescriptorObject)
             {
                 sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptorObject, typeof(MonoBehaviour), true);

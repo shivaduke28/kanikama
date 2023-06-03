@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -51,6 +50,7 @@ namespace Kanikama.Editor.Baking.GUI
             }
         }
 
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField("Unity", EditorStyles.boldLabel);
@@ -68,14 +68,11 @@ namespace Kanikama.Editor.Baking.GUI
                 else
                 {
                     DrawScene();
-
-                    if (KanikamaGUI.Button("Load Active Scene"))
-                    {
-                        Load();
-                    }
                 }
             }
         }
+
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
 
         void DrawScene()
         {
@@ -84,7 +81,7 @@ namespace Kanikama.Editor.Baking.GUI
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
 
-            if (sceneDescriptor == null)
+            if (sceneDescriptor == null || sceneDescriptor is Object sceneDescriptorObj)
             {
                 sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             }

@@ -33,6 +33,8 @@ namespace Kanikama.Application.Editor
             }
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
+
 
         void Setup()
         {
@@ -86,10 +88,6 @@ namespace Kanikama.Application.Editor
                     {
                         Setup();
                     }
-                }
-                if (KanikamaGUI.Button("Load Active Scene"))
-                {
-                    Load();
                 }
             }
         }

@@ -24,6 +24,8 @@ namespace Kanikama.Udon.Editor
             Load();
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
+
         void Load()
         {
             kanikamaUdonGIUpdater = Object.FindObjectOfType<KanikamaUdonGIUpdater>();
@@ -96,10 +98,6 @@ namespace Kanikama.Udon.Editor
                     {
                         Setup();
                     }
-                }
-                if (KanikamaGUI.Button("Load Active Scene"))
-                {
-                    Load();
                 }
             }
         }

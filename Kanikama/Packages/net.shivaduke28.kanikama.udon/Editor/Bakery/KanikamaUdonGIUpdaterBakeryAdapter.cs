@@ -98,11 +98,9 @@ namespace Kanikama.Udon.Editor.Bakery
                         Setup();
                     }
                 }
-                if (KanikamaGUI.Button("Load Active Scene"))
-                {
-                    Load();
-                }
             }
         }
+
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
     }
 }
