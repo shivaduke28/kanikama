@@ -6,9 +6,10 @@
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
+        [NoScaleOffset] _MetallicSmoothnessMap("Metallic Smoothness Map", 2D) = "white" {}
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
-        [KeywordEnum(Array, Directional)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
+        [KeywordEnum(Array, Directional, Directional Specular)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
     }
@@ -22,7 +23,7 @@
 
         CGPROGRAM
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
-        #pragma shader_feature_local_fragment _ _KANIKAMA_GI_MODE_DIRECTIONAL
+        #pragma shader_feature_local_fragment _ _KANIKAMA_GI_MODE_DIRECTIONAL _KANIKAMA_GI_MODE_DIRECTIONAL_SPECULAR
 
         #pragma target 3.0
 
@@ -30,6 +31,7 @@
         #include "./KanikamaGI.hlsl"
 
         sampler2D _MainTex;
+        sampler2D _MetallicSmoothnessMap;
         sampler2D _BumpMap;
         half _BumpScale;
 
@@ -59,7 +61,12 @@
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
-            gi.indirect.diffuse += KanikamaGISample(data.lightmapUV, s.Normal);
+            half roughness = SmoothnessToRoughness(s.Smoothness);
+            half3 diffuse;
+            half3 specular;
+            KanikamaGISample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
+            gi.indirect.diffuse += diffuse;
+            gi.indirect.specular += specular;
         }
 
         void vert(inout appdata_full v, out Input o)
@@ -77,8 +84,9 @@
             half4 base = tex2D(_MainTex, uv) * _Color;
             o.Albedo = base.rgb;
             o.Alpha = base.a;
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
+            half2 ms = tex2D(_MetallicSmoothnessMap, uv).xw;
+            o.Metallic = _Metallic * ms.x;
+            o.Smoothness = _Glossiness * ms.y;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
             o.Occlusion = 1;
         }
