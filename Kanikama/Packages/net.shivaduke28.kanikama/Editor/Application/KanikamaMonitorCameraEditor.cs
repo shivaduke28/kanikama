@@ -1,9 +1,9 @@
-﻿using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Runtime.Impl;
+﻿using Kanikama.Application.Impl;
+using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Runtime.Editor
+namespace Kanikama.Application.Editor
 {
     [CustomEditor(typeof(KanikamaRuntimeMonitorCamera))]
     public class KanikamaMonitorCameraEditor : UnityEditor.Editor
@@ -12,7 +12,7 @@ namespace Kanikama.GI.Runtime.Editor
         {
             base.OnInspectorGUI();
             var kanikamaMonitorCamera = (KanikamaRuntimeMonitorCamera) target;
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            EditorGUI.BeginDisabledGroup(UnityEngine.Application.isPlaying);
             EditorGUILayout.Space();
             if (KanikamaGUI.Button("Setup Camera"))
             {

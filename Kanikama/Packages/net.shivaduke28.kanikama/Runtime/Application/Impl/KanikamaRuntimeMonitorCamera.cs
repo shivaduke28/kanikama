@@ -1,9 +1,9 @@
 ﻿using System;
-using Kanikama.GI.Baking.Impl;
+using Kanikama.Baking.Impl;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Kanikama.GI.Runtime.Impl
+namespace Kanikama.Application.Impl
 {
     [RequireComponent(typeof(Camera))]
     public sealed class KanikamaRuntimeMonitorCamera : LightSourceGroup

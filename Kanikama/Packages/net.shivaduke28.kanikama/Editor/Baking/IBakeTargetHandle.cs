@@ -3,7 +3,7 @@ using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     public interface IBakeTargetHandle
     {

@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
-using Kanikama.GI.Baking;
+using Kanikama.Baking;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     public sealed class UnityBakingPipelineRunner
     {

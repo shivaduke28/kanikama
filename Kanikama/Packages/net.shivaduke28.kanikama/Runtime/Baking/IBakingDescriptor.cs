@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kanikama.GI.Baking
+namespace Kanikama.Baking
 {
     public interface IBakingDescriptor
     {

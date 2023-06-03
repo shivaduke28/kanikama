@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     public static class UnityBakingPipeline
     {

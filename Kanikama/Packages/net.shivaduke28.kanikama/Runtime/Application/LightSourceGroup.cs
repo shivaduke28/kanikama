@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.GI.Runtime
+namespace Kanikama.Application
 {
     public interface ILightSourceGroup
     {

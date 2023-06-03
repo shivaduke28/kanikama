@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     public sealed class UnityBakingDrawer : KanikamaWindow.IGUIDrawer
     {

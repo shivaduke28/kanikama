@@ -1,7 +1,7 @@
 ﻿using Kanikama.Core;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Impl
+namespace Kanikama.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaBakeTargetLightMesh : BakeTarget

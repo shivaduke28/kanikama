@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Kanikama.GI.Runtime.Impl
+namespace Kanikama.Application.Impl
 {
     public sealed class KanikamaRuntimeGIUpdater : MonoBehaviour
     {

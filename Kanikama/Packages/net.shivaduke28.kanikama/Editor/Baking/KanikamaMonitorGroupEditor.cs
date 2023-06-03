@@ -1,9 +1,9 @@
-﻿using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Baking.Impl;
+﻿using Kanikama.Baking.Impl;
+using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     [CustomEditor(typeof(KanikamaBakeTargetMonitorGroup))]
     public class KanikamaMonitorGroupEditor : UnityEditor.Editor

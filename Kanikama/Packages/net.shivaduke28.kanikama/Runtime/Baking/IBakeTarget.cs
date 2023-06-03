@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.GI.Baking
+namespace Kanikama.Baking
 {
     public interface IBakeTarget
     {

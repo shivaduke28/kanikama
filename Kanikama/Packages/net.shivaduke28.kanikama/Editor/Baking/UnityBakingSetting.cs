@@ -5,7 +5,7 @@ using Kanikama.Core.Editor.Util;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Editor
+namespace Kanikama.Baking.Editor
 {
     [Serializable]
     public sealed class UnityBakingSetting

@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Kanikama.GI.Baking.Impl
+namespace Kanikama.Baking.Impl
 {
     public sealed class KanikamaSceneBakeTargetDescriptor : MonoBehaviour, IBakingDescriptor
     {

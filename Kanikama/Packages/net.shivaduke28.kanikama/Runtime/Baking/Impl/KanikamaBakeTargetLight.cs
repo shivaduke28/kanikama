@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.GI.Baking.Impl
+namespace Kanikama.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
     public sealed class KanikamaBakeTargetLight : BakeTarget

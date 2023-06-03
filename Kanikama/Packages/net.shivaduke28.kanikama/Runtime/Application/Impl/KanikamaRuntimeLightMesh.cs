@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.GI.Runtime.Impl
+namespace Kanikama.Application.Impl
 {
     [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaRuntimeLightMesh : LightSource

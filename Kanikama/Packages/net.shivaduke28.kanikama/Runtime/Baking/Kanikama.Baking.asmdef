@@ -1,7 +1,7 @@
 {
-    "name": "Kanikama.GI.Runtime",
+    "name": "Kanikama.Baking",
     "references": [
-        "Kanikama.GI.Baking"
+        "Kanikama.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

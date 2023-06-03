@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Baking.Impl
+namespace Kanikama.Baking.Impl
 {
     public sealed class KanikamaBakeTargetMonitorGroup : BakeTargetGroup
     {
