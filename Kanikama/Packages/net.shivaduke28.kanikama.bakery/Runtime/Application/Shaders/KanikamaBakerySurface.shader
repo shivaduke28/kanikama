@@ -1,4 +1,4 @@
-﻿Shader "Kanikama/StandardSurface"
+﻿Shader "Kanikama/KanikamaBakerySurface"
 {
     Properties
     {
@@ -9,7 +9,12 @@
         [NoScaleOffset] _MetallicSmoothnessMap("Metallic Smoothness Map", 2D) = "white" {}
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
-        [KeywordEnum(Array, Directional, Directional Specular)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
+        [NoScaleOffset] _OcclusionMap("Occlusion Map", 2D) = "white" {}
+        [NoScaleOffset] _ParallaxMap("Parallax Map", 2D) = "white" {}
+        _Parallax ("Parallax", Range(0, 0.1)) = 0.02
+        [Header(Kanikama)]
+        [KeywordEnum(Array, Directional, Bakery MonoSH)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
     }
@@ -23,22 +28,25 @@
 
         CGPROGRAM
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
-        #pragma shader_feature_local_fragment _ _KANIKAMA_GI_MODE_DIRECTIONAL _KANIKAMA_GI_MODE_DIRECTIONAL_SPECULAR
+        #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_BAKERY_MONOSH
+        #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
 
         #pragma target 3.0
 
         #include "UnityPBSLighting.cginc"
-        #include "./KanikamaGI.hlsl"
+        #include "Packages/net.shivaduke28.kanikama.bakery/Runtime/Application/Shaders/KanikamaBakery.hlsl"
 
         sampler2D _MainTex;
         sampler2D _MetallicSmoothnessMap;
         sampler2D _BumpMap;
         half _BumpScale;
+        sampler2D _OcclusionMap;
+        sampler2D _ParallaxMap;
 
         half _Glossiness;
         half _Metallic;
+        half _Parallax;
         fixed4 _Color;
-
 
         struct Input
         {
@@ -60,11 +68,12 @@
             Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal,
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
+            // FIXME: should use MonoSH here.
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
             half3 specular;
-            KanikamaGISample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
+            KanikamaBakeryGI(data.lightmapUV, s.Normal, data.worldViewDir, roughness, s.Occlusion, diffuse, specular);
             gi.indirect.diffuse += diffuse;
             gi.indirect.specular += specular;
         }
@@ -78,9 +87,7 @@
         void surf(Input IN, inout SurfaceOutputStandard o)
         {
             float2 uv = IN.uv_MainTex;
-            #if defined(_PARALLAX)
-                uv += ParallaxOffset(tex2D(_ParallaxMap, uv).r, _Parallax, IN.viewDir);
-            #endif
+            uv += ParallaxOffset(tex2D(_ParallaxMap, uv).r, _Parallax, IN.viewDir);
             half4 base = tex2D(_MainTex, uv) * _Color;
             o.Albedo = base.rgb;
             o.Alpha = base.a;
@@ -88,7 +95,7 @@
             o.Metallic = _Metallic * ms.x;
             o.Smoothness = _Glossiness * ms.y;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
-            o.Occlusion = 1;
+            o.Occlusion = tex2D(_OcclusionMap, uv).r;
         }
         ENDCG
     }

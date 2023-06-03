@@ -13,8 +13,10 @@ namespace Kanikama.Bakery.Editor.Baking
         static readonly Regex LMA = new Regex(@"^LMA[0-9]+");
         static readonly Regex Color = new Regex(@"final$");
         static readonly Regex Dir = new Regex(@"dir$");
+        static readonly Regex L0 = new Regex(@"L0$");
+        static readonly Regex L1 = new Regex(@"L1$");
 
-        // "{scene name}_[LM0|LMA[0-9]+]_[final|dir]"
+        // "{scene name}_[LM0|LMA[0-9]+]_[final|dir|L0|L1]"
         public static List<BakeryLightmap> GetLightmaps(string outputAssetDirPath, string sceneName)
         {
             var result = new List<BakeryLightmap>();
@@ -72,6 +74,14 @@ namespace Kanikama.Bakery.Editor.Baking
             else if (Dir.IsMatch(name))
             {
                 lightmapType = BakeryLightmapType.Directional;
+            }
+            else if (L0.IsMatch(name))
+            {
+                lightmapType = BakeryLightmapType.L0;
+            }
+            else if (L1.IsMatch(name))
+            {
+                lightmapType = BakeryLightmapType.L1;
             }
             else
             {
