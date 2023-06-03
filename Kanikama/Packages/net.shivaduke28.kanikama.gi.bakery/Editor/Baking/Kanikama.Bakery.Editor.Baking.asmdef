@@ -1,11 +1,12 @@
 {
-    "name": "Kanikama.GI.Runtime.Bakery.Editor",
+    "name": "Kanikama.Bakery.Editor.Baking",
     "references": [
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly",
         "Kanikama.Application",
+        "Kanikama.Editor.Application",
         "Kanikama.Baking",
-        "Kanikama.Editor.Baking",
-        "Kanikama.GI.Bakery.Baking",
-        "Kanikama.GI.Bakery.Baking.Editor"
+        "Kanikama.Editor.Baking"
     ],
     "includePlatforms": [
         "Editor"
@@ -15,7 +16,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

@@ -3,7 +3,7 @@ using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     [CreateAssetMenu(menuName = "Kanikama/BakeryBakingSettingAsset", fileName = "BakeryBakingSettingAsset")]
     public sealed class BakeryBakingSettingAsset : ScriptableObject

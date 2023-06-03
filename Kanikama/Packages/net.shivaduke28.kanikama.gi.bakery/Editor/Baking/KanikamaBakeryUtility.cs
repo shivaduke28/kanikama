@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     public static class KanikamaBakeryUtility
     {

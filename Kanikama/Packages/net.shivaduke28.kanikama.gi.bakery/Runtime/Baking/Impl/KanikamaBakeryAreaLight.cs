@@ -1,7 +1,7 @@
 ﻿using Kanikama.Baking;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking.Impl
+namespace Kanikama.Bakery.Baking.Impl
 {
     [RequireComponent(typeof(Light), typeof(BakeryLightMesh))]
     public sealed class KanikamaBakeryAreaLight : BakeTarget

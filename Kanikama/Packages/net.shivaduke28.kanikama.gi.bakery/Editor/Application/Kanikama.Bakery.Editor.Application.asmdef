@@ -1,0 +1,21 @@
+{
+    "name": "Kanikama.Bakery.Editor.Application",
+    "references": [
+        "Kanikama.Application",
+        "Kanikama.Baking",
+        "Kanikama.Editor.Baking",
+        "Kanikama.Bakery.Baking",
+        "Kanikama.Bakery.Editor.Baking"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

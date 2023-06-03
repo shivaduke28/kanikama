@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
-using Kanikama.GI.Bakery.Baking.Editor;
 using Kanikama.Application.Impl;
+using Kanikama.Bakery.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Runtime.Editor
+namespace Kanikama.Bakery.Editor.Application
 {
     internal sealed class KanikamaGIUpdaterBakeryAdapter : KanikamaWindow.IGUIDrawer
     {

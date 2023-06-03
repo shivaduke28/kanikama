@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     public static class BakeryBakingPipelineRunner
     {

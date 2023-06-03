@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     [Serializable]
     public sealed class BakeryLightmapStorage

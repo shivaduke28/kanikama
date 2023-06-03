@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     [Serializable]
     public sealed class BakeryLightmapArray

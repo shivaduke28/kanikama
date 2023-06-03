@@ -2,7 +2,7 @@
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Bakery.Baking.Impl
+namespace Kanikama.Bakery.Baking.Impl
 {
     [RequireComponent(typeof(Light), typeof(BakeryPointLight))]
     public sealed class KanikamaBakeryPointLight : BakeTarget

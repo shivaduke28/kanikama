@@ -6,7 +6,7 @@ using Kanikama.Editor.Baking;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.GI.Bakery.Baking.Editor
+namespace Kanikama.Bakery.Editor.Baking
 {
     public sealed class BakerySceneGIContext : IDisposable
     {
