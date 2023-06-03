@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Kanikama.Utility.Editor;
-using Kanikama.Utility.Editor.Util;
+using Kanikama.Editor.Utility;
+using Kanikama.Editor.Utility.Util;
 using UnityEditor;
 using UnityEngine;
 

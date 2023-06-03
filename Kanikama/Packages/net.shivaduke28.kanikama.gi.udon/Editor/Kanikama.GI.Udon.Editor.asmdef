@@ -6,7 +6,7 @@
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
         "Kanikama.Utility",
-        "Kanikama.Core.Editor",
+        "Kanikama.Editor.Utility",
         "Kanikama.GI.Runtime",
         "Kanikama.Baking",
         "Kanikama.Editor.Baking",

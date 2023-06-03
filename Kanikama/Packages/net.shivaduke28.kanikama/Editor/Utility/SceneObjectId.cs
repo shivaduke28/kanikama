@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEditor;
 
-namespace Kanikama.Utility.Editor
+namespace Kanikama.Editor.Utility
 {
     public readonly struct SceneObjectId : IEquatable<SceneObjectId>
     {

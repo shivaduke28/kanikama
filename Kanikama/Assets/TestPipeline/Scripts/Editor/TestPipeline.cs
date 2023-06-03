@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Kanikama.Utility.Editor;
-using Kanikama.Utility.Editor.Util;
+using Kanikama.Editor.Utility;
+using Kanikama.Editor.Utility.Util;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;

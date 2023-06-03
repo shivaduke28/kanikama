@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace Kanikama.Utility.Editor
+namespace Kanikama.Editor.Utility
 {
     public sealed class ObjectHandle<T> where T : UnityEngine.Object
 

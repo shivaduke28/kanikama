@@ -2,7 +2,7 @@
   "name": "Kanikama.Editor.Application",
   "references": [
     "Kanikama.Utility",
-    "Kanikama.Core.Editor",
+    "Kanikama.Editor.Utility",
     "Kanikama.Application",
     "Kanikama.Editor.Baking"
   ],

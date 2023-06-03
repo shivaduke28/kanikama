@@ -1,8 +1,9 @@
 ﻿using System.Linq;
+using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Utility.Editor
+namespace Kanikama.Editor.Utility
 {
     public static class ExtensionMethods
     {

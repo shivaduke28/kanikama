@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Utility;
-using Kanikama.Utility.Editor;
-using Kanikama.Utility.Editor.Util;
+using Kanikama.Editor.Utility;
+using Kanikama.Editor.Utility.Util;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

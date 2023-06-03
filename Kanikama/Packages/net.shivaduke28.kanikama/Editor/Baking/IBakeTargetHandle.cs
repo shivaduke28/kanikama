@@ -1,5 +1,5 @@
-﻿using Kanikama.Utility.Editor;
-using Kanikama.Utility.Editor.Util;
+﻿using Kanikama.Editor.Utility;
+using Kanikama.Editor.Utility.Util;
 using UnityEditor;
 using Object = UnityEngine.Object;
 

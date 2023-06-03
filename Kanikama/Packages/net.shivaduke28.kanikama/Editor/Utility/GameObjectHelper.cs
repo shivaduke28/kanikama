@@ -1,6 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 
-namespace Kanikama.Utility.Editor.Util
+namespace Kanikama.Editor.Utility.Util
 {
     public static class GameObjectHelper
     {

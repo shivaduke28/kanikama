@@ -3,10 +3,11 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Utility.Editor
+namespace Kanikama.Editor.Utility
 {
     // Dirty code to replace m_LightingDataAsset field in .unity file directly.
     public static class LightingDataAssetReplacer

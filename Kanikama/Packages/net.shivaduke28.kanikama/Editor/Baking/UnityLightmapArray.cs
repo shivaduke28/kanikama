@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Kanikama.Utility.Editor;
+using Kanikama.Editor.Utility;
 using UnityEngine;
 
 namespace Kanikama.Baking.Editor

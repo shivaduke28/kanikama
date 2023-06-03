@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Utility.Editor;
-using Kanikama.Utility.Editor.Util;
+using Kanikama.Editor.Utility;
+using Kanikama.Editor.Utility.Util;
 using Kanikama.Baking;
 using UnityEditor;
 using UnityEngine;

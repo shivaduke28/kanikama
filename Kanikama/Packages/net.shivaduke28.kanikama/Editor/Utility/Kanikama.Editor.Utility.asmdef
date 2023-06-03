@@ -1,5 +1,5 @@
 {
-    "name": "Kanikama.Core.Editor",
+    "name": "Kanikama.Editor.Utility",
     "references": [
         "Kanikama.Utility"
     ],

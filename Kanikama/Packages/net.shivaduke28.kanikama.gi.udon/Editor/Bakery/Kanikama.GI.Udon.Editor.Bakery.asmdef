@@ -2,7 +2,7 @@
   "name": "Kanikama.GI.Udon.Editor.Bakery",
   "references": [
     "Kanikama.Utility",
-    "Kanikama.Core.Editor",
+    "Kanikama.Editor.Utility",
     "Kanikama.Application",
     "Kanikama.Editor.Baking",
     "Kanikama.GI.Udon",

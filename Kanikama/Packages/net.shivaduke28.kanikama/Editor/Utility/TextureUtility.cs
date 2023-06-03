@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Utility.Editor.Util
+namespace Kanikama.Editor.Utility.Util
 {
     public static class TextureUtility
     {
