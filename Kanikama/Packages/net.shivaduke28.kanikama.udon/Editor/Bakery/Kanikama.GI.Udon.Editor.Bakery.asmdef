@@ -1,0 +1,26 @@
+{
+  "name": "Kanikama.GI.Udon.Editor.Bakery",
+  "references": [
+    "Kanikama.Application",
+    "Kanikama.Baking",
+    "Kanikama.Editor.Baking",
+    "Kanikama.Udon",
+    "Kanikama.Bakery.Baking",
+    "Kanikama.Bakery.Editor.Baking",
+    "UdonSharp.Runtime",
+    "UdonSharp.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [
+    "BAKERY_INCLUDED"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
