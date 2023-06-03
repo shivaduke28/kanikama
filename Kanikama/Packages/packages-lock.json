@@ -224,14 +224,14 @@
         "com.unity.textmeshpro": "2.1.6"
       }
     },
-    "net.shivaduke28.kanikama.core": {
-      "version": "file:net.shivaduke28.kanikama.core",
+    "net.shivaduke28.kanikama": {
+      "version": "file:net.shivaduke28.kanikama",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
-    "net.shivaduke28.kanikama.gi": {
-      "version": "file:net.shivaduke28.kanikama.gi",
+    "net.shivaduke28.kanikama.core": {
+      "version": "file:net.shivaduke28.kanikama.core",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
