@@ -113,6 +113,8 @@ namespace Kanikama.Editor.Baking.GUI
                     }
                 }
 
+                EditorGUILayout.Space();
+
                 foreach (var drawer in guiDrawers)
                 {
                     drawer.Draw();

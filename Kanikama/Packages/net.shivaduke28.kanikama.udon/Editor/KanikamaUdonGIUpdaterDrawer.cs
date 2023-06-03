@@ -12,6 +12,7 @@ namespace Kanikama.Udon.Editor
     {
         KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
         SerializedObject serializedObject;
+        UnityBakingSettingAsset bakingSettingAsset;
 
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
@@ -36,6 +37,20 @@ namespace Kanikama.Udon.Editor
             else
             {
                 serializedObject = null;
+            }
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
+            {
+                bakingSettingAsset = null;
+                return;
+            }
+
+            if (UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var asset))
+            {
+                bakingSettingAsset = asset;
+            }
+            else
+            {
+                bakingSettingAsset = null;
             }
         }
 
@@ -91,6 +106,10 @@ namespace Kanikama.Udon.Editor
                 if (kanikamaUdonGIUpdater == null)
                 {
                     EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
+                }
+                else if (bakingSettingAsset == null)
+                {
+                    EditorGUILayout.HelpBox($"{nameof(UnityBakingSettingAsset)} is not found.", MessageType.Warning);
                 }
                 else
                 {
