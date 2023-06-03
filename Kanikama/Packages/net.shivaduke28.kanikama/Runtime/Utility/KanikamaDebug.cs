@@ -1,4 +1,4 @@
-namespace Kanikama.Core
+namespace Kanikama.Utility
 {
     public static class KanikamaDebug
     {

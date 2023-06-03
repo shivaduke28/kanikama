@@ -1,7 +1,7 @@
 {
     "name": "Kanikama.GI.Runtime.Bakery.Editor",
     "references": [
-        "Kanikama.Core",
+        "Kanikama.Utility",
         "Kanikama.Core.Editor",
         "Kanikama.Application",
         "Kanikama.Baking",

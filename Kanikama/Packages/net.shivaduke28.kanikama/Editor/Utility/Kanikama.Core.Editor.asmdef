@@ -1,7 +1,7 @@
 {
     "name": "Kanikama.Core.Editor",
     "references": [
-        "Kanikama.Core"
+        "Kanikama.Utility"
     ],
     "includePlatforms": [
         "Editor"

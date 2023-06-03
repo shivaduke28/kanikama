@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     public sealed class KanikamaWindow : EditorWindow
     {

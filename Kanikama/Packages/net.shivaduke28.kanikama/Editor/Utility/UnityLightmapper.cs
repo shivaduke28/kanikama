@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEditor;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     public sealed class UnityLightmapper
     {

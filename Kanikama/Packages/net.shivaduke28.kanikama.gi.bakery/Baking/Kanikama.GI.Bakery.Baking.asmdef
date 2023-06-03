@@ -2,7 +2,7 @@
     "name": "Kanikama.GI.Bakery.Baking",
     "references": [
         "BakeryRuntimeAssembly",
-        "Kanikama.Core",
+        "Kanikama.Utility",
         "Kanikama.Baking"
     ],
     "includePlatforms": [],

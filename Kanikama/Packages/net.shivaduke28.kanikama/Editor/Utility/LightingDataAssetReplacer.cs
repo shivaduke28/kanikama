@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     // Dirty code to replace m_LightingDataAsset field in .unity file directly.
     public static class LightingDataAssetReplacer

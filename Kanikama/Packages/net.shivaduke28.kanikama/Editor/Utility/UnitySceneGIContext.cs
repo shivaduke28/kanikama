@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     public sealed class UnitySceneGIContext
     {

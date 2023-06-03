@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     [CreateAssetMenu(menuName = "Kanikama/UnityLightmapStorage", fileName = "UnityLightmapStorage")]
     public sealed class UnityLightmapStorageAsset : ScriptableObject

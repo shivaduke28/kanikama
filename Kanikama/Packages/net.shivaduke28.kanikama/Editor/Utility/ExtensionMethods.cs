@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     public static class ExtensionMethods
     {

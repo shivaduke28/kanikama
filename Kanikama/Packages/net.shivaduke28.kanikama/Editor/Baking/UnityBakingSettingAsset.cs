@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Kanikama.Core.Editor.Util;
+using Kanikama.Utility.Editor.Util;
 using UnityEditor;
 using UnityEngine;
 

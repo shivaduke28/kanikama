@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Kanikama.Core
+namespace Kanikama.Utility
 {
     [DisallowMultipleComponent, RequireComponent(typeof(Renderer))]
     public sealed class RendererMaterialHolder : MonoBehaviour

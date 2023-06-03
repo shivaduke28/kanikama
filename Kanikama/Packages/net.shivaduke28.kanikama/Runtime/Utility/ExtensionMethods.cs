@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.Core
+namespace Kanikama.Utility
 {
     public static class ExtensionMethods
     {

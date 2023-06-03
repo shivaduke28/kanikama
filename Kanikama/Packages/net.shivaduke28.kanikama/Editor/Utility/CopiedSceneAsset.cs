@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEditor;
 
-namespace Kanikama.Core.Editor
+namespace Kanikama.Utility.Editor
 {
     public sealed class CopiedSceneAsset : IDisposable
     {
