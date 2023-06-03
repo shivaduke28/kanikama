@@ -9,6 +9,9 @@
         [NoScaleOffset] _MetallicSmoothnessMap("Metallic Smoothness Map", 2D) = "white" {}
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
+        [NoScaleOffset] _OcclusionMap("Occlusion Map", 2D) = "white" {}
+        [NoScaleOffset] _ParallaxMap("Parallax Map", 2D) = "white" {}
+        _Parallax ("Parallax", Range(0, 0.1)) = 0.02
         [Header(Kanikama)]
         [KeywordEnum(Array, Directional, Bakery MonoSH)] _Kanikama_Mode("Kanikama Mode", Float) = 0
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
@@ -37,9 +40,12 @@
         sampler2D _MetallicSmoothnessMap;
         sampler2D _BumpMap;
         half _BumpScale;
+        sampler2D _OcclusionMap;
+        sampler2D _ParallaxMap;
 
         half _Glossiness;
         half _Metallic;
+        half _Parallax;
         fixed4 _Color;
 
 
@@ -81,9 +87,7 @@
         void surf(Input IN, inout SurfaceOutputStandard o)
         {
             float2 uv = IN.uv_MainTex;
-            #if defined(_PARALLAX)
-                uv += ParallaxOffset(tex2D(_ParallaxMap, uv).r, _Parallax, IN.viewDir);
-            #endif
+            uv += ParallaxOffset(tex2D(_ParallaxMap, uv).r, _Parallax, IN.viewDir);
             half4 base = tex2D(_MainTex, uv) * _Color;
             o.Albedo = base.rgb;
             o.Alpha = base.a;
@@ -91,7 +95,7 @@
             o.Metallic = _Metallic * ms.x;
             o.Smoothness = _Glossiness * ms.y;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
-            o.Occlusion = 1;
+            o.Occlusion = tex2D(_OcclusionMap, uv).r;
         }
         ENDCG
     }
