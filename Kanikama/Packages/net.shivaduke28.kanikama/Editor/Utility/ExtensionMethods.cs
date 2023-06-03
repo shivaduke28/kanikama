@@ -3,7 +3,7 @@ using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Utility
+namespace Kanikama.Editor.Baking
 {
     public static class ExtensionMethods
     {

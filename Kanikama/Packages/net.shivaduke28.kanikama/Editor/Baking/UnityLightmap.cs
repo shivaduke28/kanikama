@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Kanikama.Editor.Utility
+namespace Kanikama.Editor.Baking
 {
     [Serializable]
     public sealed class UnityLightmap

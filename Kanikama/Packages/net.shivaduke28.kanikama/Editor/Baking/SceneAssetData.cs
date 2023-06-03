@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor.Utility
+namespace Kanikama.Editor.Baking
 {
     public readonly struct SceneAssetData
     {

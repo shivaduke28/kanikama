@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEditor;
 
-namespace Kanikama.Editor.Utility.Util
+namespace Kanikama.Editor.Baking.Util
 {
     public static class IOUtility
     {

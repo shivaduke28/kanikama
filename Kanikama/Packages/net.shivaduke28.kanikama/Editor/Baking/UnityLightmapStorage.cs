@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Kanikama.Editor.Utility
+namespace Kanikama.Editor.Baking
 {
     [Serializable]
     public sealed class UnityLightmapStorage

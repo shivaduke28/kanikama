@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor.Utility;
+using Kanikama.Editor.Baking;
 using Kanikama.Baking;
 
 namespace Kanikama.Baking.Editor

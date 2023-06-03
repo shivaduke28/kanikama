@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor.Utility;
-using Kanikama.Editor.Utility.Util;
+using Kanikama.Editor.Baking;
+using Kanikama.Editor.Baking.Util;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -182,8 +182,7 @@ namespace Kanikama.Baking.Editor
         bool ValidateAndLoadOnFail()
         {
             var result = sceneDescriptor != null;
-            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
-            result = result && sceneAssetData.Asset == sceneAsset;
+            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData) && sceneAssetData.Asset == sceneAsset;
 
             if (!result)
             {

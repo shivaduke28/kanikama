@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Kanikama.Editor.Utility.Util;
+using Kanikama.Editor.Baking.Util;
 using UnityEditor;
 using UnityEngine;
 
