@@ -3,7 +3,6 @@ using Kanikama.Core;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
 using Kanikama.GI.Bakery.Baking.Editor;
-using Kanikama.GI.Baking.Editor;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;

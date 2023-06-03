@@ -3,9 +3,9 @@
     "references": [
         "Kanikama.Core",
         "Kanikama.Core.Editor",
-        "Kanikama.GI.Runtime",
-        "Kanikama.GI.Baking",
-        "Kanikama.GI.Baking.Editor",
+        "Kanikama.Application",
+        "Kanikama.Baking",
+        "Kanikama.Editor.Baking",
         "Kanikama.GI.Bakery.Baking",
         "Kanikama.GI.Bakery.Baking.Editor"
     ],

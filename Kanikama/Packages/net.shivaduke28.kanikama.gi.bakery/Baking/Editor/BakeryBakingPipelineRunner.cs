@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
-using Kanikama.GI.Baking;
-using Kanikama.GI.Baking.Editor;
+using Kanikama.Baking;
+using Kanikama.Baking.Editor;
 
 namespace Kanikama.GI.Bakery.Baking.Editor
 {

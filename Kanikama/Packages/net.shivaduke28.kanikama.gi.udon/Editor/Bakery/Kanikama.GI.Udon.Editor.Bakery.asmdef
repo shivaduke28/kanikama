@@ -3,8 +3,8 @@
   "references": [
     "Kanikama.Core",
     "Kanikama.Core.Editor",
-    "Kanikama.GI.Runtime",
-    "Kanikama.GI.Baking.Editor",
+    "Kanikama.Application",
+    "Kanikama.Editor.Baking",
     "Kanikama.GI.Udon",
     "Kanikama.GI.Bakery.Baking",
     "Kanikama.GI.Bakery.Baking.Editor",

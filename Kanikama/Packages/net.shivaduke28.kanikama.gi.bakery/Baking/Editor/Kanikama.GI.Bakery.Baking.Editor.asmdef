@@ -5,10 +5,10 @@
         "BakeryEditorAssembly",
         "Kanikama.Core",
         "Kanikama.Core.Editor",
-        "Kanikama.GI.Runtime",
-        "Kanikama.GI.Runtime.Editor",
-        "Kanikama.GI.Baking",
-        "Kanikama.GI.Baking.Editor"
+        "Kanikama.Application",
+        "Kanikama.Editor.Application",
+        "Kanikama.Baking",
+        "Kanikama.Editor.Baking"
     ],
     "includePlatforms": [
         "Editor"

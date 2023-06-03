@@ -3,7 +3,7 @@
     "references": [
         "BakeryRuntimeAssembly",
         "Kanikama.Core",
-        "Kanikama.GI.Baking"
+        "Kanikama.Baking"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

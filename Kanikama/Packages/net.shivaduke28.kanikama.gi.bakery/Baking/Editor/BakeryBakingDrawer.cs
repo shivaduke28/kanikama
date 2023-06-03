@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Core.Editor;
 using Kanikama.Core.Editor.Util;
-using Kanikama.GI.Baking;
+using Kanikama.Baking;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
