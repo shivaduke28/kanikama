@@ -231,13 +231,13 @@
       "dependencies": {}
     },
     "net.shivaduke28.kanikama.bakery": {
-      "version": "file:net.shivaduke28.kanikama.gi.bakery",
+      "version": "file:net.shivaduke28.kanikama.bakery",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
     },
     "net.shivaduke28.kanikama.udon": {
-      "version": "file:net.shivaduke28.kanikama.gi.udon",
+      "version": "file:net.shivaduke28.kanikama.udon",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}
