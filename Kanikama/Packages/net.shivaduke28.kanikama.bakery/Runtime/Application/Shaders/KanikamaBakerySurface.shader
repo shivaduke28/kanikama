@@ -48,7 +48,6 @@
         half _Parallax;
         fixed4 _Color;
 
-
         struct Input
         {
             float2 uv_MainTex;
@@ -69,6 +68,7 @@
             Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal,
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
+            // FIXME: should use MonoSH here.
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
