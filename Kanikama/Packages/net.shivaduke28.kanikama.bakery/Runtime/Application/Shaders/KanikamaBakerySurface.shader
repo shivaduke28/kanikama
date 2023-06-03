@@ -73,7 +73,7 @@
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
             half3 specular;
-            KanikamaBakerySample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
+            KanikamaBakeryGI(data.lightmapUV, s.Normal, data.worldViewDir, roughness, s.Occlusion, diffuse, specular);
             gi.indirect.diffuse += diffuse;
             gi.indirect.specular += specular;
         }

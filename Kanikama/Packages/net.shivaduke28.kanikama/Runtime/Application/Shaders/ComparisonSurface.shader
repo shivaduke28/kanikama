@@ -63,7 +63,7 @@
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
             half3 lm = gi.indirect.diffuse;
             half3 prt;
-            KanikamaSample(data.lightmapUV, s.Normal, prt);
+            KanikamaGI(data.lightmapUV, s.Normal, s.Occlusion, prt);
             gi.indirect.diffuse = lerp(lm, prt, _ComparingParam);
         }
 

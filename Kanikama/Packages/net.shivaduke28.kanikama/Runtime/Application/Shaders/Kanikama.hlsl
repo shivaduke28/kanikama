@@ -81,16 +81,17 @@ inline void KanikamaSampleDirectional(float2 lightmapUV, half3 normalWorld, inou
 
 #endif // _KANIKAMA_MODE_DIRECTIONAL
 
-void KanikamaSample(float2 lightmapUV, half3 normalWorld, out half3 diffuse)
+void KanikamaGI(float2 lightmapUV, half3 normalWorld, half occlusion, out half3 diffuse)
 {
     #if defined(_KANIKAMA_MODE_DIRECTIONAL)
     KanikamaSampleDirectional(lightmapUV, normalWorld, diffuse);
     #else
     diffuse = KanikamaGISampleLightmapArray(lightmapUV);
     #endif
-}
+    diffuse *= occlusion;
+} 
 
-void KanikamaSample(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
+void KanikamaGI(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness, half occlusion,
                     out half3 diffuse, out half3 specular)
 {
     #if defined(_KANIKAMA_MODE_DIRECTIONAL)
@@ -99,6 +100,9 @@ void KanikamaSample(float2 lightmapUV, half3 normalWorld, half3 viewDir, half ro
     diffuse = KanikamaGISampleLightmapArray(lightmapUV);
     specular = 0;
     #endif
+
+    diffuse *= occlusion;
+    specular *= occlusion;
 }
 
 #endif // KANIKAMA_INCLUDED

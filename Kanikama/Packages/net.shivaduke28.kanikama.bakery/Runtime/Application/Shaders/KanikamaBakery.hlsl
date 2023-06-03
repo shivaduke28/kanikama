@@ -1,4 +1,6 @@
-﻿#ifndef KANIKAMA_BAKERY_INCLUDED
+﻿// Based on Bakery.cginc by Mr F
+// https://geom.io/bakery/wiki/
+#ifndef KANIKAMA_BAKERY_INCLUDED
 #define KANIKAMA_BAKERY_INCLUDED
 
 #include <UnityCG.cginc>
@@ -13,9 +15,6 @@ UNITY_DECLARE_TEX2DARRAY_NOSAMPLER(_Udon_LightmapIndArray);
 #include "UnityStandardBRDF.cginc"
 #endif
 
-
-// MonoSH based on BakeryDirectionalLightmapSpecular in Bakery.cginc by Mr F
-// https://geom.io/bakery/wiki/
 inline void KanikamaSampleBakeryMonoSH(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
                                        out half3 diffuse, out half3 specular)
 {
@@ -52,8 +51,8 @@ inline void KanikamaSampleBakeryMonoSH(float2 lightmapUV, half3 normalWorld, hal
 
 #endif // _KANIKAMA_MODE_BAKERY_MONOSH
 
-void KanikamaBakerySample(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
-                    out half3 diffuse, out half3 specular)
+void KanikamaBakeryGI(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
+    half occlusion, out half3 diffuse, out half3 specular)
 {
     #if defined(_KANIKAMA_MODE_DIRECTIONAL)
     KanikamaSampleDirectional(lightmapUV, normalWorld, viewDir, roughness, diffuse, specular);
@@ -63,6 +62,8 @@ void KanikamaBakerySample(float2 lightmapUV, half3 normalWorld, half3 viewDir, h
     diffuse = KanikamaGISampleLightmapArray(lightmapUV);
     specular = 0;
     #endif
+    diffuse *= occlusion;
+    specular *= occlusion;
 }
 
 #endif // KANIKAMA_BAKERY_INCLUDED

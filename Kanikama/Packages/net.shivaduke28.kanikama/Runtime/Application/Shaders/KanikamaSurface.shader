@@ -72,9 +72,9 @@
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
             half3 specular;
-            KanikamaSample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
-            gi.indirect.diffuse += diffuse * s.Occlusion;
-            gi.indirect.specular += specular * s.Occlusion;
+            KanikamaGI(data.lightmapUV, s.Normal, data.worldViewDir, roughness, s.Occlusion, diffuse, specular);
+            gi.indirect.diffuse += diffuse;
+            gi.indirect.specular += specular;
         }
 
         void vert(inout appdata_full v, out Input o)
