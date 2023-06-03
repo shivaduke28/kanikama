@@ -1,4 +1,4 @@
-﻿Shader "Kanikama/StandardSurface"
+﻿Shader "Kanikama/KanikamaBakerySurface"
 {
     Properties
     {
@@ -9,7 +9,9 @@
         [NoScaleOffset] _MetallicSmoothnessMap("Metallic Smoothness Map", 2D) = "white" {}
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
-        [KeywordEnum(Array, Directional, Directional Specular)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
+        [Header(Kanikama)]
+        [KeywordEnum(Array, Directional, Bakery MonoSH)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
     }
@@ -23,12 +25,13 @@
 
         CGPROGRAM
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
-        #pragma shader_feature_local_fragment _ _KANIKAMA_GI_MODE_DIRECTIONAL _KANIKAMA_GI_MODE_DIRECTIONAL_SPECULAR
+        #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_BAKERY_MONOSH
+        #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
 
         #pragma target 3.0
 
         #include "UnityPBSLighting.cginc"
-        #include "./KanikamaGI.hlsl"
+        #include "Packages/net.shivaduke28.kanikama.bakery/Runtime/Application/Shaders/KanikamaBakery.hlsl"
 
         sampler2D _MainTex;
         sampler2D _MetallicSmoothnessMap;
@@ -64,7 +67,7 @@
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
             half3 specular;
-            KanikamaGISample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
+            KanikamaBakerySample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
             gi.indirect.diffuse += diffuse;
             gi.indirect.specular += specular;
         }

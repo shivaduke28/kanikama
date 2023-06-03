@@ -24,7 +24,8 @@ namespace Kanikama.Bakery.Editor.Baking
     {
         Light = 0,
         Directional = 1,
-        // TODO: MonoSH L0 and L1,
+        L0 = 2,
+        L1 = 3,
     }
 
     public static class BakeryLightmapTypeExtension

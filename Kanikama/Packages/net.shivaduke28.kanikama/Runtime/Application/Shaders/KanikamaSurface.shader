@@ -1,4 +1,4 @@
-﻿Shader "Kanikama/Debug/ComparisonSurface"
+﻿Shader "Kanikama/KanikamaSurface"
 {
     Properties
     {
@@ -6,12 +6,14 @@
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
+        [NoScaleOffset] _MetallicSmoothnessMap("Metallic Smoothness Map", 2D) = "white" {}
         [NoScaleOffset] _BumpMap("Normal Map", 2D) = "bump" {}
         _BumpScale("Normal Scale", Float) = 1.0
-        [KeywordEnum(Array, Directional)] _Kanikama_GI_Mode("KanikamaGI Mode", Float) = 0
+        [Header(Kanikama)]
+        [KeywordEnum(Array, Directional)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
-        _ComparingParam("Compare (0=Ground Truth, 1=PRT)", Range(0, 1)) = 0
     }
     SubShader
     {
@@ -23,21 +25,22 @@
 
         CGPROGRAM
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
-        #pragma shader_feature_local_fragment _ _KANIKAMA_GI_MODE_DIRECTIONAL
+        #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL
+        #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
 
         #pragma target 3.0
 
         #include "UnityPBSLighting.cginc"
-        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
+        #include "./Kanikama.hlsl"
 
         sampler2D _MainTex;
+        sampler2D _MetallicSmoothnessMap;
         sampler2D _BumpMap;
         half _BumpScale;
 
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
-        half _ComparingParam;
 
 
         struct Input
@@ -61,10 +64,12 @@
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
-            half3 lm = gi.indirect.diffuse;
-            half3 prt;
-            KanikamaSample(data.lightmapUV, s.Normal, prt);
-            gi.indirect.diffuse = lerp(lm, prt, _ComparingParam);
+            half roughness = SmoothnessToRoughness(s.Smoothness);
+            half3 diffuse;
+            half3 specular;
+            KanikamaSample(data.lightmapUV, s.Normal, data.worldViewDir, roughness, diffuse, specular);
+            gi.indirect.diffuse += diffuse;
+            gi.indirect.specular += specular;
         }
 
         void vert(inout appdata_full v, out Input o)
@@ -82,8 +87,9 @@
             half4 base = tex2D(_MainTex, uv) * _Color;
             o.Albedo = base.rgb;
             o.Alpha = base.a;
-            o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
+            half2 ms = tex2D(_MetallicSmoothnessMap, uv).xw;
+            o.Metallic = _Metallic * ms.x;
+            o.Smoothness = _Glossiness * ms.y;
             o.Normal = UnpackScaleNormal(tex2D(_BumpMap, uv), _BumpScale);
             o.Occlusion = 1;
         }
