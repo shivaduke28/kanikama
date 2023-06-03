@@ -90,7 +90,7 @@
                 float y = floor(uv.y * s) / s;
                 float hue = uv.x * _Scale + y + _Time.y * _Speed;
 
-                col = hsv2rgb(float3(hue, 1, _Emission * (sin(_Time.y) * 0.5 + 0.5)));
+                col = hsv2rgb(float3(hue, 1, _Emission));
                 col *= step(_Random, random(float2(_Time.y, 0.5)).x);
 
                 return fixed4(col, 1);
