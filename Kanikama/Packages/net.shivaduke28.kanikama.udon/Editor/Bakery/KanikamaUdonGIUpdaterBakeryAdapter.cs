@@ -13,6 +13,7 @@ namespace Kanikama.Udon.Editor.Bakery
     {
         KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
         SerializedObject serializedObject;
+        BakeryBakingSettingAsset bakingSettingAsset;
 
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
@@ -35,6 +36,21 @@ namespace Kanikama.Udon.Editor.Bakery
             else
             {
                 serializedObject = null;
+            }
+            
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
+            {
+                bakingSettingAsset = null;
+                return;
+            }
+
+            if (BakeryBakingSettingAsset.TryFind(sceneAssetData.Asset, out var asset))
+            {
+                bakingSettingAsset = asset;
+            }
+            else
+            {
+                bakingSettingAsset = null;
             }
         }
 
@@ -91,6 +107,10 @@ namespace Kanikama.Udon.Editor.Bakery
                 {
                     EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
                 }
+                else if (bakingSettingAsset == null)
+                {
+                    EditorGUILayout.HelpBox($"{nameof(BakeryBakingSettingAsset)} is not found.", MessageType.Warning);
+                }
                 else
                 {
                     if (KanikamaGUI.Button($"Setup by {nameof(BakeryBakingSettingAsset)} asset"))
@@ -98,11 +118,9 @@ namespace Kanikama.Udon.Editor.Bakery
                         Setup();
                     }
                 }
-                if (KanikamaGUI.Button("Load Active Scene"))
-                {
-                    Load();
-                }
             }
         }
+
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
     }
 }

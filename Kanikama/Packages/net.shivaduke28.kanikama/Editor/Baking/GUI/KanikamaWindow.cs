@@ -11,6 +11,7 @@ namespace Kanikama.Editor.Baking.GUI
         public interface IGUIDrawer
         {
             void Draw();
+            void OnLoadActiveScene();
         }
 
         sealed class DrawerFactory
@@ -103,6 +104,16 @@ namespace Kanikama.Editor.Baking.GUI
             using (var scroll = new EditorGUILayout.ScrollViewScope(scrollPositions[category]))
             {
                 scrollPositions[category] = scroll.scrollPosition;
+
+                if (KanikamaGUI.Button("Load Active Scene"))
+                {
+                    foreach (var drawer in guiDrawers)
+                    {
+                        drawer.OnLoadActiveScene();
+                    }
+                }
+
+                EditorGUILayout.Space();
 
                 foreach (var drawer in guiDrawers)
                 {

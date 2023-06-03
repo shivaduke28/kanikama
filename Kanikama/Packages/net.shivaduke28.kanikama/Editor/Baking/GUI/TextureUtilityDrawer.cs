@@ -20,6 +20,10 @@ namespace Kanikama.Editor.Baking.GUI
         {
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene()
+        {
+        }
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField("Texture Utility", EditorStyles.boldLabel);

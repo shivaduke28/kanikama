@@ -11,6 +11,7 @@ namespace Kanikama.Application.Editor
     internal sealed class KanikamaGIUpdaterDrawer : KanikamaWindow.IGUIDrawer
     {
         KanikamaRuntimeGIUpdater giUpdater;
+        UnityBakingSettingAsset bakingSettingAsset;
         SerializedObject serializedObject;
 
         [InitializeOnLoadMethod]
@@ -31,7 +32,24 @@ namespace Kanikama.Application.Editor
             {
                 serializedObject = new SerializedObject(giUpdater);
             }
+
+            if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
+            {
+                bakingSettingAsset = null;
+                return;
+            }
+
+            if (UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var asset))
+            {
+                bakingSettingAsset = asset;
+            }
+            else
+            {
+                bakingSettingAsset = null;
+            }
         }
+
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
 
 
         void Setup()
@@ -80,16 +98,16 @@ namespace Kanikama.Application.Editor
                 {
                     EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} is not found.", MessageType.Warning);
                 }
+                else if (bakingSettingAsset == null)
+                {
+                    EditorGUILayout.HelpBox($"{nameof(UnityBakingSettingAsset)} is not found.", MessageType.Warning);
+                }
                 else
                 {
                     if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
                     {
                         Setup();
                     }
-                }
-                if (KanikamaGUI.Button("Load Active Scene"))
-                {
-                    Load();
                 }
             }
         }

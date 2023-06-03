@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -51,6 +50,7 @@ namespace Kanikama.Editor.Baking.GUI
             }
         }
 
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField("Unity", EditorStyles.boldLabel);
@@ -68,14 +68,11 @@ namespace Kanikama.Editor.Baking.GUI
                 else
                 {
                     DrawScene();
-
-                    if (KanikamaGUI.Button("Load Active Scene"))
-                    {
-                        Load();
-                    }
                 }
             }
         }
+
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
 
         void DrawScene()
         {
@@ -84,14 +81,15 @@ namespace Kanikama.Editor.Baking.GUI
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
 
-            if (sceneDescriptor == null)
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (sceneDescriptor == null || (sceneDescriptor is Object sceneDescriptorObject && sceneDescriptorObject == null))
             {
                 sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
             }
 
-            if (sceneDescriptor is Object sceneDescriptorObject)
+            if (sceneDescriptor is Object obj)
             {
-                sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", sceneDescriptorObject, typeof(MonoBehaviour), true);
+                sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", obj, typeof(MonoBehaviour), true);
             }
 
             bakingSettingAsset =
@@ -119,16 +117,16 @@ namespace Kanikama.Editor.Baking.GUI
                 return;
             }
 
-            if (KanikamaGUI.Button("Bake Kanikama") && ValidateAndLoadOnFail())
-            {
-                cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
-            }
-
             if (KanikamaGUI.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
                 var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+            }
+
+            if (KanikamaGUI.Button("Bake Kanikama") && ValidateAndLoadOnFail())
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                var _ = BakeKanikamaAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
