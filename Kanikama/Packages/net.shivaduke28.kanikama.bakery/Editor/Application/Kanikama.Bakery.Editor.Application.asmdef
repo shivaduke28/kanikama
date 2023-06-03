@@ -5,7 +5,8 @@
     "Kanikama.Baking",
     "Kanikama.Editor.Baking",
     "Kanikama.Bakery.Baking",
-    "Kanikama.Bakery.Editor.Baking"
+    "Kanikama.Bakery.Editor.Baking",
+    "BakeryRuntimeAssembly"
   ],
   "includePlatforms": [
     "Editor"

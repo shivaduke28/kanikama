@@ -6,6 +6,7 @@
 #include <UnityCG.cginc>
 #include <HLSLSupport.cginc>
 #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
+#include "Assets/Bakery/shader/Bakery.cginc"
 
 #if defined(_KANIKAMA_MODE_BAKERY_MONOSH)
 
@@ -25,8 +26,26 @@ inline void KanikamaBakeryMonoSH(float3 lightTex, float3 dirTex, half3 normalWor
     float3 L1y = nL1.y * L0 * 2;
     float3 L1z = nL1.z * L0 * 2;
 
-    // MAY: support BAKERY_SHNONLINEAR
-    float3 sh = L0 + normalWorld.x * L1x + normalWorld.y * L1y + normalWorld.z * L1z;
+    float3 sh;
+    #if _KANIKAMA_BAKERY_SHNONLINEAR
+    //sh.r = shEvaluateDiffuseL1Geomerics(L0.r, float3(L1x.r, L1y.r, L1z.r), normalWorld);
+    //sh.g = shEvaluateDiffuseL1Geomerics(L0.g, float3(L1x.g, L1y.g, L1z.g), normalWorld);
+    //sh.b = shEvaluateDiffuseL1Geomerics(L0.b, float3(L1x.b, L1y.b, L1z.b), normalWorld);
+
+    float lumaL0 = dot(L0, 1);
+    float lumaL1x = dot(L1x, 1);
+    float lumaL1y = dot(L1y, 1);
+    float lumaL1z = dot(L1z, 1);
+    float lumaSH = shEvaluateDiffuseL1Geomerics(lumaL0, float3(lumaL1x, lumaL1y, lumaL1z), normalWorld);
+
+    sh = L0 + normalWorld.x * L1x + normalWorld.y * L1y + normalWorld.z * L1z;
+    float regularLumaSH = dot(sh, 1);
+    //sh *= regularLumaSH < 0.001 ? 1 : (lumaSH / regularLumaSH);
+    sh *= lerp(1, lumaSH / regularLumaSH, saturate(regularLumaSH*16));
+
+    #else
+    sh = L0 + normalWorld.x * L1x + normalWorld.y * L1y + normalWorld.z * L1z;
+    #endif
 
     diffuse += max(sh, 0.0);
 
@@ -63,9 +82,10 @@ inline void KanikamaSampleBakeryMonoSH(float2 lightmapUV, half3 normalWorld, hal
 
 #endif // _KANIKAMA_MODE_BAKERY_MONOSH
 
-void KanikamaBakeryGI(float2 lightmapUV, half3 normalWorld, half3 viewDir, half roughness,
+void KanikamaBakeryGI(float2 lightmapUV, half3 normalWorld, half3 viewDir, half smoothness,
     half occlusion, out half3 diffuse, out half3 specular)
 {
+    half roughness = SmoothnessToRoughness(smoothness);
     #if defined(_KANIKAMA_MODE_DIRECTIONAL)
     KanikamaSampleDirectional(lightmapUV, normalWorld, viewDir, roughness, diffuse, specular);
     #elif defined (_KANIKAMA_MODE_BAKERY_MONOSH)
