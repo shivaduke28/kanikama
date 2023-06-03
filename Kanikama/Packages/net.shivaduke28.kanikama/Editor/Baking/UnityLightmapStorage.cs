@@ -19,7 +19,7 @@ namespace Kanikama.Editor.Baking
         [SerializeField] List<KeyLightmapsPair> lightmapsPairs = new List<KeyLightmapsPair>();
         public List<UnityLightmap> Get() => lightmapsPairs.SelectMany(x => x.Lightmaps).ToList();
 
-        public void AddOrUpdate(string key,  List<UnityLightmap> lightmaps, string name = "")
+        public void AddOrUpdate(string key, List<UnityLightmap> lightmaps, string name = "")
         {
             foreach (var pair in lightmapsPairs)
             {

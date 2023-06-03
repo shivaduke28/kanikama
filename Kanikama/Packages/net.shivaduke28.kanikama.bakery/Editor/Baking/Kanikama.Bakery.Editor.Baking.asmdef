@@ -1,24 +1,24 @@
 {
-    "name": "Kanikama.Bakery.Editor.Baking",
-    "references": [
-        "BakeryRuntimeAssembly",
-        "BakeryEditorAssembly",
-        "Kanikama.Application",
-        "Kanikama.Editor.Application",
-        "Kanikama.Baking",
-        "Kanikama.Editor.Baking"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "BAKERY_INCLUDED"
-    ],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Kanikama.Bakery.Editor.Baking",
+  "references": [
+    "BakeryRuntimeAssembly",
+    "BakeryEditorAssembly",
+    "Kanikama.Application",
+    "Kanikama.Editor.Application",
+    "Kanikama.Baking",
+    "Kanikama.Editor.Baking"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [
+    "BAKERY_INCLUDED"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

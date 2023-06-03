@@ -6,8 +6,8 @@
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/GlobalIllumination.hlsl"
 #endif
 
-TEXTURE2D_ARRAY(_Udon_LightmapArray);
-SAMPLER(sampler_Udon_LightmapArray);
+TEXTURE2D_ARRAY (_Udon_LightmapArray);
+SAMPLER (sampler_Udon_LightmapArray);
 
 #if defined(_KANIKAMA_GI_MODE_DIRECTIONAL)
 TEXTURE2D_ARRAY(_Udon_LightmapIndArray);

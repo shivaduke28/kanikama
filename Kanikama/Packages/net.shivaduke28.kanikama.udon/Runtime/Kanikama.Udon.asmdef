@@ -1,18 +1,18 @@
 {
-    "name": "Kanikama.Udon",
-    "references": [
-        "UdonSharp.Runtime",
-        "VRC.Udon"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [
-        "UDONSHARP"
-    ],
-    "versionDefines": [],
-    "noEngineReferences": false
+  "name": "Kanikama.Udon",
+  "references": [
+    "UdonSharp.Runtime",
+    "VRC.Udon"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [
+    "UDONSHARP"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

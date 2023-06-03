@@ -19,5 +19,4 @@ namespace Kanikama.Baking
         public abstract bool Includes(Object obj);
         public abstract void Clear();
     }
-
 }
