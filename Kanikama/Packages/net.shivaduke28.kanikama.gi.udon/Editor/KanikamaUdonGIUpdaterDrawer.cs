@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
-using Kanikama.Baking.Editor;
+using Kanikama.Editor.Baking.GUI;
 using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;

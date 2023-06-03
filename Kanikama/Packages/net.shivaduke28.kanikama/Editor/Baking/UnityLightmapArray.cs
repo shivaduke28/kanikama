@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Kanikama.Editor.Baking;
 using UnityEngine;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking
 {
     [Serializable]
     public sealed class UnityLightmapArray

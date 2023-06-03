@@ -6,8 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
-using Kanikama.Baking.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;

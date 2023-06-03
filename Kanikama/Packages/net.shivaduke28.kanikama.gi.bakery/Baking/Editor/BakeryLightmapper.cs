@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor.Baking.Util;
+using Kanikama.Editor.Baking;
 using UnityEditor;
 
 namespace Kanikama.GI.Bakery.Baking.Editor

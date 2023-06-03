@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
 using Kanikama.Baking;
+using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;

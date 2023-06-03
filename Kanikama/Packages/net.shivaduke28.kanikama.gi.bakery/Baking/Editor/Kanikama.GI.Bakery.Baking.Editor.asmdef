@@ -3,8 +3,6 @@
     "references": [
         "BakeryRuntimeAssembly",
         "BakeryEditorAssembly",
-        "Kanikama.Utility",
-        "Kanikama.Editor.Utility",
         "Kanikama.Application",
         "Kanikama.Editor.Application",
         "Kanikama.Baking",

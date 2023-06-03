@@ -1,8 +1,7 @@
-﻿using Kanikama.Editor.Baking.Util;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking
+namespace Kanikama.Editor.Baking.GUI
 {
     internal sealed class TextureUtilityDrawer : KanikamaWindow.IGUIDrawer
     {

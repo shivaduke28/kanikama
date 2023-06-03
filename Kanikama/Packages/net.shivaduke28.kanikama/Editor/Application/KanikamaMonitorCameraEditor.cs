@@ -1,7 +1,6 @@
 ﻿using Kanikama.Application.Impl;
-using Kanikama.Editor.Baking.Util;
+using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
-using UnityEngine;
 
 namespace Kanikama.Application.Editor
 {

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.Util
+namespace Kanikama.Editor.Baking
 {
     public static class UnityLightmapUtility
     {

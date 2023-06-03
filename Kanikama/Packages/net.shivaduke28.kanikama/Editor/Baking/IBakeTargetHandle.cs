@@ -1,9 +1,9 @@
-﻿using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
+﻿using Kanikama.Baking;
+using Kanikama.Editor.Baking;
 using UnityEditor;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking
 {
     public interface IBakeTargetHandle
     {

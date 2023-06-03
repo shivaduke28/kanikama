@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor.Baking;
 using Kanikama.Baking;
+using Kanikama.Editor.Baking;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking
 {
     public sealed class UnityBakingPipelineRunner
     {

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
-using Kanikama.Baking.Editor;
 
 namespace Kanikama.GI.Bakery.Baking.Editor
 {

@@ -5,15 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Utility;
-using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking
 {
     public static class UnityBakingPipeline
     {

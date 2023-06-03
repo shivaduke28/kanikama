@@ -1,8 +1,7 @@
 {
   "name": "Kanikama.Editor.Application",
   "references": [
-    "Kanikama.Utility",
-    "Kanikama.Editor.Utility",
+    "Kanikama.Baking",
     "Kanikama.Application",
     "Kanikama.Editor.Baking"
   ],

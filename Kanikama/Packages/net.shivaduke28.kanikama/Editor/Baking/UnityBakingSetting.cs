@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking
 {
     [Serializable]
     public sealed class UnityBakingSetting

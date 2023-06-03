@@ -5,8 +5,6 @@
         "VRC.Udon",
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
-        "Kanikama.Utility",
-        "Kanikama.Editor.Utility",
         "Kanikama.GI.Runtime",
         "Kanikama.Baking",
         "Kanikama.Editor.Baking",

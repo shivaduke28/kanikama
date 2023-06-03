@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.Util
+namespace Kanikama.Editor.Baking.GUI
 {
     public static class KanikamaGUI
     {

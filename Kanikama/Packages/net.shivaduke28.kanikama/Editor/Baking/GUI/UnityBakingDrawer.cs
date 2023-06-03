@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Baking;
 using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.Util;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Baking.Editor
+namespace Kanikama.Editor.Baking.GUI
 {
     public sealed class UnityBakingDrawer : KanikamaWindow.IGUIDrawer
     {

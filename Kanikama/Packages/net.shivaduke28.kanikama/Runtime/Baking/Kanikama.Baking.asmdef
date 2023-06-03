@@ -1,7 +1,6 @@
 {
     "name": "Kanikama.Baking",
     "references": [
-        "Kanikama.Utility"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

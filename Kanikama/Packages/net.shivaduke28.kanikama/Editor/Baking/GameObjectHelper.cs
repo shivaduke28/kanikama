@@ -1,6 +1,6 @@
 ﻿using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor.Baking.Util
+namespace Kanikama.Editor.Baking
 {
     public static class GameObjectHelper
     {
