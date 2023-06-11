@@ -11,6 +11,14 @@ namespace Kanikama.Editor.Baking
 {
     public static class TextureUtility
     {
+        class PackShaderProperties
+        {
+            public static readonly int Tex0 = Shader.PropertyToID("_Tex0");
+            public static readonly int Tex1 = Shader.PropertyToID("_Tex1");
+            public static readonly int Tex2 = Shader.PropertyToID("_Tex2");
+            public static readonly int Tex3 = Shader.PropertyToID("_Tex3");
+        }
+
         // isLinear:
         // - lightmap: false
         // - directional lightmap: true
@@ -179,6 +187,62 @@ namespace Kanikama.Editor.Baking
             var path = Path.Combine(dirPath, $"{name}.renderTexture");
             IOUtility.CreateOrReplaceAsset(ref rt, path);
             return rt;
+        }
+
+        public static Texture2D PackBC6H(Texture2D[] textures, bool isLinear)
+        {
+            var count = textures.Length;
+            if (count == 0)
+            {
+                throw new ArgumentException(string.Format(KanikamaDebug.Format, "List is empty."));
+            }
+            if (count > 3)
+            {
+                throw new ArgumentException(string.Format(KanikamaDebug.Format, "The size of list must be <= 3."));
+            }
+            var shader = Shader.Find("Kanikama/Pack");
+            var mat = new Material(shader);
+            var map = textures[0];
+            var rtDescriptor = new RenderTextureDescriptor(map.width, map.height)
+            {
+                dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+                colorFormat = RenderTextureFormat.ARGBHalf,
+                useMipMap = true,
+                depthBufferBits = 0,
+                useDynamicScale = false,
+                msaaSamples = 1,
+                volumeDepth = 1
+            };
+            var rt = RenderTexture.GetTemporary(rtDescriptor);
+
+            var active = RenderTexture.active;
+            var param = new TextureParameter
+            {
+                Width = map.width,
+                Height = map.height,
+                Format = TextureFormat.RGBAHalf, // map.format should be BC6H
+                Linear = isLinear,
+                MipChain = true,
+            };
+
+            Texture GetTexture(int index)
+            {
+                return index < count ? textures[index] : Texture2D.blackTexture;
+            }
+
+            mat.SetTexture(PackShaderProperties.Tex0, GetTexture(0));
+            mat.SetTexture(PackShaderProperties.Tex1, GetTexture(1));
+            mat.SetTexture(PackShaderProperties.Tex2, GetTexture(2));
+
+            var tex = GenerateTexture(param);
+            RenderTexture.active = rt;
+            Graphics.Blit(null, rt, mat);
+            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0, true);
+            tex.Apply();
+            EditorUtility.CompressTexture(tex, TextureFormat.BC6H, TextureCompressionQuality.Best);
+            RenderTexture.active = active;
+
+            return tex;
         }
     }
 
