@@ -104,8 +104,7 @@ namespace Kanikama.Editor.Baking
             }
         }
 
-        static void CopyBakedLightingAssetCollection(List<UnityLightmap> src, out List<UnityLightmap> dst, string dstDir,
-            string id)
+        public static void CopyBakedLightingAssetCollection(List<UnityLightmap> src, out List<UnityLightmap> dst, string dstDir, string id)
         {
             dst = new List<UnityLightmap>(src.Count);
             foreach (var lightmap in src)
@@ -170,6 +169,10 @@ namespace Kanikama.Editor.Baking
             var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Light).ToArray();
             var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
+            foreach (var lm in allLightmaps)
+            {
+                TextureUtility.ResizeTexture(lm.Texture, resizeType);
+            }
 
             bakingSetting.LightmapArrayStorage.Clear();
             for (var i = 0; i <= maxIndex; i++)
@@ -177,16 +180,6 @@ namespace Kanikama.Editor.Baking
                 var index = i;
                 var light = lightmaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
                 var dir = directionalMaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
-
-                foreach (var texture in light)
-                {
-                    TextureUtility.ResizeTexture(texture, resizeType);
-                }
-
-                foreach (var texture in dir)
-                {
-                    TextureUtility.ResizeTexture(texture, resizeType);
-                }
 
                 if (light.Count > 0)
                 {
