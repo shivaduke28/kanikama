@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading;
 using Kanikama.Baking;
-using Kanikama.Baking.LTC;
+using Kanikama.Baking.Experimental.LTC;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.LTC
+namespace Kanikama.Editor.Baking.Experimental.LTC
 {
     public class UnityLTCBakingDrawer : KanikamaWindow.IGUIDrawer
     {

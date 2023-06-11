@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.LTC
+namespace Kanikama.Editor.Baking.Experimental.LTC
 {
     [CreateAssetMenu(menuName = "Kanikama/UnityLTCBakingSettingAsset", fileName = "UnityLTCBakingSettingAsset")]
     public class UnityLTCBakingSettingAsset : ScriptableObject

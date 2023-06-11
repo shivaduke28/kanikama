@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Editor.Baking.LTC
+namespace Kanikama.Editor.Baking.Experimental.LTC
 {
     public static class UnityLTCBakingPipeline
     {

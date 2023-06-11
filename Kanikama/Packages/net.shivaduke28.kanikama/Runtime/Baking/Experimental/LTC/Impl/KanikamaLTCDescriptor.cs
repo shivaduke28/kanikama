@@ -2,7 +2,7 @@
 using Kanikama.Baking.Impl;
 using UnityEngine;
 
-namespace Kanikama.Baking.LTC.Impl
+namespace Kanikama.Baking.Experimental.LTC.Impl
 {
     public class KanikamaLTCDescriptor : MonoBehaviour, ILTCDescriptor
     {

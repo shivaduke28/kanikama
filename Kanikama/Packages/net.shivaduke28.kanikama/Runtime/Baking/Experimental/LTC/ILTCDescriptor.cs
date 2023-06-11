@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kanikama.Baking.LTC
+namespace Kanikama.Baking.Experimental.LTC
 {
     public interface ILTCDescriptor
     {
