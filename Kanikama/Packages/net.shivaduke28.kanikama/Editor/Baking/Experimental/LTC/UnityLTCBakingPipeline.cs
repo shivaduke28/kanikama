@@ -76,11 +76,12 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                         context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
                     }
 
-                    // NOTE: BakeTargets are supposed to use Renderers with emissive materials.
-                    // Set Bounce 0 when BakeTargets use Area Light.
-                    context.Lightmapper.SetBounce(1);
+                    // NOTE: BakeTargets are supposed to use Unity Area Light.
+                    // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
+                    context.Lightmapper.SetBounce(0);
                     foreach (var monitor in context.MonitorHandles)
                     {
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor... name: {monitor.Name}, id: {monitor.Id}.");
                         monitor.TurnOn();
                         context.Lightmapper.ClearCache();
                         await context.Lightmapper.BakeAsync(cancellationToken);
@@ -89,6 +90,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                         UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, out var copied, context.Setting.OutputAssetDirPath, monitor.Id);
                         context.Setting.LightmapStorage.AddOrUpdate(monitor.Id, copied, monitor.Name);
                     }
+                    Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
                 catch (OperationCanceledException)
                 {
@@ -139,7 +141,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             {
                 TextureUtility.ResizeTexture(lm.Texture, bakingSetting.TextureResizeType);
             }
-            for (var i = 0; i < maxIndex; i++)
+            for (var i = 0; i <= maxIndex; i++)
             {
                 var light = lightmaps.Where(l => l.Index == i).Select(l => l.Texture).ToArray();
                 var packed = TextureUtility.PackBC6H(light, false);
