@@ -38,17 +38,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define MAX_LIGHT_SOURCE_COUNT 3
 
-float3 _LTC_Vertex0[MAX_LIGHT_SOURCE_COUNT];
-float3 _LTC_Vertex1[MAX_LIGHT_SOURCE_COUNT];
-float3 _LTC_Vertex2[MAX_LIGHT_SOURCE_COUNT];
-float3 _LTC_Vertex3[MAX_LIGHT_SOURCE_COUNT];
+// Global
+float3 _Udon_LTC_Vertex0[MAX_LIGHT_SOURCE_COUNT];
+float3 _Udon_LTC_Vertex1[MAX_LIGHT_SOURCE_COUNT];
+float3 _Udon_LTC_Vertex2[MAX_LIGHT_SOURCE_COUNT];
+float3 _Udon_LTC_Vertex3[MAX_LIGHT_SOURCE_COUNT];
+// 0 ~ 3
+int _Udon_LTC_Count;
 
+// const
 // TODO use trilinear sampler
 sampler2D _LightSourceTex0;
 
+// const
 sampler2D _LTC_1;
 sampler2D _LTC_2;
-sampler2D _Udon_LTCShadowMap;
+
+// Per Renderer Data
+sampler2D _Udon_LTC_ShadowMap;
 
 static const float LUT_SIZE = 64;
 static const float LUT_SCALE = (LUT_SIZE - 1.0) / LUT_SIZE;
@@ -77,8 +84,9 @@ float SquareSDF(float2 uv)
 
 float GaussianKernel(in float x, in float sigma)
 {
+    float s = 1/ sigma;
     // 1/sqrt(2 * PI) = 0.39894
-    return 0.39894 * exp(-0.5 * x * x / (sigma * sigma)) / sigma;
+    return 0.39894 * exp(-0.5 * x * x * s * s) * s;
 }
 
 float GaussianInv(float y, float sigma)
@@ -87,7 +95,7 @@ float GaussianInv(float y, float sigma)
     return sigma * sqrt(-2 * log(2.50662 * sigma * y));
 }
 
-half3 FetchTexture(sampler2D tex, float3 p0, float3 p1, float3 p2, float3 p3)
+half3 FetchTexture(sampler2D tex, float3 p0, float3 p1, float3 p2)
 {
     // uv
     float3 V1 = p0 - p1;
@@ -166,12 +174,46 @@ half3 LTCEvaluate(float3 pos, float3x3 Minv, float3 points[4], sampler2D tex)
     float scale = ltc2_tex.w;
     sum = len * scale;
 
-    #if defined(LTC_TEXTURE_FETCH)
-    half3 texColor = FetchTexture(tex, p0, p1, p2, p3);
+    half3 texColor = FetchTexture(tex, p0, p1, p2);
     return texColor * sum;
-    #else
+}
+
+half3 LTCEvaluateNoTexture(float3 pos, float3x3 Minv, float3 points[4])
+{
+    float3 dir = pos - points[0];
+    float3 lightNormal = cross(points[1] - points[0], points[3] - points[0]);
+    bool behind = dot(dir, lightNormal) < 0.0;
+
+    float sum;
+    if (behind)
+    {
+        return half3(0, 0, 0);
+    }
+    float3 vsum = 0;
+    float3 p0 = mul(Minv, points[0] - pos);
+    float3 p1 = mul(Minv, points[1] - pos);
+    float3 p2 = mul(Minv, points[2] - pos);
+    float3 p3 = mul(Minv, points[3] - pos);
+    float3 l0 = normalize(p0);
+    float3 l1 = normalize(p1);
+    float3 l2 = normalize(p2);
+    float3 l3 = normalize(p3);
+
+    vsum += IntegrateEdgeVec(l0, l1);
+    vsum += IntegrateEdgeVec(l1, l2);
+    vsum += IntegrateEdgeVec(l2, l3);
+    vsum += IntegrateEdgeVec(l3, l0);
+
+    float len = length(vsum);
+    float z = vsum.z / len;
+
+    float2 uv2 = float2(z * 0.5 + 0.5, len);
+    uv2 = uv2 * LUT_SCALE + LUT_BIAS;
+
+    float4 ltc2_tex = tex2D(_LTC_2, uv2);
+    float scale = ltc2_tex.w;
+    sum = len * scale;
     return half3(sum, sum, sum);
-    #endif
 }
 
 struct LTCData
@@ -195,8 +237,10 @@ LTCData LTCSetup(float ndotv, float perceptualRoughness)
     return o;
 }
 
-void LTCLighting(float3 position, half3 normal, half3 view, half perceptualRoughness, out half3 diffuse,
-                 out half3 specular)
+void KanikamaLTCSpecular(float3 position, half3 normal, half3 view, half perceptualRoughness, float2 lightmapUV,
+                         half occlusion,
+                         half3 specColor,
+                         out half3 specular)
 {
     float ndotv = saturate(dot(normal, view));
     LTCData data = LTCSetup(ndotv, perceptualRoughness);
@@ -205,17 +249,25 @@ void LTCLighting(float3 position, half3 normal, half3 view, half perceptualRough
     float3x3 orth = float3x3(viewTangent, viewBitangent, normal);
     float3x3 Minv = mul(data.Minv, orth);
     float2 ltcParam = data.BRDFParam;
-    float3 points[4];
 
-    points[0] = _LTC_Vertex0;
-    points[1] = _LTC_Vertex1;
-    points[2] = _LTC_Vertex2;
-    points[3] = _LTC_Vertex3;
-    half3 ltcDiff = LTCEvaluate(position, orth, points, _LightSourceTex0);
-    half3 ltcSpec = LTCEvaluate(position, Minv, points, _LightSourceTex0);
-    ltcSpec *= ltcParam.x + (1.0 - specular) * ltcParam.y;
-    diffuse = ltcDiff;
-    specular = ltcSpec;
+    float3 shadow = tex2D(_Udon_LTC_ShadowMap, lightmapUV).rgb;
+    float3 points[4];
+    specular = 0;
+
+    for (int i = 0; i < _Udon_LTC_Count; i++)
+    {
+        points[0] = _Udon_LTC_Vertex0[i];
+        points[1] = _Udon_LTC_Vertex1[i];
+        points[2] = _Udon_LTC_Vertex2[i];
+        points[3] = _Udon_LTC_Vertex3[i];
+        half3 ltcDiff = LTCEvaluateNoTexture(position, orth, points);
+        half3 ltcSpec = LTCEvaluate(position, Minv, points, _LightSourceTex0);
+        ltcSpec *= ltcParam.x + (1.0 - specColor) * ltcParam.y;
+        // fake shadowing using lightmap
+        ltcSpec *= saturate(shadow[i] / max(0.001, Luminance(ltcDiff)));
+        specular += ltcSpec;
+    }
+    specular *= occlusion;
 }
 
 #endif
