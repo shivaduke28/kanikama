@@ -3,12 +3,12 @@
     Properties
     {
         [NoScaleOffset] _Numerator0("Numerator R", 2D) = "black" {}
-        [NoScaleOffset] _Denominator0("Denominator R", 2D) = "white" {}
         [NoScaleOffset] _Numerator1("Numerator G", 2D) = "black" {}
-        [NoScaleOffset] _Denominator1("Denominator G", 2D) = "white" {}
         [NoScaleOffset] _Numerator2("Numerator B", 2D) = "black" {}
-        [NoScaleOffset] _Denominator2("Denominator B", 2D) = "white" {}
         [NoScaleOffset] _Numerator3("Numerator A", 2D) = "black" {}
+        [NoScaleOffset] _Denominator0("Denominator R", 2D) = "white" {}
+        [NoScaleOffset] _Denominator1("Denominator G", 2D) = "white" {}
+        [NoScaleOffset] _Denominator2("Denominator B", 2D) = "white" {}
         [NoScaleOffset] _Denominator3("Denominator A", 2D) = "white" {}
     }
     SubShader
@@ -44,12 +44,12 @@
             }
 
             sampler2D _Numerator0;
-            sampler2D _Denominator0;
             sampler2D _Numerator1;
-            sampler2D _Denominator1;
             sampler2D _Numerator2;
-            sampler2D _Denominator2;
             sampler2D _Numerator3;
+            sampler2D _Denominator0;
+            sampler2D _Denominator1;
+            sampler2D _Denominator2;
             sampler2D _Denominator3;
 
 
