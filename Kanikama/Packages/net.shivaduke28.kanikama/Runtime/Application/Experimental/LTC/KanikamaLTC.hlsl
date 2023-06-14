@@ -178,44 +178,6 @@ half3 LTCEvaluate(float3 pos, float3x3 Minv, float3 points[4], sampler2D tex)
     return texColor * sum;
 }
 
-half3 LTCEvaluateNoTexture(float3 pos, float3x3 Minv, float3 points[4])
-{
-    float3 dir = pos - points[0];
-    float3 lightNormal = cross(points[1] - points[0], points[3] - points[0]);
-    bool behind = dot(dir, lightNormal) < 0.0;
-
-    float sum;
-    if (behind)
-    {
-        return half3(0, 0, 0);
-    }
-    float3 vsum = 0;
-    float3 p0 = mul(Minv, points[0] - pos);
-    float3 p1 = mul(Minv, points[1] - pos);
-    float3 p2 = mul(Minv, points[2] - pos);
-    float3 p3 = mul(Minv, points[3] - pos);
-    float3 l0 = normalize(p0);
-    float3 l1 = normalize(p1);
-    float3 l2 = normalize(p2);
-    float3 l3 = normalize(p3);
-
-    vsum += IntegrateEdgeVec(l0, l1);
-    vsum += IntegrateEdgeVec(l1, l2);
-    vsum += IntegrateEdgeVec(l2, l3);
-    vsum += IntegrateEdgeVec(l3, l0);
-
-    float len = length(vsum);
-    float z = vsum.z / len;
-
-    float2 uv2 = float2(z * 0.5 + 0.5, len);
-    uv2 = uv2 * LUT_SCALE + LUT_BIAS;
-
-    float4 ltc2_tex = tex2D(_LTC_2, uv2);
-    float scale = ltc2_tex.w;
-    sum = len * scale;
-    return half3(sum, sum, sum);
-}
-
 struct LTCData
 {
     float3x3 Minv;
