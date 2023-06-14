@@ -236,7 +236,6 @@ namespace Kanikama.Editor.Application
         void DoNormalArea()
         {
             m_MaterialEditor.TexturePropertySingleLine(Styles.normalMapText, bumpMap, bumpMap.textureValue != null ? bumpScale : null);
-            bumpScale.floatValue = 1f;
         }
 
         void DoAlbedoArea(Material material)
@@ -270,17 +269,18 @@ namespace Kanikama.Editor.Application
             else if (m_WorkflowMode == WorkflowMode.Metallic)
             {
                 flag1 = metallicMap.textureValue != null;
-                m_MaterialEditor.TexturePropertySingleLine(Styles.metallicMapText, metallicMap, flag1 ? null : metallic);
+                m_MaterialEditor.TexturePropertySingleLine(Styles.metallicMapText, metallicMap, metallic);
             }
             var flag2 = flag1;
-            if (smoothnessMapChannel != null && (int) smoothnessMapChannel.floatValue == 1)
-                flag2 = true;
+            // if (smoothnessMapChannel != null && (int) smoothnessMapChannel.floatValue == 1)
+            //     flag2 = true;
             var labelIndent1 = 2;
-            m_MaterialEditor.ShaderProperty(flag2 ? smoothnessScale : smoothness, flag2 ? Styles.smoothnessScaleText : Styles.smoothnessText, labelIndent1);
-            var labelIndent2 = labelIndent1 + 1;
-            if (smoothnessMapChannel == null)
-                return;
-            m_MaterialEditor.ShaderProperty(smoothnessMapChannel, Styles.smoothnessMapChannelText, labelIndent2);
+            // m_MaterialEditor.ShaderProperty(flag2 ? smoothnessScale : smoothness, flag2 ? Styles.smoothnessScaleText : Styles.smoothnessText, labelIndent1);
+            m_MaterialEditor.ShaderProperty(smoothness, Styles.smoothnessText, labelIndent1);
+            // var labelIndent2 = labelIndent1 + 1;
+            // if (smoothnessMapChannel == null)
+            //     return;
+            // m_MaterialEditor.ShaderProperty(smoothnessMapChannel, Styles.smoothnessMapChannelText, labelIndent2);
         }
 
         public static void SetupMaterialWithBlendMode(

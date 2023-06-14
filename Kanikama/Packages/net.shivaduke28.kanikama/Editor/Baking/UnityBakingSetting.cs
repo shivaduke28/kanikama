@@ -15,38 +15,25 @@ namespace Kanikama.Editor.Baking
         [SerializeField] UnityLightmapArrayStorage lightmapArrayStorage;
         [SerializeField] string outputAssetDirPath = "Assets";
 
-        public SceneAsset SceneAsset
-        {
-            get => sceneAsset;
-            set
-            {
-                sceneAsset = value;
-                outputAssetDirPath = GetOutputAssetDirPath(value);
-            }
-        }
-
+        public SceneAsset SceneAsset => sceneAsset;
         public TextureResizeType TextureResizeType => textureResizeType;
         public UnityLightmapStorage LightmapStorage => lightmapStorage;
         public UnityLightmapArrayStorage LightmapArrayStorage => lightmapArrayStorage;
         public string OutputAssetDirPath => outputAssetDirPath;
 
 
-        public UnityBakingSetting(SceneAsset sceneAsset, TextureResizeType textureResizeType)
+        public UnityBakingSetting(SceneAsset sceneAsset, TextureResizeType textureResizeType, string outputDirSuffix = "_kanikama_unity")
         {
-            SceneAsset = sceneAsset;
+            this.sceneAsset = sceneAsset;
             this.textureResizeType = textureResizeType;
+            var path = AssetDatabase.GetAssetPath(sceneAsset);
+            var dirPath = Path.GetDirectoryName(path);
+            outputAssetDirPath = dirPath != null ? Path.Combine(dirPath, $"{sceneAsset.name}{outputDirSuffix}") : string.Empty;
         }
 
         public UnityBakingSetting Clone()
         {
             return new UnityBakingSetting(sceneAsset, textureResizeType);
-        }
-
-        public static string GetOutputAssetDirPath(SceneAsset sceneAsset)
-        {
-            var path = AssetDatabase.GetAssetPath(sceneAsset);
-            var dirPath = Path.GetDirectoryName(path);
-            return dirPath != null ? Path.Combine(dirPath, $"{sceneAsset.name}_kanikama_unity") : string.Empty;
         }
     }
 }
