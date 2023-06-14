@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using Kanikama.Baking.Impl;
 using UnityEngine;
 
 namespace Kanikama.Baking.Experimental.LTC.Impl
 {
     public class KanikamaLTCDescriptor : MonoBehaviour, ILTCDescriptor
     {
-        [SerializeField] KanikamaBakeTargetMonitorGroup monitorGroup;
-        [SerializeField] List<KanikamaBakeTargetMonitor> monitors;
+        [SerializeField] List<KanikamaLTCMonitor> ltcMonitors;
 
-        BakeTargetGroup ILTCDescriptor.GetMonitorGroup() => monitorGroup;
-        IEnumerable<BakeTargetGroup> ILTCDescriptor.GetMonitors() => monitors.ToArray();
+        IEnumerable<LTCMonitor> ILTCDescriptor.GetMonitors() => ltcMonitors.ToArray();
     }
 }

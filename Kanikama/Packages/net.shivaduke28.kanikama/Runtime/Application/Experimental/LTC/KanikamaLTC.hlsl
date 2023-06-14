@@ -260,11 +260,10 @@ void KanikamaLTCSpecular(float3 position, half3 normal, half3 view, half percept
         points[1] = _Udon_LTC_Vertex1[i];
         points[2] = _Udon_LTC_Vertex2[i];
         points[3] = _Udon_LTC_Vertex3[i];
-        half3 ltcDiff = LTCEvaluateNoTexture(position, orth, points);
         half3 ltcSpec = LTCEvaluate(position, Minv, points, _LightSourceTex0);
         ltcSpec *= ltcParam.x + (1.0 - specColor) * ltcParam.y;
         // fake shadowing using lightmap
-        ltcSpec *= saturate(shadow[i] / max(0.001, Luminance(ltcDiff)));
+        ltcSpec *= saturate(shadow[i]);
         specular += ltcSpec;
     }
     specular *= occlusion;

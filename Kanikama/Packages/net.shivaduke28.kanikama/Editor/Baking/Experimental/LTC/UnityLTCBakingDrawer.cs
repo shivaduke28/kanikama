@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Threading;
 using Kanikama.Baking;
 using Kanikama.Baking.Experimental.LTC;
@@ -120,35 +121,23 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 cancellationTokenSource?.Cancel();
                 cancellationTokenSource?.Dispose();
                 cancellationTokenSource = new CancellationTokenSource();
-                var (gridFiberHandles, monitorHandles) = ToHandles(descriptor);
                 var __ = UnityLTCBakingPipeline.BakeAsync(new UnityLTCBakingPipeline.Context(
                     new SceneAssetData(sceneAsset),
-                    gridFiberHandles,
-                    monitorHandles,
                     new UnityLightmapper(),
-                    settingAsset.Setting
+                    settingAsset.Setting,
+                    ToHandles(descriptor)
                 ), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                var (gridFiberHandles, monitorHandles) = ToHandles(descriptor);
-                UnityLTCBakingPipeline.CreateAssets(gridFiberHandles, monitorHandles, settingAsset.Setting);
+                UnityLTCBakingPipeline.CreateAssets(ToHandles(descriptor), settingAsset.Setting);
             }
         }
 
-        static (IList<IBakeTargetHandle> gridFiberHandles, IList<IBakeTargetHandle> monitorHandles) ToHandles(ILTCDescriptor descriptor)
+        static IList<ILTCMonitorHandle> ToHandles(ILTCDescriptor descriptor)
         {
-            var monitors = descriptor.GetMonitors();
-            var monitorGroup = descriptor.GetMonitorGroup();
-            return (
-                gridFiberHandles: monitorGroup.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(monitorGroup, i))
-                    .Cast<IBakeTargetHandle>()
-                    .ToList(),
-                monitorHandles: monitors
-                    .Select(x => new BakeTargetGroupHandle<BakeTargetGroup>(x))
-                    .Cast<IBakeTargetHandle>()
-                    .ToList());
+            return descriptor.GetMonitors().Select(x => new LTCMonitorHandle<LTCMonitor>(x)).Cast<ILTCMonitorHandle>().ToList();
         }
 
         void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();

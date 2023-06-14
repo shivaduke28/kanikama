@@ -19,6 +19,19 @@ namespace Kanikama.Editor.Baking
             public static readonly int Tex3 = Shader.PropertyToID("_Tex3");
         }
 
+        class RatioPackShaderProperties
+        {
+            public static readonly int Numerator0 = Shader.PropertyToID("_Numerator0");
+            public static readonly int Numerator1 = Shader.PropertyToID("_Numerator1");
+            public static readonly int Numerator2 = Shader.PropertyToID("_Numerator2");
+            public static readonly int Numerator3 = Shader.PropertyToID("_Numerator3");
+            public static readonly int Denominator0 = Shader.PropertyToID("_Denominator0");
+            public static readonly int Denominator1 = Shader.PropertyToID("_Denominator1");
+            public static readonly int Denominator2 = Shader.PropertyToID("_Denominator2");
+            public static readonly int Denominator3 = Shader.PropertyToID("_Denominator3");
+        }
+
+
         // isLinear:
         // - lightmap: false
         // - directional lightmap: true
@@ -233,6 +246,68 @@ namespace Kanikama.Editor.Baking
             mat.SetTexture(PackShaderProperties.Tex0, GetTexture(0));
             mat.SetTexture(PackShaderProperties.Tex1, GetTexture(1));
             mat.SetTexture(PackShaderProperties.Tex2, GetTexture(2));
+
+            var tex = GenerateTexture(param);
+            RenderTexture.active = rt;
+            Graphics.Blit(null, rt, mat);
+            tex.ReadPixels(new Rect(0, 0, rt.width, rt.height), 0, 0, true);
+            tex.Apply();
+            EditorUtility.CompressTexture(tex, TextureFormat.BC6H, TextureCompressionQuality.Best);
+            RenderTexture.active = active;
+
+            return tex;
+        }
+
+        public static Texture2D RatioPackBC6H((Texture2D Numerator, Texture2D Denominator)[] textures, bool isLinear)
+        {
+            var count = textures.Length;
+            if (count == 0)
+            {
+                throw new ArgumentException(string.Format(KanikamaDebug.Format, "List is empty."));
+            }
+            if (count > 3)
+            {
+                throw new ArgumentException(string.Format(KanikamaDebug.Format, "The size of list must be <= 3."));
+            }
+            var shader = Shader.Find("Kanikama/RatioPack");
+            var mat = new Material(shader);
+            var map = textures[0].Numerator;
+            var rtDescriptor = new RenderTextureDescriptor(map.width, map.height)
+            {
+                dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+                colorFormat = RenderTextureFormat.ARGBHalf,
+                useMipMap = true,
+                depthBufferBits = 0,
+                useDynamicScale = false,
+                msaaSamples = 1,
+                volumeDepth = 1
+            };
+            var rt = RenderTexture.GetTemporary(rtDescriptor);
+
+            var active = RenderTexture.active;
+            var param = new TextureParameter
+            {
+                Width = map.width,
+                Height = map.height,
+                Format = TextureFormat.RGBAHalf, // map.format should be BC6H
+                Linear = isLinear,
+                MipChain = true,
+            };
+
+            (Texture Numerator, Texture Denominator) GetTexture(int index)
+            {
+                return index < count ? textures[index] : (Texture2D.blackTexture, Texture2D.whiteTexture);
+            }
+
+            var (n0, d0) = GetTexture(0);
+            var (n1, d1) = GetTexture(1);
+            var (n2, d2) = GetTexture(2);
+            mat.SetTexture(RatioPackShaderProperties.Numerator0, n0);
+            mat.SetTexture(RatioPackShaderProperties.Numerator1, n1);
+            mat.SetTexture(RatioPackShaderProperties.Numerator2, n2);
+            mat.SetTexture(RatioPackShaderProperties.Denominator0, d0);
+            mat.SetTexture(RatioPackShaderProperties.Denominator1, d1);
+            mat.SetTexture(RatioPackShaderProperties.Denominator2, d2);
 
             var tex = GenerateTexture(param);
             RenderTexture.active = rt;

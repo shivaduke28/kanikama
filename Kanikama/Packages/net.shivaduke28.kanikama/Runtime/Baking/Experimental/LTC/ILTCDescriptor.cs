@@ -4,7 +4,6 @@ namespace Kanikama.Baking.Experimental.LTC
 {
     public interface ILTCDescriptor
     {
-        BakeTargetGroup GetMonitorGroup();
-        IEnumerable<BakeTargetGroup> GetMonitors();
+        IEnumerable<LTCMonitor> GetMonitors();
     }
 }

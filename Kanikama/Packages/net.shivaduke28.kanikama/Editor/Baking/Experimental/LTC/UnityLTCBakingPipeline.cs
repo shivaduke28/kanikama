@@ -16,22 +16,16 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         public sealed class Context
         {
             public SceneAssetData SceneAssetData { get; }
-            public IList<IBakeTargetHandle> GridFiberHandles { get; }
-            public IList<IBakeTargetHandle> MonitorHandles { get; }
             public UnityLightmapper Lightmapper { get; }
             public UnityBakingSetting Setting { get; }
+            public IList<ILTCMonitorHandle> MonitorHandles { get; }
 
-            public Context(SceneAssetData sceneAssetData,
-                IList<IBakeTargetHandle> gridFiberHandles,
-                IList<IBakeTargetHandle> monitorHandles,
-                UnityLightmapper lightmapper,
-                UnityBakingSetting setting)
+            public Context(SceneAssetData sceneAssetData, UnityLightmapper lightmapper, UnityBakingSetting setting, IList<ILTCMonitorHandle> monitorHandles)
             {
                 SceneAssetData = sceneAssetData;
-                GridFiberHandles = gridFiberHandles;
-                MonitorHandles = monitorHandles;
                 Lightmapper = lightmapper;
                 Setting = setting;
+                MonitorHandles = monitorHandles;
             }
         }
 
@@ -53,42 +47,37 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                         monitor.Initialize(copiedSceneGuid);
                     }
 
-                    foreach (var handle in context.GridFiberHandles)
-                    {
-                        handle.Initialize(copiedSceneGuid);
-                    }
-
                     // turn off all light sources but kanikama ones
-                    var sceneGIContext = UnitySceneGIContext.GetGIContext(obj => context.GridFiberHandles.All(h => !h.Includes(obj)));
+                    var sceneGIContext = UnitySceneGIContext.GetGIContext(obj => context.MonitorHandles.All(h => !h.Includes(obj)));
                     sceneGIContext.TurnOff();
 
-
-                    // bake lightmaps for each grid fibers
-                    foreach (var handle in context.GridFiberHandles)
-                    {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking... name: {handle.Name}, id: {handle.Id}.");
-                        handle.TurnOn();
-                        context.Lightmapper.ClearCache();
-                        await context.Lightmapper.BakeAsync(cancellationToken);
-                        handle.TurnOff();
-                        var baked = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData);
-                        UnityBakingPipeline.CopyBakedLightingAssetCollection(baked, out var copied, context.Setting.OutputAssetDirPath, handle.Id);
-                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
-                    }
 
                     // NOTE: BakeTargets are supposed to use Unity Area Light.
                     // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
                     context.Lightmapper.SetBounce(0);
                     foreach (var monitor in context.MonitorHandles)
                     {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor... name: {monitor.Name}, id: {monitor.Id}.");
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {monitor.Name}, id: {monitor.Id}.");
                         monitor.TurnOn();
+                        monitor.SetCastShadow(true);
+                        context.Lightmapper.ClearCache();
+                        await context.Lightmapper.BakeAsync(cancellationToken);
+                        var bakedShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light).ToList();
+                        UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, out var copiedShadow, context.Setting.OutputAssetDirPath,
+                            monitor.Id + "_shadow");
+                        context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_shadow", copiedShadow, monitor.Name + "_shadow");
+
+
+                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/o shadow... name: {monitor.Name}, id: {monitor.Id}.");
+                        monitor.SetCastShadow(false);
                         context.Lightmapper.ClearCache();
                         await context.Lightmapper.BakeAsync(cancellationToken);
                         monitor.TurnOff();
-                        var bakedShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData);
-                        UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, out var copied, context.Setting.OutputAssetDirPath, monitor.Id);
-                        context.Setting.LightmapStorage.AddOrUpdate(monitor.Id, copied, monitor.Name);
+                        var bakedNoShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light)
+                            .ToList();
+                        UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedNoShadows, out var copiedNoShadow, context.Setting.OutputAssetDirPath,
+                            monitor.Id + "_ltc");
+                        context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_ltc", copiedNoShadow, monitor.Name + "_ltc");
                     }
                     Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
@@ -110,20 +99,36 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         }
 
 
-        public static void CreateAssets(IList<IBakeTargetHandle> gridFiberHandles, IList<IBakeTargetHandle> monitorHandles, UnityBakingSetting bakingSetting)
+        public static void CreateAssets(IList<ILTCMonitorHandle> monitors, UnityBakingSetting bakingSetting)
         {
-            Assert.IsTrue(monitorHandles.Count <= 3);
+            Assert.IsTrue(monitors.Count <= 3);
+            Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");
 
-            // create PRT assets
-            UnityBakingPipeline.CreateAssets(gridFiberHandles, bakingSetting);
             var lightmapStorage = bakingSetting.LightmapStorage;
             var hasError = false;
-            var lightmaps = new List<UnityLightmap>();
-            foreach (var handle in monitorHandles)
+            var maps = new Dictionary<int, List<(Texture2D Shadow, Texture2D Light)>>();
+            foreach (var handle in monitors)
             {
-                if (lightmapStorage.TryGet(handle.Id, out var lm))
+                if (lightmapStorage.TryGet(handle.Id + "_ltc", out var lm) && lightmapStorage.TryGet(handle.Id + "_shadow", out var lms))
                 {
-                    lightmaps.AddRange(lm.Where(l => l.Type == UnityLightmapType.Light));
+                    foreach (var light in lm.Where(l => l.Type == UnityLightmapType.Light))
+                    {
+                        var shadow = lms.FirstOrDefault(s => s.Type == UnityLightmapType.Light && s.Index == light.Index);
+                        if (shadow == null)
+                        {
+                            Debug.LogErrorFormat(KanikamaDebug.Format,
+                                $"Shadow map not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                            hasError = true;
+                            continue;
+                        }
+
+                        if (!maps.TryGetValue(light.Index, out var list))
+                        {
+                            list = new List<(Texture2D Shadow, Texture2D Light)>();
+                            maps[light.Index] = list;
+                        }
+                        list.Add((shadow.Texture, light.Texture));
+                    }
                 }
                 else
                 {
@@ -136,18 +141,22 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 Debug.LogErrorFormat(KanikamaDebug.Format, "canceled by some error.");
                 return;
             }
-            var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
-            foreach (var lm in lightmaps)
+
+            var maxIndex = maps.Keys.Max();
+            foreach (var (shadow, light) in maps.Values.SelectMany(l => l))
             {
-                TextureUtility.ResizeTexture(lm.Texture, bakingSetting.TextureResizeType);
+                TextureUtility.ResizeTexture(shadow, bakingSetting.TextureResizeType);
+                TextureUtility.ResizeTexture(light, bakingSetting.TextureResizeType);
             }
+
             for (var i = 0; i <= maxIndex; i++)
             {
-                var light = lightmaps.Where(l => l.Index == i).Select(l => l.Texture).ToArray();
-                var packed = TextureUtility.PackBC6H(light, false);
-                var path = Path.Combine(bakingSetting.OutputAssetDirPath, $"shadow-{i}.asset");
+                var packed = TextureUtility.RatioPackBC6H(maps[i].ToArray(), false);
+                var path = Path.Combine(bakingSetting.OutputAssetDirPath, $"ltc-shadow-{i}.asset");
                 IOUtility.CreateOrReplaceAsset(ref packed, path);
+                Debug.LogFormat(KanikamaDebug.Format, $"create LTC asset: {path})");
             }
+            Debug.LogFormat(KanikamaDebug.Format, "done");
         }
     }
 }
