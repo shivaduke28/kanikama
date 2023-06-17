@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -65,7 +65,7 @@ namespace Kanikama.Application.Impl
             }
         }
 
-        void Awake()
+        void Start()
         {
             if (targetCamera == null)
             {
@@ -95,7 +95,7 @@ namespace Kanikama.Application.Impl
                 var i = r.lightmapIndex;
                 if (i < 0 || i >= lightmapArrays.Length)
                 {
-                    Debug.LogWarning($"invalid lightmap index. {r.name}: {i}");
+                    Debug.LogWarningFormat(KanikamaDebug.Format, $"invalid lightmap index. {r.name}: {i}");
                     continue;
                 }
 
@@ -107,7 +107,7 @@ namespace Kanikama.Application.Impl
                 }
                 r.SetPropertyBlock(block);
             }
-            Shader.SetGlobalInt(Count, colorsInternal.Length);
+            Shader.SetGlobalInt(Count, index);
         }
 
         void UpdateColors()
