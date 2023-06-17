@@ -3,10 +3,9 @@ using UnityEngine;
 
 namespace Kanikama.Baking.Experimental.LTC.Impl
 {
-    public class KanikamaLTCDescriptor : MonoBehaviour, ILTCDescriptor
+    public class KanikamaLTCDescriptor : MonoBehaviour
     {
         [SerializeField] List<KanikamaLTCMonitor> ltcMonitors;
-
-        IEnumerable<LTCMonitor> ILTCDescriptor.GetMonitors() => ltcMonitors.ToArray();
+        public KanikamaLTCMonitor[] GetMonitors() => ltcMonitors.ToArray();
     }
 }

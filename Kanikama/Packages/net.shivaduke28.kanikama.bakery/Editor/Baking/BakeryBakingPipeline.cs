@@ -10,85 +10,76 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Object = UnityEngine.Object;
 
 namespace Kanikama.Bakery.Editor.Baking
 {
     public static class BakeryBakingPipeline
     {
-        public sealed class Context
+        public sealed class Parameter
         {
             public SceneAssetData SceneAssetData { get; }
-            public List<IBakeTargetHandle> BakeTargetHandles { get; }
-            public BakeryLightmapper Lightmapper { get; }
             public BakeryBakingSetting Setting { get; }
+            public IList<IBakingCommand> Commands { get; }
 
-            public Context(SceneAssetData sceneAssetData,
-                List<IBakeTargetHandle> bakeTargetHandles,
-                BakeryLightmapper lightmapper,
-                BakeryBakingSetting setting)
+            public Parameter(SceneAssetData sceneAssetData,
+                BakeryBakingSetting setting, IList<IBakingCommand> commands)
             {
                 SceneAssetData = sceneAssetData;
-                BakeTargetHandles = bakeTargetHandles;
-                Lightmapper = lightmapper;
                 Setting = setting;
+                Commands = commands;
             }
         }
 
-        public static async Task BakeAsync(Context context, CancellationToken cancellationToken)
+        public sealed class Context
+        {
+            public SceneAssetData SceneAssetData { get; } // copied
+            public BakeryLightmapper Lightmapper { get; }
+            public BakeryBakingSetting Setting { get; }
+            public BakerySceneGIContext SceneGIContext { get; }
+
+            public Context(SceneAssetData sceneAssetData, BakeryLightmapper lightmapper,
+                BakeryBakingSetting setting, BakerySceneGIContext sceneGIContext)
+            {
+                SceneAssetData = sceneAssetData;
+                Lightmapper = lightmapper;
+                Setting = setting;
+                SceneGIContext = sceneGIContext;
+            }
+        }
+
+        public static async Task BakeAsync(Parameter parameter, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline start");
-            using (var copiedScene = CopiedSceneAsset.Create(context.SceneAssetData, true))
+            using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, true))
             {
                 try
                 {
+                    IOUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
-
-                    var bakeTargetHandles = context.BakeTargetHandles;
-                    var guid = copiedScene.SceneAssetData.Guid;
+                    var giContext = BakerySceneGIContext.GetContext();
+                    giContext.TurnOff();
+                    var context = new Context(copiedScene.SceneAssetData, new BakeryLightmapper(), parameter.Setting, giContext);
 
                     // initialize all light source handles **after** the copied scene is opened
-                    foreach (var handle in bakeTargetHandles)
+                    var guid = copiedScene.SceneAssetData.Guid;
+                    foreach (var command in parameter.Commands)
                     {
-                        handle.Initialize(guid);
-                        handle.TurnOff();
+                        command.Initialize(guid);
                     }
 
-                    // save scene
+                    // save scene（maybe delete this...)
                     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
-                    // turn off all light sources but kanikama ones
-                    bool Filter(Object obj) => bakeTargetHandles.All(l => !l.Includes(obj));
-
-                    var sceneGIContext = BakerySceneGIContext.GetContext(Filter);
-                    sceneGIContext.TurnOff();
-
-                    var dstDir = context.Setting.OutputAssetDirPath;
-                    IOUtility.CreateFolderIfNecessary(dstDir);
-
-                    var lightmapper = context.Lightmapper;
-                    var outputAssetDirPath = copiedScene.SceneAssetData.LightingAssetDirectoryPath;
-                    // NOTE: need to set output path explicitly to Bakery.
-                    lightmapper.SetOutputAssetDirPath(outputAssetDirPath);
-
-                    // TODO: Lightmapperのパラメータ指定があるはず
-                    foreach (var handle in bakeTargetHandles)
+                    foreach (var command in parameter.Commands)
                     {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking... name:{handle.Name}, id: {handle.Id}.");
-                        handle.TurnOn();
-                        await lightmapper.BakeAsync(cancellationToken);
-                        handle.TurnOff();
-
-                        var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedScene.SceneAssetData.Asset.name);
-                        Copy(baked, out var copied, dstDir, handle.Id);
-                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
+                        await command.RunAsync(context, cancellationToken);
                     }
 
                     // NOTE: A SettingAsset object may be destroyed while awaiting baking for some reason...
                     // So we use Setting class and update asset after baking done.
-                    var settingAssets = BakeryBakingSettingAsset.FindOrCreate(context.SceneAssetData.Asset);
-                    settingAssets.Setting = context.Setting;
+                    var settingAssets = BakeryBakingSettingAsset.FindOrCreate(parameter.SceneAssetData.Asset);
+                    settingAssets.Setting = parameter.Setting;
                     EditorUtility.SetDirty(settingAssets);
                     AssetDatabase.SaveAssets();
                     Debug.LogFormat(KanikamaDebug.Format, "done");
@@ -105,40 +96,38 @@ namespace Kanikama.Bakery.Editor.Baking
                 }
                 finally
                 {
-                    EditorSceneManager.OpenScene(context.SceneAssetData.Path);
+                    EditorSceneManager.OpenScene(parameter.SceneAssetData.Path);
                 }
             }
         }
 
-        static void Copy(List<BakeryLightmap> src, out List<BakeryLightmap> dst, string dstDir, string id)
+        public static List<Lightmap> CopyLightmaps(List<Lightmap> src, string dstDir, string id)
         {
-            dst = new List<BakeryLightmap>(src.Count);
+            var dst = new List<Lightmap>(src.Count);
             foreach (var lightmap in src)
             {
                 var dstPath = Path.Combine(dstDir, CopiedLightmapName(lightmap, id));
                 AssetDatabase.CopyAsset(lightmap.Path, dstPath);
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
-                var copied = new BakeryLightmap(lightmap.Type, texture, dstPath, lightmap.Index);
+                var copied = new Lightmap(lightmap.Type, texture, dstPath, lightmap.Index);
                 dst.Add(copied);
-                Debug.LogFormat(KanikamaDebug.Format, $"copying lightmap (index:{lightmap.Index}, type:{lightmap.Type}) {lightmap.Path} -> {dstPath}");
             }
+            return dst;
         }
 
-        public static async Task BakeStaticAsync(Context context, CancellationToken cancellationToken)
+        public static async Task BakeStaticAsync(Parameter parameter, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline non Kanikama start");
-            var handles = context.BakeTargetHandles;
-            var guid = AssetDatabase.AssetPathToGUID(context.SceneAssetData.Path);
+            var guid = AssetDatabase.AssetPathToGUID(parameter.SceneAssetData.Path);
 
-            foreach (var handle in handles)
+            foreach (var command in parameter.Commands)
             {
-                handle.Initialize(guid);
-                handle.TurnOff();
+                command.Initialize(guid);
             }
 
             try
             {
-                var lightmapper = context.Lightmapper;
+                var lightmapper = new BakeryLightmapper();
                 await lightmapper.BakeAsync(cancellationToken);
                 Debug.LogFormat(KanikamaDebug.Format, "done");
             }
@@ -154,19 +143,19 @@ namespace Kanikama.Bakery.Editor.Baking
             }
             finally
             {
-                foreach (var handle in handles)
+                foreach (var command in parameter.Commands)
                 {
-                    handle.Clear();
+                    command.Clear();
                 }
             }
         }
 
-        static string CopiedLightmapName(BakeryLightmap bakedLightmap, string id)
+        static string CopiedLightmapName(Lightmap bakedLightmap, string id)
         {
             var path = bakedLightmap.Path;
             var fileName = Path.GetFileName(path);
             var ext = Path.GetExtension(fileName);
-            return $"{bakedLightmap.Type.ToString()}-{bakedLightmap.Index}-{id}{ext}";
+            return $"{bakedLightmap.Type}-{bakedLightmap.Index}-{id}{ext}";
         }
 
         public static void CreateAssets(IEnumerable<IBakeTargetHandle> bakeTargetHandles, BakeryBakingSetting setting)
@@ -174,11 +163,11 @@ namespace Kanikama.Bakery.Editor.Baking
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
-            var lightmapStorage = setting.LightmapStorage;
+            var lightmapStorage = setting.AssetStorage.LightmapStorage;
             IOUtility.CreateFolderIfNecessary(dstDirPath);
 
             // check lightmaps are stored in storage
-            var allLightmaps = new List<BakeryLightmap>();
+            var allLightmaps = new List<Lightmap>();
             var hasError = false;
             foreach (var handle in bakeTargetHandles)
             {
@@ -188,7 +177,7 @@ namespace Kanikama.Bakery.Editor.Baking
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(BakeryLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                     hasError = true;
                 }
             }
@@ -198,10 +187,11 @@ namespace Kanikama.Bakery.Editor.Baking
                 return;
             }
 
-            setting.LightmapArrayStorage.Clear();
-            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Light || lm.Type == BakeryLightmapType.L0).ToArray();
-            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional || lm.Type == BakeryLightmapType.L1).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Light || lm.Type == BakeryLightmap.L0).ToArray();
+            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Directional || lm.Type == BakeryLightmap.L1).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
+
+            var output = new List<LightmapArray>();
             for (var index = 0; index <= maxIndex; index++)
             {
                 var light = lightmaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
@@ -216,11 +206,11 @@ namespace Kanikama.Bakery.Editor.Baking
                     // FIXME: validate all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(light[0]);
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: useMipmap);
-                    var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Light.ToFileName()}-{index}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Light}-{index}.asset");
                     if (lightArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
-                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Light, lightArr, lightPath, index));
+                        output.Add(new LightmapArray(BakeryLightmap.Light, lightArr, lightPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
@@ -233,15 +223,17 @@ namespace Kanikama.Bakery.Editor.Baking
                     // FIXME: check all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(dir[0]);
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: useMipmap);
-                    var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Directional.ToFileName()}-{index}.asset");
+                    var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Directional}-{index}.asset");
                     if (dirArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
-                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Directional, dirArr, dirPath, index));
+                        output.Add(new LightmapArray(BakeryLightmap.Directional, dirArr, dirPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }
             }
+            setting.AssetStorage.LightmapArrayStorage.AddOrUpdate("KanikamaBakery", output, "KanikamaBakery");
+
             Debug.LogFormat(KanikamaDebug.Format, "done");
         }
     }

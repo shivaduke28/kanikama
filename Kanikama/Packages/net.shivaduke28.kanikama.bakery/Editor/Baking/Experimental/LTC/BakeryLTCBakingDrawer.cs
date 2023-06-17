@@ -1,29 +1,28 @@
-﻿using System.Linq;
-using System.Threading;
-using Kanikama.Baking.Experimental.LTC;
-using Kanikama.Baking.Experimental.LTC.Impl;
+﻿using System.Threading;
+using Baking.Experimental.LTC.Impl;
+using Kanikama.Bakery.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.Editor.Baking.Experimental.LTC
 {
-    public class UnityLTCBakingDrawer : KanikamaWindow.IGUIDrawer
+    public class BakeryLTCBakingDrawer : KanikamaWindow.IGUIDrawer
     {
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityLTCBakingDrawer(), 10);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new BakeryLTCBakingDrawer(), 20);
         }
 
         SceneAsset sceneAsset;
-        KanikamaLTCDescriptor descriptor;
-        UnityBakingSettingAsset settingAsset;
+        KanikamaBakeryLTCDescriptor descriptor;
+        BakeryBakingSettingAsset settingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
 
 
-        UnityLTCBakingDrawer()
+        BakeryLTCBakingDrawer()
         {
             Load();
         }
@@ -39,8 +38,8 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             }
 
             sceneAsset = sceneAssetData.Asset;
-            descriptor = GameObject.FindObjectOfType<KanikamaLTCDescriptor>();
-            if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
+            descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeryLTCDescriptor>();
+            if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 settingAsset = asset;
             }
@@ -52,7 +51,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            EditorGUILayout.LabelField("Unity LTC", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Bakery LTC", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
                 if (isRunning)
@@ -81,16 +80,16 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (descriptor == null || (descriptor is Object sceneDescriptorObject && sceneDescriptorObject == null))
             {
-                descriptor = GameObject.FindObjectOfType<KanikamaLTCDescriptor>();
+                descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeryLTCDescriptor>();
             }
 
             if (descriptor is Object obj)
             {
-                descriptor = (KanikamaLTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(KanikamaLTCDescriptor), true);
+                descriptor = (KanikamaBakeryLTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(KanikamaBakeryLTCDescriptor), true);
             }
 
             settingAsset =
-                (UnityBakingSettingAsset) EditorGUILayout.ObjectField("LTC Settings", settingAsset, typeof(UnityBakingSettingAsset), false);
+                (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("LTC Settings", settingAsset, typeof(BakeryBakingSettingAsset), false);
 
             if (sceneAsset == null)
             {
@@ -108,7 +107,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             {
                 if (KanikamaGUI.Button("Create Settings Asset"))
                 {
-                    settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAsset);
+                    settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAsset);
                 }
                 EditorGUILayout.HelpBox("Create Kanikama LTC Settings Asset.", MessageType.Warning);
                 return;
@@ -119,16 +118,16 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 cancellationTokenSource?.Cancel();
                 cancellationTokenSource?.Dispose();
                 cancellationTokenSource = new CancellationTokenSource();
-                var __ = UnityLTCBakingPipeline.BakeAsync(new UnityLTCBakingPipeline.Parameter(
+                var __ = BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
                     new SceneAssetData(sceneAsset),
                     settingAsset.Setting,
-                    descriptor.GetMonitors().ToList()
+                    descriptor.GetMonitors()
                 ), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                UnityLTCBakingPipeline.CreateAssets(descriptor.GetMonitors().ToList(), settingAsset.Setting);
+                BakeryLTCBakingPipeline.CreateAssets(descriptor.GetMonitors(), settingAsset.Setting);
             }
         }
 

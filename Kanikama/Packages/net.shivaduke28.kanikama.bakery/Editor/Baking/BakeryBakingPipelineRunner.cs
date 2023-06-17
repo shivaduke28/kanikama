@@ -14,12 +14,12 @@ namespace Kanikama.Bakery.Editor.Baking
             var handles = CreateHandles(bakingDescriptor);
             var sceneAssetData = new SceneAssetData(bakingSetting.SceneAsset);
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
+            var commands = handles.Select(x => new BakingCommand(x)).Cast<IBakingCommand>().ToList();
 
-            var ctx = new BakeryBakingPipeline.Context(
+            var ctx = new BakeryBakingPipeline.Parameter(
                 sceneAssetData,
-                handles,
-                new BakeryLightmapper(),
-                settingAsset.Setting
+                settingAsset.Setting,
+                commands
             );
 
             await BakeryBakingPipeline.BakeAsync(ctx, cancellationToken);
@@ -30,8 +30,9 @@ namespace Kanikama.Bakery.Editor.Baking
             CancellationToken cancellationToken)
         {
             var handles = CreateHandles(bakingDescriptor);
+            var commands = handles.Select(x => new BakingCommand(x)).Cast<IBakingCommand>().ToList();
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var context = new BakeryBakingPipeline.Context(sceneAssetData, handles, new BakeryLightmapper(), settingAsset.Setting);
+            var context = new BakeryBakingPipeline.Parameter(sceneAssetData, settingAsset.Setting, commands);
 
             await BakeryBakingPipeline.BakeStaticAsync(context, cancellationToken);
         }

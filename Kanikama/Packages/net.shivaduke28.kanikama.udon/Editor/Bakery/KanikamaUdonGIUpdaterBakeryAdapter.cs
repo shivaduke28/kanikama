@@ -71,11 +71,11 @@ namespace Kanikama.Udon.Editor.Bakery
             var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
             var sliceCount = serializedObject.FindProperty("sliceCount");
 
-            var arrayStorage = settingAsset.Setting.LightmapArrayStorage;
-            var lightmapArrayList = arrayStorage.LightmapArrays;
+            var arrayStorage = settingAsset.Setting.AssetStorage.LightmapArrayStorage;
+            var lightmapArrayList = arrayStorage.GetAll();
 
-            var lights = lightmapArrayList.Where(x => x.Type == BakeryLightmapType.Light).OrderBy(x => x.Index).ToArray();
-            var directionals = lightmapArrayList.Where(x => x.Type == BakeryLightmapType.Directional).OrderBy(x => x.Index).ToArray();
+            var lights = lightmapArrayList.Where(x => x.Type == BakeryLightmap.Light).OrderBy(x => x.Index).ToArray();
+            var directionals = lightmapArrayList.Where(x => x.Type == BakeryLightmap.Directional).OrderBy(x => x.Index).ToArray();
             lightmapArrays.arraySize = lights.Length;
             for (var i = 0; i < lights.Length; i++)
             {

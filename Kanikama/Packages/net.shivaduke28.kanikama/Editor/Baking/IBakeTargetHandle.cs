@@ -14,7 +14,6 @@ namespace Kanikama.Editor.Baking
         void Initialize(string sceneGuid);
         void TurnOff();
         void TurnOn();
-        bool Includes(Object obj);
         void Clear();
     }
 
@@ -45,7 +44,6 @@ namespace Kanikama.Editor.Baking
 
         void IBakeTargetHandle.TurnOff() => handle.Value.TurnOff();
         void IBakeTargetHandle.TurnOn() => handle.Value.TurnOn();
-        bool IBakeTargetHandle.Includes(Object obj) => handle.Value.Includes(obj);
         void IBakeTargetHandle.Clear() => handle.Value.Clear();
     }
 
@@ -80,7 +78,6 @@ namespace Kanikama.Editor.Baking
 
         void IBakeTargetHandle.TurnOff() => GetBakeTarget().TurnOff();
         void IBakeTargetHandle.TurnOn() => GetBakeTarget().TurnOn();
-        bool IBakeTargetHandle.Includes(Object obj) => GetBakeTarget().Includes(obj);
         void IBakeTargetHandle.Clear() => GetBakeTarget().Clear();
     }
 
@@ -120,7 +117,6 @@ namespace Kanikama.Editor.Baking
 
         void IBakeTargetHandle.TurnOff() => DoForEach(x => x.TurnOff());
         void IBakeTargetHandle.TurnOn() => DoForEach(x => x.TurnOn());
-        bool IBakeTargetHandle.Includes(Object obj) => handle.Value.GetAll().Any(x => x.Includes(obj));
         void IBakeTargetHandle.Clear() => DoForEach(x => x.Clear());
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.Bakery.Editor.Baking
@@ -19,6 +20,30 @@ namespace Kanikama.Bakery.Editor.Baking
 
         List<ObjectHandle<LightProbeGroup>> lightProbeGroups;
         List<ObjectHandle<ReflectionProbe>> reflectionProbes;
+
+        List<RendererWithShadowCastingMode> rendererWithShadowCastingModes;
+
+        class RendererWithShadowCastingMode
+        {
+            readonly ObjectHandle<Renderer> handle;
+            readonly ShadowCastingMode shadowCastingMode;
+
+            public RendererWithShadowCastingMode(Renderer renderer)
+            {
+                handle = new ObjectHandle<Renderer>(renderer);
+                shadowCastingMode = handle.Value.shadowCastingMode;
+            }
+
+            public void SetShadowCastingMode(ShadowCastingMode mode)
+            {
+                handle.Value.shadowCastingMode = mode;
+            }
+
+            public void ClearShadowCastingMode()
+            {
+                handle.Value.shadowCastingMode = shadowCastingMode;
+            }
+        }
 
         public static BakerySceneGIContext GetContext(Func<Object, bool> filter = null)
         {
@@ -53,6 +78,11 @@ namespace Kanikama.Bakery.Editor.Baking
                     .Where(r => r.IsEmissiveAndContributeGI())
                     .Select(r => r.gameObject.GetOrAddComponent<RendererMaterialHolder>())
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
+                    .ToList(),
+                rendererWithShadowCastingModes = Object.FindObjectsOfType<Renderer>()
+                    .Where(x => filter?.Invoke(x) ?? true)
+                    .Where(r => r.gameObject.IsContributeGI())
+                    .Select(r => new RendererWithShadowCastingMode(r))
                     .ToList(),
             };
             return context;
@@ -91,6 +121,22 @@ namespace Kanikama.Bakery.Editor.Baking
                 {
                     material.RemoveBakedEmissiveFlag();
                 }
+            }
+        }
+
+        public void SetCastShadowOff()
+        {
+            foreach (var renderer in rendererWithShadowCastingModes)
+            {
+                renderer.SetShadowCastingMode(ShadowCastingMode.Off);
+            }
+        }
+
+        public void ClearCastShadow()
+        {
+            foreach (var renderer in rendererWithShadowCastingModes)
+            {
+                renderer.ClearShadowCastingMode();
             }
         }
 
