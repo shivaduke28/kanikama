@@ -36,7 +36,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             Assert.IsTrue(parameter.Monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, "Unity LTC Baking Pipeline Start");
 
-            var commands = parameter.Monitors.Select(x => new LTCBakingCommand(x)).Cast<IUnityBakingCommand>().ToList();
+            var commands = parameter.Monitors.Select(x => new UnityLTCBakingCommand(x)).Cast<IUnityBakingCommand>().ToList();
             var param = new UnityBakingPipeline.Parameter(parameter.SceneAssetData, parameter.Setting, commands);
             try
             {
@@ -68,7 +68,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             var hasError = false;
             var maps = new Dictionary<int, List<(Texture2D Shadow, Texture2D Light)>>();
-            var handles = monitors.Select(x => new LTCBakingCommand(x));
+            var handles = monitors.Select(x => new UnityLTCBakingCommand(x));
             foreach (var handle in handles)
             {
                 if (lightmapStorage.TryGet(handle.IdLTC, out var lm) && lightmapStorage.TryGet(handle.IdShadow, out var lms))

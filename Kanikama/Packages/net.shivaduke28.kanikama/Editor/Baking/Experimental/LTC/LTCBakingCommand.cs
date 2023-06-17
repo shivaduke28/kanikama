@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Kanikama.Editor.Baking.Experimental.LTC
 {
-    public sealed class LTCBakingCommand : IUnityBakingCommand
+    public sealed class UnityLTCBakingCommand : IUnityBakingCommand
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
@@ -18,7 +18,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public LTCBakingCommand(LTCMonitor value)
+        public UnityLTCBakingCommand(LTCMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);

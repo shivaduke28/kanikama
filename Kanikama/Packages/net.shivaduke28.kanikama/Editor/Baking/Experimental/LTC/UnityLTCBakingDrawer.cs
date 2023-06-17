@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting;
+﻿using System.Linq;
 using System.Threading;
-using Kanikama.Baking;
 using Kanikama.Baking.Experimental.LTC;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
