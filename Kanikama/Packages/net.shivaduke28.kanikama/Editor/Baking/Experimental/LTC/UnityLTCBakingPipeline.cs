@@ -38,47 +38,47 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 try
                 {
                     // open the copied scene
-                    EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
-
-                    // initialize all light source handles **after** the copied scene is opened
-                    var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
-                    foreach (var monitor in context.MonitorHandles)
-                    {
-                        monitor.Initialize(copiedSceneGuid);
-                    }
-
-                    // turn off all light sources but kanikama ones
-                    var sceneGIContext = UnitySceneGIContext.GetGIContext(obj => context.MonitorHandles.All(h => !h.Includes(obj)));
-                    sceneGIContext.TurnOff();
-
-
-                    // NOTE: BakeTargets are supposed to use Unity Area Light.
-                    // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
-                    context.Lightmapper.SetBounce(0);
-                    foreach (var monitor in context.MonitorHandles)
-                    {
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {monitor.Name}, id: {monitor.Id}.");
-                        monitor.TurnOn();
-                        monitor.SetCastShadow(true);
-                        context.Lightmapper.ClearCache();
-                        await context.Lightmapper.BakeAsync(cancellationToken);
-                        var bakedShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light).ToList();
-                        UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, out var copiedShadow, context.Setting.OutputAssetDirPath,
-                            monitor.Id + "_shadow");
-                        context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_shadow", copiedShadow, monitor.Name + "_shadow");
-
-
-                        Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/o shadow... name: {monitor.Name}, id: {monitor.Id}.");
-                        monitor.SetCastShadow(false);
-                        context.Lightmapper.ClearCache();
-                        await context.Lightmapper.BakeAsync(cancellationToken);
-                        monitor.TurnOff();
-                        var bakedNoShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light)
-                            .ToList();
-                        UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedNoShadows, out var copiedNoShadow, context.Setting.OutputAssetDirPath,
-                            monitor.Id + "_ltc");
-                        context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_ltc", copiedNoShadow, monitor.Name + "_ltc");
-                    }
+                    // EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
+                    //
+                    // // initialize all light source handles **after** the copied scene is opened
+                    // var copiedSceneGuid = copiedScene.SceneAssetData.Guid;
+                    // foreach (var monitor in context.MonitorHandles)
+                    // {
+                    //     monitor.Initialize(copiedSceneGuid);
+                    // }
+                    //
+                    // // turn off all light sources but kanikama ones
+                    // var sceneGIContext = UnitySceneGIContext.GetGIContext(obj => context.MonitorHandles.All(h => !h.Includes(obj)));
+                    // sceneGIContext.TurnOff();
+                    //
+                    //
+                    // // NOTE: BakeTargets are supposed to use Unity Area Light.
+                    // // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
+                    // context.Lightmapper.SetBounce(0);
+                    // foreach (var monitor in context.MonitorHandles)
+                    // {
+                    //     Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {monitor.Name}, id: {monitor.Id}.");
+                    //     monitor.TurnOn();
+                    //     monitor.SetCastShadow(true);
+                    //     context.Lightmapper.ClearCache();
+                    //     await context.Lightmapper.BakeAsync(cancellationToken);
+                    //     var bakedShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light).ToList();
+                    //     UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, out var copiedShadow, context.Setting.OutputAssetDirPath,
+                    //         monitor.Id + "_shadow");
+                    //     context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_shadow", copiedShadow, monitor.Name + "_shadow");
+                    //
+                    //
+                    //     Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/o shadow... name: {monitor.Name}, id: {monitor.Id}.");
+                    //     monitor.SetCastShadow(false);
+                    //     context.Lightmapper.ClearCache();
+                    //     await context.Lightmapper.BakeAsync(cancellationToken);
+                    //     monitor.TurnOff();
+                    //     var bakedNoShadows = UnityLightmapUtility.GetLightmaps(copiedScene.SceneAssetData).Where(l => l.Type == UnityLightmapType.Light)
+                    //         .ToList();
+                    //     UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedNoShadows, out var copiedNoShadow, context.Setting.OutputAssetDirPath,
+                    //         monitor.Id + "_ltc");
+                    //     context.Setting.LightmapStorage.AddOrUpdate(monitor.Id + "_ltc", copiedNoShadow, monitor.Name + "_ltc");
+                    // }
                     Debug.LogFormat(KanikamaDebug.Format, "done");
                 }
                 catch (OperationCanceledException)

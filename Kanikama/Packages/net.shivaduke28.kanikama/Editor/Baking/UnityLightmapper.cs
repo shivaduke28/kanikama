@@ -33,9 +33,10 @@ namespace Kanikama.Editor.Baking
             }
         }
 
-        public void SetBounce(int bounce)
+        public int Bounce
         {
-            LightmapEditorSettings.bounces = bounce;
+            get => LightmapEditorSettings.bounces;
+            set => LightmapEditorSettings.bounces = value;
         }
     }
 }

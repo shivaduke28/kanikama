@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking;
-using Kanikama.Editor.Baking;
 
 namespace Kanikama.Editor.Baking
 {
@@ -12,8 +11,9 @@ namespace Kanikama.Editor.Baking
         public static async Task BakeAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             var handles = CreateHandles(bakingDescriptor);
+            var commands = handles.Select(h => new UnityBakingCommand(h)).Cast<IUnityBakingCommand>().ToList();
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
+            var context = new UnityBakingPipeline.Parameter(sceneAssetData, new UnityLightmapper(), settingAsset.Setting, commands);
             await UnityBakingPipeline.BakeAsync(context, cancellationToken);
         }
 
@@ -22,8 +22,9 @@ namespace Kanikama.Editor.Baking
             CancellationToken cancellationToken)
         {
             var handles = CreateHandles(bakingDescriptor);
+            var commands = handles.Select(h => new UnityBakingCommand(h)).Cast<IUnityBakingCommand>().ToList();
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var context = new UnityBakingPipeline.BakingContext(sceneAssetData, handles, new UnityLightmapper(), settingAsset.Setting);
+            var context = new UnityBakingPipeline.Parameter(sceneAssetData, new UnityLightmapper(), settingAsset.Setting, commands);
 
             await UnityBakingPipeline.BakeStaticAsync(context, cancellationToken);
         }
