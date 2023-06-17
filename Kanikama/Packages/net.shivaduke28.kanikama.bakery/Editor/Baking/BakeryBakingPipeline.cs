@@ -58,10 +58,7 @@ namespace Kanikama.Bakery.Editor.Baking
                     // save scene
                     EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
 
-                    // turn off all light sources but kanikama ones
-                    bool Filter(Object obj) => bakeTargetHandles.All(l => !l.Includes(obj));
-
-                    var sceneGIContext = BakerySceneGIContext.GetContext(Filter);
+                    var sceneGIContext = BakerySceneGIContext.GetContext();
                     sceneGIContext.TurnOff();
 
                     var dstDir = context.Setting.OutputAssetDirPath;
