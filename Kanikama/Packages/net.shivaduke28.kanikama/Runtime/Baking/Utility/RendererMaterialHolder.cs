@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Kanikama.Utility
@@ -11,15 +12,9 @@ namespace Kanikama.Utility
         [SerializeField] Material[] materials;
         [SerializeField] bool initialized;
 
-        void OnValidate()
-        {
-            Initialize();
-        }
-
-        void Awake()
-        {
-            Initialize();
-        }
+        void OnValidate() => Initialize();
+        void Awake() => Initialize();
+        void OnDestroy() => Clear();
 
         void Initialize()
         {
@@ -31,15 +26,8 @@ namespace Kanikama.Utility
             initialized = true;
         }
 
-        public Material[] GetMaterials()
-        {
-            return materials;
-        }
-
-        public Material GetMaterial(int index)
-        {
-            return materials[index];
-        }
+        public Material[] GetMaterials() => materials;
+        public Material GetMaterial(int index) => materials[index];
 
         public void Clear()
         {
