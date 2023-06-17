@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEngine;
 
@@ -17,9 +18,9 @@ namespace Kanikama.Bakery.Editor.Baking
         static readonly Regex L1 = new Regex(@"L1$");
 
         // "{scene name}_[LM0|LMA[0-9]+]_[final|dir|L0|L1]"
-        public static List<BakeryLightmap> GetLightmaps(string outputAssetDirPath, string sceneName)
+        public static List<Lightmap> GetLightmaps(string outputAssetDirPath, string sceneName)
         {
-            var result = new List<BakeryLightmap>();
+            var result = new List<Lightmap>();
             var regex = new Regex($"^{sceneName}_");
             foreach (var guid in AssetDatabase.FindAssets("t:Texture", new[] { outputAssetDirPath }))
             {
@@ -32,13 +33,13 @@ namespace Kanikama.Bakery.Editor.Baking
                 if (TryParseLightmapPath(sub, out var lightmapType, out var index))
                 {
                     var asset = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                    result.Add(new BakeryLightmap(lightmapType, asset, path, index));
+                    result.Add(new Lightmap(lightmapType, asset, path, index));
                 }
             }
             return result;
         }
 
-        public static bool TryParseLightmapPath(string name, out BakeryLightmapType lightmapType, out int index)
+        public static bool TryParseLightmapPath(string name, out string lightmapType, out int index)
         {
             lightmapType = default;
             index = default;
@@ -69,19 +70,19 @@ namespace Kanikama.Bakery.Editor.Baking
 
             if (Color.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.Light;
+                lightmapType = BakeryLightmap.Light;
             }
             else if (Dir.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.Directional;
+                lightmapType = BakeryLightmap.Directional;
             }
             else if (L0.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.L0;
+                lightmapType = BakeryLightmap.L0;
             }
             else if (L1.IsMatch(name))
             {
-                lightmapType = BakeryLightmapType.L1;
+                lightmapType = BakeryLightmap.L1;
             }
             else
             {

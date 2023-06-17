@@ -82,7 +82,7 @@ namespace Kanikama.Bakery.Editor.Baking
 
                         var baked = KanikamaBakeryUtility.GetLightmaps(outputAssetDirPath, copiedScene.SceneAssetData.Asset.name);
                         Copy(baked, out var copied, dstDir, handle.Id);
-                        context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
+                        context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
                     }
 
                     // NOTE: A SettingAsset object may be destroyed while awaiting baking for some reason...
@@ -110,15 +110,15 @@ namespace Kanikama.Bakery.Editor.Baking
             }
         }
 
-        static void Copy(List<BakeryLightmap> src, out List<BakeryLightmap> dst, string dstDir, string id)
+        static void Copy(List<Lightmap> src, out List<Lightmap> dst, string dstDir, string id)
         {
-            dst = new List<BakeryLightmap>(src.Count);
+            dst = new List<Lightmap>(src.Count);
             foreach (var lightmap in src)
             {
                 var dstPath = Path.Combine(dstDir, CopiedLightmapName(lightmap, id));
                 AssetDatabase.CopyAsset(lightmap.Path, dstPath);
                 var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(dstPath);
-                var copied = new BakeryLightmap(lightmap.Type, texture, dstPath, lightmap.Index);
+                var copied = new Lightmap(lightmap.Type, texture, dstPath, lightmap.Index);
                 dst.Add(copied);
                 Debug.LogFormat(KanikamaDebug.Format, $"copying lightmap (index:{lightmap.Index}, type:{lightmap.Type}) {lightmap.Path} -> {dstPath}");
             }
@@ -161,12 +161,12 @@ namespace Kanikama.Bakery.Editor.Baking
             }
         }
 
-        static string CopiedLightmapName(BakeryLightmap bakedLightmap, string id)
+        static string CopiedLightmapName(Lightmap bakedLightmap, string id)
         {
             var path = bakedLightmap.Path;
             var fileName = Path.GetFileName(path);
             var ext = Path.GetExtension(fileName);
-            return $"{bakedLightmap.Type.ToString()}-{bakedLightmap.Index}-{id}{ext}";
+            return $"{bakedLightmap.Type}-{bakedLightmap.Index}-{id}{ext}";
         }
 
         public static void CreateAssets(IEnumerable<IBakeTargetHandle> bakeTargetHandles, BakeryBakingSetting setting)
@@ -174,11 +174,11 @@ namespace Kanikama.Bakery.Editor.Baking
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {setting.TextureResizeType})");
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
-            var lightmapStorage = setting.LightmapStorage;
+            var lightmapStorage = setting.AssetStorage.LightmapStorage;
             IOUtility.CreateFolderIfNecessary(dstDirPath);
 
             // check lightmaps are stored in storage
-            var allLightmaps = new List<BakeryLightmap>();
+            var allLightmaps = new List<Lightmap>();
             var hasError = false;
             foreach (var handle in bakeTargetHandles)
             {
@@ -188,7 +188,7 @@ namespace Kanikama.Bakery.Editor.Baking
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(BakeryLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                     hasError = true;
                 }
             }
@@ -198,10 +198,11 @@ namespace Kanikama.Bakery.Editor.Baking
                 return;
             }
 
-            setting.LightmapArrayStorage.Clear();
-            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Light || lm.Type == BakeryLightmapType.L0).ToArray();
-            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmapType.Directional || lm.Type == BakeryLightmapType.L1).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Light || lm.Type == BakeryLightmap.L0).ToArray();
+            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Directional || lm.Type == BakeryLightmap.L1).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
+
+            var output = new List<LightmapArray>();
             for (var index = 0; index <= maxIndex; index++)
             {
                 var light = lightmaps.Where(l => l.Index == index).Select(l => l.Texture).ToList();
@@ -216,11 +217,11 @@ namespace Kanikama.Bakery.Editor.Baking
                     // FIXME: validate all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(light[0]);
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: useMipmap);
-                    var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Light.ToFileName()}-{index}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Light}-{index}.asset");
                     if (lightArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
-                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Light, lightArr, lightPath, index));
+                        output.Add(new LightmapArray(BakeryLightmap.Light, lightArr, lightPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
                 }
@@ -233,15 +234,17 @@ namespace Kanikama.Bakery.Editor.Baking
                     // FIXME: check all or no lightmaps have mipmap.
                     var useMipmap = TextureUtility.GetTextureHasMipmap(dir[0]);
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: useMipmap);
-                    var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmapType.Directional.ToFileName()}-{index}.asset");
+                    var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Directional}-{index}.asset");
                     if (dirArr != null)
                     {
                         IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
-                        setting.LightmapArrayStorage.AddOrUpdate(new BakeryLightmapArray(BakeryLightmapType.Directional, dirArr, dirPath, index));
+                        output.Add(new LightmapArray(BakeryLightmap.Directional, dirArr, dirPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }
                 }
             }
+            setting.AssetStorage.LightmapArrayStorage.AddOrUpdate("KanikamaBakery", output, "KanikamaBakery");
+
             Debug.LogFormat(KanikamaDebug.Format, "done");
         }
     }
