@@ -13,9 +13,10 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         readonly SceneObjectId sceneObjectId;
         readonly string name;
         ObjectHandle<LTCMonitor> handle;
-        string Id => sceneObjectId.ToString();
-        string IdShadow => Id + "_shadow";
-        string IdLTC => Id + "_ltc";
+        public string Name => name;
+        public string Id => sceneObjectId.ToString();
+        public string IdShadow => Id + "_shadow";
+        public string IdLTC => Id + "_ltc";
 
         public LTCBakingCommand(LTCMonitor value)
         {
@@ -69,6 +70,8 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             {
                 handle = new ObjectHandle<LTCMonitor>(globalObjectId);
             }
+            handle.Value.Initialize();
+            handle.Value.TurnOff();
         }
     }
 }

@@ -16,15 +16,12 @@ namespace Kanikama.Editor.Baking
         public sealed class Parameter
         {
             public SceneAssetData SceneAssetData { get; }
-            public UnityLightmapper Lightmapper { get; }
             public UnityBakingSetting Setting { get; }
             public List<IUnityBakingCommand> Commands { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, UnityLightmapper lightmapper,
-                UnityBakingSetting setting, List<IUnityBakingCommand> commands)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, List<IUnityBakingCommand> commands)
             {
                 SceneAssetData = sceneAssetData;
-                Lightmapper = lightmapper;
                 Setting = setting;
                 Commands = commands;
             }
@@ -52,7 +49,8 @@ namespace Kanikama.Editor.Baking
             IOUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
             using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, true))
             {
-                var context = new Context(copiedScene.SceneAssetData, parameter.Lightmapper, parameter.Setting);
+                var lightmapper = new UnityLightmapper();
+                var context = new Context(copiedScene.SceneAssetData, lightmapper, parameter.Setting);
                 try
                 {
                     // open the copied scene
@@ -196,10 +194,9 @@ namespace Kanikama.Editor.Baking
                     command.Initialize(copiedScene.SceneAssetData.Guid);
                 }
 
-
                 try
                 {
-                    var lightmapper = parameter.Lightmapper;
+                    var lightmapper = new UnityLightmapper();
                     lightmapper.ClearCache();
                     await lightmapper.BakeAsync(cancellationToken);
                     var lightingDataAsset = Lightmapping.lightingDataAsset;

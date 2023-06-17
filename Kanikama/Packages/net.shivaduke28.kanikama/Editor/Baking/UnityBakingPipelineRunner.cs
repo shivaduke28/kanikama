@@ -13,7 +13,7 @@ namespace Kanikama.Editor.Baking
             var handles = CreateHandles(bakingDescriptor);
             var commands = handles.Select(h => new UnityBakingCommand(h)).Cast<IUnityBakingCommand>().ToList();
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var context = new UnityBakingPipeline.Parameter(sceneAssetData, new UnityLightmapper(), settingAsset.Setting, commands);
+            var context = new UnityBakingPipeline.Parameter(sceneAssetData, settingAsset.Setting, commands);
             await UnityBakingPipeline.BakeAsync(context, cancellationToken);
         }
 
@@ -24,7 +24,7 @@ namespace Kanikama.Editor.Baking
             var handles = CreateHandles(bakingDescriptor);
             var commands = handles.Select(h => new UnityBakingCommand(h)).Cast<IUnityBakingCommand>().ToList();
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var context = new UnityBakingPipeline.Parameter(sceneAssetData, new UnityLightmapper(), settingAsset.Setting, commands);
+            var context = new UnityBakingPipeline.Parameter(sceneAssetData, settingAsset.Setting, commands);
 
             await UnityBakingPipeline.BakeStaticAsync(context, cancellationToken);
         }

@@ -15,6 +15,7 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
                 {
                     var go = new GameObject("Light");
                     go.transform.SetParent(transform, false);
+                    go.transform.localPosition = new Vector3(0, 0, -0.001f);
                     go.transform.localRotation = Quaternion.Euler(0, 180, 0);
                     areaLight = go.AddComponent<Light>();
                     areaLight.range = 50f;
@@ -27,7 +28,6 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
 
         public override void TurnOff()
         {
-            gameObject.SetActive(false);
             areaLight.enabled = false;
         }
 
@@ -43,12 +43,10 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
             var t = transform;
             var lossy = t.lossyScale;
             areaLight.areaSize = new Vector2(lossy.x, lossy.y);
-            gameObject.SetActive(false);
         }
 
         public override void TurnOn()
         {
-            gameObject.SetActive(true);
             areaLight.enabled = true;
         }
     }

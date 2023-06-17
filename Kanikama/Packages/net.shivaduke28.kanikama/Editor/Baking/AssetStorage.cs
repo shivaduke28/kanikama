@@ -70,8 +70,8 @@ namespace Kanikama.Editor.Baking
     [Serializable]
     public class AssetStorage
     {
-        [SerializeField] LightmapStorage lightmapStorage;
-        [SerializeField] LightmapArrayStorage lightmapArrayStorage;
+        [SerializeField] LightmapStorage lightmapStorage = new LightmapStorage();
+        [SerializeField] LightmapArrayStorage lightmapArrayStorage = new LightmapArrayStorage();
         public LightmapStorage LightmapStorage => lightmapStorage;
         public LightmapArrayStorage LightmapArrayStorage => lightmapArrayStorage;
     }
@@ -83,7 +83,7 @@ namespace Kanikama.Editor.Baking
         [SerializeField] List<TR> valueListPairs = new List<TR>();
         public List<T> GetAll() => valueListPairs.SelectMany(x => x.Values).ToList();
 
-        public void AddOrUpdate(string key, List<T> values, string name = "")
+        public void AddOrUpdate(string key, List<T> values, string name)
         {
             foreach (var pair in valueListPairs)
             {
