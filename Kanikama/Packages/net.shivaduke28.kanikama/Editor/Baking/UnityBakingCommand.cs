@@ -24,7 +24,7 @@ namespace Kanikama.Editor.Baking
 
             var baked = UnityLightmapUtility.GetLightmaps(context.SceneAssetData);
             var copied = UnityBakingPipeline.CopyBakedLightingAssetCollection(baked, context.Setting.OutputAssetDirPath, handle.Id);
-            context.Setting.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
+            context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
             foreach (var lm in copied)
             {
                 Debug.LogFormat(KanikamaDebug.Format, $"- copied lightmap: {lm.Path}");

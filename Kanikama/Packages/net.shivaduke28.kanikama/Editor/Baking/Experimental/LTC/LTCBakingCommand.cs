@@ -36,11 +36,11 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
             var bakedShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
-                .Where(l => l.Type == UnityLightmapType.Light)
+                .Where(l => l.Type == UnityLightmap.Light)
                 .ToList();
             var copiedShadow = UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedShadows, context.Setting.OutputAssetDirPath,
                 IdShadow);
-            context.Setting.LightmapStorage.AddOrUpdate(IdShadow, copiedShadow, name + "_shadow");
+            context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(IdShadow, copiedShadow, name + "_shadow");
             foreach (var lm in copiedShadow)
             {
                 Debug.LogFormat(KanikamaDebug.Format, $"- copied lightmap: {lm.Path}");
@@ -52,10 +52,10 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             await context.Lightmapper.BakeAsync(cancellationToken);
             handle.Value.TurnOff();
             var bakedNoShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
-                .Where(l => l.Type == UnityLightmapType.Light)
+                .Where(l => l.Type == UnityLightmap.Light)
                 .ToList();
             var copiedNoShadow = UnityBakingPipeline.CopyBakedLightingAssetCollection(bakedNoShadows, context.Setting.OutputAssetDirPath, IdLTC);
-            context.Setting.LightmapStorage.AddOrUpdate(IdLTC, copiedNoShadow, name + "_ltc");
+            context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(IdLTC, copiedNoShadow, name + "_ltc");
             foreach (var lm in copiedNoShadow)
             {
                 Debug.LogFormat(KanikamaDebug.Format, $"- copied lightmap: {lm.Path}");

@@ -104,20 +104,20 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             Assert.IsTrue(monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");
 
-            var lightmapStorage = bakingSetting.LightmapStorage;
+            var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             var hasError = false;
             var maps = new Dictionary<int, List<(Texture2D Shadow, Texture2D Light)>>();
             foreach (var handle in monitors)
             {
                 if (lightmapStorage.TryGet(handle.Id + "_ltc", out var lm) && lightmapStorage.TryGet(handle.Id + "_shadow", out var lms))
                 {
-                    foreach (var light in lm.Where(l => l.Type == UnityLightmapType.Light))
+                    foreach (var light in lm.Where(l => l.Type == UnityLightmap.Light))
                     {
-                        var shadow = lms.FirstOrDefault(s => s.Type == UnityLightmapType.Light && s.Index == light.Index);
+                        var shadow = lms.FirstOrDefault(s => s.Type == UnityLightmap.Light && s.Index == light.Index);
                         if (shadow == null)
                         {
                             Debug.LogErrorFormat(KanikamaDebug.Format,
-                                $"Shadow map not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                                $"Shadow map not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                             hasError = true;
                             continue;
                         }
@@ -132,7 +132,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                     hasError = true;
                 }
             }

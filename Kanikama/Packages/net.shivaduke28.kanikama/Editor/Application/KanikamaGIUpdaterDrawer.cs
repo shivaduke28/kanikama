@@ -64,11 +64,11 @@ namespace Kanikama.Application.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
                 return;
             }
-            var arrayStorage = settingAsset.Setting.LightmapArrayStorage;
-            var lightmapArrayList = arrayStorage.LightmapArrays;
+            var arrayStorage = settingAsset.Setting.AssetStorage.LightmapArrayStorage;
+            var lightmapArrayList = arrayStorage.GetAll();
 
-            var lights = lightmapArrayList.Where(x => x.Type == UnityLightmapType.Light).OrderBy(x => x.Index).ToArray();
-            var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmapType.Directional).OrderBy(x => x.Index).ToArray();
+            var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
+            var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmap.Directional).OrderBy(x => x.Index).ToArray();
 
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             lightmapArrays.arraySize = lights.Length;

@@ -95,19 +95,19 @@ namespace Kanikama.Editor.Baking
             }
         }
 
-        public static List<UnityLightmap> CopyBakedLightingAssetCollection(List<UnityLightmap> src, string dstDir, string id)
+        public static List<Lightmap> CopyBakedLightingAssetCollection(List<Lightmap> src, string dstDir, string id)
         {
-            var dst = new List<UnityLightmap>(src.Count);
+            var dst = new List<Lightmap>(src.Count);
             foreach (var lightmap in src)
             {
                 switch (lightmap.Type)
                 {
-                    case UnityLightmapType.Light:
-                    case UnityLightmapType.Directional:
+                    case UnityLightmap.Light:
+                    case UnityLightmap.Directional:
                         var outPath = Path.Combine(dstDir, TempLightmapName(lightmap, id));
                         dst.Add(UnityLightmapUtility.CopyBakedLightmap(lightmap, outPath));
                         break;
-                    case UnityLightmapType.ShadowMask:
+                    case UnityLightmap.ShadowMask:
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -121,12 +121,12 @@ namespace Kanikama.Editor.Baking
         {
             var resizeType = bakingSetting.TextureResizeType;
             var dstDirPath = bakingSetting.OutputAssetDirPath;
-            var lightmapStorage = bakingSetting.LightmapStorage;
+            var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
             IOUtility.CreateFolderIfNecessary(dstDirPath);
 
             // check lightmaps are stored in storage
-            var allLightmaps = new List<UnityLightmap>();
+            var allLightmaps = new List<Lightmap>();
             var hasError = false;
             foreach (var handle in bakeTargetHandles)
             {
@@ -136,7 +136,7 @@ namespace Kanikama.Editor.Baking
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(UnityLightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
                     hasError = true;
                 }
             }
@@ -146,15 +146,15 @@ namespace Kanikama.Editor.Baking
                 return;
             }
 
-            var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Light).ToArray();
-            var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmapType.Directional).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == UnityLightmap.Light).ToArray();
+            var directionalMaps = allLightmaps.Where(lm => lm.Type == UnityLightmap.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
             foreach (var lm in allLightmaps)
             {
                 TextureUtility.ResizeTexture(lm.Texture, resizeType);
             }
 
-            bakingSetting.LightmapArrayStorage.Clear();
+            var output = new List<LightmapArray>();
             for (var i = 0; i <= maxIndex; i++)
             {
                 var index = i;
@@ -164,20 +164,21 @@ namespace Kanikama.Editor.Baking
                 if (light.Count > 0)
                 {
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
-                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Light.ToFileName()}-{i}.asset");
+                    var lightPath = Path.Combine(dstDirPath, $"{UnityLightmap.Light}-{i}.asset");
                     IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
-                    bakingSetting.LightmapArrayStorage.AddOrUpdate(new UnityLightmapArray(UnityLightmapType.Light, lightArr, lightPath, i));
+                    output.Add(new LightmapArray(UnityLightmap.Light, lightArr, lightPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                 }
                 if (dir.Count > 0)
                 {
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
-                    var dirPath = Path.Combine(dstDirPath, $"{UnityLightmapType.Directional.ToFileName()}-{i}.asset");
+                    var dirPath = Path.Combine(dstDirPath, $"{UnityLightmap.Directional}-{i}.asset");
                     IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
-                    bakingSetting.LightmapArrayStorage.AddOrUpdate(new UnityLightmapArray(UnityLightmapType.Directional, dirArr, dirPath, i));
+                    output.Add(new LightmapArray(UnityLightmap.Directional, dirArr, dirPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }
+            bakingSetting.AssetStorage.LightmapArrayStorage.AddOrUpdate("KanikamaUnity", output, "Kanikama Unity");
             Debug.LogFormat(KanikamaDebug.Format, "done");
         }
 
@@ -223,12 +224,12 @@ namespace Kanikama.Editor.Baking
             }
         }
 
-        static string TempLightmapName(UnityLightmap unityLightmap, string id)
+        static string TempLightmapName(Lightmap unityLightmap, string id)
         {
             var path = unityLightmap.Path;
             var fileName = Path.GetFileName(path);
             var ext = Path.GetExtension(fileName);
-            return $"{unityLightmap.Type.ToFileName()}-{unityLightmap.Index}-{id}{ext}";
+            return $"{unityLightmap.Type}-{unityLightmap.Index}-{id}{ext}";
         }
     }
 }
