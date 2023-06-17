@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using UnityEditor;
-using UnityEngine;
 
 namespace Kanikama.Bakery.Editor.Baking
 {
@@ -20,10 +19,8 @@ namespace Kanikama.Bakery.Editor.Baking
 
         public void SetOutputAssetDirPath(string outputAssetDirPath)
         {
-            Debug.Log(outputAssetDirPath);
             ftRenderLightmap.useScenePath = false;
             ftRenderLightmap.outputPath = IOUtility.RemoveAssetsFromPath(outputAssetDirPath);
-            Debug.Log(ftRenderLightmap.outputPath);
         }
 
         public bool UseMipmap => projectSetting.mipmapLightmaps;
