@@ -8,6 +8,5 @@ namespace Kanikama.Baking.Experimental.LTC
         public abstract void TurnOn();
         public abstract void TurnOff();
         public abstract void SetCastShadow(bool enable);
-        public abstract bool Includes(Object obj);
     }
 }

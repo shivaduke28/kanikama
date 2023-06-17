@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using UnityEditor;
+using UnityEngine;
 
 namespace Kanikama.Bakery.Editor.Baking
 {
@@ -19,8 +20,10 @@ namespace Kanikama.Bakery.Editor.Baking
 
         public void SetOutputAssetDirPath(string outputAssetDirPath)
         {
+            Debug.Log(outputAssetDirPath);
             ftRenderLightmap.useScenePath = false;
             ftRenderLightmap.outputPath = IOUtility.RemoveAssetsFromPath(outputAssetDirPath);
+            Debug.Log(ftRenderLightmap.outputPath);
         }
 
         public bool UseMipmap => projectSetting.mipmapLightmaps;
@@ -37,6 +40,29 @@ namespace Kanikama.Bakery.Editor.Baking
             {
                 throw new TaskCanceledException();
             }
+        }
+
+        public DirMode DirectionalMode
+        {
+            get => (DirMode) ftRenderLightmap.renderDirMode;
+            set => ftRenderLightmap.renderDirMode = (ftRenderLightmap.RenderDirMode) value;
+        }
+
+
+        public enum DirMode
+        {
+            None = 0,
+            BakedNormalMaps = 1,
+            DominantDirection = 2,
+            RNM = 3,
+            SH = 4,
+            MonoSH = 6
+        };
+
+        public int Bounce
+        {
+            get => ftRenderLightmap.bounces;
+            set => ftRenderLightmap.bounces = value;
         }
     }
 }

@@ -6,8 +6,6 @@ namespace Kanikama.Baking.Impl
     public class KanikamaBakeTargetMonitorGridLight : BakeTarget
     {
         [SerializeField] new Light light;
-        [SerializeField, HideInInspector] Color color;
-        [SerializeField, HideInInspector] float intensity;
 
         void OnValidate()
         {
@@ -29,9 +27,6 @@ namespace Kanikama.Baking.Impl
 
         public override void Initialize()
         {
-            gameObject.SetActive(true);
-            color = light.color;
-            intensity = light.intensity;
             var t = transform;
             var lossy = t.lossyScale;
             light.areaSize = new Vector2(lossy.x, lossy.y);
@@ -39,7 +34,7 @@ namespace Kanikama.Baking.Impl
 
         public override void TurnOff()
         {
-            light.intensity = 0f;
+            light.enabled = false;
         }
 
         public override void TurnOn()
@@ -52,8 +47,6 @@ namespace Kanikama.Baking.Impl
 
         public override void Clear()
         {
-            light.color = color;
-            light.intensity = intensity;
         }
     }
 }

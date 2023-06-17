@@ -36,8 +36,6 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
             areaLight.shadows = enable ? LightShadows.Soft : LightShadows.None;
         }
 
-        public override bool Includes(Object obj) => obj is Light l && l == areaLight;
-
         public override void Initialize()
         {
             var t = transform;
