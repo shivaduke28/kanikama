@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace Kanikama.Utility
@@ -44,9 +43,11 @@ namespace Kanikama.Utility
 
         public void Clear()
         {
+            if (!initialized) return;
             if (sharedMaterials != null)
             {
                 renderer.sharedMaterials = sharedMaterials;
+                sharedMaterials = null;
             }
             if (materials != null)
             {
@@ -54,6 +55,7 @@ namespace Kanikama.Utility
                 {
                     material.DestroySafely();
                 }
+                materials = null;
             }
             initialized = false;
         }

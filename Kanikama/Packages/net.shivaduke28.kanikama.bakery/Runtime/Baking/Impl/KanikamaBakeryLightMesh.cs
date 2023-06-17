@@ -9,8 +9,8 @@ namespace Kanikama.Bakery.Baking.Impl
         [SerializeField] new Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
         [SerializeField] string tag;
-        [SerializeField, HideInInspector] Color color;
-        [SerializeField, HideInInspector] float intensity;
+        [SerializeField] Color color;
+        [SerializeField] float intensity;
 
         void OnValidate()
         {

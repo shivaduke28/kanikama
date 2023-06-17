@@ -80,5 +80,9 @@ namespace Kanikama.Bakery.Editor.Baking.Experimental.LTC
             handle.Value.Initialize();
             handle.Value.TurnOff();
         }
+
+        void IBakingCommand.Clear()
+        {
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Kanikama.Bakery.Editor.Baking
     {
         Task RunAsync(BakeryBakingPipeline.Context context, CancellationToken cancellationToken);
         void Initialize(string sceneGuid);
+        void Clear();
     }
 
     public sealed class BakingCommand : IBakingCommand
@@ -43,6 +44,11 @@ namespace Kanikama.Bakery.Editor.Baking
         {
             handle.Initialize(sceneGuid);
             handle.TurnOff();
+        }
+
+        void IBakingCommand.Clear()
+        {
+            handle.Clear();
         }
     }
 }

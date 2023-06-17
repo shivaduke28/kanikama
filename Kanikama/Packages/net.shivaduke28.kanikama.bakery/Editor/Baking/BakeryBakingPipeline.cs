@@ -117,7 +117,6 @@ namespace Kanikama.Bakery.Editor.Baking
 
         public static async Task BakeStaticAsync(Parameter parameter, CancellationToken cancellationToken)
         {
-            // TODO: copy scene here
             Debug.LogFormat(KanikamaDebug.Format, "Bakery pipeline non Kanikama start");
             var guid = AssetDatabase.AssetPathToGUID(parameter.SceneAssetData.Path);
 
@@ -144,6 +143,10 @@ namespace Kanikama.Bakery.Editor.Baking
             }
             finally
             {
+                foreach (var command in parameter.Commands)
+                {
+                    command.Clear();
+                }
             }
         }
 
