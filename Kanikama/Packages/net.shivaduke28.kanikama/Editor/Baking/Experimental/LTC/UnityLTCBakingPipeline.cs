@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking.Experimental.LTC;
+using Kanikama.Baking.Experimental.LTC.Impl;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -21,9 +22,9 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         {
             public SceneAssetData SceneAssetData { get; }
             public UnityBakingSetting Setting { get; }
-            public IList<LTCMonitor> Monitors { get; }
+            public IList<KanikamaLTCMonitor> Monitors { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<LTCMonitor> monitors)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<KanikamaLTCMonitor> monitors)
             {
                 SceneAssetData = sceneAssetData;
                 Setting = setting;
@@ -60,7 +61,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         }
 
 
-        public static void CreateAssets(IList<LTCMonitor> monitors, UnityBakingSetting bakingSetting)
+        public static void CreateAssets(IList<KanikamaLTCMonitor> monitors, UnityBakingSetting bakingSetting)
         {
             Assert.IsTrue(monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using Kanikama.Baking.Experimental.LTC;
+using Kanikama.Baking.Experimental.LTC.Impl;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         }
 
         SceneAsset sceneAsset;
-        ILTCDescriptor descriptor;
+        KanikamaLTCDescriptor descriptor;
         UnityBakingSettingAsset settingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -38,7 +39,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             }
 
             sceneAsset = sceneAssetData.Asset;
-            descriptor = GameObjectHelper.FindObjectOfType<ILTCDescriptor>();
+            descriptor = GameObject.FindObjectOfType<KanikamaLTCDescriptor>();
             if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 settingAsset = asset;
@@ -80,12 +81,12 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (descriptor == null || (descriptor is Object sceneDescriptorObject && sceneDescriptorObject == null))
             {
-                descriptor = GameObjectHelper.FindObjectOfType<ILTCDescriptor>();
+                descriptor = GameObject.FindObjectOfType<KanikamaLTCDescriptor>();
             }
 
             if (descriptor is Object obj)
             {
-                descriptor = (ILTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(MonoBehaviour), true);
+                descriptor = (KanikamaLTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(KanikamaLTCDescriptor), true);
             }
 
             settingAsset =

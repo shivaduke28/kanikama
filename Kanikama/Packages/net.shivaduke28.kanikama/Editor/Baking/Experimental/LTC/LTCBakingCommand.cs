@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking.Experimental.LTC;
+using Kanikama.Baking.Experimental.LTC.Impl;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -12,13 +13,13 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
-        ObjectHandle<LTCMonitor> handle;
+        ObjectHandle<KanikamaLTCMonitor> handle;
         public string Name => name;
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public UnityLTCBakingCommand(LTCMonitor value)
+        public UnityLTCBakingCommand(KanikamaLTCMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -68,7 +69,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         {
             if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                handle = new ObjectHandle<LTCMonitor>(globalObjectId);
+                handle = new ObjectHandle<KanikamaLTCMonitor>(globalObjectId);
             }
             handle.Value.Initialize();
             handle.Value.TurnOff();

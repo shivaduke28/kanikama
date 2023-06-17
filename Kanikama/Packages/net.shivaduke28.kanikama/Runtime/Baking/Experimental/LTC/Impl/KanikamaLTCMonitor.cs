@@ -2,7 +2,7 @@
 
 namespace Kanikama.Baking.Experimental.LTC.Impl
 {
-    public sealed class KanikamaLTCMonitor : LTCMonitor
+    public sealed class KanikamaLTCMonitor : MonoBehaviour
     {
         [SerializeField] Light areaLight;
 
@@ -26,24 +26,24 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
             }
         }
 
-        public override void TurnOff()
+        public void TurnOff()
         {
             areaLight.enabled = false;
         }
 
-        public override void SetCastShadow(bool enable)
+        public void SetCastShadow(bool enable)
         {
             areaLight.shadows = enable ? LightShadows.Soft : LightShadows.None;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
             var t = transform;
             var lossy = t.lossyScale;
             areaLight.areaSize = new Vector2(lossy.x, lossy.y);
         }
 
-        public override void TurnOn()
+        public void TurnOn()
         {
             areaLight.enabled = true;
         }

@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
+using Baking.Experimental.LTC.Impl;
 using Kanikama.Bakery.Editor.Baking;
-using Kanikama.Baking.Experimental.LTC;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
@@ -17,7 +16,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         }
 
         SceneAsset sceneAsset;
-        ILTCDescriptor descriptor;
+        KanikamaBakeryLTCDescriptor descriptor;
         BakeryBakingSettingAsset settingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -39,7 +38,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             }
 
             sceneAsset = sceneAssetData.Asset;
-            descriptor = GameObjectHelper.FindObjectOfType<ILTCDescriptor>();
+            descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeryLTCDescriptor>();
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 settingAsset = asset;
@@ -81,12 +80,12 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (descriptor == null || (descriptor is Object sceneDescriptorObject && sceneDescriptorObject == null))
             {
-                descriptor = GameObjectHelper.FindObjectOfType<ILTCDescriptor>();
+                descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeryLTCDescriptor>();
             }
 
             if (descriptor is Object obj)
             {
-                descriptor = (ILTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(MonoBehaviour), true);
+                descriptor = (KanikamaBakeryLTCDescriptor) EditorGUILayout.ObjectField("LTC Descriptor", obj, typeof(KanikamaBakeryLTCDescriptor), true);
             }
 
             settingAsset =
@@ -122,13 +121,13 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
                 var __ = BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
                     new SceneAssetData(sceneAsset),
                     settingAsset.Setting,
-                    descriptor.GetMonitors().ToList()
+                    descriptor.GetMonitors()
                 ), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                BakeryLTCBakingPipeline.CreateAssets(descriptor.GetMonitors().ToList(), settingAsset.Setting);
+                BakeryLTCBakingPipeline.CreateAssets(descriptor.GetMonitors(), settingAsset.Setting);
             }
         }
 

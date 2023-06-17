@@ -6,6 +6,7 @@
     "Kanikama.Application",
     "Kanikama.Editor.Application",
     "Kanikama.Baking",
+    "Kanikama.Bakery.Baking",
     "Kanikama.Editor.Baking"
   ],
   "includePlatforms": [
