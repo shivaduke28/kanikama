@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e6bbf9453942248a9fda95c4850950, type: 3}
+  m_Name: UnityBakingSettingAsset
+  m_EditorClassIdentifier: 
+  setting:
+    sceneAsset: {fileID: 102900000, guid: 6e33335c3a38ce648bf16bb8b19f3a0f, type: 3}
+    textureResizeType: 2
+    outputAssetDirPath: Assets\Kanikama\Udon\Udon_kanikama_unity
+    assetStorage:
+      lightmapStorage:
+        valueListPairs:
+        - Name: MonitorGroup_0
+          Key: 1588683620-0_0
+          Values:
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: c03f0c9f0598aa24481856c614742754, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-0-1588683620-0_0.png
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 8e1d24ed4557bac4d88a1f0fbea27635, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-1588683620-0_0.exr
+            Index: 0
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: 15da5f81248ad544c9de1877c9048b0c, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-1-1588683620-0_0.png
+            Index: 1
+          - Type: Light
+            Texture: {fileID: 2800000, guid: a8bec8805d478c44cbeb069ae9db4326, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-1588683620-0_0.exr
+            Index: 1
+        - Name: MonitorGroup_1
+          Key: 1588683620-0_1
+          Values:
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: 79c48bcf604809a4e9504b4bc5fbc187, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-0-1588683620-0_1.png
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 17540455603eeee41be492ad989da936, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-1588683620-0_1.exr
+            Index: 0
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: ec803fd1b3bcfdd48b274ca7c0bd99b2, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-1-1588683620-0_1.png
+            Index: 1
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 6f7ab7bab17048f41bc01a011803657b, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-1588683620-0_1.exr
+            Index: 1
+        - Name: MonitorGroup_2
+          Key: 1588683620-0_2
+          Values:
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: 3198b4eb4a27d6d41bb706eb2269b61e, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-0-1588683620-0_2.png
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 90885e8bd9a860d4c95e814384c5547c, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-1588683620-0_2.exr
+            Index: 0
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: d85ee6dea58a64e4dbb39212d5f10e85, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-1-1588683620-0_2.png
+            Index: 1
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 5103f292d8818ea4f9e02cb8f049b896, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-1588683620-0_2.exr
+            Index: 1
+        - Name: MonitorGroup_3
+          Key: 1588683620-0_3
+          Values:
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: b1ebe2daebcbf6446978f8020fcab6ec, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-0-1588683620-0_3.png
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: d363fec3e5a84f64db6003fae3d4e3ba, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-1588683620-0_3.exr
+            Index: 0
+          - Type: Directional
+            Texture: {fileID: 2800000, guid: 4f5d62acf1e08814a853215b9f325ce5, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-1-1588683620-0_3.png
+            Index: 1
+          - Type: Light
+            Texture: {fileID: 2800000, guid: 44e8f6176522c0a4f9a453cd632363e6, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-1588683620-0_3.exr
+            Index: 1
+        - Name: Monitor_shadow
+          Key: 286135934-0_shadow
+          Values:
+          - Type: Light
+            Texture: {fileID: 2800000, guid: ec11df4cea31b04498acfce3b8f1fd41, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-286135934-0_shadow.exr
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: a32e8e1dbab3dbf4a972ca03d51aab2c, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-286135934-0_shadow.exr
+            Index: 1
+        - Name: Monitor_ltc
+          Key: 286135934-0_ltc
+          Values:
+          - Type: Light
+            Texture: {fileID: 2800000, guid: f2f3b3a181b266046ae763b80db3c506, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0-286135934-0_ltc.exr
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 2800000, guid: a75af6c51891a124caadb60004d1ab0c, type: 3}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1-286135934-0_ltc.exr
+            Index: 1
+        - Name: KanikamaUnityLTC
+          Key: KanikamaUnityLTC
+          Values:
+          - Type: LTCVisiblity
+            Texture: {fileID: 2800000, guid: 84bc556c8aa7f554aaebba822f91dfe7, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\ltc-visibility-0.asset
+            Index: 0
+          - Type: LTCVisiblity
+            Texture: {fileID: 2800000, guid: 8b13b95fab47f654ba97e31ca20f1602, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\ltc-visibility-1.asset
+            Index: 1
+      lightmapArrayStorage:
+        valueListPairs:
+        - Name: Kanikama Unity
+          Key: KanikamaUnity
+          Values:
+          - Type: Light
+            Texture: {fileID: 18700000, guid: 457bffc2451effa4ba734d04a5febe47, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-0.asset
+            Index: 0
+          - Type: Directional
+            Texture: {fileID: 18700000, guid: 0b7186a0f39556242a600e058b00566d, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-0.asset
+            Index: 0
+          - Type: Light
+            Texture: {fileID: 18700000, guid: 6923c20d89a4d4044b1ebd0b402b7f13, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Light-1.asset
+            Index: 1
+          - Type: Directional
+            Texture: {fileID: 18700000, guid: cba8a0c0de6d5374d90978c1ee9d1702, type: 2}
+            Path: Assets\Kanikama\Udon\Udon_kanikama_unity\Directional-1.asset
+            Index: 1
