@@ -161,6 +161,7 @@ namespace Kanikama.Udon
         /// </summary>
         public void Setup()
         {
+            camera.orthographic = true;
             var cameraTrans = camera.transform;
             var rendererTrans = monitorRenderer.transform;
             var pos = rendererTrans.position - rendererTrans.forward * cameraDistance;

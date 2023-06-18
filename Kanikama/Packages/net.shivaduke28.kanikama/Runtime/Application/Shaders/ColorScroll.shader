@@ -3,7 +3,7 @@
     Properties
     {
         _Scale("Scale", Range(0,2)) = 1
-        _Speed("Speed", Range(-10,10) ) = 1
+        _Speed("Speed", Range(0,10) ) = 1
         _Partition("Partition", Range(1, 10)) = 2
         _Rotation("Rotation", float) = 0
         _Emission("Emission", Range(0, 20)) = 1

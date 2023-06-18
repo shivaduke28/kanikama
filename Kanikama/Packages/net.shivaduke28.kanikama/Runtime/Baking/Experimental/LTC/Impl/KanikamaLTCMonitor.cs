@@ -10,10 +10,10 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
         {
             if (areaLight == null)
             {
-                areaLight = GetComponentInChildren<Light>();
-                if (areaLight == null)
+                var child = transform.Find("LTCLight");
+                if (child == null)
                 {
-                    var go = new GameObject("Light");
+                    var go = new GameObject("LTCLight");
                     go.transform.SetParent(transform, false);
                     go.transform.localPosition = new Vector3(0, 0, -0.001f);
                     go.transform.localRotation = Quaternion.Euler(0, 180, 0);
@@ -22,6 +22,7 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
                 }
                 areaLight.type = LightType.Area;
                 areaLight.shadows = LightShadows.Soft;
+                areaLight.enabled = false;
                 Initialize();
             }
         }

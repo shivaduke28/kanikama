@@ -183,7 +183,7 @@ namespace Kanikama.Editor.Baking
         public static async Task BakeStaticAsync(Parameter parameter, CancellationToken cancellationToken)
         {
             Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline (static) start");
-            using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, false, "_kanikama_static_unity"))
+            using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, false, "_kanikama_unity_static"))
             {
                 // open the copied scene
                 EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
