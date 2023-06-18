@@ -5,7 +5,6 @@ using UnityEngine;
 namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    [AddComponentMenu("Udon.KanikamaMonitorCamera")]
     public sealed class KanikamaUdonMonitorCamera : KanikamaUdonLightSourceGroup
     {
         [SerializeField] Renderer monitorRenderer;

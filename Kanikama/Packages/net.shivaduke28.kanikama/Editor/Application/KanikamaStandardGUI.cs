@@ -360,7 +360,7 @@ namespace Kanikama.Editor.Application
             Material material,
             WorkflowMode workflowMode)
         {
-            SetKeyword(material, "_NORMALMAP", (bool) (Object) material.GetTexture("_BumpMap") || (bool) (Object) material.GetTexture("_DetailNormalMap"));
+            // SetKeyword(material, "_NORMALMAP", (bool) (Object) material.GetTexture("_BumpMap") || (bool) (Object) material.GetTexture("_DetailNormalMap"));
             switch (workflowMode)
             {
                 // case WorkflowMode.Specular:
@@ -370,8 +370,8 @@ namespace Kanikama.Editor.Application
                     SetKeyword(material, "_METALLICGLOSSMAP", (bool) (Object) material.GetTexture("_MetallicGlossMap"));
                     break;
             }
-            SetKeyword(material, "_PARALLAXMAP", (bool) (Object) material.GetTexture("_ParallaxMap"));
-            SetKeyword(material, "_DETAIL_MULX2", (bool) (Object) material.GetTexture("_DetailAlbedoMap") || (bool) (Object) material.GetTexture("_DetailNormalMap"));
+            // SetKeyword(material, "_PARALLAXMAP", (bool) (Object) material.GetTexture("_ParallaxMap"));
+            // SetKeyword(material, "_DETAIL_MULX2", (bool) (Object) material.GetTexture("_DetailAlbedoMap") || (bool) (Object) material.GetTexture("_DetailNormalMap"));
             MaterialEditor.FixupEmissiveFlag(material);
             var state = (material.globalIlluminationFlags & MaterialGlobalIlluminationFlags.EmissiveIsBlack) == MaterialGlobalIlluminationFlags.None;
             SetKeyword(material, "_EMISSION", state);

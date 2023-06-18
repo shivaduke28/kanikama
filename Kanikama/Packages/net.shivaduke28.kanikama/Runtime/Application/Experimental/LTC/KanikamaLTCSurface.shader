@@ -38,12 +38,6 @@ Shader "Kanikama/KanikamaLTCSurface"
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
-
-        [Header(LTC)]
-        //        [NoScaleOffset] _LTC_1("LTC 1", 2D) = "white" {}
-        //        [NoScaleOffset] _LTC_2("LTC 2", 2D) = "white" {}
-        //        [NoScaleOffset] _LightSourceTex0("LTC Tex", 2D) = "white" {}
-        [PerRendererData] _Udon_LTC_ShadowMap("LTC ShadowMap", 2D) = "white" {}
     }
     SubShader
     {
@@ -57,10 +51,6 @@ Shader "Kanikama/KanikamaLTCSurface"
         CGPROGRAM
         #pragma shader_feature_local_fragment _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
         #pragma shader_feature_local_fragment _EMISSION
-
-        #define _METALLICGLOSSMAP 1
-        #define _PARALLAXMAP 1
-        #define _NORMALMAP 1
 
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
         #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL

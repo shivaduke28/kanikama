@@ -93,7 +93,6 @@ namespace Kanikama.Baking.Impl
                 {
                     var item = Instantiate(prefab, transform, false);
                     var go = item.gameObject;
-                    go.SetActive(false);
                     go.tag = "EditorOnly";
                     go.name = (i + j * count).ToString();
                     var t = item.transform;
@@ -122,7 +121,6 @@ namespace Kanikama.Baking.Impl
                     var areaX = !expandX || (i == 0 || i == countX - 1) ? sizeX : sizeX * 2;
                     var item = Instantiate(prefab, transform, false);
                     var go = item.gameObject;
-                    go.SetActive(false);
                     go.tag = "EditorOnly";
                     go.name = (i + j * countX).ToString();
                     var t = item.transform;
