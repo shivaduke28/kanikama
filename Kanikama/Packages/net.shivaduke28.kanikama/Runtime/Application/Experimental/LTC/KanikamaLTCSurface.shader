@@ -52,10 +52,6 @@ Shader "Kanikama/KanikamaLTCSurface"
         #pragma shader_feature_local_fragment _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
         #pragma shader_feature_local_fragment _EMISSION
 
-        #define _METALLICGLOSSMAP 1
-        #define _PARALLAXMAP 1
-        #define _NORMALMAP 1
-
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
         #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL
         #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR

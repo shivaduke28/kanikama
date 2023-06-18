@@ -39,8 +39,8 @@ namespace Kanikama.Udon.Experimental.LTC
             ltcVertex1 = VRCShader.PropertyToID("_Udon_LTC_Vertex1");
             ltcVertex2 = VRCShader.PropertyToID("_Udon_LTC_Vertex2");
             ltcVertex3 = VRCShader.PropertyToID("_Udon_LTC_Vertex3");
-            ltcTex0 = VRCShader.PropertyToID("_Udon_LTC_Tex0");
-            ltcTex1 = VRCShader.PropertyToID("_Udon_LTC_Tex1");
+            ltcTex0 = VRCShader.PropertyToID("_Udon_LTC_LUT0");
+            ltcTex1 = VRCShader.PropertyToID("_Udon_LTC_LUT1");
             ltcLightTex0 = VRCShader.PropertyToID("_Udon_LTC_LightTex0");
 
             vertex0 = new Vector4[3];
