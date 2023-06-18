@@ -38,12 +38,6 @@ Shader "Kanikama/KanikamaLTCSurface"
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
-
-        [Header(LTC)]
-        //        [NoScaleOffset] _LTC_1("LTC 1", 2D) = "white" {}
-        //        [NoScaleOffset] _LTC_2("LTC 2", 2D) = "white" {}
-        //        [NoScaleOffset] _LightSourceTex0("LTC Tex", 2D) = "white" {}
-        [PerRendererData] _Udon_LTC_ShadowMap("LTC ShadowMap", 2D) = "white" {}
     }
     SubShader
     {

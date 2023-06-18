@@ -48,14 +48,14 @@ int _Udon_LTC_Count;
 
 // const
 // TODO use trilinear sampler
-sampler2D _LightSourceTex0;
+sampler2D _Udon_LTC_LightTex0;
 
 // const
-sampler2D _LTC_1;
-sampler2D _LTC_2;
+sampler2D _Udon_LTC_LUT0;
+sampler2D _Udon_LTC_LUT1;
 
 // Per Renderer Data
-sampler2D _Udon_LTC_ShadowMap;
+sampler2D _Udon_LTC_VisibilityMap;
 
 static const float LUT_SIZE = 64;
 static const float LUT_SCALE = (LUT_SIZE - 1.0) / LUT_SIZE;
@@ -170,8 +170,8 @@ half3 LTCEvaluate(float3 pos, float3x3 Minv, float3 points[4], sampler2D tex)
     float2 uv2 = float2(z * 0.5 + 0.5, len);
     uv2 = uv2 * LUT_SCALE + LUT_BIAS;
 
-    float4 ltc2_tex = tex2D(_LTC_2, uv2);
-    float scale = ltc2_tex.w;
+    float4 ltc1_tex = tex2D(_Udon_LTC_LUT1, uv2);
+    float scale = ltc1_tex.w;
     sum = len * scale;
 
     half3 texColor = FetchTexture(tex, p0, p1, p2);
@@ -189,13 +189,13 @@ LTCData LTCSetup(float ndotv, float perceptualRoughness)
     LTCData o;
     float2 uv = float2(perceptualRoughness, sqrt(1.0 - ndotv));
     uv = uv * LUT_SCALE + LUT_BIAS;
-    float4 t1 = tex2D(_LTC_1, uv);
-    float4 t2 = tex2D(_LTC_2, uv);
+    float4 t0 = tex2D(_Udon_LTC_LUT0, uv);
+    float4 t1 = tex2D(_Udon_LTC_LUT1, uv);
     o.Minv = float3x3(
-        t1.x, 0, t1.z,
+        t0.x, 0, t0.z,
         0, 1, 0,
-        t1.y, 0, t1.w);
-    o.BRDFParam = t2.xy;
+        t0.y, 0, t0.w);
+    o.BRDFParam = t1.xy;
     return o;
 }
 
@@ -212,7 +212,7 @@ void KanikamaLTCSpecular(float3 position, half3 normal, half3 view, half percept
     float3x3 Minv = mul(data.Minv, orth);
     float2 ltcParam = data.BRDFParam;
 
-    float3 shadow = tex2D(_Udon_LTC_ShadowMap, lightmapUV).rgb;
+    const float3 visibility = tex2D(_Udon_LTC_VisibilityMap, lightmapUV).rgb;
     float3 points[4];
     specular = 0;
 
@@ -222,10 +222,10 @@ void KanikamaLTCSpecular(float3 position, half3 normal, half3 view, half percept
         points[1] = _Udon_LTC_Vertex1[i];
         points[2] = _Udon_LTC_Vertex2[i];
         points[3] = _Udon_LTC_Vertex3[i];
-        half3 ltcSpec = LTCEvaluate(position, Minv, points, _LightSourceTex0);
-        ltcSpec *= ltcParam.x + (1.0 - specColor) * ltcParam.y;
-        // fake shadowing using lightmap
-        ltcSpec *= saturate(shadow[i]);
+        half3 ltcSpec = LTCEvaluate(position, Minv, points, _Udon_LTC_LightTex0);
+        ltcSpec *= specColor * ltcParam.x + (1.0 - specColor) * ltcParam.y;
+        // fake visibility using lightmap
+        ltcSpec *= saturate(visibility[i]);
         specular += ltcSpec;
     }
     specular *= occlusion;

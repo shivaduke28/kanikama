@@ -38,9 +38,12 @@ namespace Kanikama.Baking.Experimental.LTC.Impl
 
         public void Initialize()
         {
+#if UNITY_EDITOR
+            // NOTE: Light.areaSize is editor only.
             var t = transform;
             var lossy = t.lossyScale;
             areaLight.areaSize = new Vector2(lossy.x, lossy.y);
+#endif
         }
 
         public void TurnOn()

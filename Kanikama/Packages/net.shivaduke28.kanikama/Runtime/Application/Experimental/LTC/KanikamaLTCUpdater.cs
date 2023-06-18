@@ -8,31 +8,35 @@ namespace Kanikama.Application.Experimental.LTC
         [SerializeField] Transform[] lightSources;
         [SerializeField] Renderer[] receivers;
         [SerializeField] Texture[] shadowMaps;
+        [SerializeField] Texture ltc0;
         [SerializeField] Texture ltc1;
-        [SerializeField] Texture ltc2;
         [SerializeField] Texture lightSourceTex;
 
-        Vector4[] vertex0 = new Vector4[3];
-        Vector4[] vertex1 = new Vector4[3];
-        Vector4[] vertex2 = new Vector4[3];
-        Vector4[] vertex3 = new Vector4[3];
+        readonly Vector4[] vertex0 = new Vector4[3];
+        readonly Vector4[] vertex1 = new Vector4[3];
+        readonly Vector4[] vertex2 = new Vector4[3];
+        readonly Vector4[] vertex3 = new Vector4[3];
 
         static readonly int LtcCount = Shader.PropertyToID("_Udon_LTC_Count");
-        static readonly int LtcShadowMap = Shader.PropertyToID("_Udon_LTC_ShadowMap");
+        static readonly int LtcVisibilityMap = Shader.PropertyToID("_Udon_LTC_VisibilityMap");
 
         static readonly int LtcVertex0 = Shader.PropertyToID("_Udon_LTC_Vertex0");
         static readonly int LtcVertex1 = Shader.PropertyToID("_Udon_LTC_Vertex1");
         static readonly int LtcVertex2 = Shader.PropertyToID("_Udon_LTC_Vertex2");
         static readonly int LtcVertex3 = Shader.PropertyToID("_Udon_LTC_Vertex3");
+        static readonly int UdonLtcLut0 = Shader.PropertyToID("_Udon_LTC_LUT0");
+        static readonly int UdonLtcLut1 = Shader.PropertyToID("_Udon_LTC_LUT1");
+        static readonly int UdonLtcLightTex0 = Shader.PropertyToID("_Udon_LTC_LightTex0");
+
         int count;
 
         void Start()
         {
             count = Mathf.Min(3, lightSources.Length);
             Shader.SetGlobalInt(LtcCount, count);
-            Shader.SetGlobalTexture("_LTC_1", ltc1);
-            Shader.SetGlobalTexture("_LTC_2", ltc2);
-            Shader.SetGlobalTexture("_LightSourceTex0", lightSourceTex);
+            Shader.SetGlobalTexture(UdonLtcLut0, ltc0);
+            Shader.SetGlobalTexture(UdonLtcLut1, ltc1);
+            Shader.SetGlobalTexture(UdonLtcLightTex0, lightSourceTex);
 
             var block = new MaterialPropertyBlock();
             foreach (var r in receivers)
@@ -45,12 +49,14 @@ namespace Kanikama.Application.Experimental.LTC
                 }
 
                 r.GetPropertyBlock(block);
-                block.SetTexture(LtcShadowMap, shadowMaps[i]);
+                block.SetTexture(LtcVisibilityMap, shadowMaps[i]);
                 r.SetPropertyBlock(block);
             }
+
+            UpdateVertexPositions();
         }
 
-        void LateUpdate()
+        void UpdateVertexPositions()
         {
             // Unity's Quad mesh
             var w = 0.5f;
