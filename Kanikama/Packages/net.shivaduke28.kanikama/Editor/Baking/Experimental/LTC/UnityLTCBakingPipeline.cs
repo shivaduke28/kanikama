@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Baking.Experimental.LTC;
 using Kanikama.Baking.Experimental.LTC.Impl;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
@@ -116,7 +115,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
             for (var i = 0; i <= maxIndex; i++)
             {
                 var packed = TextureUtility.RatioPackBC6H(maps[i].ToArray(), false);
-                var path = Path.Combine(bakingSetting.OutputAssetDirPath, $"ltc-shadow-{i}.asset");
+                var path = Path.Combine(bakingSetting.OutputAssetDirPath, $"ltc-visibility-{i}.asset");
                 IOUtility.CreateOrReplaceAsset(ref packed, path);
                 output.Add(new Lightmap(LightmapType, packed, path, i));
                 Debug.LogFormat(KanikamaDebug.Format, $"create LTC asset: {path})");
