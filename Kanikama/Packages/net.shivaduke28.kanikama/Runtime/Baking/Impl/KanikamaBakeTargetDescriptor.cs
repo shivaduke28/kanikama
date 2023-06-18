@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.Baking.Impl
 {
-    public sealed class KanikamaSceneBakeTargetDescriptor : MonoBehaviour, IBakingDescriptor
+    public sealed class KanikamaBakeTargetDescriptor : MonoBehaviour, IBakingDescriptor
     {
         [SerializeField] List<BakeTarget> bakeTargets;
         [SerializeField] List<BakeTargetGroup> bakeTargetGroups;
