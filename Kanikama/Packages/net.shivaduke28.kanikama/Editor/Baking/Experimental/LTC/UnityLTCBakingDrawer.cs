@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading;
-using Kanikama.Baking.Experimental.LTC;
 using Kanikama.Baking.Experimental.LTC.Impl;
 using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
@@ -13,7 +12,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityLTCBakingDrawer(), 10);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityLTCBakingDrawer(), 1);
         }
 
         SceneAsset sceneAsset;

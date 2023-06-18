@@ -15,7 +15,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new BakeryBakingDrawer(), 2);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new BakeryBakingDrawer(), 10);
         }
 
         SceneAsset sceneAsset;

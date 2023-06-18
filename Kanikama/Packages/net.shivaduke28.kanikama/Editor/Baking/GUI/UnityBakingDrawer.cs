@@ -13,7 +13,7 @@ namespace Kanikama.Editor.Baking.GUI
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityBakingDrawer(), 1);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityBakingDrawer(), 0);
         }
 
         SceneAsset sceneAsset;

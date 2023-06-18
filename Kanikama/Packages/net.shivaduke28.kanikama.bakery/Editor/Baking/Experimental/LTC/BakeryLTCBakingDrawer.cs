@@ -12,7 +12,7 @@ namespace Kanikama.Editor.Baking.Experimental.LTC
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new BakeryLTCBakingDrawer(), 20);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new BakeryLTCBakingDrawer(), 11);
         }
 
         SceneAsset sceneAsset;
