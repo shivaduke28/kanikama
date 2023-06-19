@@ -79,7 +79,7 @@
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" "PerformanceChecks"="False" }
+        Tags { "RenderType"="Opaque" "PerformanceChecks"="False" "KanikamaGI"="True" }
         LOD 300
 
 
