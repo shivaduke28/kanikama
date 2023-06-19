@@ -3,6 +3,7 @@
   "references": [
     "Kanikama.Application",
     "Kanikama.Baking",
+    "Kanikama.Editor.Application",
     "Kanikama.Editor.Baking",
     "Kanikama.Bakery.Baking",
     "Kanikama.Bakery.Editor.Baking",

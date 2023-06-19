@@ -11,7 +11,7 @@ namespace Kanikama.Application.Impl
         [SerializeField] Camera targetCamera;
         [SerializeField] List<LightSource> lightSources;
         [SerializeField] List<LightSourceGroup> lightSourceGroups;
-        [SerializeField] Renderer[] renderers;
+        [SerializeField] Renderer[] receivers;
         [SerializeField] Texture2DArray[] lightmapArrays;
         [SerializeField] Texture2DArray[] directionalLightmapArrays;
 
@@ -90,7 +90,7 @@ namespace Kanikama.Application.Impl
             colorsInternal = new Vector4[MaxColorCount];
 
             block = new MaterialPropertyBlock();
-            foreach (var r in renderers)
+            foreach (var r in receivers)
             {
                 var i = r.lightmapIndex;
                 if (i < 0 || i >= lightmapArrays.Length)
