@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Kanikama.Baking.Experimental.LTC.Impl
+namespace Kanikama.Baking.Impl.LTC
 {
     public class KanikamaLTCDescriptor : MonoBehaviour
     {

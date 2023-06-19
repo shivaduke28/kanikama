@@ -2,7 +2,7 @@
 using UnityEngine;
 using VRC.SDKBase;
 
-namespace Kanikama.Udon.Experimental.LTC
+namespace Kanikama.Udon.LTC
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public sealed class KanikamaUdonLTCUpdtater : UdonSharpBehaviour
