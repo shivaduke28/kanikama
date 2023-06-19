@@ -1,4 +1,5 @@
-﻿using UnityEngine.SceneManagement;
+﻿using System.Linq;
+using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor.Baking
 {
@@ -16,6 +17,13 @@ namespace Kanikama.Editor.Baking
                 }
             }
             return default;
+        }
+
+        public static T[] GetComponentsInScene<T>(bool includeInactive)
+        {
+            return SceneManager.GetActiveScene().GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<T>(includeInactive))
+                .ToArray();
         }
     }
 }
