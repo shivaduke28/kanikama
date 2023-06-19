@@ -5,13 +5,11 @@ using UnityEngine;
 namespace Kanikama.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaBakeTargetMonitor : BakeTargetGroup
+    public sealed class KanikamaBakeTargetMonitor : MonoBehaviour
     {
         [SerializeField] Renderer monitorRenderer;
         [SerializeField] List<BakeTarget> bakeTargets;
-
         const float LightOffset = -0.001f;
-
 
         void OnValidate()
         {
@@ -21,7 +19,7 @@ namespace Kanikama.Baking.Impl
             }
         }
 
-        public Bounds GetUnRotatedBounds()
+        Bounds GetUnRotatedBounds()
         {
             var t = monitorRenderer.transform;
             var rotation = t.rotation;
@@ -134,9 +132,6 @@ namespace Kanikama.Baking.Impl
             }
         }
 
-        public override List<IBakeTarget> GetAll() => bakeTargets.Cast<IBakeTarget>().ToList();
-        public override IBakeTarget Get(int index) => bakeTargets[index];
-        public List<BakeTarget> GetAllBakeTargets() => bakeTargets.ToList();
         public BakeTarget GetBakeTarget(int index) => bakeTargets[index];
 
 
