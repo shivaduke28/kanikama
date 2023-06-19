@@ -5,7 +5,7 @@ using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.Experimental.LTC
+namespace Kanikama.Editor.Baking.LTC
 {
     public class BakeryLTCBakingDrawer : KanikamaWindow.IGUIDrawer
     {

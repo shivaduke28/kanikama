@@ -1,13 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Baking.Experimental.LTC;
-using Kanikama.Baking.Experimental.LTC.Impl;
+using Kanikama.Baking.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Baking.Experimental.LTC
+namespace Kanikama.Editor.Baking.LTC
 {
     public sealed class UnityLTCBakingCommand : IUnityBakingCommand
     {
