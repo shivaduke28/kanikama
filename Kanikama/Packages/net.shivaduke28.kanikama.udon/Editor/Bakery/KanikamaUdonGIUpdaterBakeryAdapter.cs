@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Editor.Application;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
@@ -37,7 +38,7 @@ namespace Kanikama.Udon.Editor.Bakery
             {
                 serializedObject = null;
             }
-            
+
             if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 bakingSettingAsset = null;
@@ -94,6 +95,22 @@ namespace Kanikama.Udon.Editor.Bakery
             UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
         }
 
+        void SetupReceivers()
+        {
+            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup Receivers");
+            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
+            var receivers = serializedObject.FindProperty("receivers");
+            var renderers = RendererCollector.CollectKanikamaReceivers();
+            receivers.arraySize = renderers.Length;
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                receivers.GetArrayElementAtIndex(i).objectReferenceValue = renderers[i];
+            }
+            serializedObject.ApplyModifiedProperties();
+            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
+            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
+        }
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField($"{nameof(KanikamaUdonGIUpdater)} (Udon) (Bakery)", EditorStyles.boldLabel);
@@ -116,6 +133,10 @@ namespace Kanikama.Udon.Editor.Bakery
                     if (KanikamaGUI.Button($"Setup by {nameof(BakeryBakingSettingAsset)} asset"))
                     {
                         Setup();
+                    }
+                    if (KanikamaGUI.Button("Set KanikamaGI Receivers"))
+                    {
+                        SetupReceivers();
                     }
                 }
             }

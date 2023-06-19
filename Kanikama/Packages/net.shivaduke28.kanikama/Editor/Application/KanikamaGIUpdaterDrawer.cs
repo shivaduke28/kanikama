@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Editor.Application;
 using Kanikama.Application.Impl;
 using Kanikama.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
@@ -85,6 +86,20 @@ namespace Kanikama.Application.Editor
             serializedObject.ApplyModifiedProperties();
         }
 
+        void SetupReceivers()
+        {
+            Undo.RecordObject(giUpdater, "Setup Receivers");
+            var receivers = serializedObject.FindProperty("receivers");
+            var renderers = RendererCollector.CollectKanikamaReceivers();
+            receivers.arraySize = renderers.Length;
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                receivers.GetArrayElementAtIndex(i).objectReferenceValue = renderers[i];
+            }
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(giUpdater);
+        }
+
         void KanikamaWindow.IGUIDrawer.Draw()
         {
             EditorGUILayout.LabelField($"{nameof(KanikamaRuntimeGIUpdater)} (Unity)", EditorStyles.boldLabel);
@@ -107,6 +122,10 @@ namespace Kanikama.Application.Editor
                     if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
                     {
                         Setup();
+                    }
+                    if (KanikamaGUI.Button("Set KanikamaGI Receivers"))
+                    {
+                        SetupReceivers();
                     }
                 }
             }

@@ -20,7 +20,7 @@ namespace Kanikama.Udon.Editor
             base.OnInspectorGUI();
 
             EditorGUILayout.Space();
-            using (new EditorGUI.DisabledScope(Application.isPlaying))
+            using (new EditorGUI.DisabledScope(UnityEngine.Application.isPlaying))
             {
                 EditorGUILayout.Space();
                 if (GUILayout.Button("Setup Camera"))
@@ -34,7 +34,7 @@ namespace Kanikama.Udon.Editor
 
         public override bool RequiresConstantRepaint()
         {
-            return Application.isPlaying;
+            return UnityEngine.Application.isPlaying;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Editor.Application;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
@@ -67,6 +68,8 @@ namespace Kanikama.Udon.Editor
                 return;
             }
 
+            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup GI Updater");
+            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
             var sliceCount = serializedObject.FindProperty("sliceCount");
@@ -92,6 +95,23 @@ namespace Kanikama.Udon.Editor
 
             serializedObject.ApplyModifiedProperties();
             UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
+            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
+        }
+
+        void SetupReceivers()
+        {
+            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup Receivers");
+            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
+            var receivers = serializedObject.FindProperty("receivers");
+            var renderers = RendererCollector.CollectKanikamaReceivers();
+            receivers.arraySize = renderers.Length;
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                receivers.GetArrayElementAtIndex(i).objectReferenceValue = renderers[i];
+            }
+            serializedObject.ApplyModifiedProperties();
+            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
+            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
         }
 
         void KanikamaWindow.IGUIDrawer.Draw()
@@ -116,6 +136,11 @@ namespace Kanikama.Udon.Editor
                     if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
                     {
                         Setup();
+                    }
+
+                    if (KanikamaGUI.Button("Set KanikamaGI Receivers"))
+                    {
+                        SetupReceivers();
                     }
                 }
             }
