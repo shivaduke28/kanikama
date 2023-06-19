@@ -7,7 +7,7 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaUdonRealtimeSceneLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaUdonColorCollector colorCollector;
+        [SerializeField] KanikamaUdonGIUpdater giUpdater;
         [SerializeField] Light light;
         [SerializeField] public float intensity = 1;
         [SerializeField] bool weightEnable = false;
@@ -18,7 +18,7 @@ namespace Kanikama.Udon
 
         void Start()
         {
-            colors = colorCollector.GetColors();
+            colors = giUpdater.GetColors();
             count = colors.Length;
             if (count == 0)
             {
@@ -41,7 +41,7 @@ namespace Kanikama.Udon
         }
 
         // Note:
-        // Colors are updated by KanikamaColorCollector on OnPreCull.
+        // Colors are updated by KanikamaGIUpdater on OnPreCull.
         void OnPreRender()
         {
             var color = Color.black;
