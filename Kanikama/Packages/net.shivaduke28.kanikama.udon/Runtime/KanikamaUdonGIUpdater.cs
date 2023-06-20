@@ -92,7 +92,7 @@ namespace Kanikama.Udon
             foreach (var r in receivers)
             {
                 var lmi = r.lightmapIndex;
-                if (lmi < 0) continue;
+                if (lmi < 0 || lmi >= lightmapArrays.Length) continue;
                 r.GetPropertyBlock(block);
                 block.SetTexture(lightmapArrayId, lightmapArrays[lmi]);
                 if (lmi <= directionalMapCount)
@@ -100,7 +100,7 @@ namespace Kanikama.Udon
                     block.SetTexture(lightmapIndArrayId, directionalLightmapArrays[lmi]);
                 }
 
-                if (lmi <= ltcVisibilityMaps.Length)
+                if (lmi < ltcVisibilityMaps.Length)
                 {
                     block.SetTexture(visibilityMapId, ltcVisibilityMaps[lmi]);
                 }
