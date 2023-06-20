@@ -32,13 +32,15 @@ namespace Kanikama.Editor.Baking
             public SceneAssetData SceneAssetData { get; } // copied
             public UnityLightmapper Lightmapper { get; }
             public UnityBakingSetting Setting { get; }
+            public UnitySceneGIContext SceneGIContext { get; }
 
             public Context(SceneAssetData sceneAssetData, UnityLightmapper lightmapper,
-                UnityBakingSetting setting)
+                UnityBakingSetting setting, UnitySceneGIContext sceneGIContext)
             {
                 SceneAssetData = sceneAssetData;
                 Lightmapper = lightmapper;
                 Setting = setting;
+                SceneGIContext = sceneGIContext;
             }
         }
 
@@ -49,14 +51,17 @@ namespace Kanikama.Editor.Baking
             IOUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
             using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, true))
             {
-                var lightmapper = new UnityLightmapper();
-                var context = new Context(copiedScene.SceneAssetData, lightmapper, parameter.Setting);
                 try
                 {
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
+
+                    var sceneGI = UnitySceneGIContext.GetGIContext();
+                    var lightmapper = new UnityLightmapper();
+                    var context = new Context(copiedScene.SceneAssetData, lightmapper, parameter.Setting, sceneGI);
+
                     // Turn off all light sources
-                    UnitySceneGIContext.GetGIContext().TurnOff();
+                    sceneGI.TurnOff();
 
                     // initialize all light source handles **after** the copied scene is opened
                     foreach (var command in parameter.Commands)
