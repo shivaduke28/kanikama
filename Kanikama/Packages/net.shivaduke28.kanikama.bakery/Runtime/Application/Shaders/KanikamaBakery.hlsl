@@ -5,6 +5,7 @@
 
 #include <UnityCG.cginc>
 #include <HLSLSupport.cginc>
+#include <UnityStandardBRDF.cginc>
 #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
 #include "Assets/Bakery/shader/Bakery.cginc"
 
