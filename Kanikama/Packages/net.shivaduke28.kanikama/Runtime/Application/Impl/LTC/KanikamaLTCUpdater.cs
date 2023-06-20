@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.Application.LTC
+namespace Kanikama.Application.Impl.LTC
 {
     public sealed class KanikamaLTCUpdater : MonoBehaviour
     {

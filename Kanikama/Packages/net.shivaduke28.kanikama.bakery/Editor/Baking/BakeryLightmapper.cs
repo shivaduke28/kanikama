@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using UnityEditor;
@@ -31,11 +32,10 @@ namespace Kanikama.Bakery.Editor.Baking
             while (ftRenderLightmap.bakeInProgress)
             {
                 await Task.Delay(33, cancellationToken);
-            }
-
-            if (ftRenderLightmap.userCanceled)
-            {
-                throw new TaskCanceledException();
+                if (ftRenderLightmap.userCanceled)
+                {
+                    throw new OperationCanceledException();
+                }
             }
         }
 

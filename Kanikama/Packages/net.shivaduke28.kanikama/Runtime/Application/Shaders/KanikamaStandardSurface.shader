@@ -12,13 +12,8 @@ Shader "Kanikama/KanikamaStandardSurface"
         _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
         _GlossMapScale("Smoothness Scale", Range(0.0, 1.0)) = 1.0
 
-        // [Enum(Metallic Alpha,0,Albedo Alpha,1)] _SmoothnessTextureChannel ("Smoothness texture channel", Float) = 0
-
         [Gamma] _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
         _MetallicGlossMap("Metallic", 2D) = "white" {}
-
-        // [ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
-        // [ToggleOff] _GlossyReflections("Glossy Reflections", Float) = 1.0
 
         _BumpScale("Scale", Float) = 1.0
         [Normal] _BumpMap("Normal Map", 2D) = "bump" {}
@@ -32,12 +27,6 @@ Shader "Kanikama/KanikamaStandardSurface"
         _EmissionColor("Color", Color) = (0,0,0)
         _EmissionMap("Emission", 2D) = "white" {}
 
-        // _DetailMask("Detail Mask", 2D) = "white" {}
-        // _DetailAlbedoMap("Detail Albedo x2", 2D) = "grey" {}
-        // _DetailNormalMapScale("Scale", Float) = 1.0
-        // [Normal] _DetailNormalMap("Normal Map", 2D) = "bump" {}
-        // [Enum(UV0,0,UV1,1)] _UVSec ("UV Set for secondary textures", Float) = 0
-
         // Blending state
         [HideInInspector] _Mode ("__mode", Float) = 0.0
         [HideInInspector] _SrcBlend ("__src", Float) = 1.0
@@ -45,10 +34,11 @@ Shader "Kanikama/KanikamaStandardSurface"
         [HideInInspector] _ZWrite ("__zw", Float) = 1.0
 
         [Header(Kanikama)]
-        [KeywordEnum(Array, Directional)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [KeywordEnum(NONE, ARRAY, DIRECTIONAL)] _Kanikama_Mode("Kanikama Mode", Float) = 0
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
+        [Toggle(_KANIKAMA_LTC)] _Kanikama_LTC("Kanikama LTC", Float) = 0
     }
     SubShader
     {
@@ -63,20 +53,10 @@ Shader "Kanikama/KanikamaStandardSurface"
         #pragma shader_feature_local_fragment _ _ALPHATEST_ON _ALPHABLEND_ON _ALPHAPREMULTIPLY_ON
         #pragma shader_feature_local_fragment _EMISSION
 
-        // NOTE: need to reduce shader keywords to compile surface shader.
-        // #pragma shader_feature_local _METALLICGLOSSMAP
-        // #pragma shader_feature_local _DETAIL_MULX2
-        // #pragma shader_feature_local _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-        // #pragma shader_feature_local _SPECULARHIGHLIGHTS_OFF
-        // #pragma shader_feature_local _GLOSSYREFLECTIONS_OFF
-
-        #define _METALLICGLOSSMAP 1
-        #define _PARALLAXMAP 1
-        #define _NORMALMAP 1
-
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
-        #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL
+        #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL
         #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
+        #pragma shader_feature_local_fragment _ _KANIKAMA_LTC
 
 
         #pragma multi_compile_fog
@@ -85,7 +65,8 @@ Shader "Kanikama/KanikamaStandardSurface"
         #pragma target 3.0
 
         #include <UnityPBSLighting.cginc>
-        #include "./Kanikama.hlsl"
+        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
+        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/KanikamaLTC.hlsl"
 
         half4 _Color;
         half _Cutoff;
@@ -130,18 +111,32 @@ Shader "Kanikama/KanikamaStandardSurface"
             return LightingStandard(s, viewDir, gi);
         }
 
+        inline half3 LTCSpecular(Input IN, SurfaceOutputStandard s, float3 worldNormal, float3 worldView)
+        {
+            half3 specColor;
+            half oneMinusReflectivity = 0;
+            DiffuseAndSpecularFromMetallic(s.Albedo, s.Metallic, specColor, oneMinusReflectivity);
+            half perceptualRoughness = SmoothnessToPerceptualRoughness(s.Smoothness);
+            half3 ltcSpec;
+            KanikamaLTCSpecular(IN.worldPos, worldNormal, worldView, perceptualRoughness, IN.lightmapUV,
+                                s.Occlusion, specColor, ltcSpec);
+            return ltcSpec;
+        }
+
         inline void LightingKanikama_GI(SurfaceOutputStandard s, UnityGIInput data, inout UnityGI gi)
         {
             Unity_GlossyEnvironmentData g = UnityGlossyEnvironmentSetup(s.Smoothness, data.worldViewDir, s.Normal,
                                                                         lerp(unity_ColorSpaceDielectricSpec.rgb,
                                                                              s.Albedo, s.Metallic));
             gi = UnityGlobalIllumination(data, s.Occlusion, s.Normal, g);
+            #if defined(_KANIKAMA_MODE_ARRAY) || defined(_KANIKAMA_MODE_DIRECTIONAL)
             half roughness = SmoothnessToRoughness(s.Smoothness);
             half3 diffuse;
             half3 specular;
             KanikamaGI(data.lightmapUV, s.Normal, data.worldViewDir, roughness, s.Occlusion, diffuse, specular);
             gi.indirect.diffuse += diffuse;
             gi.indirect.specular += specular;
+            #endif
         }
 
         void vert(inout appdata_full v, out Input o)
@@ -164,6 +159,11 @@ Shader "Kanikama/KanikamaStandardSurface"
             o.Occlusion = tex2D(_OcclusionMap, uv).r;
             #ifdef _EMISSION
             o.Emission = tex2D(_EmissionMap, uv) * _EmissionColor;
+            #endif
+
+            #ifdef _KANIKAMA_LTC
+            o.Emission += LTCSpecular(IN, o, WorldNormalVector(IN, o.Normal),
+                                      normalize(UnityWorldSpaceViewDir(IN.worldPos)));
             #endif
         }
         ENDCG

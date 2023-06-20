@@ -77,11 +77,13 @@ namespace Kanikama.Editor.Application
 
         MaterialProperty kanikamaMode;
         MaterialProperty kanikamaDirectionalSpecular;
+        MaterialProperty kanikamaLTC;
 
         void FindKanikamaProperties(MaterialProperty[] properties)
         {
             kanikamaMode = FindProperty("_Kanikama_Mode", properties);
             kanikamaDirectionalSpecular = FindProperty("_Kanikama_Directional_Specular", properties);
+            kanikamaLTC = FindProperty("_Kanikama_LTC", properties);
         }
 
         void KanikamaPropertiesGUI(MaterialEditor materialEditor)
@@ -89,6 +91,7 @@ namespace Kanikama.Editor.Application
             GUILayout.Label("Kanikama", EditorStyles.boldLabel);
             materialEditor.ShaderProperty(kanikamaMode, "Kanikama Mode");
             materialEditor.ShaderProperty(kanikamaDirectionalSpecular, "Kanikama Directional Specular");
+            materialEditor.ShaderProperty(kanikamaLTC, "Kanikama LTC");
         }
 
         public void FindProperties(MaterialProperty[] props)

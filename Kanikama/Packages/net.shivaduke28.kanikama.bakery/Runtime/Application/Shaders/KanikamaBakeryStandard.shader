@@ -66,11 +66,12 @@
         [Toggle(BAKERY_VOLUME)] _BAKERY_VOLUME ("Use volumes", Float) = 0
         [Toggle(BAKERY_VOLROTATION)] _BAKERY_VOLROTATION ("Support volume rotation", Float) = 0
 
-        [KeywordEnum(Array, Directional, Bakery MonoSH)] _Kanikama_Mode("Kanikama Mode", Float) = 0
+        [KeywordEnum(None, Array, Directional, Bakery MonoSH)] _Kanikama_Mode("Kanikama Mode", Float) = 0
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [Toggle(_KANIKAMA_BAKERY_SHNONLINEAR)] _Kanikama_Bakery_SHNonlinear ("Kanikama SH non-linear mode", Float) = 1
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
+        [Toggle(_KANIKAMA_LTC)] _Kanikama_LTC("Kanikama LTC", Float) = 0
     }
 
     CGINCLUDE
@@ -131,9 +132,10 @@
             //#pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile _ BAKERY_COMPRESSED_VOLUME
 
-            #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_BAKERY_MONOSH
+            #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL _KANIKAMA_MODE_BAKERY_MONOSH
             #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
             #pragma shader_feature_local_fragment _ _KANIKAMA_BAKERY_SHNONLINEAR
+            #pragma shader_feature_local_fragment _ _KANIKAMA_LTC
 
             #pragma vertex bakeryVertForwardBase
             #pragma fragment KanikamaBakeryFragForwardBase

@@ -32,11 +32,6 @@ namespace Kanikama.Baking.Impl.LTC
             areaLight.enabled = false;
         }
 
-        public void SetCastShadow(bool enable)
-        {
-            areaLight.shadows = enable ? LightShadows.Soft : LightShadows.None;
-        }
-
         public override void Initialize()
         {
 #if UNITY_EDITOR

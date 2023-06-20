@@ -54,7 +54,9 @@ namespace Kanikama.Bakery.Editor.Baking
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Where(r => r.IsEmissiveAndContributeGI())
+#pragma warning disable CS0618
                     .Select(r => r.gameObject.GetOrAddComponent<RendererMaterialHolder>())
+#pragma warning restore CS0618
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
                 rendererWithShadowCastingModes = Object.FindObjectsOfType<Renderer>()

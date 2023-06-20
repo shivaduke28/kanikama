@@ -11,6 +11,8 @@ namespace Kanikama.Bakery.Baking.Impl
         [SerializeField] string tag;
         [SerializeField] Color color;
         [SerializeField] float intensity;
+        [SerializeField] bool rendererEnable;
+        [SerializeField] bool bakeryLightMeshEnable;
 
         void OnValidate()
         {
@@ -24,6 +26,8 @@ namespace Kanikama.Bakery.Baking.Impl
             intensity = bakeryLightMesh.intensity;
             tag = gameObject.tag;
             gameObject.tag = "Untagged";
+            rendererEnable = renderer.enabled;
+            bakeryLightMeshEnable = bakeryLightMesh.enabled;
         }
 
         public override void TurnOff()
@@ -47,8 +51,8 @@ namespace Kanikama.Bakery.Baking.Impl
 
         public override void Clear()
         {
-            renderer.enabled = true;
-            bakeryLightMesh.enabled = true;
+            renderer.enabled = rendererEnable;
+            bakeryLightMesh.enabled = bakeryLightMeshEnable;
             bakeryLightMesh.color = color;
             bakeryLightMesh.intensity = intensity;
             gameObject.tag = tag;

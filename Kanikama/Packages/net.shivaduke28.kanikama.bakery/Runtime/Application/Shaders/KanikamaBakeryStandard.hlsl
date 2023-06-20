@@ -4,6 +4,7 @@
 #include "Assets/Bakery/shader/Bakery.cginc"
 #include "UnityStandardCoreForward.cginc"
 #include "KanikamaBakery.hlsl"
+#include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/KanikamaLTC.hlsl"
 
 half4 KanikamaBakeryFragForwardBase(BakeryVertexOutputForwardBase i) : SV_Target
 {
@@ -178,18 +179,26 @@ half4 KanikamaBakeryFragForwardBase(BakeryVertexOutputForwardBase i) : SV_Target
     #endif
     #endif
 
+    #if defined(_KANIKAMA_MODE_ARRAY) || defined(_KANIKAMA_MODE_DIRECTIONAL) || defined(_KANIKAMA_MODE_BAKERY_MONOSH)
     half3 kanikamaDiffuse;
     half3 kanikamaSpecular;
     KanikamaBakeryGI(i.ambientOrLightmapUV.xy, s.normalWorld, -s.eyeVec, s.smoothness, occlusion, kanikamaDiffuse,
                      kanikamaSpecular);
     gi.indirect.diffuse += kanikamaDiffuse;
     gi.indirect.specular += kanikamaSpecular;
+    #endif
 
     half4 c = UNITY_BRDF_PBS(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec,
                              gi.light, gi.indirect);
 
     c.rgb += UNITY_BRDF_GI(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec,
                            occlusion, gi);
+
+    #if defined(_KANIKAMA_LTC)
+    half3 ltcSpec;
+    KanikamaLTCSpecular(s.posWorld, s.normalWorld, -s.eyeVec, SmoothnessToPerceptualRoughness(s.smoothness), i.ambientOrLightmapUV.xy, occlusion, s.specColor, ltcSpec);
+    c.rgb += ltcSpec;
+    #endif
     c.rgb += Emission(i.tex.xy);
 
     UNITY_APPLY_FOG(i.fogCoord, c.rgb);
