@@ -30,6 +30,8 @@ namespace Baking.Impl.LTC
             renderer.shadowCastingMode = ShadowCastingMode.On;
             bakeryLightMesh.selfShadow = true;
             bakeryLightMesh.enabled = true;
+            bakeryLightMesh.color = Color.white;
+            bakeryLightMesh.intensity = 1;
         }
 
         public override void TurnOff()
