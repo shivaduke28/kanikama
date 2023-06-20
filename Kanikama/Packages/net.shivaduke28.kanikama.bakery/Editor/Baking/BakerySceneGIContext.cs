@@ -23,28 +23,6 @@ namespace Kanikama.Bakery.Editor.Baking
 
         List<RendererWithShadowCastingMode> rendererWithShadowCastingModes;
 
-        class RendererWithShadowCastingMode
-        {
-            readonly ObjectHandle<Renderer> handle;
-            readonly ShadowCastingMode shadowCastingMode;
-
-            public RendererWithShadowCastingMode(Renderer renderer)
-            {
-                handle = new ObjectHandle<Renderer>(renderer);
-                shadowCastingMode = handle.Value.shadowCastingMode;
-            }
-
-            public void SetShadowCastingMode(ShadowCastingMode mode)
-            {
-                handle.Value.shadowCastingMode = mode;
-            }
-
-            public void ClearShadowCastingMode()
-            {
-                handle.Value.shadowCastingMode = shadowCastingMode;
-            }
-        }
-
         public static BakerySceneGIContext GetContext(Func<Object, bool> filter = null)
         {
             var context = new BakerySceneGIContext

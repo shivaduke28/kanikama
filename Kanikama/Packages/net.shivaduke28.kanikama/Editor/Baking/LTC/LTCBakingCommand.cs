@@ -33,7 +33,7 @@ namespace Kanikama.Editor.Baking.LTC
             context.Lightmapper.Bounce = 0;
             Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {name}, id: {Id}.");
             handle.Value.TurnOn();
-            handle.Value.SetCastShadow(true);
+            context.SceneGIContext.ClearCastShadow();
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
             var bakedShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
@@ -48,7 +48,7 @@ namespace Kanikama.Editor.Baking.LTC
             }
 
             Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/o shadow... name: {name}, id: {Id}.");
-            handle.Value.SetCastShadow(false);
+            context.SceneGIContext.SetCastShadowOff();
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
             handle.Value.TurnOff();

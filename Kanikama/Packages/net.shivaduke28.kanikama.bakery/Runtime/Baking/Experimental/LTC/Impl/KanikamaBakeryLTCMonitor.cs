@@ -1,18 +1,19 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Impl.LTC;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Baking.Experimental.LTC.Impl
 {
     [RequireComponent(typeof(BakeryLightMesh))]
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaBakeryLTCMonitor : MonoBehaviour
+    public sealed class KanikamaBakeryLTCMonitor : KanikamaLTCMonitor
     {
         [SerializeField] BakeryLightMesh bakeryLightMesh;
         [SerializeField] new Renderer renderer;
 
         void OnValidate() => Initialize();
 
-        public void Initialize()
+        public override void Initialize()
         {
             if (bakeryLightMesh == null)
             {
@@ -24,14 +25,14 @@ namespace Baking.Experimental.LTC.Impl
             }
         }
 
-        public void TurnOn()
+        public override void TurnOn()
         {
             renderer.shadowCastingMode = ShadowCastingMode.On;
             bakeryLightMesh.selfShadow = true;
             bakeryLightMesh.enabled = true;
         }
 
-        public void TurnOff()
+        public override void TurnOff()
         {
             bakeryLightMesh.enabled = false;
         }

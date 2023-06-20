@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Baking.Experimental.LTC.Impl;
+using Kanikama.Baking.Impl.LTC;
 using Kanikama.Editor.Baking;
 using Kanikama.Utility;
 using UnityEditor;
@@ -14,13 +15,13 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
     public sealed class BakeryLTCBakingCommand : IBakingCommand
     {
         readonly SceneObjectId sceneObjectId;
-        ObjectHandle<KanikamaBakeryLTCMonitor> handle;
+        ObjectHandle<KanikamaLTCMonitor> handle;
         public string Name { get; }
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public BakeryLTCBakingCommand(KanikamaBakeryLTCMonitor value)
+        public BakeryLTCBakingCommand(KanikamaLTCMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -74,7 +75,7 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
         {
             if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                handle = new ObjectHandle<KanikamaBakeryLTCMonitor>(globalObjectId);
+                handle = new ObjectHandle<KanikamaLTCMonitor>(globalObjectId);
             }
             handle.Value.Initialize();
             handle.Value.TurnOff();

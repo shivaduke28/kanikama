@@ -15,6 +15,7 @@ namespace Kanikama.Editor.Baking
         List<ObjectHandle<LightProbeGroup>> lightProbeGroups;
         List<ObjectHandle<ReflectionProbe>> reflectionProbes;
         AmbientLight ambientLight;
+        List<RendererWithShadowCastingMode> rendererWithShadowCastingModes;
 
         public static UnitySceneGIContext GetGIContext(Func<Object, bool> filter = null)
         {
@@ -37,6 +38,11 @@ namespace Kanikama.Editor.Baking
                     .ToList(),
                 reflectionProbes = Object.FindObjectsOfType<ReflectionProbe>()
                     .Select(rp => new ObjectHandle<ReflectionProbe>(rp))
+                    .ToList(),
+                rendererWithShadowCastingModes = Object.FindObjectsOfType<Renderer>()
+                    .Where(x => filter?.Invoke(x) ?? true)
+                    .Where(r => r.gameObject.IsContributeGI())
+                    .Select(r => new RendererWithShadowCastingMode(r))
                     .ToList(),
             };
             return context;
@@ -68,6 +74,22 @@ namespace Kanikama.Editor.Baking
             }
 
             ambientLight.TurnOff();
+        }
+
+        public void SetCastShadowOff()
+        {
+            foreach (var renderer in rendererWithShadowCastingModes)
+            {
+                renderer.SetShadowCastingMode(ShadowCastingMode.Off);
+            }
+        }
+
+        public void ClearCastShadow()
+        {
+            foreach (var renderer in rendererWithShadowCastingModes)
+            {
+                renderer.ClearShadowCastingMode();
+            }
         }
 
         public void Dispose()
