@@ -1,22 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Baking.Impl.LTC;
 using UnityEngine;
 
 namespace Kanikama.Baking.Impl
 {
-    public sealed class KanikamaBakeTargetDescriptor : MonoBehaviour, IBakingDescriptor
+    public sealed class KanikamaBakeTargetDescriptor : MonoBehaviour
     {
         [SerializeField] List<BakeTarget> bakeTargets;
         [SerializeField] List<BakeTargetGroup> bakeTargetGroups;
+        [SerializeField] List<KanikamaLTCMonitor> ltcMonitors;
 
-        List<BakeTarget> IBakingDescriptor.GetBakeTargets()
-        {
-            return bakeTargets.ToList();
-        }
+        public List<BakeTarget> GetBakeTargets() => bakeTargets.ToList();
 
-        List<BakeTargetGroup> IBakingDescriptor.GetBakeTargetGroups()
-        {
-            return bakeTargetGroups.ToList();
-        }
+        public List<BakeTargetGroup> GetBakeTargetGroups() => bakeTargetGroups.ToList();
+        public KanikamaLTCMonitor[] GetLTCMonitors() => ltcMonitors.ToArray();
     }
 }

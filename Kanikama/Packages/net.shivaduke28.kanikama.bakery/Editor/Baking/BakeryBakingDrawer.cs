@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
+using Kanikama.Baking.Impl;
 using Kanikama.Editor.Baking.GUI;
+using Kanikama.Editor.Baking.LTC;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -19,7 +21,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
         }
 
         SceneAsset sceneAsset;
-        IBakingDescriptor sceneDescriptor;
+        KanikamaBakeTargetDescriptor descriptor;
         BakeryBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -36,12 +38,12 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             {
                 sceneAsset = null;
                 bakingSettingAsset = null;
-                sceneDescriptor = null;
+                descriptor = null;
                 return;
             }
 
             sceneAsset = sceneAssetData.Asset;
-            sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
+            descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeTargetDescriptor>();
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
@@ -84,15 +86,12 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
 
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (sceneDescriptor == null || (sceneDescriptor is Object sceneDescriptorObject && sceneDescriptorObject == null))
+            if (descriptor == null)
             {
-                sceneDescriptor = GameObjectHelper.FindObjectOfType<IBakingDescriptor>();
+                descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeTargetDescriptor>();
             }
 
-            if (sceneDescriptor is Object obj)
-            {
-                sceneDescriptor = (IBakingDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", obj, typeof(MonoBehaviour), true);
-            }
+            descriptor = (KanikamaBakeTargetDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", descriptor, typeof(KanikamaBakeTargetDescriptor), true);
 
             bakingSettingAsset =
                 (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(BakeryBakingSettingAsset), false);
@@ -103,7 +102,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
                 return;
             }
 
-            if (sceneDescriptor == null)
+            if (descriptor == null)
             {
                 EditorGUILayout.HelpBox("BakingSceneDescriptor is not found.", MessageType.Warning);
                 return;
@@ -122,22 +121,39 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             if (KanikamaGUI.Button("Bake static") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeStaticAsync(sceneDescriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeStaticAsync(descriptor, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(sceneDescriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(descriptor, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                BakeryBakingPipelineRunner.CreateAssets(sceneDescriptor, new SceneAssetData(sceneAsset));
+                BakeryBakingPipelineRunner.CreateAssets(descriptor, new SceneAssetData(sceneAsset));
+            }
+
+            if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
+            {
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource?.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+                var __ = BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
+                    new SceneAssetData(sceneAsset),
+                    bakingSettingAsset.Setting,
+                    descriptor.GetLTCMonitors()
+                ), cancellationTokenSource.Token);
+            }
+
+            if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
+            {
+                BakeryLTCBakingPipeline.CreateAssets(descriptor.GetLTCMonitors(), bakingSettingAsset.Setting);
             }
         }
 
-        async Task BakeKanikamaAsync(IBakingDescriptor bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
+        async Task BakeKanikamaAsync(KanikamaBakeTargetDescriptor bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
         {
             try
             {
@@ -158,7 +174,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             }
         }
 
-        async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(KanikamaBakeTargetDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
@@ -181,7 +197,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
 
         bool ValidateAndLoadOnFail()
         {
-            var result = sceneDescriptor != null;
+            var result = descriptor != null;
             result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
             result = result && sceneAssetData.Asset == sceneAsset;
 

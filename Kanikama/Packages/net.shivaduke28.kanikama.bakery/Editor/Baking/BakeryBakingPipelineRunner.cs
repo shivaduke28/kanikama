@@ -4,12 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
+using Kanikama.Baking.Impl;
 
 namespace Kanikama.Bakery.Editor.Baking
 {
     public static class BakeryBakingPipelineRunner
     {
-        public static async Task BakeAsync(IBakingDescriptor bakingDescriptor, BakeryBakingSetting bakingSetting, CancellationToken cancellationToken)
+        public static async Task BakeAsync(KanikamaBakeTargetDescriptor bakingDescriptor, BakeryBakingSetting bakingSetting,
+            CancellationToken cancellationToken)
         {
             var handles = CreateHandles(bakingDescriptor);
             var sceneAssetData = new SceneAssetData(bakingSetting.SceneAsset);
@@ -25,7 +27,7 @@ namespace Kanikama.Bakery.Editor.Baking
             await BakeryBakingPipeline.BakeAsync(ctx, cancellationToken);
         }
 
-        public static async Task BakeStaticAsync(IBakingDescriptor bakingDescriptor,
+        public static async Task BakeStaticAsync(KanikamaBakeTargetDescriptor bakingDescriptor,
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
@@ -37,7 +39,7 @@ namespace Kanikama.Bakery.Editor.Baking
             await BakeryBakingPipeline.BakeStaticAsync(context, cancellationToken);
         }
 
-        public static void CreateAssets(IBakingDescriptor bakingDescriptor, SceneAssetData sceneAssetData)
+        public static void CreateAssets(KanikamaBakeTargetDescriptor bakingDescriptor, SceneAssetData sceneAssetData)
         {
             var handles = CreateHandles(bakingDescriptor);
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
@@ -45,7 +47,7 @@ namespace Kanikama.Bakery.Editor.Baking
             BakeryBakingPipeline.CreateAssets(handles, setting);
         }
 
-        static List<IBakeTargetHandle> CreateHandles(IBakingDescriptor bakingDescriptor)
+        static List<IBakeTargetHandle> CreateHandles(KanikamaBakeTargetDescriptor bakingDescriptor)
         {
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
