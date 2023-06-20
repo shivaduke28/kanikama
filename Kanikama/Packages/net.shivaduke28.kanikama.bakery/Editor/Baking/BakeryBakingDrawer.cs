@@ -63,12 +63,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             {
                 if (isRunning)
                 {
-                    if (KanikamaGUI.Button("Cancel"))
-                    {
-                        cancellationTokenSource.Cancel();
-                        cancellationTokenSource.Dispose();
-                        cancellationTokenSource = null;
-                    }
+                    EditorGUILayout.HelpBox("Pipeline can be canceled from Bakery Progress Bar.", MessageType.Info);
                 }
                 else
                 {
@@ -140,11 +135,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
                 cancellationTokenSource?.Cancel();
                 cancellationTokenSource?.Dispose();
                 cancellationTokenSource = new CancellationTokenSource();
-                var __ = BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
-                    new SceneAssetData(sceneAsset),
-                    bakingSettingAsset.Setting,
-                    descriptor.GetLTCMonitors()
-                ), cancellationTokenSource.Token);
+                var _ = BakeLTCAsync(cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
@@ -180,6 +171,31 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
             {
                 isRunning = true;
                 await BakeryBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
+
+        async Task BakeLTCAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                isRunning = true;
+                await BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
+                    new SceneAssetData(sceneAsset),
+                    bakingSettingAsset.Setting,
+                    descriptor.GetLTCMonitors()
+                ), cancellationToken);
             }
             catch (OperationCanceledException)
             {
