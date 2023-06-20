@@ -1,27 +1,41 @@
 ﻿using Kanikama.Baking.Impl.LTC;
+using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Baking.Impl.LTC
 {
-    [RequireComponent(typeof(BakeryLightMesh))]
-    [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaBakeryLTCMonitor : KanikamaLTCMonitor
     {
         [SerializeField] BakeryLightMesh bakeryLightMesh;
         [SerializeField] new Renderer renderer;
 
-        void OnValidate() => Initialize();
+        void OnValidate()
+        {
+            Initialize();
+        }
 
         public override void Initialize()
         {
             if (bakeryLightMesh == null)
             {
-                bakeryLightMesh = GetComponent<BakeryLightMesh>();
-            }
-            if (renderer == null)
-            {
-                renderer = GetComponent<Renderer>();
+                var child = transform.Find("BakeryLTCLight");
+                if (child == null)
+                {
+                    var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                    if (go.TryGetComponent<Collider>(out var c))
+                    {
+                        c.DestroySafely();
+                    }
+                    go.name = "BakeryLTCLight";
+                    go.transform.SetParent(transform, false);
+                    go.transform.localPosition = new Vector3(0, 0, -0.001f);
+                    go.transform.localRotation = Quaternion.identity;
+                    child = go.transform;
+                }
+                renderer = child.GetComponent<Renderer>();
+                bakeryLightMesh = child.gameObject.GetOrAddComponent<BakeryLightMesh>();
+                TurnOff();
             }
         }
 
@@ -37,6 +51,7 @@ namespace Baking.Impl.LTC
         public override void TurnOff()
         {
             bakeryLightMesh.enabled = false;
+            renderer.enabled = false;
         }
     }
 }
