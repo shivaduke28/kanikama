@@ -138,7 +138,7 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
                 var _ = BakeLTCAsync(cancellationTokenSource.Token);
             }
 
-            if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
+            if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
             {
                 BakeryLTCBakingPipeline.CreateAssets(descriptor.GetLTCMonitors(), bakingSettingAsset.Setting);
             }
