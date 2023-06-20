@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Baking.Experimental.LTC.Impl
+namespace Baking.Impl.LTC
 {
     [RequireComponent(typeof(BakeryLightMesh))]
     [RequireComponent(typeof(Renderer))]
