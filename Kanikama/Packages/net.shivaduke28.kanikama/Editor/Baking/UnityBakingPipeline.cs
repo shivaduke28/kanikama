@@ -13,6 +13,8 @@ namespace Kanikama.Editor.Baking
 {
     public static class UnityBakingPipeline
     {
+        public const string LightmapArrayKey = "KanikamaUnity";
+
         public sealed class Parameter
         {
             public SceneAssetData SceneAssetData { get; }
@@ -181,7 +183,7 @@ namespace Kanikama.Editor.Baking
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }
             }
-            bakingSetting.AssetStorage.LightmapArrayStorage.AddOrUpdate("KanikamaUnity", output, "Kanikama Unity");
+            bakingSetting.AssetStorage.LightmapArrayStorage.AddOrUpdate(LightmapArrayKey, output, "Kanikama Unity");
             Debug.LogFormat(KanikamaDebug.Format, "done");
         }
 
