@@ -3,6 +3,7 @@ using Editor.Application;
 using Kanikama.Application.Impl;
 using Kanikama.Editor.Baking;
 using Kanikama.Editor.Baking.GUI;
+using Kanikama.Editor.Baking.LTC;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -65,8 +66,7 @@ namespace Kanikama.Application.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
                 return;
             }
-            var arrayStorage = settingAsset.Setting.AssetStorage.LightmapArrayStorage;
-            var lightmapArrayList = arrayStorage.GetAll();
+            if (!settingAsset.Setting.AssetStorage.LightmapArrayStorage.TryGet(UnityBakingPipeline.LightmapArrayKey, out var lightmapArrayList)) return;
 
             var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
             var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmap.Directional).OrderBy(x => x.Index).ToArray();
@@ -83,6 +83,17 @@ namespace Kanikama.Application.Editor
             {
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
+
+            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(UnityLTCBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
+            {
+                var ltcVisibilityMap = serializedObject.FindProperty("_Udon_LTC_VisibilityMap");
+                ltcVisibilityMap.arraySize = lights.Length;
+                for (var i = 0; i < lights.Length; i++)
+                {
+                    ltcVisibilityMap.GetArrayElementAtIndex(i).objectReferenceValue = ltcVisibilityMapList[i].Texture;
+                }
+            }
+
             serializedObject.ApplyModifiedProperties();
         }
 

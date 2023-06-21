@@ -15,6 +15,8 @@ namespace Kanikama.Bakery.Editor.Baking
 {
     public static class BakeryBakingPipeline
     {
+        public const string LightmapArrayKey = "KanikamaBakery";
+
         public sealed class Parameter
         {
             public SceneAssetData SceneAssetData { get; }
@@ -232,7 +234,7 @@ namespace Kanikama.Bakery.Editor.Baking
                     }
                 }
             }
-            setting.AssetStorage.LightmapArrayStorage.AddOrUpdate("KanikamaBakery", output, "KanikamaBakery");
+            setting.AssetStorage.LightmapArrayStorage.AddOrUpdate(LightmapArrayKey, output, "KanikamaBakery");
 
             Debug.LogFormat(KanikamaDebug.Format, "done");
         }
