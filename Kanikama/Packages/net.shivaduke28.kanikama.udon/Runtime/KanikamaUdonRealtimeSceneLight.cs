@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿using Kanikama.Baking.Attributes;
+using UdonSharp;
 using UnityEngine;
 
 namespace Kanikama.Udon
@@ -7,8 +8,8 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaUdonRealtimeSceneLight : UdonSharpBehaviour
     {
-        [SerializeField] KanikamaUdonGIUpdater giUpdater;
-        [SerializeField] Light light;
+        [SerializeField, NonNull] KanikamaUdonGIUpdater giUpdater;
+        [SerializeField, NonNull] Light light;
         [SerializeField] public float intensity = 1;
         [SerializeField] bool weightEnable = false;
         [SerializeField] float[] weights;

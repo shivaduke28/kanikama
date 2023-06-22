@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Baking.Attributes;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -8,11 +9,11 @@ namespace Kanikama.Baking.Impl
 {
     public sealed class KanikamaBakeTargetMonitorGroup : BakeTargetGroup
     {
-        [SerializeField] KanikamaBakeTargetMonitor mainMonitor;
-        [SerializeField] KanikamaBakeTargetMonitor[] subMonitors;
-        [SerializeField] BakeTarget bakeTargetPrefab;
+        [SerializeField, NonNull] KanikamaBakeTargetMonitor mainMonitor;
+        [SerializeField, NonNull] KanikamaBakeTargetMonitor[] subMonitors;
+        [SerializeField, NonNull] BakeTarget bakeTargetPrefab;
         [SerializeField] KanikamaBakeTargetMonitor.PartitionType partitionType = KanikamaBakeTargetMonitor.PartitionType.Grid1x1;
-        [SerializeField] List<MonitorGridFiber> monitorGridFibers;
+        [SerializeField, NonNull] List<MonitorGridFiber> monitorGridFibers;
 
 
         [Serializable]

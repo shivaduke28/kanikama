@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 using VRC.SDKBase;
 
 namespace Kanikama.Udon
@@ -6,7 +7,7 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Renderer))]
     public class KanikamaUdonLightMesh : KanikamaUdonLightSource
     {
-        [SerializeField] new Renderer renderer;
+        [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
         [SerializeField] Material instance;

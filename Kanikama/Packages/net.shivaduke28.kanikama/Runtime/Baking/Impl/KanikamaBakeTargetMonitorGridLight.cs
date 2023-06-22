@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.Baking.Impl
 {
     public class KanikamaBakeTargetMonitorGridLight : BakeTarget
     {
-        [SerializeField] new Light light;
+        [SerializeField, NonNull] new Light light;
 
         void OnValidate()
         {

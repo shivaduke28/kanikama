@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 
 namespace Kanikama.Application.Impl
 {
     [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaRuntimeLightMesh : LightSource
     {
-        [SerializeField] new Renderer renderer;
+        [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
         [SerializeField] Material instance;

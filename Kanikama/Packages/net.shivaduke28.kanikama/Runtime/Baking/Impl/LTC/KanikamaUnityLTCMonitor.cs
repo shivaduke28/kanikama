@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 
 namespace Kanikama.Baking.Impl.LTC
 {
     public sealed class KanikamaUnityLTCMonitor : KanikamaLTCMonitor
     {
-        [SerializeField] Light areaLight;
+        [SerializeField, NonNull] Light areaLight;
 
         void OnValidate()
         {

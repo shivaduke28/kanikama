@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 
 namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Light))]
     public class KanikamaUdonLight : KanikamaUdonLightSource
     {
-        [SerializeField] new Light light;
+        [SerializeField, NonNull] new Light light;
 
         void OnValidate()
         {
