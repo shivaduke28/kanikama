@@ -103,6 +103,12 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
                 return;
             }
 
+            if (!descriptor.Validate())
+            {
+                EditorGUILayout.HelpBox($"{nameof(KanikamaBakeTargetDescriptor)} has invalid null fields.", MessageType.Error);
+                return;
+            }
+
             if (bakingSettingAsset == null)
             {
                 if (KanikamaGUI.Button("Load/Create Settings Asset"))
