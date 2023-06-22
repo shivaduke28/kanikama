@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,8 +10,7 @@ namespace Kanikama.Application.Impl
     {
         [SerializeField] bool isSRP;
         [SerializeField] Camera targetCamera;
-        [Header("Scene")]
-        [SerializeField] List<LightSource> lightSources;
+        [Header("Scene")] [SerializeField] List<LightSource> lightSources;
         [SerializeField] List<LightSourceGroup> lightSourceGroups;
         [SerializeField] Renderer[] receivers;
         [SerializeField] Texture2DArray[] lightmapArrays;
@@ -217,6 +217,20 @@ namespace Kanikama.Application.Impl
                 Length = colors.Length;
                 StartIndex = startIndex;
             }
+        }
+
+        public bool Validate()
+        {
+            return receivers.All(x => x != null)
+                && lightmapArrays.All(x => x != null)
+                && directionalLightmapArrays.All(x => x != null)
+                && lightSources.All(x => x != null)
+                && lightSourceGroups.All(x => x != null)
+                && ltcMonitors.All(x => x != null)
+                && ltcVisibilityMaps.All(x => x != null)
+                && ltcLut0 != null
+                && ltcLut1 != null
+                && ltcLightSourceTex != null;
         }
     }
 }

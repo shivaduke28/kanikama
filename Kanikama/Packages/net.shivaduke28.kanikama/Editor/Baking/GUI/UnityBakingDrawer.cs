@@ -101,7 +101,13 @@ namespace Kanikama.Editor.Baking.GUI
 
             if (descriptor == null)
             {
-                EditorGUILayout.HelpBox("BakingSceneDescriptor is not found.", MessageType.Warning);
+                EditorGUILayout.HelpBox($"{nameof(KanikamaBakeTargetDescriptor)}  is not found.", MessageType.Warning);
+                return;
+            }
+
+            if (!descriptor.Validate())
+            {
+                EditorGUILayout.HelpBox($"{nameof(KanikamaBakeTargetDescriptor)} has invalid null fields.", MessageType.Error);
                 return;
             }
 

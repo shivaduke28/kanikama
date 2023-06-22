@@ -2,7 +2,8 @@
   "name": "Kanikama.Udon",
   "references": [
     "UdonSharp.Runtime",
-    "VRC.Udon"
+    "VRC.Udon",
+    "Kanikama.Baking"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

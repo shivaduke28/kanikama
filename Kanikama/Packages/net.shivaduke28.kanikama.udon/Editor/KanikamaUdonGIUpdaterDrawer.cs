@@ -138,6 +138,10 @@ namespace Kanikama.Udon.Editor
                 {
                     EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
                 }
+                else if (!kanikamaUdonGIUpdater.Validate())
+                {
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} has invalid null fields.", MessageType.Error);
+                }
                 else if (bakingSettingAsset == null)
                 {
                     EditorGUILayout.HelpBox($"{nameof(UnityBakingSettingAsset)} is not found.", MessageType.Warning);

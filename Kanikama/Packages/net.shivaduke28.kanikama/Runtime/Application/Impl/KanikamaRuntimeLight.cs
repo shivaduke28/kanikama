@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 
 namespace Kanikama.Application.Impl
 {
     [RequireComponent(typeof(Light))]
     public sealed class KanikamaRuntimeLight : LightSource
     {
-        [SerializeField] new Light light;
+        [SerializeField, NonNull] new Light light;
 
         void OnValidate()
         {

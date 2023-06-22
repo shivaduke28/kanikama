@@ -1,4 +1,6 @@
-﻿using UdonSharp;
+﻿using System.Linq;
+using Kanikama.Baking.Attributes;
+using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -7,14 +9,12 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class KanikamaUdonGIUpdater : UdonSharpBehaviour
     {
-        [SerializeField] Renderer[] receivers;
-
-        [SerializeField] Texture[] lightmapArrays;
-        [SerializeField] Texture[] directionalLightmapArrays;
+        [SerializeField, NonNull] Renderer[] receivers;
+        [SerializeField, NonNull] Texture[] lightmapArrays;
+        [SerializeField, NonNull] Texture[] directionalLightmapArrays;
         [SerializeField] int sliceCount;
-
-        [SerializeField] KanikamaUdonLightSource[] lightSources;
-        [SerializeField] KanikamaUdonLightSourceGroup[] lightSourceGroups;
+        [SerializeField, NonNull] KanikamaUdonLightSource[] lightSources;
+        [SerializeField, NonNull] KanikamaUdonLightSourceGroup[] lightSourceGroups;
         [SerializeField] Vector4[] colors; // linear
 
         const int MaxColorCount = 64;
@@ -31,11 +31,14 @@ namespace Kanikama.Udon
         int countId;
         int colorsId;
 
-        [Header("LTC")] [SerializeField] Transform[] ltcMonitors;
-        [SerializeField] Texture[] ltcVisibilityMaps;
-        [SerializeField] Texture ltcLut0;
-        [SerializeField] Texture ltcLut1;
-        [SerializeField] Texture ltcLightSourceTex;
+        [Header("LTC")]
+        [SerializeField, NonNull]
+        Transform[] ltcMonitors;
+
+        [SerializeField, NonNull] Texture[] ltcVisibilityMaps;
+        [SerializeField, NonNull] Texture ltcLut0;
+        [SerializeField, NonNull] Texture ltcLut1;
+        [SerializeField, NonNull] Texture ltcLightSourceTex;
 
         int ltcCount;
         Vector4[] vertex0;
@@ -193,5 +196,22 @@ namespace Kanikama.Udon
             }
             VRCShader.SetGlobalVectorArray(colorsId, colors);
         }
+
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        public bool Validate()
+        {
+            return receivers.All(x => x != null)
+                && lightmapArrays.All(x => x != null)
+                && directionalLightmapArrays.All(x => x != null)
+                && lightSources.All(x => x != null)
+                && lightSourceGroups.All(x => x != null)
+                && ltcMonitors.All(x => x != null)
+                && ltcVisibilityMaps.All(x => x != null)
+                && ltcLut0 != null
+                && ltcLut1 != null
+                && ltcLightSourceTex != null;
+        }
+#endif
     }
 }

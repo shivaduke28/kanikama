@@ -1,4 +1,5 @@
-﻿using Kanikama.Utility;
+﻿using Kanikama.Baking.Attributes;
+using Kanikama.Utility;
 using UnityEngine;
 
 namespace Kanikama.Baking.Impl
@@ -6,7 +7,7 @@ namespace Kanikama.Baking.Impl
     [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaBakeTargetLightMesh : BakeTarget
     {
-        [SerializeField] new Renderer renderer;
+        [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
         [SerializeField] string tag;

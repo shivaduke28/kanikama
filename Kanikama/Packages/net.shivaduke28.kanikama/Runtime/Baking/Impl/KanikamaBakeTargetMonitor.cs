@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Baking.Attributes;
 using UnityEngine;
 
 namespace Kanikama.Baking.Impl
@@ -7,8 +8,8 @@ namespace Kanikama.Baking.Impl
     [RequireComponent(typeof(Renderer))]
     public sealed class KanikamaBakeTargetMonitor : MonoBehaviour
     {
-        [SerializeField] Renderer monitorRenderer;
-        [SerializeField] List<BakeTarget> bakeTargets;
+        [SerializeField, NonNull] Renderer monitorRenderer;
+        [SerializeField, NonNull] List<BakeTarget> bakeTargets;
         const float LightOffset = -0.001f;
 
         void OnValidate()

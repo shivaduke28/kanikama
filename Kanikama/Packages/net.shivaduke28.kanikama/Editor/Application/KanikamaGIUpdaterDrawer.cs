@@ -124,6 +124,10 @@ namespace Kanikama.Application.Editor
                 {
                     EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} is not found.", MessageType.Warning);
                 }
+                else if (!giUpdater.Validate())
+                {
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} has invalid null fields.", MessageType.Error);
+                }
                 else if (bakingSettingAsset == null)
                 {
                     EditorGUILayout.HelpBox($"{nameof(UnityBakingSettingAsset)} is not found.", MessageType.Warning);

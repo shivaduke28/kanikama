@@ -1,4 +1,5 @@
 ﻿using System;
+using Kanikama.Baking.Attributes;
 using Kanikama.Baking.Impl;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -9,11 +10,11 @@ namespace Kanikama.Application.Impl
     public sealed class KanikamaRuntimeMonitorCamera : LightSourceGroup
     {
         [SerializeField] bool isSRP;
-        [SerializeField] Renderer monitorRenderer;
+        [SerializeField, NonNull] Renderer monitorRenderer;
         [SerializeField] KanikamaBakeTargetMonitor.PartitionType partitionType = KanikamaBakeTargetMonitor.PartitionType.Grid1x1;
-        [SerializeField] Camera targetCamera;
+        [SerializeField, NonNull] Camera targetCamera;
         [SerializeField] CameraSettings cameraSettings;
-        [SerializeField] Texture2D readingTexture;
+        [SerializeField, NonNull] Texture2D readingTexture;
         [SerializeField] Color[] colors;
         [SerializeField] float aspectRatio = 1f;
 

@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Kanikama.Baking.Attributes;
+using UnityEngine;
 
 namespace Kanikama.Baking.Impl
 {
     [RequireComponent(typeof(Light))]
     public sealed class KanikamaBakeTargetLight : BakeTarget
     {
-        [SerializeField] new Light light;
+        [SerializeField, NonNull] new Light light;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] float intensity;
 

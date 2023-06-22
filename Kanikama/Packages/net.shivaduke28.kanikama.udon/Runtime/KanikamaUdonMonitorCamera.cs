@@ -1,4 +1,5 @@
 ﻿using System;
+using Kanikama.Baking.Attributes;
 using UdonSharp;
 using UnityEngine;
 
@@ -7,13 +8,13 @@ namespace Kanikama.Udon
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public sealed class KanikamaUdonMonitorCamera : KanikamaUdonLightSourceGroup
     {
-        [SerializeField] Renderer monitorRenderer;
-        [SerializeField] Texture2D readingTexture;
-        [SerializeField] KanikamaMonitorPartitionType partitionType;
+        [SerializeField, NonNull] Renderer monitorRenderer;
+        [SerializeField, NonNull] Texture2D readingTexture;
+        [SerializeField] KanikamaMonitorPartitionType partitionType = KanikamaMonitorPartitionType.Grid1x1;
         [SerializeField] float cameraNear = 0f;
         [SerializeField] float cameraFar = 0.2f;
         [SerializeField] float cameraDistance = 0.1f;
-        [SerializeField] new Camera camera;
+        [SerializeField, NonNull] new Camera camera;
         [SerializeField] float aspectRatio = 1f;
         public float intensity = 1f;
 
