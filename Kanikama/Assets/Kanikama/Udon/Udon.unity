@@ -1567,7 +1567,8 @@ MonoBehaviour:
   bakeTargets: []
   bakeTargetGroups:
   - {fileID: 1588683620}
-  ltcMonitors: []
+  ltcMonitors:
+  - {fileID: 286135934}
 --- !u!114 &1331345973
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -1673,9 +1674,9 @@ MonoBehaviour:
   ltcVisibilityMaps:
   - {fileID: 2800000, guid: 84bc556c8aa7f554aaebba822f91dfe7, type: 2}
   - {fileID: 2800000, guid: 8b13b95fab47f654ba97e31ca20f1602, type: 2}
-  ltcLut0: {fileID: 0}
-  ltcLut1: {fileID: 0}
-  ltcLightSourceTex: {fileID: 0}
+  ltcLut0: {fileID: 2800000, guid: 90b8553b2df6c004faa5acf2a0966c54, type: 3}
+  ltcLut1: {fileID: 2800000, guid: f39141e5bcdaf70459a9e8c70241a22d, type: 3}
+  ltcLightSourceTex: {fileID: 8400000, guid: 41c95cfabfcdca241b2e6a6b952a62fe, type: 2}
 --- !u!20 &1331345975
 Camera:
   m_ObjectHideFlags: 0
