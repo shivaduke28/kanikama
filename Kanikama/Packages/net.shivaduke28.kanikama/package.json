@@ -12,7 +12,7 @@
   "samples": [
     {
       "displayName": "Sample Scene",
-      "path": "Samples~/net.shivaduke28.kanikama"
+      "path": "Samples~"
     }
   ]
 }
