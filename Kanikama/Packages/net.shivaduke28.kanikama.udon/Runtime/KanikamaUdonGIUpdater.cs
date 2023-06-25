@@ -31,9 +31,8 @@ namespace Kanikama.Udon
         int countId;
         int colorsId;
 
-        [Header("LTC")]
-        [SerializeField, NonNull]
-        Transform[] ltcMonitors;
+        [Header("LTC")] [SerializeField] bool enableLtc;
+        [SerializeField, NonNull] Transform[] ltcMonitors;
 
         [SerializeField, NonNull] Texture[] ltcVisibilityMaps;
         [SerializeField, NonNull] Texture ltcLut0;
@@ -201,16 +200,16 @@ namespace Kanikama.Udon
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public bool Validate()
         {
-            return receivers.All(x => x != null)
-                && lightmapArrays.All(x => x != null)
-                && directionalLightmapArrays.All(x => x != null)
-                && lightSources.All(x => x != null)
-                && lightSourceGroups.All(x => x != null)
-                && ltcMonitors.All(x => x != null)
-                && ltcVisibilityMaps.All(x => x != null)
-                && ltcLut0 != null
-                && ltcLut1 != null
-                && ltcLightSourceTex != null;
+            return (receivers == null || receivers.All(x => x != null))
+                && (lightmapArrays == null || lightmapArrays.All(x => x != null))
+                && (directionalLightmapArrays == null || directionalLightmapArrays.All(x => x != null))
+                && (lightSources == null || lightSources.All(x => x != null))
+                && (lightSourceGroups == null || lightSourceGroups.All(x => x != null))
+                && !enableLtc || ((ltcMonitors == null || ltcMonitors.All(x => x != null))
+                    && (ltcVisibilityMaps == null || ltcVisibilityMaps.All(x => x != null))
+                    && ltcLut0 != null
+                    && ltcLut1 != null
+                    && ltcLightSourceTex != null);
         }
 #endif
     }
