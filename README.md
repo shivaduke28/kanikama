@@ -2,7 +2,7 @@
 
 version 3.0.0
 
-KanikamaGI is a library for dynamically updating lightmaps without Enlighten Realtime GI.
+KanikamaGI is a library to update lightmaps at runtime in Unity.
 
 ### Docs
 
