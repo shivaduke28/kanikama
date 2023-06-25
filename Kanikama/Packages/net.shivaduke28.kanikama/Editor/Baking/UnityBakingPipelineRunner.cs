@@ -42,7 +42,6 @@ namespace Kanikama.Editor.Baking
             var bakeTargets = bakingDescriptor.GetBakeTargets();
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
             handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
-            handles.AddRange(bakingDescriptor.GetLTCMonitors().Take(3).Select(x => new BakeTargetHandle<LTCMonitor>(x)));
             return handles;
 
             IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
