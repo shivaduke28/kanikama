@@ -102,7 +102,7 @@ namespace Kanikama.Udon
                     block.SetTexture(lightmapIndArrayId, directionalLightmapArrays[lmi]);
                 }
 
-                if (lmi < ltcVisibilityMaps.Length)
+                if (enableLtc && lmi < ltcVisibilityMaps.Length)
                 {
                     block.SetTexture(visibilityMapId, ltcVisibilityMaps[lmi]);
                 }
@@ -126,18 +126,21 @@ namespace Kanikama.Udon
                 index += groupColors.Length;
             }
 
-            vertex0 = new Vector4[3];
-            vertex1 = new Vector4[3];
-            vertex2 = new Vector4[3];
-            vertex3 = new Vector4[3];
+            if (enableLtc)
+            {
+                vertex0 = new Vector4[3];
+                vertex1 = new Vector4[3];
+                vertex2 = new Vector4[3];
+                vertex3 = new Vector4[3];
 
-            ltcCount = Mathf.Min(3, ltcMonitors.Length);
-            VRCShader.SetGlobalInteger(ltcCountId, ltcCount);
-            VRCShader.SetGlobalTexture(ltcTex0Id, ltcLut0);
-            VRCShader.SetGlobalTexture(ltcTex1Id, ltcLut1);
-            VRCShader.SetGlobalTexture(ltcLightTex0Id, ltcLightSourceTex);
+                ltcCount = Mathf.Min(3, ltcMonitors.Length);
+                VRCShader.SetGlobalInteger(ltcCountId, ltcCount);
+                VRCShader.SetGlobalTexture(ltcTex0Id, ltcLut0);
+                VRCShader.SetGlobalTexture(ltcTex1Id, ltcLut1);
+                VRCShader.SetGlobalTexture(ltcLightTex0Id, ltcLightSourceTex);
 
-            UpdateLtcVertexPositions();
+                UpdateLtcVertexPositions();
+            }
 
             isInitialized = true;
         }

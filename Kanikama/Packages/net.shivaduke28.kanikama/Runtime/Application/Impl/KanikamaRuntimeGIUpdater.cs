@@ -139,7 +139,7 @@ namespace Kanikama.Application.Impl
                     block.SetTexture(LightmapIndArray, directionalLightmapArrays[i]);
                 }
                 // ltc visibility
-                if (i < ltcVisibilityMaps.Length)
+                if (enableLtc && i < ltcVisibilityMaps.Length)
                 {
                     block.SetTexture(LtcVisibilityMap, ltcVisibilityMaps[i]);
                 }
@@ -149,13 +149,16 @@ namespace Kanikama.Application.Impl
 
             Shader.SetGlobalInt(Count, index);
 
-            ltcMonitorCount = Mathf.Min(3, ltcMonitors.Length);
-            Shader.SetGlobalInt(LtcCount, ltcMonitorCount);
-            Shader.SetGlobalTexture(UdonLtcLut0, ltcLut0);
-            Shader.SetGlobalTexture(UdonLtcLut1, ltcLut1);
-            Shader.SetGlobalTexture(UdonLtcLightTex0, ltcLightSourceTex);
+            if (enableLtc)
+            {
+                ltcMonitorCount = Mathf.Min(3, ltcMonitors.Length);
+                Shader.SetGlobalInt(LtcCount, ltcMonitorCount);
+                Shader.SetGlobalTexture(UdonLtcLut0, ltcLut0);
+                Shader.SetGlobalTexture(UdonLtcLut1, ltcLut1);
+                Shader.SetGlobalTexture(UdonLtcLightTex0, ltcLightSourceTex);
 
-            UpdateLtcVertexPositions();
+                UpdateLtcVertexPositions();
+            }
         }
 
         void UpdateColors()
