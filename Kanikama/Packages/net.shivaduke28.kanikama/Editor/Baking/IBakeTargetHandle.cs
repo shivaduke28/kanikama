@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Kanikama.Baking;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 using Object = UnityEngine.Object;
 

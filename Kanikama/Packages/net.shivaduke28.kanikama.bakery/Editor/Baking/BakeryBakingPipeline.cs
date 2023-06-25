@@ -68,6 +68,7 @@ namespace Kanikama.Bakery.Editor.Baking
                     foreach (var command in parameter.Commands)
                     {
                         command.Initialize(guid);
+                        command.TurnOff();
                     }
 
                     // save scene（maybe delete this...)
@@ -125,6 +126,7 @@ namespace Kanikama.Bakery.Editor.Baking
             foreach (var command in parameter.Commands)
             {
                 command.Initialize(guid);
+                command.TurnOff();
             }
 
             try

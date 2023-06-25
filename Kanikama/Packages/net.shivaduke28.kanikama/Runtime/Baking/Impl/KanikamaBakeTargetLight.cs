@@ -23,7 +23,7 @@ namespace Kanikama.Baking.Impl
 
         public override void TurnOff()
         {
-            light.intensity = 0f;
+            light.intensity = 0;
         }
 
         public override void TurnOn()

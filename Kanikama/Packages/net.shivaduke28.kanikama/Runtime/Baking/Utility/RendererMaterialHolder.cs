@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace Kanikama.Utility
@@ -15,6 +14,7 @@ namespace Kanikama.Utility
         void OnValidate() => Initialize();
         void Awake() => Initialize();
         void OnDestroy() => Clear();
+        public void Reset() => Clear();
 
         void Initialize()
         {

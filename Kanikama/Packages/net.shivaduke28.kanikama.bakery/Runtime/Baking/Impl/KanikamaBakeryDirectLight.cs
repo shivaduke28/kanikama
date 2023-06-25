@@ -6,7 +6,7 @@ namespace Kanikama.Bakery.Baking.Impl
     [RequireComponent(typeof(Light), typeof(BakeryDirectLight))]
     public sealed class KanikamaBakeryDirectLight : BakeTarget
     {
-        [SerializeField] Light light;
+        [SerializeField] new Light light;
         [SerializeField] BakeryDirectLight bakeryLight;
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;

@@ -8,7 +8,7 @@ namespace Kanikama.Bakery.Baking.Impl
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
-        [SerializeField] string tag;
+        [SerializeField] string gameObjectTag;
         [SerializeField] Color color;
         [SerializeField] float intensity;
         [SerializeField] bool rendererEnable;
@@ -24,7 +24,7 @@ namespace Kanikama.Bakery.Baking.Impl
         {
             color = bakeryLightMesh.color;
             intensity = bakeryLightMesh.intensity;
-            tag = gameObject.tag;
+            gameObjectTag = gameObject.tag;
             gameObject.tag = "Untagged";
             rendererEnable = renderer.enabled;
             bakeryLightMeshEnable = bakeryLightMesh.enabled;
@@ -55,7 +55,7 @@ namespace Kanikama.Bakery.Baking.Impl
             bakeryLightMesh.enabled = bakeryLightMeshEnable;
             bakeryLightMesh.color = color;
             bakeryLightMesh.intensity = intensity;
-            gameObject.tag = tag;
+            gameObject.tag = gameObjectTag;
         }
     }
 }

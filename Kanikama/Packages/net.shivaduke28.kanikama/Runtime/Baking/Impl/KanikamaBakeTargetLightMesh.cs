@@ -10,7 +10,7 @@ namespace Kanikama.Baking.Impl
         [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
-        [SerializeField] string tag;
+        [SerializeField, HideInInspector] string gameObjectTag;
 
         void OnValidate()
         {
@@ -19,25 +19,24 @@ namespace Kanikama.Baking.Impl
 
         public override void Initialize()
         {
-            gameObject.SetActive(true);
-            renderer.enabled = true;
-            tag = gameObject.tag;
+            var go = gameObject;
+            gameObjectTag = go.tag;
+            go.tag = "Untagged";
             if (!TryGetComponent<RendererMaterialHolder>(out _))
             {
-                gameObject.AddComponent<RendererMaterialHolder>();
+                go.AddComponent<RendererMaterialHolder>();
             }
         }
 
         public override void TurnOff()
         {
-            gameObject.tag = tag;
+            gameObject.tag = gameObjectTag;
             var holder = GetComponent<RendererMaterialHolder>();
             holder.GetMaterial(materialIndex).RemoveBakedEmissiveFlag();
         }
 
         public override void TurnOn()
         {
-            gameObject.tag = "Untagged";
             var holder = GetComponent<RendererMaterialHolder>();
             var mat = holder.GetMaterial(materialIndex);
             mat.SetColor(propertyName, Color.white);
@@ -48,7 +47,7 @@ namespace Kanikama.Baking.Impl
 
         public override void Clear()
         {
-            gameObject.tag = tag;
+            gameObject.tag = gameObjectTag;
             if (TryGetComponent<RendererMaterialHolder>(out var holder))
             {
                 holder.Clear();

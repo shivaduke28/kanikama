@@ -10,12 +10,12 @@ namespace Kanikama.Baking.Impl
     {
         [SerializeField, NonNull] List<BakeTarget> bakeTargets;
         [SerializeField, NonNull] List<BakeTargetGroup> bakeTargetGroups;
-        [SerializeField, NonNull] List<KanikamaLTCMonitor> ltcMonitors;
+        [SerializeField, NonNull] List<LTCMonitor> ltcMonitors;
 
         public List<BakeTarget> GetBakeTargets() => bakeTargets.ToList();
 
         public List<BakeTargetGroup> GetBakeTargetGroups() => bakeTargetGroups.ToList();
-        public KanikamaLTCMonitor[] GetLTCMonitors() => ltcMonitors.ToArray();
+        public LTCMonitor[] GetLTCMonitors() => ltcMonitors.ToArray();
 
         public bool Validate()
         {

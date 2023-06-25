@@ -1,42 +1,29 @@
 ﻿using Kanikama.Baking.Impl.LTC;
-using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Object = UnityEngine.Object;
 
 namespace Baking.Impl.LTC
 {
-    public sealed class KanikamaBakeryLTCMonitor : KanikamaLTCMonitor
+    [RequireComponent(typeof(BakeryLightMesh))]
+    public sealed class KanikamaBakeryLTCMonitor : LTCMonitor
     {
-        [SerializeField] BakeryLightMesh bakeryLightMesh;
         [SerializeField] new Renderer renderer;
+        [SerializeField] BakeryLightMesh bakeryLightMesh;
 
         void OnValidate()
         {
-            Initialize();
+            if (renderer == null) renderer = GetComponent<Renderer>();
+            if (bakeryLightMesh == null) bakeryLightMesh = GetComponent<BakeryLightMesh>();
         }
 
         public override void Initialize()
         {
-            if (bakeryLightMesh == null)
-            {
-                var child = transform.Find("BakeryLTCLight");
-                if (child == null)
-                {
-                    var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
-                    if (go.TryGetComponent<Collider>(out var c))
-                    {
-                        c.DestroySafely();
-                    }
-                    go.name = "BakeryLTCLight";
-                    go.transform.SetParent(transform, false);
-                    go.transform.localPosition = new Vector3(0, 0, -0.001f);
-                    go.transform.localRotation = Quaternion.identity;
-                    child = go.transform;
-                }
-                renderer = child.GetComponent<Renderer>();
-                bakeryLightMesh = child.gameObject.GetOrAddComponent<BakeryLightMesh>();
-                TurnOff();
-            }
+        }
+
+        public override void TurnOff()
+        {
+            bakeryLightMesh.intensity = 0;
         }
 
         public override void TurnOn()
@@ -45,13 +32,16 @@ namespace Baking.Impl.LTC
             bakeryLightMesh.selfShadow = true;
             bakeryLightMesh.enabled = true;
             bakeryLightMesh.color = Color.white;
-            bakeryLightMesh.intensity = 1;
+            bakeryLightMesh.intensity = 1f;
         }
 
-        public override void TurnOff()
+        public override bool Includes(Object obj)
         {
-            bakeryLightMesh.enabled = false;
-            renderer.enabled = false;
+            return obj == renderer || obj == bakeryLightMesh;
+        }
+
+        public override void Clear()
+        {
         }
     }
 }

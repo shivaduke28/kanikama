@@ -19,9 +19,9 @@ namespace Kanikama.Editor.Baking
         {
             public SceneAssetData SceneAssetData { get; }
             public UnityBakingSetting Setting { get; }
-            public List<IUnityBakingCommand> Commands { get; }
+            public IUnityBakingCommand[] Commands { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, List<IUnityBakingCommand> commands)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IUnityBakingCommand[] commands)
             {
                 SceneAssetData = sceneAssetData;
                 Setting = setting;
@@ -69,6 +69,7 @@ namespace Kanikama.Editor.Baking
                     foreach (var command in parameter.Commands)
                     {
                         command.Initialize(copiedScene.SceneAssetData.Guid);
+                        command.TurnOff();
                     }
 
                     // Run all baking command
@@ -199,6 +200,7 @@ namespace Kanikama.Editor.Baking
                 foreach (var command in parameter.Commands)
                 {
                     command.Initialize(copiedScene.SceneAssetData.Guid);
+                    command.TurnOff();
                 }
 
                 try
