@@ -127,6 +127,7 @@ namespace Kanikama.Editor.Baking
         {
             var resizeType = bakingSetting.TextureResizeType;
             var dstDirPath = bakingSetting.OutputAssetDirPath;
+            bakingSetting.AssetStorage.RemoveEmpties();
             var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
             IOUtility.CreateFolderIfNecessary(dstDirPath);

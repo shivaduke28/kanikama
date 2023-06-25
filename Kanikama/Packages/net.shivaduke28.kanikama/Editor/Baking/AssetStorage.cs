@@ -74,6 +74,12 @@ namespace Kanikama.Editor.Baking
         [SerializeField] LightmapArrayStorage lightmapArrayStorage = new LightmapArrayStorage();
         public LightmapStorage LightmapStorage => lightmapStorage;
         public LightmapArrayStorage LightmapArrayStorage => lightmapArrayStorage;
+
+        public void RemoveEmpties()
+        {
+            lightmapStorage.RemoveAll(x => x.Texture == null);
+            lightmapArrayStorage.RemoveAll(x => x.Texture == null);
+        }
     }
 
 
@@ -125,6 +131,23 @@ namespace Kanikama.Editor.Baking
 
             data = default;
             return false;
+        }
+
+        public void RemoveAll(Func<T, bool> func)
+        {
+            var keys = new List<string>();
+            foreach (var keyValueListPair in valueListPairs)
+            {
+                keyValueListPair.Values.RemoveAll(func.Invoke);
+                if (keyValueListPair.Values.Count == 0)
+                {
+                    keys.Add(keyValueListPair.Key);
+                }
+            }
+            foreach (var key in keys)
+            {
+                Remove(key);
+            }
         }
 
         public void Clear()
