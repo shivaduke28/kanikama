@@ -70,12 +70,11 @@ namespace Kanikama.Udon.Editor
             }
 
             Undo.RecordObject(kanikamaUdonGIUpdater, "Setup GI Updater");
-            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
+            // UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
             var sliceCount = serializedObject.FindProperty("sliceCount");
 
-            var arrayStorage = settingAsset.Setting.AssetStorage.LightmapArrayStorage;
             if (!settingAsset.Setting.AssetStorage.LightmapArrayStorage.TryGet(UnityBakingPipeline.LightmapArrayKey, out var lightmapArrayList)) return;
 
             var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
