@@ -6,11 +6,13 @@ using UnityEngine;
 namespace Kanikama.Baking.Impl
 {
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaBakeTargetMonitor : MonoBehaviour
+    public sealed class KanikamaQuadMonitor : KanikamaMonitor
     {
         [SerializeField, NonNull] Renderer monitorRenderer;
         [SerializeField, NonNull] List<BakeTarget> bakeTargets;
         const float LightOffset = -0.001f;
+
+        public override BakeTarget GetBakeTarget(int index) => bakeTargets[index];
 
         void OnValidate()
         {
@@ -30,7 +32,7 @@ namespace Kanikama.Baking.Impl
             return bounds;
         }
 
-        public void SetupLights(PartitionType partitionType, BakeTarget prefab)
+        public override void SetupLights(PartitionType partitionType, BakeTarget prefab)
         {
             if (monitorRenderer == null) return;
 
@@ -97,6 +99,7 @@ namespace Kanikama.Baking.Impl
                     var t = item.transform;
                     t.localScale = new Vector3(sizeX, sizeY, 1);
                     t.localPosition = anchor + new Vector3(sizeX * (0.5f + (i % count)), sizeY * (0.5f + (j % count)), LightOffset);
+                    go.SetActive(false);
                     bakeTargets.Add(item);
                 }
             }
@@ -125,25 +128,13 @@ namespace Kanikama.Baking.Impl
                     var t = item.transform;
                     t.localPosition = anchor + position + new Vector3(areaX, areaY, 0) * 0.5f + new Vector3(0, 0, LightOffset);
                     t.localScale = new Vector3(areaX, areaY, 1);
+                    go.SetActive(false);
                     bakeTargets.Add(item);
                     position += new Vector3(areaX, 0, 0);
                 }
 
                 position.y += areaY;
             }
-        }
-
-        public BakeTarget GetBakeTarget(int index) => bakeTargets[index];
-
-
-        public enum PartitionType
-        {
-            Grid1x1 = 11,
-            Grid2x2 = 22,
-            Grid3x2 = 32,
-            Grid3x3 = 33,
-            Grid4x3 = 43,
-            Grid4x4 = 44,
         }
     }
 }
