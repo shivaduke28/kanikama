@@ -7,7 +7,7 @@
         _Partition("Partition", Range(1, 10)) = 2
         _Rotation("Rotation", float) = 0
         _Emission("Emission", Range(0, 20)) = 1
-        _Random("Random", Range(0,1)) = 1
+        _Random("Random", Range(0,1)) = 0
     }
     SubShader
     {
