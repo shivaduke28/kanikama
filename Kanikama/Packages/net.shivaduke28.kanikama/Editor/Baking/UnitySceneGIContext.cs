@@ -30,7 +30,7 @@ namespace Kanikama.Editor.Baking
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Where(r => r.IsEmissiveAndContributeGI())
-                    .Select(r => r.gameObject.GetOrAddComponent<RendererMaterialHolder>())
+                    .Select(r => Kanikama.Utility.ExtensionMethods.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
                 lightProbeGroups = Object.FindObjectsOfType<LightProbeGroup>()

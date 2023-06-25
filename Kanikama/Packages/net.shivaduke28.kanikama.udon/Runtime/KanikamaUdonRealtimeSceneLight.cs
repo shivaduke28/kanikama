@@ -9,7 +9,7 @@ namespace Kanikama.Udon
     public class KanikamaUdonRealtimeSceneLight : UdonSharpBehaviour
     {
         [SerializeField, NonNull] KanikamaUdonGIUpdater giUpdater;
-        [SerializeField, NonNull] Light light;
+        [SerializeField, NonNull] new Light light;
         [SerializeField] public float intensity = 1;
         [SerializeField] bool weightEnable = false;
         [SerializeField] float[] weights;
