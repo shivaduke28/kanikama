@@ -9,7 +9,7 @@
 #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
 #include "Assets/Bakery/shader/Bakery.cginc"
 
-#if defined(_KANIKAMA_MODE_BAKERY_MONOSH)
+#if defined(_KANIKAMA_MODE_BAKERY_MONOSH) && defined(BAKERY_MONOSH)
 
 UNITY_DECLARE_TEX2DARRAY_NOSAMPLER(_Udon_LightmapIndArray);
 
@@ -89,7 +89,7 @@ void KanikamaBakeryGI(float2 lightmapUV, half3 normalWorld, half3 viewDir, half 
     half roughness = SmoothnessToRoughness(smoothness);
     #if defined(_KANIKAMA_MODE_DIRECTIONAL)
     KanikamaSampleDirectional(lightmapUV, normalWorld, viewDir, roughness, diffuse, specular);
-    #elif defined (_KANIKAMA_MODE_BAKERY_MONOSH)
+    #elif defined (_KANIKAMA_MODE_BAKERY_MONOSH) && defined(BAKERY_MONOSH)
     KanikamaSampleBakeryMonoSH(lightmapUV, normalWorld, viewDir, roughness, diffuse, specular);
     #else
     diffuse = KanikamaGISampleLightmapArray(lightmapUV);
