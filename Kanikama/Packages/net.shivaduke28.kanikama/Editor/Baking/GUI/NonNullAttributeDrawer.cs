@@ -16,7 +16,7 @@ namespace Kanikama.Editor.Baking.GUI
                 UnityEngine.GUI.backgroundColor = Color.red;
             }
             position.height = GetPropertyHeight(property, label);
-            EditorGUI.PropertyField(position, property, label);
+            EditorGUI.PropertyField(position, property, label, true);
             position.y += position.height;
             if (isNull)
             {

@@ -10,6 +10,7 @@ namespace Kanikama.Bakery.Editor.Baking
     {
         Task RunAsync(BakeryBakingPipeline.Context context, CancellationToken cancellationToken);
         void Initialize(string sceneGuid);
+        void TurnOff();
         void Clear();
     }
 
@@ -40,15 +41,8 @@ namespace Kanikama.Bakery.Editor.Baking
             }
         }
 
-        void IBakingCommand.Initialize(string sceneGuid)
-        {
-            handle.Initialize(sceneGuid);
-            handle.TurnOff();
-        }
-
-        void IBakingCommand.Clear()
-        {
-            handle.Clear();
-        }
+        void IBakingCommand.Initialize(string sceneGuid) => handle.Initialize(sceneGuid);
+        void IBakingCommand.TurnOff() => handle.TurnOff();
+        void IBakingCommand.Clear() => handle.Clear();
     }
 }

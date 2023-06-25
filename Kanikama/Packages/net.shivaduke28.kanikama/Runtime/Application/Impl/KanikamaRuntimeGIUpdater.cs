@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Baking.Attributes;
 using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -10,11 +11,15 @@ namespace Kanikama.Application.Impl
     {
         [SerializeField] bool isSRP;
         [SerializeField] Camera targetCamera;
-        [Header("Scene")] [SerializeField] List<LightSource> lightSources;
-        [SerializeField] List<LightSourceGroup> lightSourceGroups;
-        [SerializeField] Renderer[] receivers;
-        [SerializeField] Texture2DArray[] lightmapArrays;
-        [SerializeField] Texture2DArray[] directionalLightmapArrays;
+
+        [Header("Scene")]
+        [SerializeField, NonNull]
+        List<LightSource> lightSources;
+
+        [SerializeField, NonNull] List<LightSourceGroup> lightSourceGroups;
+        [SerializeField, NonNull] Renderer[] receivers;
+        [SerializeField, NonNull] Texture2DArray[] lightmapArrays;
+        [SerializeField, NonNull] Texture2DArray[] directionalLightmapArrays;
 
         static readonly int LightmapArray = Shader.PropertyToID("_Udon_LightmapArray");
         static readonly int LightmapIndArray = Shader.PropertyToID("_Udon_LightmapIndArray");
@@ -26,11 +31,12 @@ namespace Kanikama.Application.Impl
         MaterialPropertyBlock block;
         List<IndexedColorArray> indexedColorArrays;
 
-        [Header("LTC")] [SerializeField] Transform[] ltcMonitors;
-        [SerializeField] Texture[] ltcVisibilityMaps;
-        [SerializeField] Texture ltcLut0;
-        [SerializeField] Texture ltcLut1;
-        [SerializeField] Texture ltcLightSourceTex;
+        [Header("LTC")] [SerializeField] bool enableLtc;
+        [SerializeField] Transform[] ltcMonitors;
+        [SerializeField, NonNull] Texture[] ltcVisibilityMaps;
+        [SerializeField, NonNull] Texture ltcLut0;
+        [SerializeField, NonNull] Texture ltcLut1;
+        [SerializeField, NonNull] Texture ltcLightSourceTex;
 
         readonly Vector4[] vertex0 = new Vector4[3];
         readonly Vector4[] vertex1 = new Vector4[3];
@@ -133,7 +139,7 @@ namespace Kanikama.Application.Impl
                     block.SetTexture(LightmapIndArray, directionalLightmapArrays[i]);
                 }
                 // ltc visibility
-                if (i < ltcVisibilityMaps.Length)
+                if (enableLtc && i < ltcVisibilityMaps.Length)
                 {
                     block.SetTexture(LtcVisibilityMap, ltcVisibilityMaps[i]);
                 }
@@ -143,13 +149,16 @@ namespace Kanikama.Application.Impl
 
             Shader.SetGlobalInt(Count, index);
 
-            ltcMonitorCount = Mathf.Min(3, ltcMonitors.Length);
-            Shader.SetGlobalInt(LtcCount, ltcMonitorCount);
-            Shader.SetGlobalTexture(UdonLtcLut0, ltcLut0);
-            Shader.SetGlobalTexture(UdonLtcLut1, ltcLut1);
-            Shader.SetGlobalTexture(UdonLtcLightTex0, ltcLightSourceTex);
+            if (enableLtc)
+            {
+                ltcMonitorCount = Mathf.Min(3, ltcMonitors.Length);
+                Shader.SetGlobalInt(LtcCount, ltcMonitorCount);
+                Shader.SetGlobalTexture(UdonLtcLut0, ltcLut0);
+                Shader.SetGlobalTexture(UdonLtcLut1, ltcLut1);
+                Shader.SetGlobalTexture(UdonLtcLightTex0, ltcLightSourceTex);
 
-            UpdateLtcVertexPositions();
+                UpdateLtcVertexPositions();
+            }
         }
 
         void UpdateColors()
@@ -226,11 +235,11 @@ namespace Kanikama.Application.Impl
                 && directionalLightmapArrays.All(x => x != null)
                 && lightSources.All(x => x != null)
                 && lightSourceGroups.All(x => x != null)
-                && ltcMonitors.All(x => x != null)
-                && ltcVisibilityMaps.All(x => x != null)
-                && ltcLut0 != null
-                && ltcLut1 != null
-                && ltcLightSourceTex != null;
+                && !enableLtc || (ltcMonitors.All(x => x != null)
+                    && ltcVisibilityMaps.All(x => x != null)
+                    && ltcLut0 != null
+                    && ltcLut1 != null
+                    && ltcLightSourceTex != null);
         }
     }
 }

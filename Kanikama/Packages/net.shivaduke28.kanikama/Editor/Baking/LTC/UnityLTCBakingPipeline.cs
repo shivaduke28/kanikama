@@ -21,9 +21,9 @@ namespace Kanikama.Editor.Baking.LTC
         {
             public SceneAssetData SceneAssetData { get; }
             public UnityBakingSetting Setting { get; }
-            public IList<KanikamaLTCMonitor> Monitors { get; }
+            public IList<LTCMonitor> Monitors { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<KanikamaLTCMonitor> monitors)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<LTCMonitor> monitors)
             {
                 SceneAssetData = sceneAssetData;
                 Setting = setting;
@@ -36,7 +36,7 @@ namespace Kanikama.Editor.Baking.LTC
             Assert.IsTrue(parameter.Monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, "Unity LTC Baking Pipeline Start");
 
-            var commands = parameter.Monitors.Select(x => new UnityLTCBakingCommand(x)).Cast<IUnityBakingCommand>().ToList();
+            var commands = parameter.Monitors.Select(x => new UnityLTCBakingCommand(x)).Cast<IUnityBakingCommand>().ToArray();
             var param = new UnityBakingPipeline.Parameter(parameter.SceneAssetData, parameter.Setting, commands);
             try
             {
@@ -60,7 +60,7 @@ namespace Kanikama.Editor.Baking.LTC
         }
 
 
-        public static void CreateAssets(IList<KanikamaLTCMonitor> monitors, UnityBakingSetting bakingSetting)
+        public static void CreateAssets(IList<LTCMonitor> monitors, UnityBakingSetting bakingSetting)
         {
             Assert.IsTrue(monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");

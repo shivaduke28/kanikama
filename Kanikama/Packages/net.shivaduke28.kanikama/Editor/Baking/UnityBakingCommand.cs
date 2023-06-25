@@ -34,13 +34,15 @@ namespace Kanikama.Editor.Baking
         void IUnityBakingCommand.Initialize(string sceneGuid)
         {
             handle.Initialize(sceneGuid);
-            handle.TurnOff();
         }
+
+        void IUnityBakingCommand.TurnOff() => handle.TurnOff();
     }
 
     public interface IUnityBakingCommand
     {
         Task RunAsync(UnityBakingPipeline.Context context, CancellationToken cancellationToken);
         void Initialize(string sceneGuid);
+        void TurnOff();
     }
 }

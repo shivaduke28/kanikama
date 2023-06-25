@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Bakery.Editor.Baking.LTC;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
 using Kanikama.Baking.Impl;
@@ -13,10 +14,9 @@ namespace Kanikama.Bakery.Editor.Baking
         public static async Task BakeAsync(KanikamaBakeTargetDescriptor bakingDescriptor, BakeryBakingSetting bakingSetting,
             CancellationToken cancellationToken)
         {
-            var handles = CreateHandles(bakingDescriptor);
             var sceneAssetData = new SceneAssetData(bakingSetting.SceneAsset);
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
-            var commands = handles.Select(x => new BakingCommand(x)).Cast<IBakingCommand>().ToList();
+            var commands = CreateCommands(bakingDescriptor);
 
             var ctx = new BakeryBakingPipeline.Parameter(
                 sceneAssetData,
@@ -31,8 +31,7 @@ namespace Kanikama.Bakery.Editor.Baking
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
-            var handles = CreateHandles(bakingDescriptor);
-            var commands = handles.Select(x => new BakingCommand(x)).Cast<IBakingCommand>().ToList();
+            var commands = CreateCommands(bakingDescriptor);
             var settingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var context = new BakeryBakingPipeline.Parameter(sceneAssetData, settingAsset.Setting, commands);
 
@@ -53,6 +52,21 @@ namespace Kanikama.Bakery.Editor.Baking
             var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
             handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
             return handles;
+
+            IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
+            {
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
+            }
+        }
+
+        static IBakingCommand[] CreateCommands(KanikamaBakeTargetDescriptor bakingDescriptor)
+        {
+            var commands = new List<IBakingCommand>();
+
+            commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new BakingCommand(new BakeTargetHandle<BakeTarget>(x))));
+            commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new BakingCommand(h)));
+            commands.AddRange(bakingDescriptor.GetLTCMonitors().Take(3).Select(x => new BakeryLTCBakingCommand(x)));
+            return commands.ToArray();
 
             IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
             {

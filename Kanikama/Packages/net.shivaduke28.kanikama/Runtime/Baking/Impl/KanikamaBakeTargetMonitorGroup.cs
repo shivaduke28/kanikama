@@ -9,11 +9,11 @@ namespace Kanikama.Baking.Impl
 {
     public sealed class KanikamaBakeTargetMonitorGroup : BakeTargetGroup
     {
-        [SerializeField, NonNull] KanikamaBakeTargetMonitor mainMonitor;
-        [SerializeField, NonNull] KanikamaBakeTargetMonitor[] subMonitors;
+        [SerializeField, NonNull] KanikamaMonitor mainMonitor;
+        [SerializeField, NonNull] KanikamaMonitor[] subMonitors;
         [SerializeField, NonNull] BakeTarget bakeTargetPrefab;
-        [SerializeField] KanikamaBakeTargetMonitor.PartitionType partitionType = KanikamaBakeTargetMonitor.PartitionType.Grid1x1;
-        [SerializeField, NonNull] List<MonitorGridFiber> monitorGridFibers;
+        [SerializeField] KanikamaMonitor.PartitionType partitionType = KanikamaMonitor.PartitionType.Grid1x1;
+        [SerializeField] List<MonitorGridFiber> monitorGridFibers;
 
 
         [Serializable]
@@ -29,25 +29,26 @@ namespace Kanikama.Baking.Impl
 
             public void Initialize()
             {
-                foreach (var lightSource in bakeTargets)
+                foreach (var bakeTarget in bakeTargets)
                 {
-                    lightSource.Initialize();
+                    bakeTarget.gameObject.SetActive(true);
+                    bakeTarget.Initialize();
                 }
             }
 
             public void TurnOff()
             {
-                foreach (var lightSource in bakeTargets)
+                foreach (var bakeTarget in bakeTargets)
                 {
-                    lightSource.TurnOff();
+                    bakeTarget.TurnOff();
                 }
             }
 
             public void TurnOn()
             {
-                foreach (var lightSource in bakeTargets)
+                foreach (var bakeTarget in bakeTargets)
                 {
-                    lightSource.TurnOn();
+                    bakeTarget.TurnOn();
                 }
             }
 
@@ -58,9 +59,10 @@ namespace Kanikama.Baking.Impl
 
             public void Clear()
             {
-                foreach (var lightSource in bakeTargets)
+                foreach (var bakeTarget in bakeTargets)
                 {
-                    lightSource.Clear();
+                    bakeTarget.gameObject.SetActive(false);
+                    bakeTarget.Clear();
                 }
             }
         }

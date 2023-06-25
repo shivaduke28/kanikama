@@ -14,13 +14,13 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
     public sealed class BakeryLTCBakingCommand : IBakingCommand
     {
         readonly SceneObjectId sceneObjectId;
-        ObjectHandle<KanikamaLTCMonitor> handle;
+        ObjectHandle<LTCMonitor> handle;
         public string Name { get; }
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public BakeryLTCBakingCommand(KanikamaLTCMonitor value)
+        public BakeryLTCBakingCommand(LTCMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -74,14 +74,16 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
         {
             if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                handle = new ObjectHandle<KanikamaLTCMonitor>(globalObjectId);
+                handle = new ObjectHandle<LTCMonitor>(globalObjectId);
             }
             handle.Value.Initialize();
-            handle.Value.TurnOff();
         }
+
+        public void TurnOff() => handle.Value.TurnOff();
 
         void IBakingCommand.Clear()
         {
+            handle.Value.Clear();
         }
     }
 }

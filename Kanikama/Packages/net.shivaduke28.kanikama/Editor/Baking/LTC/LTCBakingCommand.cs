@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor.Baking.LTC
 {
@@ -12,13 +15,13 @@ namespace Kanikama.Editor.Baking.LTC
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
-        ObjectHandle<KanikamaLTCMonitor> handle;
+        ObjectHandle<LTCMonitor> handle;
         public string Name => name;
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public UnityLTCBakingCommand(KanikamaLTCMonitor value)
+        public UnityLTCBakingCommand(LTCMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -28,12 +31,13 @@ namespace Kanikama.Editor.Baking.LTC
         async Task IUnityBakingCommand.RunAsync(UnityBakingPipeline.Context context, CancellationToken cancellationToken)
         {
             var bounce = context.Lightmapper.Bounce;
-            // NOTE: BakeTargets are supposed to use Unity Area Light.
-            // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
             context.Lightmapper.Bounce = 0;
             Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {name}, id: {Id}.");
             handle.Value.TurnOn();
             context.SceneGIContext.ClearCastShadow();
+
+            //  NOTE: This is a workaround for that the Light status is not reflected in Unity's lightmapper.
+            Selection.activeObject = handle.Value.Target;
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
             var bakedShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
@@ -68,9 +72,13 @@ namespace Kanikama.Editor.Baking.LTC
         {
             if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                handle = new ObjectHandle<KanikamaLTCMonitor>(globalObjectId);
+                handle = new ObjectHandle<LTCMonitor>(globalObjectId);
             }
             handle.Value.Initialize();
+        }
+
+        public void TurnOff()
+        {
             handle.Value.TurnOff();
         }
     }

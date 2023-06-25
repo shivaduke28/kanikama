@@ -87,7 +87,7 @@ namespace Kanikama.Bakery.Editor.Application
 
             if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(BakeryLTCBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
             {
-                var ltcVisibilityMap = serializedObject.FindProperty("_Udon_LTC_VisibilityMap");
+                var ltcVisibilityMap = serializedObject.FindProperty("ltcVisibilityMaps");
                 ltcVisibilityMap.arraySize = lights.Length;
                 for (var i = 0; i < lights.Length; i++)
                 {

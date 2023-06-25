@@ -48,11 +48,13 @@ namespace Kanikama.Editor.Baking
             return context;
         }
 
+        // NOTE: This method has a side effect to an active Scene.
+        // Call for a copied scene.
         public void TurnOff()
         {
             foreach (var handle in lights)
             {
-                handle.Value.enabled = false;
+                handle.Value.intensity = 0;
             }
 
             foreach (var handle in renderers)
@@ -89,19 +91,6 @@ namespace Kanikama.Editor.Baking
             foreach (var renderer in rendererWithShadowCastingModes)
             {
                 renderer.ClearShadowCastingMode();
-            }
-        }
-
-        public void Dispose()
-        {
-            if (renderers != null)
-            {
-                foreach (var holder in renderers)
-                {
-                    if (holder.Value == null) continue;
-                    holder.Value.Clear();
-                    Object.DestroyImmediate(holder.Value);
-                }
             }
         }
 
