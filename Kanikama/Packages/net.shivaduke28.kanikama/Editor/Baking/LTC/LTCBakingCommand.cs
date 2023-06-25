@@ -35,9 +35,9 @@ namespace Kanikama.Editor.Baking.LTC
             Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {name}, id: {Id}.");
             handle.Value.TurnOn();
             context.SceneGIContext.ClearCastShadow();
-            EditorUtility.SetDirty(handle.Value);
-            EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
-            await Task.Delay(TimeSpan.FromSeconds(3f), cancellationToken);
+
+            //  NOTE: This is a workaround for that the Light status is not reflected in Unity's lightmapper.
+            Selection.activeObject = handle.Value.Target;
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
             var bakedShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)

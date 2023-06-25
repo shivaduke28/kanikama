@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Kanikama.Baking.Attributes;
-using Kanikama.Utility;
+﻿using Kanikama.Baking.Attributes;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -71,5 +68,7 @@ namespace Kanikama.Baking.Impl.LTC
         {
             areaLight.gameObject.SetActive(false);
         }
+
+        public override Object Target => areaLight;
     }
 }

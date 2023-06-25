@@ -9,5 +9,6 @@ namespace Kanikama.Baking.Impl.LTC
         public abstract void TurnOff();
         public abstract bool Includes(Object obj);
         public abstract void Clear();
+        public abstract Object Target { get; }
     }
 }
