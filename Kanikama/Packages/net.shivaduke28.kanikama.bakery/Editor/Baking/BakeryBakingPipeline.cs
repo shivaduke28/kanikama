@@ -151,6 +151,7 @@ namespace Kanikama.Bakery.Editor.Baking
                 {
                     command.Clear();
                 }
+                EditorSceneManager.SaveScene(SceneManager.GetActiveScene());
             }
         }
 
