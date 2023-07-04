@@ -8,9 +8,9 @@ namespace Kanikama.Baking.Impl
 {
     public sealed class KanikamaBakeTargetDescriptor : MonoBehaviour
     {
-        [SerializeField, NonNull] List<BakeTarget> bakeTargets;
-        [SerializeField, NonNull] List<BakeTargetGroup> bakeTargetGroups;
-        [SerializeField, NonNull] List<LTCMonitor> ltcMonitors;
+        [SerializeField, NonNull] List<BakeTarget> bakeTargets = new List<BakeTarget>();
+        [SerializeField, NonNull] List<BakeTargetGroup> bakeTargetGroups = new List<BakeTargetGroup>();
+        [SerializeField, NonNull] List<LTCMonitor> ltcMonitors = new List<LTCMonitor>();
 
         public List<BakeTarget> GetBakeTargets() => bakeTargets.ToList();
 
