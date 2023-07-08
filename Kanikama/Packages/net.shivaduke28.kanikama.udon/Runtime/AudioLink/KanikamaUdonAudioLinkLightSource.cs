@@ -7,8 +7,8 @@ namespace Kanikama.Udon.AudioLink
     public sealed class KanikamaUdonAudioLinkLightSource : KanikamaUdonLightSource
     {
         [SerializeField] VRCAudioLink.AudioLink audioLink;
-        [SerializeField] int band;
-        [SerializeField] int delay;
+        [SerializeField, Range(0, 63)] int band;
+        [SerializeField, Range(0, 127)] int delay;
         [SerializeField] float intensity = 1f;
 
         int dataIndex;
