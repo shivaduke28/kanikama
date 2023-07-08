@@ -9,7 +9,7 @@ namespace Kanikama.Editor.Baking
     {
         public void ClearCache()
         {
-            Lightmapping.ClearDiskCache();
+            Lightmapping.Clear();
         }
 
         public async Task BakeAsync(CancellationToken cancellationToken)
