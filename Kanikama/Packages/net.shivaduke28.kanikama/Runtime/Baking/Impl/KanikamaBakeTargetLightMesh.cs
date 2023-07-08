@@ -1,6 +1,7 @@
 ﻿using Kanikama.Baking.Attributes;
 using Kanikama.Utility;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Kanikama.Baking.Impl
 {
@@ -9,8 +10,9 @@ namespace Kanikama.Baking.Impl
     {
         [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
+        [SerializeField] bool useStandardShader = true;
         [SerializeField] string propertyName = "_EmissionColor";
-        [SerializeField, HideInInspector] string gameObjectTag;
+        [SerializeField] string gameObjectTag;
 
         void OnValidate()
         {
@@ -22,9 +24,17 @@ namespace Kanikama.Baking.Impl
             var go = gameObject;
             gameObjectTag = go.tag;
             go.tag = "Untagged";
-            if (!TryGetComponent<RendererMaterialHolder>(out _))
+            if (!TryGetComponent<RendererMaterialHolder>(out var holder))
             {
-                go.AddComponent<RendererMaterialHolder>();
+                holder = go.AddComponent<RendererMaterialHolder>();
+            }
+
+            if (useStandardShader)
+            {
+                var mat = holder.GetMaterial(materialIndex);
+                mat.shader = Shader.Find("Standard");
+                mat.SetColor(propertyName, Color.white);
+                mat.AddBakedEmissiveFlag();
             }
         }
 
@@ -41,6 +51,7 @@ namespace Kanikama.Baking.Impl
             var mat = holder.GetMaterial(materialIndex);
             mat.SetColor(propertyName, Color.white);
             mat.AddBakedEmissiveFlag();
+            SelectionUtility.SetActiveObject(mat);
         }
 
         public override bool Includes(Object obj) => obj == renderer;
