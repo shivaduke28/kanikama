@@ -43,7 +43,5 @@ namespace Baking.Impl.LTC
         public override void Clear()
         {
         }
-
-        public override Object Target => this;
     }
 }

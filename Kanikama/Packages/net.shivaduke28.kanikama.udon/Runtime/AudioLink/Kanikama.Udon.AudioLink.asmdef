@@ -1,9 +1,9 @@
 {
-    "name": "Kanikama.Udon",
+    "name": "Kanikama.Udon.AudioLink",
     "references": [
         "UdonSharp.Runtime",
-        "VRC.Udon",
-        "Kanikama.Baking"
+        "Kanikama.Udon",
+        "AudioLink"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -12,7 +12,8 @@
     "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [
-        "UDONSHARP"
+        "UDONSHARP",
+        "AUDIOLINK"
     ],
     "versionDefines": [],
     "noEngineReferences": false
