@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5136146375e9a0a498a72a0091b40cc1, type: 3}
-  m_Name: Kanikama.GI.Udon.Runtime
+  m_Name: Kanikama.Udon
   m_EditorClassIdentifier: 
   sourceAssembly: {fileID: 5897886265953266890, guid: b7061df148b15f944ba0abb107bcc1a7,
     type: 3}
