@@ -1,4 +1,5 @@
 ﻿using Kanikama.Baking.Attributes;
+using Kanikama.Utility;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -60,6 +61,7 @@ namespace Kanikama.Baking.Impl.LTC
         public override void TurnOn()
         {
             areaLight.enabled = true;
+            SelectionUtility.SetActiveObject(areaLight);
         }
 
         public override bool Includes(Object obj) => obj == areaLight;
@@ -68,7 +70,5 @@ namespace Kanikama.Baking.Impl.LTC
         {
             areaLight.gameObject.SetActive(false);
         }
-
-        public override Object Target => areaLight;
     }
 }
