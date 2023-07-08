@@ -9,6 +9,7 @@ namespace Kanikama.Udon.AudioLink
         [SerializeField] VRCAudioLink.AudioLink audioLink;
         [SerializeField] int band;
         [SerializeField] int delay;
+        [SerializeField] float intensity = 1f;
 
         int dataIndex;
 
@@ -22,7 +23,7 @@ namespace Kanikama.Udon.AudioLink
             var audioData = audioLink.audioData;
             if (audioData.Length != 0)
             {
-                return audioData[dataIndex].linear;
+                return audioData[dataIndex].linear * intensity;
             }
             else
             {
