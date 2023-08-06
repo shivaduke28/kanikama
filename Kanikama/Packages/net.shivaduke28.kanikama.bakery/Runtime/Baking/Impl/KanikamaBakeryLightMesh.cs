@@ -13,6 +13,7 @@ namespace Kanikama.Bakery.Baking.Impl
         [SerializeField] float intensity;
         [SerializeField] bool rendererEnable;
         [SerializeField] bool bakeryLightMeshEnable;
+        [SerializeField] bool gameObjectActive;
 
         void OnValidate()
         {
@@ -24,16 +25,22 @@ namespace Kanikama.Bakery.Baking.Impl
         {
             color = bakeryLightMesh.color;
             intensity = bakeryLightMesh.intensity;
-            gameObjectTag = gameObject.tag;
-            gameObject.tag = "Untagged";
+            var go = gameObject;
+            gameObjectTag = go.tag;
+            go.tag = "Untagged";
             rendererEnable = renderer.enabled;
             bakeryLightMeshEnable = bakeryLightMesh.enabled;
+            gameObjectActive = go.activeSelf;
         }
 
         public override void TurnOff()
         {
             renderer.enabled = false;
             bakeryLightMesh.enabled = false;
+            if (!gameObjectActive)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         public override void TurnOn()
@@ -42,6 +49,10 @@ namespace Kanikama.Bakery.Baking.Impl
             bakeryLightMesh.enabled = true;
             bakeryLightMesh.color = Color.white;
             bakeryLightMesh.intensity = 1f;
+            if (!gameObjectActive)
+            {
+                gameObject.SetActive(true);
+            }
         }
 
         public override bool Includes(Object obj)
@@ -56,6 +67,7 @@ namespace Kanikama.Bakery.Baking.Impl
             bakeryLightMesh.color = color;
             bakeryLightMesh.intensity = intensity;
             gameObject.tag = gameObjectTag;
+            gameObject.SetActive(gameObjectActive);
         }
     }
 }
