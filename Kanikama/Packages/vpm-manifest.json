@@ -1,50 +1,32 @@
 {
   "dependencies": {
-    "com.vrchat.worlds": {
-      "version": "3.1.10"
-    },
     "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.17"
+      "version": "0.1.28"
     },
-    "com.vrchat.clientsim": {
-      "version": "1.2.2"
-    },
-    "com.vrchat.udonsharp": {
-      "version": "1.1.6"
+    "com.vrchat.worlds": {
+      "version": "3.5.2"
     },
     "com.llealloo.audiolink": {
-      "version": "0.3.2"
+      "version": "1.3.0"
     }
   },
   "locked": {
-    "com.vrchat.worlds": {
-      "version": "3.2.0",
-      "dependencies": {
-        "com.vrchat.base": "3.2.0"
-      }
-    },
     "com.vrchat.base": {
-      "version": "3.2.0",
+      "version": "3.5.2",
       "dependencies": {}
     },
     "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.19",
+      "version": "0.1.28",
       "dependencies": {}
     },
-    "com.vrchat.clientsim": {
-      "version": "1.2.5",
+    "com.vrchat.worlds": {
+      "version": "3.5.2",
       "dependencies": {
-        "com.vrchat.worlds": "^3.1.x"
-      }
-    },
-    "com.vrchat.udonsharp": {
-      "version": "1.1.8",
-      "dependencies": {
-        "com.vrchat.worlds": "^3.1.x"
+        "com.vrchat.base": "3.5.2"
       }
     },
     "com.llealloo.audiolink": {
-      "version": "0.3.2",
+      "version": "1.3.0",
       "dependencies": {}
     }
   }
