@@ -6,7 +6,7 @@ namespace Kanikama.Udon.AudioLink
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public sealed class KanikamaUdonAudioLinkLightSource : KanikamaUdonLightSource
     {
-        [SerializeField] VRCAudioLink.AudioLink audioLink;
+        [SerializeField] global::AudioLink.AudioLink audioLink;
         [SerializeField, Range(0, 63)] int band;
         [SerializeField, Range(0, 127)] int delay;
         [SerializeField] float intensity = 1f;
