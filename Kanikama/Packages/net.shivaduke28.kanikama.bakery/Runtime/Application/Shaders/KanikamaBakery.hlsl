@@ -16,6 +16,33 @@ UNITY_DECLARE_TEX2DARRAY_NOSAMPLER(_Udon_LightmapIndArray);
 #include "UnityStandardBRDF.cginc"
 #endif
 
+float KanikamaSHEvaluateDiffuseL1Geomerics(float L0, float3 L1, float3 n)
+{
+    // average energy
+    float R0 = L0;
+
+    // avg direction of incoming light
+    float3 R1 = 0.5f * L1;
+
+    // directional brightness
+    float lenR1 = length(R1);
+
+    // linear angle between normal and direction 0-1
+    //float q = 0.5f * (1.0f + dot(R1 / lenR1, n));
+    //float q = dot(R1 / lenR1, n) * 0.5 + 0.5;
+    float q = dot(normalize(R1), n) * 0.5 + 0.5;
+
+    // power for q
+    // lerps from 1 (linear) to 3 (cubic) based on directionality
+    float p = 1.0f + 2.0f * lenR1 / R0;
+
+    // dynamic range constant
+    // should vary between 4 (highly directional) and 0 (ambient)
+    float a = (1.0f - lenR1 / R0) / (1.0f + lenR1 / R0);
+
+    return R0 * (a + (1.0f - a) * (p + 1.0f) * pow(q, p));
+}
+
 inline void KanikamaBakeryMonoSH(float3 lightTex, float3 dirTex, half3 normalWorld, half3 viewDir, half roughness,
                                        inout half3 diffuse, inout half3 specular)
 {
@@ -36,7 +63,7 @@ inline void KanikamaBakeryMonoSH(float3 lightTex, float3 dirTex, half3 normalWor
     float lumaL1x = dot(L1x, 1);
     float lumaL1y = dot(L1y, 1);
     float lumaL1z = dot(L1z, 1);
-    float lumaSH = shEvaluateDiffuseL1Geomerics(lumaL0, float3(lumaL1x, lumaL1y, lumaL1z), normalWorld);
+    float lumaSH = KanikamaSHEvaluateDiffuseL1Geomerics(lumaL0, float3(lumaL1x, lumaL1y, lumaL1z), normalWorld);
 
     sh = L0 + normalWorld.x * L1x + normalWorld.y * L1y + normalWorld.z * L1z;
     float regularLumaSH = dot(sh, 1);
@@ -56,6 +83,7 @@ inline void KanikamaBakeryMonoSH(float3 lightTex, float3 dirTex, half3 normalWor
     half3 halfDir = Unity_SafeNormalize(normalize(dominantDir) + viewDir);
     half nh = saturate(dot(normalWorld, halfDir));
     half spec = GGXTerm(nh, roughness);
+    sh = L0 + dominantDir.x * L1x + dominantDir.y * L1y + dominantDir.z * L1z;
 
     specular += max(spec * sh, 0.0);
     #endif

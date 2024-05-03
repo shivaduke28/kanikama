@@ -61,6 +61,7 @@
         [Toggle(BAKERY_RNM)] _BAKERY_RNM ("Enable RNM", Float) = 0
         [Toggle(BAKERY_MONOSH)] _BAKERY_MONOSH ("Enable MonoSH", Float) = 0
         [Toggle(BAKERY_LMSPEC)] _BAKERY_LMSPEC ("Enable Lightmap Specular", Float) = 0
+        [Toggle(BAKERY_LMSPECOCCLUSION)] _BAKERY_LMSPECOCCLUSION ("Use Lightmap Specular as Reflection Occlusion", Float) = 0
         [Toggle(BAKERY_BICUBIC)] _BAKERY_BICUBIC ("Enable Bicubic Filter", Float) = 0
         [Toggle(BAKERY_PROBESHNONLINEAR)] _BAKERY_PROBESHNONLINEAR ("Use non-linear SH for light probes", Float) = 0
         [Toggle(BAKERY_VOLUME)] _BAKERY_VOLUME ("Use volumes", Float) = 0
@@ -120,6 +121,7 @@
             #pragma shader_feature BAKERY_SHNONLINEAR
             #pragma shader_feature BAKERY_RNM
             #pragma shader_feature BAKERY_LMSPEC
+            #pragma shader_feature BAKERY_LMSPECOCCLUSION
             #pragma shader_feature BAKERY_BICUBIC
             #pragma shader_feature BAKERY_PROBESHNONLINEAR
             #pragma shader_feature BAKERY_VOLUME
