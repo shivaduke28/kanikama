@@ -192,8 +192,8 @@ namespace Kanikama.Bakery.Editor.Baking
                 return;
             }
 
-            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Light || lm.Type == BakeryLightmap.L0).ToArray();
-            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Directional || lm.Type == BakeryLightmap.L1).ToArray();
+            var lightmaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Light).ToArray();
+            var directionalMaps = allLightmaps.Where(lm => lm.Type == BakeryLightmap.Directional).ToArray();
             var maxIndex = lightmaps.Max(lightmap => lightmap.Index);
 
             var output = new List<LightmapArray>();

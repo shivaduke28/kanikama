@@ -32,7 +32,7 @@ namespace Kanikama.Bakery.Editor.Baking
             await context.Lightmapper.BakeAsync(cancellationToken);
             handle.TurnOff();
 
-            var baked = KanikamaBakeryUtility.GetLightmaps(context.Setting.OutputAssetDirPath, context.SceneAssetData.Asset.name);
+            var baked = KanikamaBakeryUtility.GetLightmaps();
             var copied = BakeryBakingPipeline.CopyLightmaps(baked, context.Setting.OutputAssetDirPath, handle.Id);
             context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(handle.Id, copied, handle.Name);
             foreach (var lm in copied)
