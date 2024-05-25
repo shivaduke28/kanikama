@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.RegularExpressions;
 using Kanikama.Editor.Baking;
+using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,83 +8,38 @@ namespace Kanikama.Bakery.Editor.Baking
 {
     public static class KanikamaBakeryUtility
     {
-        // TODO: 名前良い感じに...
-        static readonly Regex LM0 = new Regex(@"^LM0");
-        static readonly Regex LMA = new Regex(@"^LMA[0-9]+");
-        static readonly Regex Color = new Regex(@"final$");
-        static readonly Regex Dir = new Regex(@"dir$");
-        static readonly Regex L0 = new Regex(@"L0$");
-        static readonly Regex L1 = new Regex(@"L1$");
-
-        // "{scene name}_[LM0|LMA[0-9]+]_[final|dir|L0|L1]"
-        public static List<Lightmap> GetLightmaps(string outputAssetDirPath, string sceneName)
+        public static List<Lightmap> GetLightmaps()
         {
             var result = new List<Lightmap>();
-            var regex = new Regex($"^{sceneName}_");
-            foreach (var guid in AssetDatabase.FindAssets("t:Texture", new[] { outputAssetDirPath }))
+            var ftLightmapsStorage = GameObjectHelper.FindObjectOfType<ftLightmapsStorage>();
+            if (ftLightmapsStorage == null)
             {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var fileName = Path.GetFileNameWithoutExtension(path);
-                var match = regex.Match(fileName);
-                if (!match.Success) continue;
+                Debug.LogWarningFormat(KanikamaDebug.Format, "ftLightmapStorage is not found.");
+                return result;
+            }
 
-                var sub = fileName.Substring(match.Length);
-                if (TryParseLightmapPath(sub, out var lightmapType, out var index))
+            var lightmaps = ftLightmapsStorage.maps;
+            if (lightmaps != null)
+            {
+                for (var i = 0; i < lightmaps.Count; i++)
                 {
-                    var asset = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
-                    result.Add(new Lightmap(lightmapType, asset, path, index));
+                    var texture = lightmaps[i];
+                    var path = AssetDatabase.GetAssetPath(texture);
+                    result.Add(new Lightmap(BakeryLightmap.Light, texture, path, i));
+                }
+            }
+
+            var dirMaps = ftLightmapsStorage.dirMaps;
+            if (dirMaps != null)
+            {
+                for (var i = 0; i < dirMaps.Count; i++)
+                {
+                    var texture = dirMaps[i];
+                    var path = AssetDatabase.GetAssetPath(texture);
+                    result.Add(new Lightmap(BakeryLightmap.Directional, texture, path, i));
                 }
             }
             return result;
-        }
-
-        public static bool TryParseLightmapPath(string name, out string lightmapType, out int index)
-        {
-            lightmapType = default;
-            index = default;
-            if (LM0.IsMatch(name))
-            {
-                index = 0;
-            }
-            else
-            {
-                var match = LMA.Match(name);
-                if (match.Success)
-                {
-                    var str = name.Substring(3, match.Length - 3);
-                    if (int.TryParse(str, out var i))
-                    {
-                        index = i;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            if (Color.IsMatch(name))
-            {
-                lightmapType = BakeryLightmap.Light;
-            }
-            else if (Dir.IsMatch(name))
-            {
-                lightmapType = BakeryLightmap.Directional;
-            }
-            else if (L0.IsMatch(name))
-            {
-                lightmapType = BakeryLightmap.L0;
-            }
-            else if (L1.IsMatch(name))
-            {
-                lightmapType = BakeryLightmap.L1;
-            }
-            else
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }

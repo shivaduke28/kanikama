@@ -1,4 +1,5 @@
-﻿using Kanikama.Editor.Baking.GUI;
+﻿using Kanikama.Editor.Baking;
+using Kanikama.Editor.Baking.GUI;
 using UnityEditor;
 using UnityEngine;
 
@@ -24,6 +25,8 @@ namespace Kanikama.Editor.Bakery.Baking
                     showLightmapsStorage = EditorGUILayout.Toggle("Show !ftraceLightmaps", showLightmapsStorage);
                     if (check.changed)
                     {
+                        var obj = GameObjectHelper.FindObjectOfType<ftLightmapsStorage>();
+                        Debug.Log(obj == null);
                         var ft = GameObject.Find("!ftraceLightmaps");
                         if (ft != null)
                         {

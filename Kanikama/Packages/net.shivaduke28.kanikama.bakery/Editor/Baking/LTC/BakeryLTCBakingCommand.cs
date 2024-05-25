@@ -67,7 +67,7 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
         }
 
         List<Lightmap> GetBakedLightmaps(BakeryBakingPipeline.Context context)
-            => KanikamaBakeryUtility.GetLightmaps(context.Setting.OutputAssetDirPath, context.SceneAssetData.Asset.name)
+            => KanikamaBakeryUtility.GetLightmaps()
                 .Where(l => l.Type == BakeryLightmap.Light).ToList();
 
         void IBakingCommand.Initialize(string sceneGuid)
