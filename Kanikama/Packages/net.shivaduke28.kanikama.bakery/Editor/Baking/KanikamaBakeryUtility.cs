@@ -62,10 +62,6 @@ namespace Kanikama.Bakery.Editor.Baking
                         return false;
                     }
                 }
-                else
-                {
-                    return false;
-                }
             }
 
             if (Color.IsMatch(name))
