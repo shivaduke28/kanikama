@@ -219,9 +219,9 @@ namespace Kanikama.Bakery.Editor.Baking.GUI
 
         bool ValidateAndLoadOnFail()
         {
-            var result = descriptor != null;
-            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData);
-            result = result && sceneAssetData.Asset == sceneAsset;
+            var result = descriptor != null
+                && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData)
+                && sceneAssetData.Asset == sceneAsset;
 
             if (!result)
             {
