@@ -31,8 +31,8 @@ namespace Kanikama.Baking.Impl
             {
                 foreach (var bakeTarget in bakeTargets)
                 {
-                    bakeTarget.gameObject.SetActive(true);
                     bakeTarget.Initialize();
+                    bakeTarget.gameObject.SetActive(true);
                 }
             }
 
