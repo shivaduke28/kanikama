@@ -38,7 +38,7 @@ Shader "Kanikama/KanikamaStandardSurface"
         [Toggle(_KANIKAMA_DIRECTIONAL_SPECULAR)] _Kanikama_Directional_Specular("Kanikama Directional Specular", Float) = 0
         [PerRendererData]_Udon_LightmapArray("LightmapArray", 2DArray) = ""{}
         [PerRendererData]_Udon_LightmapIndArray("LightmapIndArray", 2DArray) = ""{}
-        [Toggle(_KANIKAMA_LTC)] _Kanikama_LTC("Kanikama LTC", Float) = 0
+        [KeywordEnum(None, Specular, Diffuse Specular)] _Kanikama_LTC("Kanikama LTC", Float) = 0
     }
     SubShader
     {
@@ -56,7 +56,7 @@ Shader "Kanikama/KanikamaStandardSurface"
         #pragma surface surf Kanikama fullforwardshadows vertex:vert addshadow
         #pragma shader_feature_local_fragment _ _KANIKAMA_MODE_ARRAY _KANIKAMA_MODE_DIRECTIONAL
         #pragma shader_feature_local_fragment _ _KANIKAMA_DIRECTIONAL_SPECULAR
-        #pragma shader_feature_local_fragment _ _KANIKAMA_LTC
+        #pragma shader_feature_local_fragment _ _KANIKAMA_LTC_SPECULAR _KANIKAMA_LTC_DIFFUSE_SPECULAR
 
 
         #pragma multi_compile_fog
@@ -111,6 +111,18 @@ Shader "Kanikama/KanikamaStandardSurface"
             return LightingStandard(s, viewDir, gi);
         }
 
+        inline half3 LTCDiffuseSpecular(Input IN, SurfaceOutputStandard s, float3 worldNormal, float3 worldView)
+        {
+            half3 specColor;
+            half oneMinusReflectivity = 0;
+            half3 diffuseColor = DiffuseAndSpecularFromMetallic(s.Albedo, s.Metallic, specColor, oneMinusReflectivity);
+            half perceptualRoughness = SmoothnessToPerceptualRoughness(s.Smoothness);
+            half3 ltcResult;
+            KanikamaLTC(IN.worldPos, worldNormal, worldView, perceptualRoughness, IN.lightmapUV,
+                                s.Occlusion, diffuseColor, specColor, ltcResult);
+            return ltcResult;
+        }
+
         inline half3 LTCSpecular(Input IN, SurfaceOutputStandard s, float3 worldNormal, float3 worldView)
         {
             half3 specColor;
@@ -161,7 +173,10 @@ Shader "Kanikama/KanikamaStandardSurface"
             o.Emission = tex2D(_EmissionMap, uv) * _EmissionColor;
             #endif
 
-            #ifdef _KANIKAMA_LTC
+            #if defined(_KANIKAMA_LTC_DIFFUSE_SPECULAR)
+            o.Emission += LTCDiffuseSpecular(IN, o, WorldNormalVector(IN, o.Normal),
+                                      normalize(UnityWorldSpaceViewDir(IN.worldPos)));
+            #elif defined(_KANIKAMA_LTC_SPECULAR)
             o.Emission += LTCSpecular(IN, o, WorldNormalVector(IN, o.Normal),
                                       normalize(UnityWorldSpaceViewDir(IN.worldPos)));
             #endif

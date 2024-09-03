@@ -2,15 +2,22 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: KanikamaBakeryStandard
   m_Shader: {fileID: 4800000, guid: 9c76be3c8ad9470c8cf22c408250d4b9, type: 3}
-  m_ShaderKeywords: BAKERY_SHNONLINEAR _KANIKAMA_BAKERY_SHNONLINEAR _KANIKAMA_LTC
-    _KANIKAMA_MODE_ARRAY
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - BAKERY_SHNONLINEAR
+  - _KANIKAMA_BAKERY_SHNONLINEAR
+  - _KANIKAMA_LTC_SPECULAR
+  - _KANIKAMA_MODE_ARRAY
+  m_InvalidKeywords:
+  - _KANIKAMA_LTC
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -18,6 +25,7 @@ Material:
   stringTagMap:
     RenderType: Opaque
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -81,11 +89,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _BAKERY_2SIDED: 2
     - _BAKERY_2SIDEDON: 0
     - _BAKERY_BICUBIC: 0
     - _BAKERY_LMSPEC: 0
+    - _BAKERY_LMSPECOCCLUSION: 0
     - _BAKERY_MONOSH: 0
     - _BAKERY_PROBESHNONLINEAR: 0
     - _BAKERY_RNM: 0
@@ -122,3 +132,4 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _VolumeInvSize: {r: 1000001, g: 1000001, b: 1000001, a: 1}
     - _VolumeMin: {r: 0, g: 0, b: 0, a: 1}
+  m_BuildTextureStacks: []

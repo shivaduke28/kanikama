@@ -233,10 +233,29 @@ half4 KanikamaBakeryFragForwardBase(BakeryVertexOutputForwardBase i) : SV_Target
     c.rgb += UNITY_BRDF_GI(s.diffColor, s.specColor, s.oneMinusReflectivity, s.smoothness, s.normalWorld, -s.eyeVec,
                            occlusion, gi);
 
-    #if defined(_KANIKAMA_LTC)
-    half3 ltcSpec;
-    KanikamaLTCSpecular(s.posWorld, s.normalWorld, -s.eyeVec, SmoothnessToPerceptualRoughness(s.smoothness), i.ambientOrLightmapUV.xy, occlusion, s.specColor, ltcSpec);
-    c.rgb += ltcSpec;
+    #if defined(_KANIKAMA_LTC_SPECULAR)
+    half3 ltcResult;
+    KanikamaLTCSpecular(s.posWorld,
+        s.normalWorld,
+        -s.eyeVec,
+        SmoothnessToPerceptualRoughness(s.smoothness),
+        i.ambientOrLightmapUV.xy,
+        occlusion,
+        s.specColor,
+        ltcResult);
+    c.rgb += ltcResult;
+    #elif defined(_KANIKAMA_LTC_DIFFUSE_SPECULAR)
+    half3 ltcResult;
+    KanikamaLTC(s.posWorld,
+        s.normalWorld,
+        -s.eyeVec,
+        SmoothnessToPerceptualRoughness(s.smoothness),
+        i.ambientOrLightmapUV.xy,
+        occlusion,
+        s.diffColor,
+        s.specColor,
+        ltcResult);
+    c.rgb += ltcResult;
     #endif
 
     c.rgb += Emission(i.tex.xy);

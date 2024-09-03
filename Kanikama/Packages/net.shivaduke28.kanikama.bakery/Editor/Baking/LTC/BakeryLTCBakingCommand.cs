@@ -31,8 +31,12 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
         {
             // NOTE: BakeTargets are supposed to use Bakery Light Mesh.
             // Set Bounce 1 when BakeTargets Renderers with emissive materials.;
+            var renderMode = context.Lightmapper.LightmapRenderMode;
             var bounce = context.Lightmapper.Bounce;
             var dirMode = context.Lightmapper.DirectionalMode;
+
+            // RenderMode must be FullLighting when Bounce < 1
+            context.Lightmapper.LightmapRenderMode = BakeryLightmapper.RenderMode.FullLighting;
             context.Lightmapper.Bounce = 0;
             context.Lightmapper.DirectionalMode = BakeryLightmapper.DirMode.None;
 
@@ -64,6 +68,7 @@ namespace Kanikama.Bakery.Editor.Baking.LTC
             }
             context.Lightmapper.Bounce = bounce;
             context.Lightmapper.DirectionalMode = dirMode;
+            context.Lightmapper.LightmapRenderMode = renderMode;
         }
 
         List<Lightmap> GetBakedLightmaps(BakeryBakingPipeline.Context context)
