@@ -199,6 +199,44 @@ LTCData LTCSetup(float ndotv, float perceptualRoughness)
     return o;
 }
 
+void KanikamaLTC(float3 position, half3 normal, half3 view, half perceptualRoughness, float2 lightmapUV,
+                         half occlusion,
+                         half3 diffColor,
+                         half3 specColor,
+                         out half3 ltcResult)
+{
+    float ndotv = saturate(dot(normal, view));
+    LTCData data = LTCSetup(ndotv, perceptualRoughness);
+    half3 viewTangent = normalize(view - ndotv * normal);
+    half3 viewBitangent = cross(viewTangent, normal);
+    float3x3 orth = float3x3(viewTangent, viewBitangent, normal);
+    float3x3 Minv = mul(data.Minv, orth);
+    float2 ltcParam = data.BRDFParam;
+
+    const float3 visibility = tex2D(_Udon_LTC_VisibilityMap, lightmapUV).rgb;
+    float3 points[4];
+    ltcResult = 0;
+
+    for (int i = 0; i < _Udon_LTC_Count; i++)
+    {
+        points[0] = _Udon_LTC_Vertex0[i];
+        points[1] = _Udon_LTC_Vertex1[i];
+        points[2] = _Udon_LTC_Vertex2[i];
+        points[3] = _Udon_LTC_Vertex3[i];
+        half3 ltcDiffuse = LTCEvaluate(position, orth, points, _Udon_LTC_LightTex0);
+        half3 ltcSpec = LTCEvaluate(position, Minv, points, _Udon_LTC_LightTex0);
+        ltcDiffuse *= diffColor;
+        ltcSpec *= specColor * ltcParam.x + (1.0 - specColor) * ltcParam.y;
+        // fake visibility using lightmap
+        half v = saturate(visibility[i]);
+        ltcDiffuse *= v;
+        ltcSpec *= v;
+        ltcResult += ltcDiffuse;
+        ltcResult += ltcSpec;
+    }
+    ltcResult *= occlusion;
+}
+
 void KanikamaLTCSpecular(float3 position, half3 normal, half3 view, half perceptualRoughness, float2 lightmapUV,
                          half occlusion,
                          half3 specColor,
