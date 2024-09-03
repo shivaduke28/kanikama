@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Bakery.Editor.Baking.LTC;
 using Kanikama.Editor.Baking;
 using Kanikama.Baking;
 using Kanikama.Baking.Impl;
@@ -65,7 +64,6 @@ namespace Kanikama.Bakery.Editor.Baking
 
             commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new BakingCommand(new BakeTargetHandle<BakeTarget>(x))));
             commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new BakingCommand(h)));
-            commands.AddRange(bakingDescriptor.GetLTCMonitors().Take(3).Select(x => new BakeryLTCBakingCommand(x)));
             return commands.ToArray();
 
             IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)

@@ -4,8 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking;
 using Kanikama.Baking.Impl;
-using Kanikama.Baking.Impl.LTC;
-using Kanikama.Editor.Baking.LTC;
 
 namespace Kanikama.Editor.Baking
 {
@@ -56,7 +54,6 @@ namespace Kanikama.Editor.Baking
 
             commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new UnityBakingCommand(new BakeTargetHandle<BakeTarget>(x))));
             commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new UnityBakingCommand(h)));
-            commands.AddRange(bakingDescriptor.GetLTCMonitors().Take(3).Select(x => new UnityLTCBakingCommand(x)));
             return commands.ToArray();
 
             IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
