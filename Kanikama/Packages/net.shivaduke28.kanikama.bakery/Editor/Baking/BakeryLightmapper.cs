@@ -45,6 +45,15 @@ namespace Kanikama.Bakery.Editor.Baking
             set => ftRenderLightmap.renderDirMode = (ftRenderLightmap.RenderDirMode) value;
         }
 
+        public RenderMode LightmapRenderMode
+        {
+            get => (RenderMode) ftRenderLightmap.instance.userRenderMode;
+            set
+            {
+                ftRenderLightmap.instance.userRenderMode = (ftRenderLightmap.RenderMode) value;
+                ftRenderLightmap.FindRenderSettingsStorage().renderSettingsUserRenderMode = (int) value;
+            }
+        }
 
         public enum DirMode
         {
@@ -61,5 +70,14 @@ namespace Kanikama.Bakery.Editor.Baking
             get => ftRenderLightmap.bounces;
             set => ftRenderLightmap.bounces = value;
         }
+
+        public enum RenderMode
+        {
+            FullLighting = 0,
+            Indirect = 1,
+            Shadowmask = 2,
+            Subtractive = 3,
+            AmbientOcclusionOnly = 4
+        };
     }
 }
