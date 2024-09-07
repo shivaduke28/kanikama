@@ -1,4 +1,5 @@
-﻿using Kanikama.Utility;
+﻿using Kanikama.Components;
+using Kanikama.Utility;
 using UnityEditor;
 
 namespace Kanikama.Editor.Baking.GUI

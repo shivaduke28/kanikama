@@ -1,7 +1,8 @@
 ﻿using System.Linq;
+using Kanikama.Utility;
 using UnityEngine;
 
-namespace Kanikama.Utility
+namespace Kanikama.Components
 {
     [DisallowMultipleComponent, RequireComponent(typeof(Renderer))]
     public sealed class RendererMaterialHolder : MonoBehaviour

@@ -1,23 +1,52 @@
 ﻿using Kanikama.Attributes;
-using Kanikama.Components;
 using Kanikama.Utility;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Kanikama.Baking.Impl
+namespace Kanikama.Components
 {
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaBakeTargetLightMesh : BakeTarget
+    public sealed class KanikamaEmissiveRenderer : LightSourceV2
     {
         [SerializeField, NonNull] new Renderer renderer;
         [SerializeField] int materialIndex;
-        [SerializeField] bool useStandardShader = true;
         [SerializeField] string propertyName = "_EmissionColor";
+        [SerializeField] bool useStandardShader;
         [SerializeField] string gameObjectTag;
+        [SerializeField] bool useMaterialPropertyBlock = true;
+
+        Material instance;
+        bool useMaterialPropertyBlockInternal;
+
+        int propertyId;
+        MaterialPropertyBlock block;
 
         void OnValidate()
         {
             renderer = GetComponent<Renderer>();
+        }
+
+        void Start()
+        {
+            propertyId = Shader.PropertyToID(propertyName);
+            useMaterialPropertyBlockInternal = useMaterialPropertyBlock;
+            if (useMaterialPropertyBlockInternal)
+            {
+                block = new MaterialPropertyBlock();
+            }
+            else
+            {
+                instance = renderer.materials[materialIndex];
+            }
+        }
+
+        public override Color GetLinearColor()
+        {
+            if (useMaterialPropertyBlockInternal)
+            {
+                renderer.GetPropertyBlock(block);
+                return block.GetColor(propertyId).linear;
+            }
+            return instance.GetColor(propertyId).linear;
         }
 
         public override void Initialize()
@@ -54,8 +83,6 @@ namespace Kanikama.Baking.Impl
             mat.AddBakedEmissiveFlag();
             SelectionUtility.SetActiveObject(mat);
         }
-
-        public override bool Includes(Object obj) => obj == renderer;
 
         public override void Clear()
         {
