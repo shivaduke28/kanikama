@@ -1,5 +1,5 @@
 ﻿using System;
-using Kanikama.Baking.Attributes;
+using Kanikama.Attributes;
 using Kanikama.Baking.Impl;
 using UnityEngine;
 using UnityEngine.Rendering;

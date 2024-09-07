@@ -1,4 +1,4 @@
-﻿using Kanikama.Baking.Attributes;
+﻿using Kanikama.Attributes;
 using Kanikama.Utility;
 using UnityEngine;
 using Object = UnityEngine.Object;
