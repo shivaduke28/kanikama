@@ -8,7 +8,7 @@ namespace Kanikama.Utility
         {
             if (obj == null) return;
 #if UNITY_EDITOR
-            if (Application.isPlaying)
+            if (UnityEngine.Application.isPlaying)
             {
                 Object.Destroy(obj);
             }

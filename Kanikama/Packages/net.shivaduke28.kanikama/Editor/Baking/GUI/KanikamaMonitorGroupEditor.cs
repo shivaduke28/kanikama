@@ -12,7 +12,7 @@ namespace Kanikama.Editor.Baking.GUI
         {
             base.OnInspectorGUI();
             var kanikamaMonitorGroup = (KanikamaBakeTargetMonitorGroup) target;
-            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            EditorGUI.BeginDisabledGroup(UnityEngine.Application.isPlaying);
             EditorGUILayout.Space();
             if (KanikamaGUI.Button("Setup Lights"))
             {
