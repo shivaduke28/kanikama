@@ -1,18 +1,19 @@
 {
-    "name": "Kanikama.Editor",
-    "rootNamespace": "Kanikama",
+    "name": "Kanikama.Bakery",
+    "rootNamespace": "Kanikama.Bakery",
     "references": [
+        "BakeryRuntimeAssembly",
         "Kanikama"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

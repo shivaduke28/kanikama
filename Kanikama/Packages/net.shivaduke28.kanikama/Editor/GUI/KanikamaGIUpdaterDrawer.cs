@@ -1,43 +1,36 @@
 ﻿using System.Linq;
-using Kanikama.Editor;
+using Kanikama.Application.Impl;
 using Kanikama.Utility;
-using Kanikama.Editor.GUI;
-using UdonSharpEditor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.Editor.GUI
 {
-    internal sealed class KanikamaUdonGIUpdaterDrawer : KanikamaWindow.IGUIDrawer
+    internal sealed class KanikamaGIUpdaterDrawer : KanikamaWindow.IGUIDrawer
     {
-        KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
-        SerializedObject serializedObject;
+        KanikamaRuntimeGIUpdater giUpdater;
         UnityBakingSettingAsset bakingSettingAsset;
+        SerializedObject serializedObject;
 
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Runtime, () => new KanikamaUdonGIUpdaterDrawer(), 100);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Runtime, () => new KanikamaGIUpdaterDrawer(), 1);
         }
 
-        KanikamaUdonGIUpdaterDrawer()
+        KanikamaGIUpdaterDrawer()
         {
             Load();
         }
 
-        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
-
         void Load()
         {
-            kanikamaUdonGIUpdater = Object.FindObjectOfType<KanikamaUdonGIUpdater>();
-            if (kanikamaUdonGIUpdater != null)
+            giUpdater = Object.FindObjectOfType<KanikamaRuntimeGIUpdater>();
+            if (giUpdater != null)
             {
-                serializedObject = new SerializedObject(kanikamaUdonGIUpdater);
+                serializedObject = new SerializedObject(giUpdater);
             }
-            else
-            {
-                serializedObject = null;
-            }
+
             if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 bakingSettingAsset = null;
@@ -54,6 +47,9 @@ namespace Kanikama.Udon.Editor
             }
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
+
+
         void Setup()
         {
             if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
@@ -66,30 +62,23 @@ namespace Kanikama.Udon.Editor
                 Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
                 return;
             }
-
-            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup GI Updater");
-            // UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
-            var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
-            var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
-            var sliceCount = serializedObject.FindProperty("sliceCount");
-
             if (!settingAsset.Setting.AssetStorage.LightmapArrayStorage.TryGet(UnityBakingPipeline.LightmapArrayKey, out var lightmapArrayList)) return;
 
             var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
             var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmap.Directional).OrderBy(x => x.Index).ToArray();
+
+            var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             lightmapArrays.arraySize = lights.Length;
             for (var i = 0; i < lights.Length; i++)
             {
                 lightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = lights[i].Texture;
             }
-
+            var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
             directionalLightmapArrays.arraySize = directionals.Length;
             for (var i = 0; i < directionals.Length; i++)
             {
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
-
-            sliceCount.intValue = lights.Length > 0 ? lights[0].Texture.depth : 0;
 
             if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(UnityLtcBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
             {
@@ -102,14 +91,11 @@ namespace Kanikama.Udon.Editor
             }
 
             serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
-            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
         }
 
         void SetupReceivers()
         {
-            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup Receivers");
-            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
+            Undo.RecordObject(giUpdater, "Setup Receivers");
             var receivers = serializedObject.FindProperty("receivers");
             var renderers = RendererCollector.CollectKanikamaReceivers();
             receivers.arraySize = renderers.Length;
@@ -118,26 +104,25 @@ namespace Kanikama.Udon.Editor
                 receivers.GetArrayElementAtIndex(i).objectReferenceValue = renderers[i];
             }
             serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
-            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
+            EditorUtility.SetDirty(giUpdater);
         }
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            EditorGUILayout.LabelField($"{nameof(KanikamaUdonGIUpdater)} (Udon)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaRuntimeGIUpdater)} (Unity)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {
-                kanikamaUdonGIUpdater = (KanikamaUdonGIUpdater) EditorGUILayout.ObjectField("Provider",
-                    kanikamaUdonGIUpdater, typeof(KanikamaUdonGIUpdater), true);
+                giUpdater = (KanikamaRuntimeGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor",
+                    giUpdater, typeof(KanikamaRuntimeGIUpdater), true);
 
-                if (kanikamaUdonGIUpdater == null)
+                if (giUpdater == null)
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} is not found.", MessageType.Warning);
                 }
-                else if (!kanikamaUdonGIUpdater.Validate())
+                else if (!giUpdater.Validate())
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} has invalid null fields.", MessageType.Error);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} has invalid null fields.", MessageType.Error);
                 }
                 else if (bakingSettingAsset == null)
                 {
@@ -149,7 +134,6 @@ namespace Kanikama.Udon.Editor
                     {
                         Setup();
                     }
-
                     if (KanikamaGUI.Button("Set KanikamaGI Receivers"))
                     {
                         SetupReceivers();
