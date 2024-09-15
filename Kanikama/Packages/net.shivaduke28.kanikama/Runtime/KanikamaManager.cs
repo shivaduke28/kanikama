@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Attributes;
 using Kanikama.Utility;
@@ -14,13 +15,13 @@ namespace Kanikama
 
         [Header("Scene")]
         [SerializeField, NonNull]
-        LightSourceV2[] lightSources;
+        LightSourceV2[] lightSources = Array.Empty<LightSourceV2>();
 
-        [SerializeField, NonNull] LightSourceGroupV2[] lightSourceGroups;
-        [SerializeField, NonNull] Renderer[] receivers;
+        [SerializeField, NonNull] LightSourceGroupV2[] lightSourceGroups = Array.Empty<LightSourceGroupV2>();
+        [SerializeField, NonNull] Renderer[] receivers = Array.Empty<Renderer>();
 
-        [SerializeField, NonNull] Texture2DArray[] lightmapArrays;
-        [SerializeField, NonNull] Texture2DArray[] directionalLightmapArrays;
+        [SerializeField, NonNull] Texture2DArray[] lightmapArrays = Array.Empty<Texture2DArray>();
+        [SerializeField, NonNull] Texture2DArray[] directionalLightmapArrays = Array.Empty<Texture2DArray>();
 
         static readonly int LightmapArray = Shader.PropertyToID("_Udon_LightmapArray");
         static readonly int LightmapIndArray = Shader.PropertyToID("_Udon_LightmapIndArray");
