@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Kanikama.Bakery.Editor
 {
+    // TODO: delete this class
     [CreateAssetMenu(menuName = "Kanikama/BakeryBakingSettingAsset", fileName = "BakeryBakingSettingAsset")]
     public sealed class BakeryBakingSettingAsset : ScriptableObject
     {
