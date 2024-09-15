@@ -1,11 +1,12 @@
-﻿using System;
+﻿using System.Linq;
+using Kanikama.Components;
 using UdonSharp;
 using UnityEngine;
 
 namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public sealed class KanikamaUdonMonitorCamera : KanikamaUdonLightSourceGroup
+    public sealed class KanikamaUdonMonitorGroup : KanikamaUdonLightSourceGroup
     {
         [SerializeField, NonNull] Renderer monitorRenderer;
         [SerializeField, NonNull] Texture2D readingTexture;
@@ -20,10 +21,37 @@ namespace Kanikama.Udon
         [ColorUsage(false, true), SerializeField]
         Color[] colors;
 
-        int lightCount;
-        int mipmapLevel;
-        bool isUniform;
-        bool isInitialized;
+#if !COMPILER_UDONSHARP
+        [Header("Bake")] [SerializeField] KanikamaMonitorV2[] monitors;
+        [SerializeField, NonNull] LightSourceV2 gridCellPrefab;
+        [SerializeField] KanikamaMonitorGridFiber[] monitorGridFibers;
+
+        public override ILightSourceV2[] GetAll() => monitorGridFibers.Cast<ILightSourceV2>().ToArray();
+        public override ILightSourceV2 Get(int index) => monitorGridFibers[index];
+
+        /// <summary>
+        /// Setup Grid Fibers. Supposed to be called from Editor scripts.
+        /// </summary>
+        public void SetupGridFibers()
+        {
+            foreach (var monitor in monitors)
+            {
+                monitor.SetupLights((KanikamaMonitorV2.PartitionType) partitionType, gridCellPrefab);
+            }
+            SetupMonitorGridFibers();
+        }
+
+        void SetupMonitorGridFibers()
+        {
+            var part = (int) partitionType;
+            var gridCount = Mathf.FloorToInt(part / 10f) * part % 10;
+            monitorGridFibers = new KanikamaMonitorGridFiber[gridCount];
+            for (var i = 0; i < gridCount; i++)
+            {
+                var fiber = new KanikamaMonitorGridFiber(monitors.Select(x => x.GetGridCell(i)).ToArray());
+                monitorGridFibers[i] = fiber;
+            }
+        }
 
         void OnValidate()
         {
@@ -32,6 +60,41 @@ namespace Kanikama.Udon
                 camera = GetComponent<Camera>();
             }
         }
+
+        /// <summary>
+        /// Setup Camera position. Supposed to be called from Editor scripts.
+        /// </summary>
+        public void SetupCamera()
+        {
+            camera.orthographic = true;
+            var cameraTrans = camera.transform;
+            var rendererTrans = monitorRenderer.transform;
+            var pos = rendererTrans.position - rendererTrans.forward * cameraDistance;
+            cameraTrans.SetPositionAndRotation(pos, rendererTrans.rotation);
+            camera.nearClipPlane = cameraNear;
+            camera.farClipPlane = cameraFar;
+            var bounds = GetUnRotatedBounds(monitorRenderer);
+            camera.orthographicSize = bounds.extents.y;
+            var extents = bounds.extents;
+            aspectRatio = extents.x / extents.y;
+        }
+
+        static Bounds GetUnRotatedBounds(Renderer renderer)
+        {
+            var t = renderer.transform;
+            var rotation = t.rotation;
+            t.rotation = Quaternion.identity;
+            var bounds = renderer.bounds;
+            t.rotation = rotation;
+            return bounds;
+        }
+#endif
+
+        int lightCount;
+        int mipmapLevel;
+        bool isUniform;
+        bool isInitialized;
+
 
         void Start()
         {
@@ -154,36 +217,6 @@ namespace Kanikama.Udon
             colors = new Color[lightCount];
             isInitialized = true;
         }
-
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
-        /// <summary>
-        /// Setup Camera position. Supposed to be called from Editor scripts.
-        /// </summary>
-        public void Setup()
-        {
-            camera.orthographic = true;
-            var cameraTrans = camera.transform;
-            var rendererTrans = monitorRenderer.transform;
-            var pos = rendererTrans.position - rendererTrans.forward * cameraDistance;
-            cameraTrans.SetPositionAndRotation(pos, rendererTrans.rotation);
-            camera.nearClipPlane = cameraNear;
-            camera.farClipPlane = cameraFar;
-            var bounds = GetUnRotatedBounds(monitorRenderer);
-            camera.orthographicSize = bounds.extents.y;
-            var extents = bounds.extents;
-            aspectRatio = extents.x / extents.y;
-        }
-
-        static Bounds GetUnRotatedBounds(Renderer renderer)
-        {
-            var t = renderer.transform;
-            var rotation = t.rotation;
-            t.rotation = Quaternion.identity;
-            var bounds = renderer.bounds;
-            t.rotation = rotation;
-            return bounds;
-        }
-#endif
     }
 
     public enum KanikamaMonitorPartitionType

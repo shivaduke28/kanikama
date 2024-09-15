@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: KanikamaUdonLightMesh
+  m_Name: KanikamaUdonEmissiveRenderer
   m_EditorClassIdentifier: 
   serializedUdonProgramAsset: {fileID: 11400000, guid: 7de82fa861050ea4ab0ef28cbef71997,
     type: 2}
@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 0
   hasInteractEvent: 0
-  scriptID: 1865708971783479899
+  scriptID: -7108338965455167887
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

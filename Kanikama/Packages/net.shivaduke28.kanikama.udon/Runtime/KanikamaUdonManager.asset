@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: KanikamaUdonGIUpdater
+  m_Name: KanikamaUdonManager
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 04549c0560928d24dba8bf2f89039539,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: ccad8a437288bf647891e355498f11a3,
     type: 2}
   udonAssembly: 
   assemblyError: 
@@ -21,7 +21,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 2
   hasInteractEvent: 0
-  scriptID: -4446266565438990467
+  scriptID: -6647680717866404938
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 

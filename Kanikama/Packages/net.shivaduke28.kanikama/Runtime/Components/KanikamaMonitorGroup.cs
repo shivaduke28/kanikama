@@ -18,7 +18,7 @@ namespace Kanikama.Components
         [Header("Bake")] [SerializeField] KanikamaMonitorV2[] monitors;
         [SerializeField, NonNull] LightSourceV2 gridCellPrefab;
         [SerializeField] KanikamaMonitorV2.PartitionType partitionType = KanikamaMonitorV2.PartitionType.Grid1x1;
-        [SerializeField] MonitorGridFiber[] monitorGridFibers;
+        [SerializeField] KanikamaMonitorGridFiber[] monitorGridFibers;
 
         #region Runtime
 
@@ -265,57 +265,6 @@ namespace Kanikama.Components
         public override ILightSourceV2[] GetAll() => monitorGridFibers.Cast<ILightSourceV2>().ToArray();
         public override ILightSourceV2 Get(int index) => monitorGridFibers[index];
 
-        [Serializable]
-        class MonitorGridFiber : ILightSourceV2
-        {
-            [FormerlySerializedAs("bakeTargets")]
-            [SerializeField]
-            LightSourceV2[] lightSources;
-
-            public MonitorGridFiber(LightSourceV2[] lightSources)
-            {
-                this.lightSources = lightSources;
-            }
-
-            public void Initialize()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.Initialize();
-                    bakeTarget.gameObject.SetActive(true);
-                }
-            }
-
-            public void TurnOff()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.TurnOff();
-                }
-            }
-
-            public void TurnOn()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.TurnOn();
-                }
-            }
-
-            public void Clear()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.gameObject.SetActive(false);
-                    bakeTarget.Clear();
-                }
-            }
-
-            public Color GetLinearColor()
-            {
-                throw new NotSupportedException("MonitorGridFiber can not be used at runtime.");
-            }
-        }
 
         /// <summary>
         /// Setup Grid Fibers. Supposed to be called from Editor scripts.
@@ -333,15 +282,68 @@ namespace Kanikama.Components
         {
             var part = (int) partitionType;
             var gridCount = Mathf.FloorToInt(part / 10f) * part % 10;
-            monitorGridFibers = new MonitorGridFiber[gridCount];
+            monitorGridFibers = new KanikamaMonitorGridFiber[gridCount];
             for (var i = 0; i < gridCount; i++)
             {
-                var fiber = new MonitorGridFiber(monitors.Select(x => x.GetGridCell(i)).ToArray());
+                var fiber = new KanikamaMonitorGridFiber(monitors.Select(x => x.GetGridCell(i)).ToArray());
                 monitorGridFibers[i] = fiber;
             }
         }
 
         #endregion
+    }
+
+    [Serializable]
+    public class KanikamaMonitorGridFiber : ILightSourceV2
+    {
+        [FormerlySerializedAs("bakeTargets")]
+        [SerializeField]
+        LightSourceV2[] lightSources;
+
+        public KanikamaMonitorGridFiber(LightSourceV2[] lightSources)
+        {
+            this.lightSources = lightSources;
+        }
+
+        public void Initialize()
+        {
+            foreach (var bakeTarget in lightSources)
+            {
+                // Initialize may record its GameObject is active or not.
+                bakeTarget.Initialize();
+                bakeTarget.gameObject.SetActive(true);
+            }
+        }
+
+        public void TurnOff()
+        {
+            foreach (var bakeTarget in lightSources)
+            {
+                bakeTarget.TurnOff();
+            }
+        }
+
+        public void TurnOn()
+        {
+            foreach (var bakeTarget in lightSources)
+            {
+                bakeTarget.TurnOn();
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (var bakeTarget in lightSources)
+            {
+                bakeTarget.gameObject.SetActive(false);
+                bakeTarget.Clear();
+            }
+        }
+
+        public Color GetLinearColor()
+        {
+            throw new NotSupportedException("MonitorGridFiber can not be used at runtime.");
+        }
     }
 
     public abstract class KanikamaMonitorV2 : MonoBehaviour

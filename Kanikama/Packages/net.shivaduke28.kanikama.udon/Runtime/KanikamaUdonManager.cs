@@ -6,7 +6,7 @@ using VRC.SDKBase;
 namespace Kanikama.Udon
 {
     [RequireComponent(typeof(Camera)), UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
-    public class KanikamaUdonGIUpdater : UdonSharpBehaviour
+    public class KanikamaUdonManager : UdonSharpBehaviour
     {
         [SerializeField, NonNull] Renderer[] receivers;
         [SerializeField, NonNull] Texture[] lightmapArrays;

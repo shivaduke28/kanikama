@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace Kanikama.Udon.Editor
 {
-    [CustomEditor(typeof(KanikamaUdonMonitorCamera))]
-    public sealed class KanikamaUdonMonitorCameraEditor : UnityEditor.Editor
+    [CustomEditor(typeof(KanikamaUdonMonitorGroup))]
+    public sealed class KanikamaUdonMonitorGroupEditor : UnityEditor.Editor
     {
-        KanikamaUdonMonitorCamera kanikamaMonitorCamera;
+        KanikamaUdonMonitorGroup kanikamaMonitorGroup;
 
         void OnEnable()
         {
             if (target == null) return;
-            kanikamaMonitorCamera = (KanikamaUdonMonitorCamera) target;
+            kanikamaMonitorGroup = (KanikamaUdonMonitorGroup) target;
         }
 
         public override void OnInspectorGUI()
@@ -25,9 +25,9 @@ namespace Kanikama.Udon.Editor
                 EditorGUILayout.Space();
                 if (GUILayout.Button("Setup Camera"))
                 {
-                    Undo.RecordObject(kanikamaMonitorCamera, "Setup Kanikama Monitor Camera");
-                    kanikamaMonitorCamera.Setup();
-                    UdonSharpEditorUtility.CopyProxyToUdon(kanikamaMonitorCamera);
+                    Undo.RecordObject(kanikamaMonitorGroup, "Setup Kanikama Monitor Camera");
+                    kanikamaMonitorGroup.SetupCamera();
+                    UdonSharpEditorUtility.CopyProxyToUdon(kanikamaMonitorGroup);
                 }
             }
         }

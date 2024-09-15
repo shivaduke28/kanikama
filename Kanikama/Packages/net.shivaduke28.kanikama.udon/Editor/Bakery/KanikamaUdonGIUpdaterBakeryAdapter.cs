@@ -10,7 +10,7 @@ namespace Kanikama.Udon.Editor.Bakery
 {
     internal sealed class KanikamaUdonGIUpdaterBakeryAdapter : KanikamaWindow.IGUIDrawer
     {
-        KanikamaUdonGIUpdater kanikamaUdonGIUpdater;
+        KanikamaUdonManager kanikamaUdonManager;
         SerializedObject serializedObject;
         BakeryBakingSettingAsset bakingSettingAsset;
 
@@ -27,10 +27,10 @@ namespace Kanikama.Udon.Editor.Bakery
 
         void Load()
         {
-            kanikamaUdonGIUpdater = Object.FindObjectOfType<KanikamaUdonGIUpdater>();
-            if (kanikamaUdonGIUpdater != null)
+            kanikamaUdonManager = Object.FindObjectOfType<KanikamaUdonManager>();
+            if (kanikamaUdonManager != null)
             {
-                serializedObject = new SerializedObject(kanikamaUdonGIUpdater);
+                serializedObject = new SerializedObject(kanikamaUdonManager);
             }
             else
             {
@@ -99,13 +99,13 @@ namespace Kanikama.Udon.Editor.Bakery
             }
 
             serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
+            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonManager);
         }
 
         void SetupReceivers()
         {
-            Undo.RecordObject(kanikamaUdonGIUpdater, "Setup Receivers");
-            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonGIUpdater);
+            Undo.RecordObject(kanikamaUdonManager, "Setup Receivers");
+            UdonSharpEditorUtility.CopyUdonToProxy(kanikamaUdonManager);
             var receivers = serializedObject.FindProperty("receivers");
             var renderers = RendererCollector.CollectKanikamaReceivers();
             receivers.arraySize = renderers.Length;
@@ -114,26 +114,26 @@ namespace Kanikama.Udon.Editor.Bakery
                 receivers.GetArrayElementAtIndex(i).objectReferenceValue = renderers[i];
             }
             serializedObject.ApplyModifiedProperties();
-            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonGIUpdater);
-            EditorUtility.SetDirty(kanikamaUdonGIUpdater);
+            UdonSharpEditorUtility.CopyProxyToUdon(kanikamaUdonManager);
+            EditorUtility.SetDirty(kanikamaUdonManager);
         }
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            EditorGUILayout.LabelField($"{nameof(KanikamaUdonGIUpdater)} (Udon) (Bakery)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaUdonManager)} (Udon) (Bakery)", EditorStyles.boldLabel);
 
             using (new EditorGUI.IndentLevelScope())
             {
-                kanikamaUdonGIUpdater = (KanikamaUdonGIUpdater) EditorGUILayout.ObjectField("Provider",
-                    kanikamaUdonGIUpdater, typeof(KanikamaUdonGIUpdater), true);
+                kanikamaUdonManager = (KanikamaUdonManager) EditorGUILayout.ObjectField("Provider",
+                    kanikamaUdonManager, typeof(KanikamaUdonManager), true);
 
-                if (kanikamaUdonGIUpdater == null)
+                if (kanikamaUdonManager == null)
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} is not found.", MessageType.Warning);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonManager)} is not found.", MessageType.Warning);
                 }
-                else if (!kanikamaUdonGIUpdater.Validate())
+                else if (!kanikamaUdonManager.Validate())
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonGIUpdater)} has invalid null fields.", MessageType.Error);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaUdonManager)} has invalid null fields.", MessageType.Error);
                 }
                 else if (bakingSettingAsset == null)
                 {
