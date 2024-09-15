@@ -150,7 +150,7 @@ namespace Kanikama.Components
         /// <summary>
         /// Setup Camera position. Supposed to be called from Editor scripts.
         /// </summary>
-        public void Setup()
+        public void SetupCamera()
         {
             var cameraTrans = captureCamera.transform;
             var rendererTrans = captureTargetQuad.transform;
@@ -318,6 +318,9 @@ namespace Kanikama.Components
             }
         }
 
+        /// <summary>
+        /// Setup Grid Fibers. Supposed to be called from Editor scripts.
+        /// </summary>
         public void SetupGridFibers()
         {
             foreach (var monitor in monitors)
