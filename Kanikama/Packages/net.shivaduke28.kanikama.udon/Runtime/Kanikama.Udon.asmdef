@@ -1,9 +1,10 @@
 {
     "name": "Kanikama.Udon",
+    "rootNamespace": "Kanikama.Udon",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon",
-        "Kanikama.Baking"
+        "Kanikama"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

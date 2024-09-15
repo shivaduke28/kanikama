@@ -17,6 +17,23 @@ namespace Kanikama.Udon.AudioLink
         {
             dataIndex = band * 128 + delay;
         }
+#if !COMPILER_UDONSHARP
+        public override void Initialize()
+        {
+        }
+
+        public override void TurnOff()
+        {
+        }
+
+        public override void TurnOn()
+        {
+        }
+
+        public override void Clear()
+        {
+        }
+#endif
 
         public override Color GetLinearColor()
         {
