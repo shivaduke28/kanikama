@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Components;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -141,26 +142,18 @@ namespace Kanikama.Editor.GUI
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                CreateAssets(kanikamaManager, new SceneAssetData(sceneAsset));
+                CreateKanikamaAssets(kanikamaManager, new SceneAssetData(sceneAsset));
             }
 
             if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
             {
-                // TODO: impl
-                // cancellationTokenSource?.Cancel();
-                // cancellationTokenSource?.Dispose();
-                // cancellationTokenSource = new CancellationTokenSource();
-                // var __ = UnityLtcBakingPipeline.BakeAsync(new UnityLtcBakingPipeline.Parameter(
-                //     new SceneAssetData(sceneAsset),
-                //     bakingSettingAsset.Setting,
-                //     manager.GetLTCMonitors().ToList()
-                // ), cancellationTokenSource.Token);
+                cancellationTokenSource = new CancellationTokenSource();
+                _ = BakeLtcAsync(kanikamaManager, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
             {
-                // TODO: impl
-                // UnityLtcBakingPipeline.CreateAssets(manager.GetLTCMonitors().ToList(), bakingSettingAsset.Setting);
+                CreateLtcAssets(kanikamaManager, new SceneAssetData(sceneAsset), bakingSettingAsset.Setting);
             }
 
             if (KanikamaGUI.Button($"Set baked assets to {nameof(KanikamaManager)} by {nameof(UnityBakingSetting)} asset"))
@@ -197,12 +190,12 @@ namespace Kanikama.Editor.GUI
             }
         }
 
-        async Task BakeStaticAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(KanikamaManager manager, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                var commands = CreateCommands(bakingDescriptor);
+                var commands = CreateCommands(manager);
                 var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
                 var parameter = new UnityBakingPipeline.Parameter(sceneAssetData, settingAsset.Setting, commands);
                 await UnityBakingPipeline.BakeStaticAsync(parameter, cancellationToken);
@@ -221,12 +214,56 @@ namespace Kanikama.Editor.GUI
             }
         }
 
-        static void CreateAssets(KanikamaManager kanikamaManager, SceneAssetData sceneAssetData)
+        static void CreateKanikamaAssets(KanikamaManager kanikamaManager, SceneAssetData sceneAssetData)
         {
-            var handles = CreateHandles(kanikamaManager);
+            var bakeTargets = kanikamaManager.GetLightSources();
+            var handles = bakeTargets.Select(x => new BakeTargetHandleV2<LightSourceV2>(x)).Cast<IBakeTargetHandle>().ToList();
+            handles.AddRange(kanikamaManager.GetLightSourceGroups().SelectMany(GetElementHandles));
+
+
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var setting = settingAsset.Setting;
             UnityBakingPipeline.CreateAssets(handles.Select(h => h.Id).ToArray(), setting);
+        }
+
+        async Task BakeLtcAsync(KanikamaManager manager, SceneAssetData sceneAssetData, CancellationToken token)
+        {
+            try
+            {
+                isRunning = true;
+                var commands = manager.GetLtcMonitors()
+                    .Select(x => new UnityLtcBakingCommand(new BakeTargetHandleV2<KanikamaLtcMonitor>(x)))
+                    .ToArray();
+                await UnityLtcBakingPipeline.BakeAsync(new UnityLtcBakingPipeline.Parameter(
+                        sceneAssetData,
+                        bakingSettingAsset.Setting,
+                        commands),
+                    token);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
+
+        static void CreateLtcAssets(KanikamaManager manager, SceneAssetData sceneAssetData, UnityBakingSetting bakingSetting)
+        {
+            // FIXME: Creating assets should use not commands but handles.
+            var commands = manager.GetLtcMonitors()
+                .Select(x => new UnityLtcBakingCommand(new BakeTargetHandleV2<KanikamaLtcMonitor>(x)))
+                .ToArray();
+            UnityLtcBakingPipeline.CreateAssets(new UnityLtcBakingPipeline.Parameter(
+                sceneAssetData,
+                bakingSetting,
+                commands));
         }
 
 
@@ -240,14 +277,6 @@ namespace Kanikama.Editor.GUI
                 Load();
             }
             return result;
-        }
-
-        static List<IBakeTargetHandle> CreateHandles(KanikamaManager bakingDescriptor)
-        {
-            var bakeTargets = bakingDescriptor.GetLightSources();
-            var handles = bakeTargets.Select(x => new BakeTargetHandleV2<LightSourceV2>(x)).Cast<IBakeTargetHandle>().ToList();
-            handles.AddRange(bakingDescriptor.GetLightSourceGroups().SelectMany(GetElementHandles));
-            return handles;
         }
 
         static IEnumerable<IBakeTargetHandle> GetElementHandles(LightSourceGroupV2 g)

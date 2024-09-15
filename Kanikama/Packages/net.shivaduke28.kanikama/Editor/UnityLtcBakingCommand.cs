@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Baking.Impl.LTC;
 using Kanikama.Utility;
-using UnityEditor;
 using UnityEngine;
 
 namespace Kanikama.Editor
@@ -12,17 +10,15 @@ namespace Kanikama.Editor
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
-        ObjectHandle<LTCMonitor> handle;
+        readonly IBakeTargetHandle handle;
         public string Name => name;
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLtc => Id + "_ltc";
 
-        public UnityLtcBakingCommand(LTCMonitor value)
+        public UnityLtcBakingCommand(IBakeTargetHandle bakeTargetHandle)
         {
-            var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
-            sceneObjectId = new SceneObjectId(globalObjectId);
-            name = value.name;
+            handle = bakeTargetHandle;
         }
 
         async Task IUnityBakingCommand.RunAsync(UnityBakingPipeline.Context context, CancellationToken cancellationToken)
@@ -32,7 +28,7 @@ namespace Kanikama.Editor
             Debug.LogFormat(KanikamaDebug.Format, $"baking LTC monitor w/ shadow... name: {name}, id: {Id}.");
             context.SceneGIContext.ClearCastShadow();
             context.Lightmapper.ClearCache();
-            handle.Value.TurnOn();
+            handle.TurnOn();
             await context.Lightmapper.BakeAsync(cancellationToken);
             var bakedShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
                 .Where(l => l.Type == UnityLightmap.Light)
@@ -49,7 +45,7 @@ namespace Kanikama.Editor
             context.SceneGIContext.SetCastShadowOff();
             context.Lightmapper.ClearCache();
             await context.Lightmapper.BakeAsync(cancellationToken);
-            handle.Value.TurnOff();
+            handle.TurnOff();
             var bakedNoShadows = UnityLightmapUtility.GetLightmaps(context.SceneAssetData)
                 .Where(l => l.Type == UnityLightmap.Light)
                 .ToList();
@@ -64,16 +60,12 @@ namespace Kanikama.Editor
 
         void IUnityBakingCommand.Initialize(string sceneGuid)
         {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
-            {
-                handle = new ObjectHandle<LTCMonitor>(globalObjectId);
-            }
-            handle.Value.Initialize();
+            handle.Initialize(sceneGuid);
         }
 
         public void TurnOff()
         {
-            handle.Value.TurnOff();
+            handle.TurnOff();
         }
     }
 }

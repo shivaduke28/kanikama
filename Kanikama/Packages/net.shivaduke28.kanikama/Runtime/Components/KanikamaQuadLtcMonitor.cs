@@ -2,15 +2,21 @@
 using System.Linq;
 using Kanikama.Attributes;
 using Kanikama.Baking;
+using Kanikama.Utility;
 using UnityEngine;
 
 namespace Kanikama.Components
 {
     [RequireComponent(typeof(Renderer))]
-    public class KanikamaQuadMonitorV2 : KanikamaMonitorV2
+    public class KanikamaQuadLtcMonitor : KanikamaLtcMonitor
     {
         [SerializeField, NonNull] Renderer quadRenderer;
         [SerializeField, NonNull] List<LightSourceV2> gridCells;
+
+        // Because Unity can not bake lightmaps w/o shadows for emissive Renderers,
+        // we use Area Light here.
+        [SerializeField, NonNull] Light ltcAreaLight;
+
         const float LightOffset = -0.001f;
 
         public override LightSourceV2 GetGridCell(int index)
@@ -73,6 +79,11 @@ namespace Kanikama.Components
             if (quadRenderer == null)
             {
                 quadRenderer = GetComponent<Renderer>();
+            }
+
+            if (ltcAreaLight == null)
+            {
+                ResetLtcLight();
             }
         }
 
@@ -140,6 +151,55 @@ namespace Kanikama.Components
 
                 position.y += areaY;
             }
+        }
+
+        void ResetLtcLight()
+        {
+            var child = transform.Find("LtcLight");
+            if (child == null)
+            {
+                var go = new GameObject("LtcLight");
+                go.transform.SetParent(transform, false);
+                go.transform.localPosition = new Vector3(0, 0, -0.001f);
+                go.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                ltcAreaLight = go.AddComponent<Light>();
+                ltcAreaLight.range = 50f;
+            }
+            else
+            {
+                ltcAreaLight = child.GetComponent<Light>();
+            }
+            ltcAreaLight.type = LightType.Area;
+            ltcAreaLight.shadows = LightShadows.Soft;
+#if UNITY_EDITOR
+            // NOTE: Light.areaSize is editor only.
+            var t = transform;
+            var lossy = t.lossyScale;
+            ltcAreaLight.areaSize = new Vector2(lossy.x, lossy.y);
+#endif
+            ltcAreaLight.gameObject.SetActive(false);
+            ltcAreaLight.gameObject.tag = "EditorOnly";
+        }
+
+        public override void Initialize()
+        {
+            ltcAreaLight.gameObject.SetActive(true);
+        }
+
+        public override void TurnOff()
+        {
+            ltcAreaLight.enabled = false;
+        }
+
+        public override void TurnOn()
+        {
+            ltcAreaLight.enabled = true;
+            SelectionUtility.SetActiveObject(ltcAreaLight);
+        }
+
+        public override void Clear()
+        {
+            ltcAreaLight.gameObject.SetActive(false);
         }
     }
 }

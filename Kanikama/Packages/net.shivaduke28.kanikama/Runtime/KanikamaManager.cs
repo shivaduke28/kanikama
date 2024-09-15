@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Attributes;
+using Kanikama.Components;
 using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -34,7 +35,7 @@ namespace Kanikama
         List<IndexedColorArray> indexedColorArrays;
 
         [Header("LTC")] [SerializeField] bool enableLtc;
-        [SerializeField] Transform[] ltcMonitors;
+        [SerializeField, NonNull] KanikamaLtcMonitor[] ltcMonitors;
         [SerializeField, NonNull] Texture[] ltcVisibilityMaps;
         [SerializeField, NonNull] Texture ltcLut0;
         [SerializeField, NonNull] Texture ltcLut1;
@@ -192,7 +193,7 @@ namespace Kanikama
 
             for (var i = 0; i < ltcMonitorCount; i++)
             {
-                var localToWorld = ltcMonitors[i].localToWorldMatrix;
+                var localToWorld = ltcMonitors[i].transform.localToWorldMatrix;
 
                 var p0 = new Vector3(w, -h, 0);
                 var p1 = new Vector3(-w, -h, 0);
@@ -233,6 +234,7 @@ namespace Kanikama
 
         public LightSourceV2[] GetLightSources() => lightSources.ToArray();
         public LightSourceGroupV2[] GetLightSourceGroups() => lightSourceGroups.ToArray();
+        public KanikamaLtcMonitor[] GetLtcMonitors() => ltcMonitors.ToArray();
 
         public bool Validate()
         {

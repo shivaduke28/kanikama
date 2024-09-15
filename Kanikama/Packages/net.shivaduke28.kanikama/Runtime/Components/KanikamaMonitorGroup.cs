@@ -360,4 +360,18 @@ namespace Kanikama.Components
             Grid4x4 = 44,
         }
     }
+
+    public abstract class KanikamaLtcMonitor : KanikamaMonitorV2, ILightSourceV2
+    {
+        public abstract void Initialize();
+        public abstract void TurnOff();
+        public abstract void TurnOn();
+        public abstract void Clear();
+
+        // not used
+        public Color GetLinearColor()
+        {
+            return Color.black;
+        }
+    }
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Baking.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -21,22 +20,22 @@ namespace Kanikama.Editor
         {
             public SceneAssetData SceneAssetData { get; }
             public UnityBakingSetting Setting { get; }
-            public IList<LTCMonitor> Monitors { get; }
+            public IList<UnityLtcBakingCommand> Commands { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<LTCMonitor> monitors)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<UnityLtcBakingCommand> commands)
             {
                 SceneAssetData = sceneAssetData;
                 Setting = setting;
-                Monitors = monitors;
+                Commands = commands;
             }
         }
 
         public static async Task BakeAsync(Parameter parameter, CancellationToken cancellationToken)
         {
-            Assert.IsTrue(parameter.Monitors.Count <= 3);
+            Assert.IsTrue(parameter.Commands.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, "Unity LTC Baking Pipeline Start");
 
-            var commands = parameter.Monitors.Select(x => new UnityLtcBakingCommand(x)).Cast<IUnityBakingCommand>().ToArray();
+            var commands = parameter.Commands.Cast<IUnityBakingCommand>().ToArray();
             var param = new UnityBakingPipeline.Parameter(parameter.SceneAssetData, parameter.Setting, commands);
             try
             {
@@ -60,16 +59,16 @@ namespace Kanikama.Editor
         }
 
 
-        public static void CreateAssets(IList<LTCMonitor> monitors, UnityBakingSetting bakingSetting)
+        public static void CreateAssets(Parameter parameter)
         {
-            Assert.IsTrue(monitors.Count <= 3);
-            Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");
+            Assert.IsTrue(parameter.Commands.Count <= 3);
+            Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {parameter.Setting.TextureResizeType})");
 
-            var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
+            var bakingSetting = parameter.Setting;
+            var lightmapStorage = parameter.Setting.AssetStorage.LightmapStorage;
             var hasError = false;
             var maps = new Dictionary<int, List<(Texture2D Shadow, Texture2D Light)>>();
-            var handles = monitors.Select(x => new UnityLtcBakingCommand(x));
-            foreach (var handle in handles)
+            foreach (var handle in parameter.Commands)
             {
                 if (lightmapStorage.TryGet(handle.IdLtc, out var lm) && lightmapStorage.TryGet(handle.IdShadow, out var lms))
                 {
