@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Kanikama.Utility;
 using UnityEngine;
 
 namespace Kanikama.Components

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Kanikama.Attributes;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;

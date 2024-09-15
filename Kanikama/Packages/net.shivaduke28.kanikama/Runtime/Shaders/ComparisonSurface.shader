@@ -28,7 +28,7 @@
         #pragma target 3.0
 
         #include "UnityPBSLighting.cginc"
-        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
+        #include "Packages/net.shivaduke28.kanikama/Runtime/Shaders/Kanikama.hlsl"
 
         sampler2D _MainTex;
         sampler2D _BumpMap;

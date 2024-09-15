@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kanikama.Attributes;
 using Kanikama.Components;
-using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 

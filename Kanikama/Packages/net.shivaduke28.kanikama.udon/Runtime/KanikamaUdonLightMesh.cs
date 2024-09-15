@@ -1,5 +1,4 @@
-﻿using Kanikama.Attributes;
-using UnityEngine;
+﻿using UnityEngine;
 using VRC.SDKBase;
 
 namespace Kanikama.Udon

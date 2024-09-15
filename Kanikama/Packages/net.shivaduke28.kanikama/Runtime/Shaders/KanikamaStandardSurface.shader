@@ -65,8 +65,8 @@ Shader "Kanikama/KanikamaStandardSurface"
         #pragma target 3.0
 
         #include <UnityPBSLighting.cginc>
-        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
-        #include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/KanikamaLTC.hlsl"
+        #include "Packages/net.shivaduke28.kanikama/Runtime/Shaders/Kanikama.hlsl"
+        #include "Packages/net.shivaduke28.kanikama/Runtime/Shaders/KanikamaLTC.hlsl"
 
         half4 _Color;
         half _Cutoff;

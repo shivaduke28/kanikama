@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1356384414997235792}
   - component: {fileID: 4768632773065989148}
   m_Layer: 0
-  m_Name: GridCellV2
+  m_Name: MonitorGridCell
   m_TagString: EditorOnly
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

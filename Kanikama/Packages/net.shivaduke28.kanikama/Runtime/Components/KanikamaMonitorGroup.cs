@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Kanikama.Attributes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;

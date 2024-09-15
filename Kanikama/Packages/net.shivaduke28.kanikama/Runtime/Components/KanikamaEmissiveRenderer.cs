@@ -1,6 +1,4 @@
-﻿using Kanikama.Attributes;
-using Kanikama.Utility;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Kanikama.Components
 {

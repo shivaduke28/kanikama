@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Components;
 using Kanikama.Editor;
-using Kanikama.Utility;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
@@ -55,7 +54,7 @@ namespace Kanikama.Bakery.Editor
                 renderers = Object.FindObjectsOfType<Renderer>()
                     .Where(x => filter?.Invoke(x) ?? true)
                     .Where(r => r.IsEmissiveAndContributeGI())
-                    .Select(r => Kanikama.Utility.ExtensionMethods.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
+                    .Select(r => ExtensionMethods.GetOrAddComponent<RendererMaterialHolder>(r.gameObject))
                     .Select(h => new ObjectHandle<RendererMaterialHolder>(h))
                     .ToList(),
                 rendererWithShadowCastingModes = Object.FindObjectsOfType<Renderer>()

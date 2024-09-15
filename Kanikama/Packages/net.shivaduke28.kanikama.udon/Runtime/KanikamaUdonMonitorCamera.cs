@@ -1,5 +1,4 @@
 ﻿using System;
-using Kanikama.Attributes;
 using UdonSharp;
 using UnityEngine;
 

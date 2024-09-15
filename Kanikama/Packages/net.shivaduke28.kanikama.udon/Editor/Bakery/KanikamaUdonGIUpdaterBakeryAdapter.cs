@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Kanikama.Bakery.Editor;
-using Kanikama.Utility;
 using Kanikama.Editor;
 using Kanikama.Editor.GUI;
 using UdonSharpEditor;

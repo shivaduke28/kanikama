@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Kanikama.Attributes
+namespace Kanikama
 {
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class NonNullAttribute : PropertyAttribute

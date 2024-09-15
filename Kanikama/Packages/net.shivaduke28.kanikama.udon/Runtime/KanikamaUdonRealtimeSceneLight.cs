@@ -1,5 +1,4 @@
-﻿using Kanikama.Attributes;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
 namespace Kanikama.Udon

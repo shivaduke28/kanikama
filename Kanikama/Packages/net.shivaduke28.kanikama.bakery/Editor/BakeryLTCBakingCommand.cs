@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Baking.Impl.LTC;
 using Kanikama.Editor;
-using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 

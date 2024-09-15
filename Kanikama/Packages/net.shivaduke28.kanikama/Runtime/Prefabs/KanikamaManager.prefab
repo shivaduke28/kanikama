@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5884279617832032345}
-  - component: {fileID: 5884279617832032347}
-  - component: {fileID: 5884279617832032344}
+  - component: {fileID: 5051206447216592044}
   m_Layer: 0
-  m_Name: Kanikama
+  m_Name: KanikamaManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,14 +24,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5884279617832032342}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5884279617832032347
+--- !u!114 &5051206447216592044
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,22 +41,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5884279617832032342}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d95e42f72f1247c0bb24953fe056b249, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bakeTargets: []
-  bakeTargetGroups: []
-  ltcMonitors: []
---- !u!114 &5884279617832032344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5884279617832032342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00fdf11f5a85468dafcd65aea95aa735, type: 3}
+  m_Script: {fileID: 11500000, guid: 97ab657f34a44d55a715b6288f8be223, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isSRP: 0
