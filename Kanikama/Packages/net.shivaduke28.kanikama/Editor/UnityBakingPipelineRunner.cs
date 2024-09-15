@@ -32,7 +32,7 @@ namespace Kanikama.Editor
             var handles = CreateHandles(bakingDescriptor);
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
             var setting = settingAsset.Setting;
-            UnityBakingPipeline.CreateAssets(handles, setting);
+            UnityBakingPipeline.CreateAssets(handles.Select(h => h.Id).ToArray(), setting);
         }
 
         static List<IBakeTargetHandle> CreateHandles(KanikamaBakeTargetDescriptor bakingDescriptor)

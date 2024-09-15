@@ -123,7 +123,7 @@ namespace Kanikama.Editor
             return dst;
         }
 
-        public static void CreateAssets(IEnumerable<IBakeTargetHandle> bakeTargetHandles, UnityBakingSetting bakingSetting)
+        public static void CreateAssets(IEnumerable<string> bakeTargetIds, UnityBakingSetting bakingSetting)
         {
             var resizeType = bakingSetting.TextureResizeType;
             var dstDirPath = bakingSetting.OutputAssetDirPath;
@@ -135,15 +135,15 @@ namespace Kanikama.Editor
             // check lightmaps are stored in storage
             var allLightmaps = new List<Lightmap>();
             var hasError = false;
-            foreach (var handle in bakeTargetHandles)
+            foreach (var id in bakeTargetIds)
             {
-                if (lightmapStorage.TryGet(handle.Id, out var lm))
+                if (lightmapStorage.TryGet(id, out var lm))
                 {
                     allLightmaps.AddRange(lm);
                 }
                 else
                 {
-                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Name:{handle.Name}, Key:{handle.Id}");
+                    Debug.LogErrorFormat(KanikamaDebug.Format, $"Lightmaps not found in {nameof(LightmapStorage)}. Id:{id}");
                     hasError = true;
                 }
             }
