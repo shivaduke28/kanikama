@@ -1,9 +1,10 @@
 {
     "name": "Kanikama.Bakery",
-    "rootNamespace": "Kanikama.Bakery",
+    "rootNamespace": "Kanikama",
     "references": [
+        "Kanikama",
         "BakeryRuntimeAssembly",
-        "Kanikama"
+        "UdonSharp.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -16,4 +17,4 @@
     ],
     "versionDefines": [],
     "noEngineReferences": false
-}
+}   

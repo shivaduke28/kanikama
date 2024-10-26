@@ -3,7 +3,7 @@
 namespace Kanikama.Bakery
 {
     [RequireComponent(typeof(BakeryLightMesh), typeof(Renderer))]
-    public class KanikamaBakeryLightMeshV2 : KanikamaLightSource
+    public class KanikamaBakeryLightMesh : KanikamaLightSource
     {
         [Header("Baking")]
         [SerializeField, HideInInspector]
@@ -15,7 +15,7 @@ namespace Kanikama.Bakery
         [SerializeField, HideInInspector] bool bakeryLightMeshEnable;
         [SerializeField, HideInInspector] bool gameObjectActive;
 
-        [Header("Runtime")] [SerializeField] Renderer renderer;
+        [Header("Runtime")] [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
         [SerializeField] Material instance;

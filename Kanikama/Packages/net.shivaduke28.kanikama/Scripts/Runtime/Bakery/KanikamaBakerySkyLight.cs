@@ -2,39 +2,40 @@
 
 namespace Kanikama.Bakery
 {
-    [RequireComponent(typeof(Light), typeof(BakeryLightMesh))]
-    public sealed class KanikamaBakeryAreaLight : BakeTarget
+    [RequireComponent(typeof(Light), typeof(BakerySkyLight))]
+    public sealed class KanikamaBakerySkyLight : KanikamaLightSource
     {
         [SerializeField] new Light light;
-        [SerializeField] BakeryLightMesh bakeryLight;
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] bool lightEnabled;
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
+        BakerySkyLight BakeryLight => GetComponent<BakerySkyLight>();
+
         void OnValidate()
         {
             if (light == null) light = GetComponent<Light>();
-            if (bakeryLight == null) bakeryLight = GetComponent<BakeryLightMesh>();
         }
 
         public override void Initialize()
         {
-            intensity = bakeryLight.intensity;
-            color = bakeryLight.color;
+            intensity = BakeryLight.intensity;
+            color = BakeryLight.color;
             lightEnabled = light.enabled;
         }
 
         public override void TurnOff()
         {
             light.enabled = false;
-            bakeryLight.enabled = false;
+            BakeryLight.enabled = false;
         }
 
         public override void TurnOn()
         {
-            bakeryLight.enabled = true;
-            bakeryLight.color = Color.white;
-            bakeryLight.intensity = 1f;
+            BakeryLight.enabled = true;
+            BakeryLight.color = Color.white;
+            BakeryLight.intensity = 1f;
             light.color = Color.white;
             light.intensity = 1f;
             light.enabled = true;
@@ -42,12 +43,14 @@ namespace Kanikama.Bakery
 
         public override void Clear()
         {
-            bakeryLight.color = color;
-            bakeryLight.intensity = intensity;
-            bakeryLight.enabled = true;
+            BakeryLight.color = color;
+            BakeryLight.intensity = intensity;
+            BakeryLight.enabled = true;
             light.color = color;
             light.intensity = intensity;
             light.enabled = lightEnabled;
         }
+#endif
+        public override Color GetLinearColor() => light.color.linear * light.intensity;
     }
 }
