@@ -35,8 +35,8 @@ namespace Kanikama.Editor
 
         public int Bounce
         {
-            get => LightmapEditorSettings.bounces;
-            set => LightmapEditorSettings.bounces = value;
+            get => Lightmapping.lightingSettings.maxBounces;
+            set => Lightmapping.lightingSettings.maxBounces = value;
         }
     }
 }
