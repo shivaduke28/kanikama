@@ -1,4 +1,4 @@
-﻿namespace Kanikama.Core
+﻿namespace Kanikama
 {
     public abstract class KanikamaBehaviour :
 #if UDONSHARP

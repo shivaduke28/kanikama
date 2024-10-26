@@ -1,23 +1,18 @@
-﻿using Kanikama.Attributes;
-using Kanikama.Utility;
+﻿using Kanikama.Utility;
 using UnityEngine;
 
 namespace Kanikama
 {
     public class KanikamaLightMesh : KanikamaLightSource
     {
-        [SerializeField, NonNull] new Renderer renderer;
+        [Header("Baking")] [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;
-        [SerializeField] bool useStandardShader = true;
         [SerializeField] string propertyName = "_EmissionColor";
-        [SerializeField] string gameObjectTag;
-
-        void OnValidate()
-        {
-            renderer = GetComponent<Renderer>();
-        }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
+        [SerializeField] bool useStandardShader = true;
+        [SerializeField] string gameObjectTag;
+
         public override void Initialize()
         {
             var go = gameObject;
@@ -63,11 +58,54 @@ namespace Kanikama
             }
         }
 #endif
+        [Header("Runtime")] [SerializeField] Material instance;
+        [SerializeField] bool useMaterialPropertyBlock = true;
+
+        bool useMaterialPropertyBlockInternal;
+        int propertyId;
+        MaterialPropertyBlock block;
+
+        void Awake()
+        {
+            propertyId = KanikamaShader.PropertyToID(propertyName);
+            useMaterialPropertyBlockInternal = useMaterialPropertyBlock;
+            if (useMaterialPropertyBlockInternal)
+            {
+                block = new MaterialPropertyBlock();
+            }
+            else
+            {
+                instance = renderer.materials[materialIndex];
+            }
+        }
 
         public override Color GetLinearColor()
         {
-            // todo:実装
-            return Color.white;
+            if (useMaterialPropertyBlockInternal)
+            {
+                renderer.GetPropertyBlock(block);
+                return block.GetColor(propertyId).linear;
+            }
+            else
+            {
+                return instance.GetColor(propertyId).linear;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (instance != null)
+            {
+                Destroy(instance);
+            }
+        }
+
+        void OnValidate()
+        {
+            if (renderer == null)
+            {
+                renderer = GetComponent<Renderer>();
+            }
         }
     }
 }

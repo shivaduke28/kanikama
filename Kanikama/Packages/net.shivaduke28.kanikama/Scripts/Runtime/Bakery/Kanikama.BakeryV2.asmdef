@@ -1,9 +1,10 @@
-﻿{
-    "name": "Kanikama.Core",
+{
+    "name": "Kanikama.BakeryV2",
     "rootNamespace": "Kanikama",
     "references": [
-        "UdonSharp.Runtime",
-        "VRC.Udon"
+        "Kanikama",
+        "BakeryRuntimeAssembly",
+        "UdonSharp.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -11,7 +12,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": false,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
-}
+}   

@@ -2,7 +2,6 @@
     "name": "Kanikama",
     "rootNamespace": "Kanikama",
     "references": [
-        "Kanikama.Core",
         "UdonSharp.Runtime"
     ],
     "includePlatforms": [],
