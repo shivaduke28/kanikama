@@ -1,18 +1,19 @@
 {
-  "name": "Kanikama.Bakery",
-  "references": [
-    "BakeryRuntimeAssembly",
-    "Kanikama"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": false,
-  "defineConstraints": [
-    "BAKERY_INCLUDED"
-  ],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "Kanikama.Bakery",
+    "rootNamespace": "Kanikama.Bakery",
+    "references": [
+        "BakeryRuntimeAssembly",
+        "Kanikama"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

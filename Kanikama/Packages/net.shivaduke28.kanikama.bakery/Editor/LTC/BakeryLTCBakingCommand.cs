@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using Kanikama.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Bakery.Editor.Baking.LTC
+namespace Kanikama.Bakery.Editor.LTC
 {
     public sealed class BakeryLTCBakingCommand : IBakingCommand
     {

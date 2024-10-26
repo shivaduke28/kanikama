@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public static class KanikamaBakeryUtility
     {

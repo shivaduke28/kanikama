@@ -2,10 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public sealed class BakeryLightmapper
     {

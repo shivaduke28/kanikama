@@ -4,15 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Bakery.Editor.Baking;
-using Kanikama.Bakery.Editor.Baking.LTC;
+using Kanikama.Editor;
 using Kanikama.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Editor.Baking.LTC
+namespace Kanikama.Bakery.Editor.LTC
 {
     public static class BakeryLTCBakingPipeline
     {

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     [CreateAssetMenu(menuName = "Kanikama/BakeryBakingSettingAsset", fileName = "BakeryBakingSettingAsset")]
     public sealed class BakeryBakingSettingAsset : ScriptableObject

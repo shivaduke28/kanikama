@@ -1,5 +1,6 @@
 {
     "name": "Kanikama.Bakery.Editor",
+    "rootNamespace": "Kanikama.Bakery",
     "references": [
         "BakeryRuntimeAssembly",
         "BakeryEditorAssembly",

@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Bakery.Editor.Application
+namespace Kanikama.Bakery.Editor.GUI
 {
     public class KanikamaBakeryStandardGUI : BakeryShaderGUI
     {

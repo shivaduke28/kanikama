@@ -3,10 +3,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using Kanikama.Impl;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public static class BakeryBakingPipelineRunner
     {

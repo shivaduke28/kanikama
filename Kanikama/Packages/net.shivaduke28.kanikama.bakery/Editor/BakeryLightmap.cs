@@ -1,4 +1,4 @@
-﻿namespace Kanikama.Bakery.Editor.Baking
+﻿namespace Kanikama.Bakery.Editor
 {
     public static class BakeryLightmap
     {

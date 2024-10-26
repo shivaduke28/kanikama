@@ -1,9 +1,9 @@
-﻿using Kanikama.Editor.Baking;
+﻿using Kanikama.Editor;
 using Kanikama.Editor.GUI;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.Bakery.Baking
+namespace Kanikama.Bakery.Editor
 {
     internal class BakeryUtilityDrawer : KanikamaWindow.IGUIDrawer
     {

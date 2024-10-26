@@ -1,21 +1,20 @@
 ﻿using UnityEngine;
 
-namespace Kanikama.Bakery.Baking.Impl
+namespace Kanikama.Bakery
 {
-    [RequireComponent(typeof(Light), typeof(BakerySkyLight))]
-    public sealed class KanikamaBakerySkyLight : BakeTarget
+    [RequireComponent(typeof(Light), typeof(BakeryDirectLight))]
+    public sealed class KanikamaBakeryDirectLight : BakeTarget
     {
         [SerializeField] new Light light;
-        [SerializeField] BakerySkyLight bakeryLight;
-
+        [SerializeField] BakeryDirectLight bakeryLight;
         [SerializeField, HideInInspector] float intensity;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] bool lightEnabled;
 
         void OnValidate()
         {
-            if (light == null) light = GetComponent<Light>();
-            if (bakeryLight == null) bakeryLight = GetComponent<BakerySkyLight>();
+            if (light != null) light = GetComponent<Light>();
+            if (bakeryLight != null) bakeryLight = GetComponent<BakeryDirectLight>();
         }
 
         public override void Initialize()

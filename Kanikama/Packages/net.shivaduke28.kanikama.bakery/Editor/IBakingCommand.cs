@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
 using Kanikama.Utility;
 using UnityEngine;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public interface IBakingCommand
     {

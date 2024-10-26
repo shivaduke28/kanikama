@@ -6,13 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
 using Kanikama.Utility;
-using Kanikama.Editor.Baking;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public static class BakeryBakingPipeline
     {

@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Bakery.Editor.LTC;
 using Kanikama.Editor;
-using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.LTC;
 using Kanikama.Editor.GUI;
 using Kanikama.Impl;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Kanikama.Bakery.Editor.Baking.GUI
+namespace Kanikama.Bakery.Editor
 {
     public sealed class BakeryBakingDrawer : KanikamaWindow.IGUIDrawer
     {

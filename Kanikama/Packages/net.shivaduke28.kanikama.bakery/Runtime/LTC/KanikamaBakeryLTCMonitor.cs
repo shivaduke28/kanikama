@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Baking.Impl.LTC
+namespace Kanikama.Bakery.LTC
 {
     [RequireComponent(typeof(BakeryLightMesh))]
     public sealed class KanikamaBakeryLTCMonitor : LTCMonitor

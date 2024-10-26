@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Kanikama.Editor;
 using Kanikama.Utility;
-using Kanikama.Editor.Baking;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Bakery.Editor.Baking
+namespace Kanikama.Bakery.Editor
 {
     public sealed class BakerySceneGIContext : IDisposable
     {
