@@ -63,7 +63,7 @@ namespace Kanikama.Editor
 
         void IUnityBakingCommand.Initialize(string sceneGuid)
         {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdUtility.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<KanikamaLtcMonitor>(globalObjectId);
             }

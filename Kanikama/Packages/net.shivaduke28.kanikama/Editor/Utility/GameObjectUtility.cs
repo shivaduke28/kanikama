@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace Kanikama.Editor
 {
-    public static class GameObjectHelper
+    public static class GameObjectUtility
     {
         public static T FindObjectOfType<T>()
         {

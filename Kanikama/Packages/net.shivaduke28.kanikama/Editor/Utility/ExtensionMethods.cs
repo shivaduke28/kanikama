@@ -9,7 +9,7 @@ namespace Kanikama.Editor
     {
         public static bool IsContributeGI(this GameObject gameObject)
         {
-            var flags = GameObjectUtility.GetStaticEditorFlags(gameObject);
+            var flags = UnityEditor.GameObjectUtility.GetStaticEditorFlags(gameObject);
             return flags.HasFlag(StaticEditorFlags.ContributeGI);
         }
 

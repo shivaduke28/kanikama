@@ -3,7 +3,6 @@
 namespace Kanikama.Editor
 {
     public sealed class ObjectHandle<T> where T : UnityEngine.Object
-
     {
         readonly GlobalObjectId globalObjectId;
         T value;

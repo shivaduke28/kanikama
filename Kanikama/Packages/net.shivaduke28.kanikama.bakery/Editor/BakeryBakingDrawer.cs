@@ -7,6 +7,7 @@ using Kanikama.Editor;
 using Kanikama.Editor.GUI;
 using UnityEditor;
 using UnityEngine;
+using GameObjectUtility = Kanikama.Editor.GameObjectUtility;
 
 namespace Kanikama.Bakery.Editor
 {
@@ -41,7 +42,7 @@ namespace Kanikama.Bakery.Editor
             }
 
             sceneAsset = sceneAssetData.Asset;
-            descriptor = GameObjectHelper.FindObjectOfType<KanikamaManager>();
+            descriptor = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
@@ -81,7 +82,7 @@ namespace Kanikama.Bakery.Editor
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (descriptor == null)
             {
-                descriptor = GameObjectHelper.FindObjectOfType<KanikamaManager>();
+                descriptor = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             }
 
             descriptor = (KanikamaManager) EditorGUILayout.ObjectField("Scene Descriptor", descriptor, typeof(KanikamaManager), true);

@@ -32,7 +32,7 @@ namespace Kanikama.Editor
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdUtility.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }
@@ -66,7 +66,7 @@ namespace Kanikama.Editor
 
         void IBakeTargetHandle.Initialize(string sceneGuid)
         {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdUtility.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<T>(globalObjectId);
             }

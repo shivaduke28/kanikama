@@ -4,7 +4,7 @@ using UnityEditor;
 
 namespace Kanikama.Editor
 {
-    public static class IOUtility
+    public static class AssetUtility
     {
         public static void CreateFolderIfNecessary(string assetDirPath, string folderName)
         {

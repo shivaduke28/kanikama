@@ -4,26 +4,25 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Bakery.Editor.LTC
+namespace Kanikama.Editor
 {
-    public static class BakeryLTCBakingPipeline
+    public static class UnityLtcBakingPipeline
     {
-        public const string LightmapKey = "KanikamaBakeryLTC";
+        public const string LightmapKey = "KanikamaUnityLTC";
         public const string LightmapType = "LTCVisiblity";
 
         public readonly struct Parameter
         {
             public SceneAssetData SceneAssetData { get; }
-            public BakeryBakingSetting Setting { get; }
+            public UnityBakingSetting Setting { get; }
             public IList<KanikamaLtcMonitor> Monitors { get; }
 
-            public Parameter(SceneAssetData sceneAssetData, BakeryBakingSetting setting, IList<KanikamaLtcMonitor> monitors)
+            public Parameter(SceneAssetData sceneAssetData, UnityBakingSetting setting, IList<KanikamaLtcMonitor> monitors)
             {
                 SceneAssetData = sceneAssetData;
                 Setting = setting;
@@ -34,14 +33,14 @@ namespace Kanikama.Bakery.Editor.LTC
         public static async Task BakeAsync(Parameter parameter, CancellationToken cancellationToken)
         {
             Assert.IsTrue(parameter.Monitors.Count <= 3);
-            Debug.LogFormat(KanikamaDebug.Format, "Bakery LTC Baking Pipeline Start");
+            Debug.LogFormat(KanikamaDebug.Format, "Unity LTC Baking Pipeline Start");
 
-            var commands = parameter.Monitors.Select(x => new BakeryLTCBakingCommand(x)).Cast<IBakingCommand>().ToList();
-            var param = new BakeryBakingPipeline.Parameter(parameter.SceneAssetData, parameter.Setting, commands);
+            var commands = parameter.Monitors.Select(x => new UnityLtcBakingCommand(x)).Cast<IUnityBakingCommand>().ToArray();
+            var param = new UnityBakingPipeline.Parameter(parameter.SceneAssetData, parameter.Setting, commands);
             try
             {
-                await BakeryBakingPipeline.BakeAsync(param, cancellationToken);
-                Debug.LogFormat(KanikamaDebug.Format, "Bakery LTC Baking Pipeline Done");
+                await UnityBakingPipeline.BakeAsync(param, cancellationToken);
+                Debug.LogFormat(KanikamaDebug.Format, "Unity LTC Baking Pipeline Done");
             }
             catch (OperationCanceledException)
             {
@@ -60,22 +59,22 @@ namespace Kanikama.Bakery.Editor.LTC
         }
 
 
-        public static void CreateAssets(KanikamaLtcMonitor[] monitors, BakeryBakingSetting bakingSetting)
+        public static void CreateAssets(IList<KanikamaLtcMonitor> monitors, UnityBakingSetting bakingSetting)
         {
-            Assert.IsTrue(monitors.Length <= 3);
+            Assert.IsTrue(monitors.Count <= 3);
             Debug.LogFormat(KanikamaDebug.Format, $"create LTC assets (resize type: {bakingSetting.TextureResizeType})");
 
             var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             var hasError = false;
             var maps = new Dictionary<int, List<(Texture2D Shadow, Texture2D Light)>>();
-            var handles = monitors.Select(x => new BakeryLTCBakingCommand(x));
+            var handles = monitors.Select(x => new UnityLtcBakingCommand(x));
             foreach (var handle in handles)
             {
                 if (lightmapStorage.TryGet(handle.IdLTC, out var lm) && lightmapStorage.TryGet(handle.IdShadow, out var lms))
                 {
-                    foreach (var light in lm.Where(l => l.Type == BakeryLightmap.Light))
+                    foreach (var light in lm.Where(l => l.Type == UnityLightmap.Light))
                     {
-                        var shadow = lms.FirstOrDefault(s => s.Type == BakeryLightmap.Light && s.Index == light.Index);
+                        var shadow = lms.FirstOrDefault(s => s.Type == UnityLightmap.Light && s.Index == light.Index);
                         if (shadow == null)
                         {
                             Debug.LogErrorFormat(KanikamaDebug.Format,
@@ -116,7 +115,7 @@ namespace Kanikama.Bakery.Editor.LTC
             {
                 var packed = TextureUtility.RatioPackBC6H(maps[i].ToArray(), false);
                 var path = Path.Combine(bakingSetting.OutputAssetDirPath, $"ltc-visibility-{i}.asset");
-                IOUtility.CreateOrReplaceAsset(ref packed, path);
+                AssetUtility.CreateOrReplaceAsset(ref packed, path);
                 output.Add(new Lightmap(LightmapType, packed, path, i));
                 Debug.LogFormat(KanikamaDebug.Format, $"create LTC asset: {path})");
             }

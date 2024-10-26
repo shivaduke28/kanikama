@@ -2,11 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Components;
 
 namespace Kanikama.Editor
 {
-    public sealed class UnityBakingPipelineRunner
+    public static class UnityBakingPipelineRunner
     {
         public static async Task BakeAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {

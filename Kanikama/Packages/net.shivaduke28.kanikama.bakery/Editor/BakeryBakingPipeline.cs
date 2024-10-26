@@ -56,7 +56,7 @@ namespace Kanikama.Bakery.Editor
             {
                 try
                 {
-                    IOUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
+                    AssetUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
                     // open the copied scene
                     EditorSceneManager.OpenScene(copiedScene.SceneAssetData.Path);
                     var giContext = BakerySceneGIContext.GetContext();
@@ -169,7 +169,7 @@ namespace Kanikama.Bakery.Editor
             var dstDirPath = setting.OutputAssetDirPath;
             var resizeType = setting.TextureResizeType;
             var lightmapStorage = setting.AssetStorage.LightmapStorage;
-            IOUtility.CreateFolderIfNecessary(dstDirPath);
+            AssetUtility.CreateFolderIfNecessary(dstDirPath);
 
             // check lightmaps are stored in storage
             var allLightmaps = new List<Lightmap>();
@@ -214,7 +214,7 @@ namespace Kanikama.Bakery.Editor
                     var lightPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Light}-{index}.asset");
                     if (lightArr != null)
                     {
-                        IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                        AssetUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
                         output.Add(new LightmapArray(BakeryLightmap.Light, lightArr, lightPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                     }
@@ -231,7 +231,7 @@ namespace Kanikama.Bakery.Editor
                     var dirPath = Path.Combine(dstDirPath, $"{BakeryLightmap.Directional}-{index}.asset");
                     if (dirArr != null)
                     {
-                        IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                        AssetUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
                         output.Add(new LightmapArray(BakeryLightmap.Directional, dirArr, dirPath, index));
                         Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                     }

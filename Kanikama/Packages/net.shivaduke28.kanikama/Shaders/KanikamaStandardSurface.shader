@@ -184,5 +184,5 @@ Shader "Kanikama/KanikamaStandardSurface"
         ENDCG
     }
     FallBack "Diffuse"
-    CustomEditor "Kanikama.Editor.Application.KanikamaStandardGUI"
+    CustomEditor "Kanikama.Editor.GUI.KanikamaStandardGUI"
 }

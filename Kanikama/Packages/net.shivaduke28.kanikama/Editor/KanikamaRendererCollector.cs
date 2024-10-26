@@ -7,7 +7,7 @@ namespace Kanikama.Editor
     {
         public static Renderer[] CollectKanikamaReceivers()
         {
-            return GameObjectHelper.GetComponentsInScene<Renderer>(true)
+            return GameObjectUtility.GetComponentsInScene<Renderer>(true)
                 .Where(r => r.gameObject.IsContributeGI())
                 .Where(IsUsingKanikamaShader)
                 .ToArray();

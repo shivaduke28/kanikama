@@ -21,7 +21,7 @@ namespace Kanikama.Bakery.Editor
         public void SetOutputAssetDirPath(string outputAssetDirPath)
         {
             ftRenderLightmap.useScenePath = false;
-            ftRenderLightmap.outputPath = IOUtility.RemoveAssetsFromPath(outputAssetDirPath);
+            ftRenderLightmap.outputPath = AssetUtility.RemoveAssetsFromPath(outputAssetDirPath);
         }
 
         public bool UseMipmap => projectSetting.mipmapLightmaps;

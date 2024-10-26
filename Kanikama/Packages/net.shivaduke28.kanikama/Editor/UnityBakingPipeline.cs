@@ -50,7 +50,7 @@ namespace Kanikama.Editor
         {
             Debug.LogFormat(KanikamaDebug.Format, "Unity pipeline start");
 
-            IOUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
+            AssetUtility.CreateFolderIfNecessary(parameter.Setting.OutputAssetDirPath);
             using (var copiedScene = CopiedSceneAsset.Create(parameter.SceneAssetData, true))
             {
                 try
@@ -130,7 +130,7 @@ namespace Kanikama.Editor
             bakingSetting.AssetStorage.RemoveEmpties();
             var lightmapStorage = bakingSetting.AssetStorage.LightmapStorage;
             Debug.LogFormat(KanikamaDebug.Format, $"create assets (resize type: {resizeType})");
-            IOUtility.CreateFolderIfNecessary(dstDirPath);
+            AssetUtility.CreateFolderIfNecessary(dstDirPath);
 
             // check lightmaps are stored in storage
             var allLightmaps = new List<Lightmap>();
@@ -172,7 +172,7 @@ namespace Kanikama.Editor
                 {
                     var lightArr = TextureUtility.CreateTexture2DArray(light, isLinear: false, mipChain: true);
                     var lightPath = Path.Combine(dstDirPath, $"{UnityLightmap.Light}-{i}.asset");
-                    IOUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
+                    AssetUtility.CreateOrReplaceAsset(ref lightArr, lightPath);
                     output.Add(new LightmapArray(UnityLightmap.Light, lightArr, lightPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {lightPath}");
                 }
@@ -180,7 +180,7 @@ namespace Kanikama.Editor
                 {
                     var dirArr = TextureUtility.CreateTexture2DArray(dir, isLinear: true, mipChain: true);
                     var dirPath = Path.Combine(dstDirPath, $"{UnityLightmap.Directional}-{i}.asset");
-                    IOUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
+                    AssetUtility.CreateOrReplaceAsset(ref dirArr, dirPath);
                     output.Add(new LightmapArray(UnityLightmap.Directional, dirArr, dirPath, i));
                     Debug.LogFormat(KanikamaDebug.Format, $"create asset: {dirPath}");
                 }

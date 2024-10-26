@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Kanikama.Udon.Editor
 {
-    public static class UdonProgramAssetCreator
+    internal static class UdonProgramAssetCreator
     {
         [MenuItem("Assets/Create/U# From C#", false, 5)]
         public static void CreateUdonSharp()

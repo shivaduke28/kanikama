@@ -2,7 +2,7 @@
 
 namespace Kanikama.Editor
 {
-    public static class GlobalObjectIdHelper
+    public static class GlobalObjectIdUtility
     {
         public static bool TryParse(string assetGUID, int identifierType, ulong targetObjectId, ulong targetPrefabId, out GlobalObjectId id)
         {

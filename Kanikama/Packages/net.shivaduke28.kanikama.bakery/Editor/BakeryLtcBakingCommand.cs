@@ -9,16 +9,16 @@ using UnityEngine;
 
 namespace Kanikama.Bakery.Editor.LTC
 {
-    public sealed class BakeryLTCBakingCommand : IBakingCommand
+    public sealed class BakeryLtcBakingCommand : IBakingCommand
     {
         readonly SceneObjectId sceneObjectId;
         ObjectHandle<KanikamaLtcMonitor> handle;
         public string Name { get; }
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
-        public string IdLTC => Id + "_ltc";
+        public string IdLtc => Id + "_ltc";
 
-        public BakeryLTCBakingCommand(KanikamaLtcMonitor value)
+        public BakeryLtcBakingCommand(KanikamaLtcMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -58,8 +58,8 @@ namespace Kanikama.Bakery.Editor.LTC
             await context.Lightmapper.BakeAsync(cancellationToken);
             handle.Value.TurnOff();
             var bakedNoShadows = GetBakedLightmaps(context);
-            var copiedNoShadow = BakeryBakingPipeline.CopyLightmaps(bakedNoShadows, context.Setting.OutputAssetDirPath, IdLTC);
-            context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(IdLTC, copiedNoShadow, Name + "_ltc");
+            var copiedNoShadow = BakeryBakingPipeline.CopyLightmaps(bakedNoShadows, context.Setting.OutputAssetDirPath, IdLtc);
+            context.Setting.AssetStorage.LightmapStorage.AddOrUpdate(IdLtc, copiedNoShadow, Name + "_ltc");
             foreach (var lm in copiedNoShadow)
             {
                 Debug.LogFormat(KanikamaDebug.Format, $"- copied lightmap: {lm.Path}");
@@ -75,7 +75,7 @@ namespace Kanikama.Bakery.Editor.LTC
 
         void IBakingCommand.Initialize(string sceneGuid)
         {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
+            if (GlobalObjectIdUtility.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
                 handle = new ObjectHandle<KanikamaLtcMonitor>(globalObjectId);
             }

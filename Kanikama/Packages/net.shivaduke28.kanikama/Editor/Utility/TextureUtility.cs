@@ -198,7 +198,7 @@ namespace Kanikama.Editor
         {
             var rt = new RenderTexture(parameter);
             var path = Path.Combine(dirPath, $"{name}.renderTexture");
-            IOUtility.CreateOrReplaceAsset(ref rt, path);
+            AssetUtility.CreateOrReplaceAsset(ref rt, path);
             return rt;
         }
 

@@ -83,7 +83,7 @@ namespace Kanikama.Bakery.Editor.GUI
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
 
-            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(BakeryLTCBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
+            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(BakeryLtcBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
             {
                 var ltcVisibilityMap = serializedObject.FindProperty("ltcVisibilityMaps");
                 ltcVisibilityMap.arraySize = lights.Length;

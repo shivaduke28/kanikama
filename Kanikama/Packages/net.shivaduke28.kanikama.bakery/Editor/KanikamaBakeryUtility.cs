@@ -3,6 +3,7 @@ using Kanikama.Editor;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
+using GameObjectUtility = Kanikama.Editor.GameObjectUtility;
 
 namespace Kanikama.Bakery.Editor
 {
@@ -11,7 +12,7 @@ namespace Kanikama.Bakery.Editor
         public static List<Lightmap> GetLightmaps()
         {
             var result = new List<Lightmap>();
-            var ftLightmapsStorage = GameObjectHelper.FindObjectOfType<ftLightmapsStorage>();
+            var ftLightmapsStorage = GameObjectUtility.FindObjectOfType<ftLightmapsStorage>();
             if (ftLightmapsStorage == null)
             {
                 Debug.LogWarningFormat(KanikamaDebug.Format, "ftLightmapStorage is not found.");

@@ -41,7 +41,7 @@ namespace Kanikama.Editor.GUI
             }
 
             sceneAsset = sceneAssetData.Asset;
-            kanikamaManager = GameObjectHelper.FindObjectOfType<KanikamaManager>();
+            kanikamaManager = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             serializedObject = new SerializedObject(kanikamaManager);
 
             if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
@@ -87,7 +87,7 @@ namespace Kanikama.Editor.GUI
 
             if (kanikamaManager == null)
             {
-                kanikamaManager = GameObjectHelper.FindObjectOfType<KanikamaManager>();
+                kanikamaManager = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             }
 
             kanikamaManager = (KanikamaManager) EditorGUILayout.ObjectField("Kanikama Manager", kanikamaManager, typeof(KanikamaManager), true);
