@@ -9,23 +9,20 @@ namespace Kanikama.Udon.Editor
         [MenuItem("Assets/Create/U# From C#", false, 5)]
         public static void CreateUdonSharp()
         {
-            var selectedObject = Selection.activeObject;
-
-            if (selectedObject == null) return;
-
-            var scriptPath = AssetDatabase.GetAssetPath(selectedObject);
-            if (!scriptPath.EndsWith(".cs"))
+            var selectedObjects = Selection.objects;
+            foreach (var selected in selectedObjects)
             {
-                return;
+                var scriptPath = AssetDatabase.GetAssetPath(selected);
+                if (!scriptPath.EndsWith(".cs")) continue;
+
+                var script = AssetDatabase.LoadAssetAtPath<MonoScript>(scriptPath);
+                var assetPath = scriptPath.Replace(".cs", ".asset");
+                if (AssetDatabase.LoadAssetAtPath<UdonSharpProgramAsset>(assetPath) != null) continue;
+
+                var newProgramAsset = ScriptableObject.CreateInstance<UdonSharpProgramAsset>();
+                newProgramAsset.sourceCsScript = script;
+                AssetDatabase.CreateAsset(newProgramAsset, assetPath);
             }
-
-            var script = AssetDatabase.LoadAssetAtPath<MonoScript>(scriptPath);
-            var assetPath = scriptPath.Replace(".cs", ".asset");
-            var newProgramAsset = ScriptableObject.CreateInstance<UdonSharpProgramAsset>();
-            newProgramAsset.sourceCsScript = script;
-
-            AssetDatabase.CreateAsset(newProgramAsset, assetPath);
-
             AssetDatabase.Refresh();
         }
     }
