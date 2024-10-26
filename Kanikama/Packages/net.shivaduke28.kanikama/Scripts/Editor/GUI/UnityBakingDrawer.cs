@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Editor.LTC;
-using Kanikama.Impl;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
@@ -149,22 +147,22 @@ namespace Kanikama.Editor.GUI
                 SetupReceivers();
             }
 
-            // if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
-            // {
-            //     cancellationTokenSource?.Cancel();
-            //     cancellationTokenSource?.Dispose();
-            //     cancellationTokenSource = new CancellationTokenSource();
-            //     var __ = UnityLTCBakingPipeline.BakeAsync(new UnityLTCBakingPipeline.Parameter(
-            //         new SceneAssetData(sceneAsset),
-            //         bakingSettingAsset.Setting,
-            //         kanikamaManager.GetLTCMonitors().ToList()
-            //     ), cancellationTokenSource.Token);
-            // }
+            if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
+            {
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource?.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+                _ = UnityLtcBakingPipeline.BakeAsync(new UnityLtcBakingPipeline.Parameter(
+                    new SceneAssetData(sceneAsset),
+                    bakingSettingAsset.Setting,
+                    kanikamaManager.GetLtcMonitors().ToList()
+                ), cancellationTokenSource.Token);
+            }
 
-            // if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
-            // {
-            //     UnityLTCBakingPipeline.CreateAssets(kanikamaManager.GetLTCMonitors().ToList(), bakingSettingAsset.Setting);
-            // }
+            if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
+            {
+                UnityLtcBakingPipeline.CreateAssets(kanikamaManager.GetLtcMonitors().ToList(), bakingSettingAsset.Setting);
+            }
         }
 
         async Task BakeKanikamaAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
@@ -251,7 +249,7 @@ namespace Kanikama.Editor.GUI
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
 
-            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(UnityLTCBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
+            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(UnityLtcBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
             {
                 var ltcVisibilityMap = serializedObject.FindProperty("ltcVisibilityMaps");
                 ltcVisibilityMap.arraySize = lights.Length;

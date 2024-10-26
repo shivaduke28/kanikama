@@ -2,7 +2,6 @@
 using Kanikama.Bakery.Editor.LTC;
 using Kanikama.Editor;
 using Kanikama.Editor.GUI;
-using Kanikama.Impl;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;

@@ -410,7 +410,9 @@ namespace Kanikama.Editor.GUI
         {
             // public static readonly GUIContent uvSetLabel = EditorGUIUtility.TrTextContent("UV Set");
             public static readonly GUIContent albedoText = EditorGUIUtility.TrTextContent("Albedo", "Albedo (RGB) and Transparency (A)");
+
             public static readonly GUIContent alphaCutoffText = EditorGUIUtility.TrTextContent("Alpha Cutoff", "Threshold for alpha cutoff");
+
             // public static readonly GUIContent specularMapText = EditorGUIUtility.TrTextContent("Specular", "Specular (RGB) and Smoothness (A)");
             public static readonly GUIContent metallicMapText = EditorGUIUtility.TrTextContent("Metallic", "Metallic (R) and Smoothness (A)");
             public static readonly GUIContent smoothnessText = EditorGUIUtility.TrTextContent("Smoothness", "Smoothness value");
@@ -421,7 +423,9 @@ namespace Kanikama.Editor.GUI
             public static readonly GUIContent normalMapText = EditorGUIUtility.TrTextContent("Normal Map", "Normal Map");
             public static readonly GUIContent heightMapText = EditorGUIUtility.TrTextContent("Height Map", "Height Map (G)");
             public static readonly GUIContent occlusionText = EditorGUIUtility.TrTextContent("Occlusion", "Occlusion (G)");
+
             public static readonly GUIContent emissionText = EditorGUIUtility.TrTextContent("Color", "Emission (RGB)");
+
             // public static readonly GUIContent detailMaskText = EditorGUIUtility.TrTextContent("Detail Mask", "Mask for Secondary Maps (A)");
             // public static readonly GUIContent detailAlbedoText = EditorGUIUtility.TrTextContent("Detail Albedo x2", "Albedo (RGB) multiplied by 2");
             // public static readonly GUIContent detailNormalMapText = EditorGUIUtility.TrTextContent("Normal Map", "Normal Map");

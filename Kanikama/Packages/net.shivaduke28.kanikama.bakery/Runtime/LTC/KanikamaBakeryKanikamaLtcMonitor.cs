@@ -1,12 +1,11 @@
-﻿using Kanikama.Impl.LTC;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace Kanikama.Bakery.LTC
 {
     [RequireComponent(typeof(BakeryLightMesh))]
-    public sealed class KanikamaBakeryLTCMonitor : LTCMonitor
+    public sealed class KanikamaBakeryKanikamaLtcMonitor : KanikamaLtcMonitor
     {
         [SerializeField] new Renderer renderer;
         [SerializeField] BakeryLightMesh bakeryLightMesh;
@@ -17,6 +16,7 @@ namespace Kanikama.Bakery.LTC
             if (bakeryLightMesh == null) bakeryLightMesh = GetComponent<BakeryLightMesh>();
         }
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
         public override void Initialize()
         {
         }
@@ -35,7 +35,7 @@ namespace Kanikama.Bakery.LTC
             bakeryLightMesh.intensity = 1f;
         }
 
-        public override bool Includes(Object obj)
+        public bool Includes(Object obj)
         {
             return obj == renderer || obj == bakeryLightMesh;
         }
@@ -43,5 +43,6 @@ namespace Kanikama.Bakery.LTC
         public override void Clear()
         {
         }
+#endif
     }
 }

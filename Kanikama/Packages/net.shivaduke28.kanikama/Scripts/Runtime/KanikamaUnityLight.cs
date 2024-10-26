@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public class KanikamaLight : KanikamaLightSource
+    public class KanikamaUnityLight : KanikamaLightSource
     {
         [SerializeField, NonNull] new Light light;
         [SerializeField, HideInInspector] Color color;

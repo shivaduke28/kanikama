@@ -1,18 +1,18 @@
 ﻿using Kanikama.Attributes;
 using Kanikama.Utility;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Kanikama.Impl.LTC
+namespace Kanikama
 {
     // Attach this to a Renderer with Unity Quad mesh.
     [DisallowMultipleComponent]
-    public sealed class KanikamaBakeTargetLTCMonitor : LTCMonitor
+    public sealed class KanikamaUnityLtcMonitor : KanikamaLtcMonitor
     {
         // Because Unity can not bake lightmaps w/o shadows for emissive Renderers,
         // we use Area Light here.
         [SerializeField, NonNull] Light areaLight;
 
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
         void OnValidate()
         {
             if (areaLight == null)
@@ -39,12 +39,10 @@ namespace Kanikama.Impl.LTC
             }
             areaLight.type = LightType.Area;
             areaLight.shadows = LightShadows.Soft;
-#if UNITY_EDITOR
-            // NOTE: Light.areaSize is editor only.
             var t = transform;
             var lossy = t.lossyScale;
+            // NOTE: Light.areaSize is editor only.
             areaLight.areaSize = new Vector2(lossy.x, lossy.y);
-#endif
             areaLight.gameObject.SetActive(false);
         }
 
@@ -64,11 +62,10 @@ namespace Kanikama.Impl.LTC
             SelectionUtility.SetActiveObject(areaLight);
         }
 
-        public override bool Includes(Object obj) => obj == areaLight;
-
         public override void Clear()
         {
             areaLight.gameObject.SetActive(false);
         }
+#endif
     }
 }

@@ -1,24 +1,23 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Impl.LTC;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Editor.LTC
+namespace Kanikama.Editor
 {
-    public sealed class UnityLTCBakingCommand : IUnityBakingCommand
+    public sealed class UnityLtcBakingCommand : IUnityBakingCommand
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
-        ObjectHandle<LTCMonitor> handle;
+        ObjectHandle<KanikamaLtcMonitor> handle;
         public string Name => name;
         public string Id => sceneObjectId.ToString();
         public string IdShadow => Id + "_shadow";
         public string IdLTC => Id + "_ltc";
 
-        public UnityLTCBakingCommand(LTCMonitor value)
+        public UnityLtcBakingCommand(KanikamaLtcMonitor value)
         {
             var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
             sceneObjectId = new SceneObjectId(globalObjectId);
@@ -66,7 +65,7 @@ namespace Kanikama.Editor.LTC
         {
             if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
             {
-                handle = new ObjectHandle<LTCMonitor>(globalObjectId);
+                handle = new ObjectHandle<KanikamaLtcMonitor>(globalObjectId);
             }
             handle.Value.Initialize();
         }

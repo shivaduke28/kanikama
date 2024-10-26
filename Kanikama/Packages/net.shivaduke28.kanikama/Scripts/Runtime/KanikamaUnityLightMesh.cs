@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public class KanikamaLightMesh : KanikamaLightSource
+    public class KanikamaUnityLightMesh : KanikamaLightSource
     {
         [Header("Baking")] [SerializeField] new Renderer renderer;
         [SerializeField] int materialIndex;

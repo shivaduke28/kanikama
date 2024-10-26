@@ -33,7 +33,7 @@ namespace Kanikama
         int colorsId;
 
         [Header("LTC")] [SerializeField] bool enableLtc;
-        [SerializeField, NonNull] Transform[] ltcMonitors;
+        [SerializeField, NonNull] KanikamaLtcMonitor[] ltcMonitors;
 
         [SerializeField, NonNull] Texture[] ltcVisibilityMaps;
         [SerializeField, NonNull] Texture ltcLut0;
@@ -154,7 +154,7 @@ namespace Kanikama
 
             for (var i = 0; i < ltcCount; i++)
             {
-                var localToWorld = ltcMonitors[i].localToWorldMatrix;
+                var localToWorld = ltcMonitors[i].transform.localToWorldMatrix;
 
                 var p0 = new Vector3(w, -h, 0);
                 var p1 = new Vector3(-w, -h, 0);
@@ -203,6 +203,7 @@ namespace Kanikama
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         public KanikamaLightSource[] GetBakeTargets() => lightSources.ToArray();
         public KanikamaLightSourceGroup[] GetBakeTargetGroups() => lightSourceGroups.ToArray();
+        public KanikamaLtcMonitor[] GetLtcMonitors() => ltcMonitors.ToArray();
 #endif
     }
 }
