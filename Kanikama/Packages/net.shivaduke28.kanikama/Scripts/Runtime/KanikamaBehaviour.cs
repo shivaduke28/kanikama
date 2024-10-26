@@ -2,6 +2,9 @@
 
 namespace Kanikama
 {
+#if UDONSHARP
+    [UdonSharp.UdonBehaviourSyncMode(UdonSharp.BehaviourSyncMode.NoVariableSync)]
+#endif
     public abstract class KanikamaBehaviour :
 #if UDONSHARP
         UdonSharp.UdonSharpBehaviour
