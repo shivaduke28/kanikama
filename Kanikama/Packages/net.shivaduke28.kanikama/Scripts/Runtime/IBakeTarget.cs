@@ -10,6 +10,7 @@ namespace Kanikama
         void Clear();
     }
 
+    // todo: 粉砕
     public abstract class BakeTarget : MonoBehaviour, IBakeTarget
     {
         public abstract void Initialize();

@@ -3,6 +3,7 @@
     "rootNamespace": "Kanikama.Udon",
     "references": [
         "VRC.Udon",
+        "VRC.Udon.Editor",
         "UdonSharp.Runtime",
         "UdonSharp.Editor",
         "Kanikama",
