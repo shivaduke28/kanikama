@@ -1,7 +1,7 @@
 ﻿using Kanikama.Utility;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     public class KanikamaUnityLightMesh : KanikamaLightSource
     {

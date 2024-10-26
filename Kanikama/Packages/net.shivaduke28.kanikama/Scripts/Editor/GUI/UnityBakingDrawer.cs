@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Components;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;

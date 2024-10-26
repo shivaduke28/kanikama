@@ -2,7 +2,7 @@
 using Kanikama.Utility;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     // Attach this to a Renderer with Unity Quad mesh.
     [DisallowMultipleComponent]

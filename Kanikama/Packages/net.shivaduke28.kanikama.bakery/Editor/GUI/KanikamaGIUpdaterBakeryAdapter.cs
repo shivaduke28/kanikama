@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Kanikama.Bakery.Editor.LTC;
+using Kanikama.Components;
 using Kanikama.Editor;
 using Kanikama.Editor.GUI;
 using Kanikama.Utility;

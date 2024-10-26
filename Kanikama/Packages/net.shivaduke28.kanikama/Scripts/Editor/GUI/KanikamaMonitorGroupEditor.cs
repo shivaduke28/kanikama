@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using Kanikama.Components;
+using UnityEditor;
 
 namespace Kanikama.Editor.GUI
 {

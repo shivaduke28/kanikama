@@ -2,7 +2,7 @@
 using Kanikama.Attributes;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     [RequireComponent(typeof(KanikamaMonitorGroupHolder))]
     public class KanikamaMonitorGroup : KanikamaLightSourceGroup

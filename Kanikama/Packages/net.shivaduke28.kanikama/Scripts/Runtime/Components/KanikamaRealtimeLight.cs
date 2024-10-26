@@ -1,8 +1,7 @@
-﻿using System;
-using Kanikama.Attributes;
+﻿using Kanikama.Attributes;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     [RequireComponent(typeof(KanikamaManager))]
     public class KanikamaRealtimeLight : KanikamaBehaviour

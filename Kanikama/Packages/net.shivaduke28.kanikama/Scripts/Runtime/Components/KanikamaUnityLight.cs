@@ -1,7 +1,7 @@
 ﻿using Kanikama.Attributes;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     public class KanikamaUnityLight : KanikamaLightSource
     {

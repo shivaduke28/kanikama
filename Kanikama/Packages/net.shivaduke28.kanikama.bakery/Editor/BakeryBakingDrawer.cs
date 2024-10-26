@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Bakery.Editor.LTC;
+using Kanikama.Components;
 using Kanikama.Editor;
 using Kanikama.Editor.GUI;
 using UnityEditor;
