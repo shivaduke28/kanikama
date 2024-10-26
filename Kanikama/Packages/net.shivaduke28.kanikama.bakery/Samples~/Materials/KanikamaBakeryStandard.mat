@@ -14,7 +14,7 @@ Material:
   m_ValidKeywords:
   - BAKERY_SHNONLINEAR
   - _KANIKAMA_BAKERY_SHNONLINEAR
-  - _KANIKAMA_LTC_SPECULAR
+  - _KANIKAMA_LTC_DIFFUSE_SPECULAR
   - _KANIKAMA_MODE_ARRAY
   m_InvalidKeywords:
   - _KANIKAMA_LTC
@@ -116,7 +116,7 @@ Material:
     - _GlossyReflections: 1
     - _Kanikama_Bakery_SHNonlinear: 1
     - _Kanikama_Directional_Specular: 0
-    - _Kanikama_LTC: 1
+    - _Kanikama_LTC: 2
     - _Kanikama_Mode: 1
     - _Metallic: 0
     - _Mode: 0
