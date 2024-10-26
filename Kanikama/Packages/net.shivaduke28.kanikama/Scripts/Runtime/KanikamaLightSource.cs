@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Kanikama;
 using UnityEngine;
 
 namespace Kanikama
