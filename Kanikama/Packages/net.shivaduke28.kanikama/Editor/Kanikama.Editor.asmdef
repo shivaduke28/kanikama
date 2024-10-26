@@ -1,0 +1,23 @@
+{
+    "name": "Kanikama.Editor",
+    "rootNamespace": "Kanikama",
+    "references": [
+        "Kanikama",
+        "VRC.Udon",
+        "VRC.Udon.Serialization.OdinSerializer",
+        "VRC.Udon.Editor",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

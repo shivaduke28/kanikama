@@ -1,0 +1,29 @@
+{
+    "name": "Kanikama.Bakery.Editor",
+    "rootNamespace": "Kanikama.Bakery",
+    "references": [
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly",
+        "VRC.Udon",
+        "VRC.Udon.Serialization.OdinSerializer",
+        "VRC.Udon.Editor",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor",
+        "Kanikama",
+        "Kanikama.Editor",
+        "Kanikama.Bakery"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "BAKERY_INCLUDED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
