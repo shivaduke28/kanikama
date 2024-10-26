@@ -19,7 +19,7 @@ namespace Kanikama.Bakery.Editor
         }
 
         SceneAsset sceneAsset;
-        KanikamaBakeTargetDescriptor descriptor;
+        KanikamaManager descriptor;
         BakeryBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
@@ -41,7 +41,7 @@ namespace Kanikama.Bakery.Editor
             }
 
             sceneAsset = sceneAssetData.Asset;
-            descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeTargetDescriptor>();
+            descriptor = GameObjectHelper.FindObjectOfType<KanikamaManager>();
             if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
@@ -81,10 +81,10 @@ namespace Kanikama.Bakery.Editor
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (descriptor == null)
             {
-                descriptor = GameObjectHelper.FindObjectOfType<KanikamaBakeTargetDescriptor>();
+                descriptor = GameObjectHelper.FindObjectOfType<KanikamaManager>();
             }
 
-            descriptor = (KanikamaBakeTargetDescriptor) EditorGUILayout.ObjectField("Scene Descriptor", descriptor, typeof(KanikamaBakeTargetDescriptor), true);
+            descriptor = (KanikamaManager) EditorGUILayout.ObjectField("Scene Descriptor", descriptor, typeof(KanikamaManager), true);
 
             bakingSettingAsset =
                 (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(BakeryBakingSettingAsset), false);
@@ -101,11 +101,11 @@ namespace Kanikama.Bakery.Editor
                 return;
             }
 
-            if (!descriptor.Validate())
-            {
-                EditorGUILayout.HelpBox($"{nameof(KanikamaBakeTargetDescriptor)} has invalid null fields.", MessageType.Error);
-                return;
-            }
+            // if (!descriptor.Validate())
+            // {
+            //     EditorGUILayout.HelpBox($"{nameof(KanikamaManager)} has invalid null fields.", MessageType.Error);
+            //     return;
+            // }
 
             if (bakingSettingAsset == null)
             {
@@ -134,21 +134,21 @@ namespace Kanikama.Bakery.Editor
                 BakeryBakingPipelineRunner.CreateAssets(descriptor, new SceneAssetData(sceneAsset));
             }
 
-            if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
-            {
-                cancellationTokenSource?.Cancel();
-                cancellationTokenSource?.Dispose();
-                cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeLTCAsync(cancellationTokenSource.Token);
-            }
+            // if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
+            // {
+            //     cancellationTokenSource?.Cancel();
+            //     cancellationTokenSource?.Dispose();
+            //     cancellationTokenSource = new CancellationTokenSource();
+            //     var _ = BakeLTCAsync(cancellationTokenSource.Token);
+            // }
 
-            if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
-            {
-                BakeryLTCBakingPipeline.CreateAssets(descriptor.GetLTCMonitors(), bakingSettingAsset.Setting);
-            }
+            // if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
+            // {
+            //     BakeryLTCBakingPipeline.CreateAssets(descriptor.GetLTCMonitors(), bakingSettingAsset.Setting);
+            // }
         }
 
-        async Task BakeKanikamaAsync(KanikamaBakeTargetDescriptor bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
+        async Task BakeKanikamaAsync(KanikamaManager bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace Kanikama.Bakery.Editor
             }
         }
 
-        async Task BakeStaticAsync(KanikamaBakeTargetDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeStaticAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             try
             {
@@ -190,30 +190,30 @@ namespace Kanikama.Bakery.Editor
             }
         }
 
-        async Task BakeLTCAsync(CancellationToken cancellationToken)
-        {
-            try
-            {
-                isRunning = true;
-                await BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
-                    new SceneAssetData(sceneAsset),
-                    bakingSettingAsset.Setting,
-                    descriptor.GetLTCMonitors()
-                ), cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-            finally
-            {
-                isRunning = false;
-            }
-        }
+        // async Task BakeLTCAsync(CancellationToken cancellationToken)
+        // {
+        //     try
+        //     {
+        //         isRunning = true;
+        //         await BakeryLTCBakingPipeline.BakeAsync(new BakeryLTCBakingPipeline.Parameter(
+        //             new SceneAssetData(sceneAsset),
+        //             bakingSettingAsset.Setting,
+        //             descriptor.GetLTCMonitors()
+        //         ), cancellationToken);
+        //     }
+        //     catch (OperationCanceledException)
+        //     {
+        //         throw;
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         Debug.LogException(e);
+        //     }
+        //     finally
+        //     {
+        //         isRunning = false;
+        //     }
+        // }
 
         bool ValidateAndLoadOnFail()
         {

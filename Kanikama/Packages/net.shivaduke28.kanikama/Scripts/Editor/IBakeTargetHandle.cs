@@ -14,7 +14,7 @@ namespace Kanikama.Editor
         void Clear();
     }
 
-    public sealed class BakeTargetHandle<T> : IBakeTargetHandle where T : Object, IBakeTarget
+    public sealed class BakeTargetHandle<T> : IBakeTargetHandle where T : Object, IKanikamaBakeTarget
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
@@ -44,13 +44,13 @@ namespace Kanikama.Editor
         void IBakeTargetHandle.Clear() => handle.Value.Clear();
     }
 
-    public sealed class BakeTargetGroupElementHandle<T> : IBakeTargetHandle where T : Object, IBakeTargetGroup
+    public sealed class BakeTargetGroupElementHandle<T> : IBakeTargetHandle where T : KanikamaLightSourceGroup
     {
         readonly SceneObjectId sceneObjectId;
         readonly string name;
         readonly int index;
         ObjectHandle<T> handle;
-        IBakeTarget GetBakeTarget() => handle.Value.Get(index);
+        IKanikamaBakeTarget GetBakeTarget() => handle.Value.Get(index);
 
         public BakeTargetGroupElementHandle(T value, int index)
         {

@@ -6,7 +6,8 @@
         "BakeryEditorAssembly",
         "Kanikama",
         "Kanikama.Bakery",
-        "Kanikama.Editor"
+        "Kanikama.Editor",
+        "UdonSharp.Runtime"
     ],
     "includePlatforms": [
         "Editor"

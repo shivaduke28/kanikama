@@ -8,7 +8,7 @@ namespace Kanikama.Editor
 {
     public sealed class UnityBakingPipelineRunner
     {
-        public static async Task BakeAsync(KanikamaBakeTargetDescriptor bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        public static async Task BakeAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
         {
             var commands = CreateCommands(bakingDescriptor);
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
@@ -16,7 +16,7 @@ namespace Kanikama.Editor
             await UnityBakingPipeline.BakeAsync(parameter, cancellationToken);
         }
 
-        public static async Task BakeStaticAsync(KanikamaBakeTargetDescriptor bakingDescriptor,
+        public static async Task BakeStaticAsync(KanikamaManager bakingDescriptor,
             SceneAssetData sceneAssetData,
             CancellationToken cancellationToken)
         {
@@ -26,7 +26,7 @@ namespace Kanikama.Editor
             await UnityBakingPipeline.BakeStaticAsync(parameter, cancellationToken);
         }
 
-        public static void CreateAssets(KanikamaBakeTargetDescriptor bakingDescriptor, SceneAssetData sceneAssetData)
+        public static void CreateAssets(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData)
         {
             var handles = CreateHandles(bakingDescriptor);
             var settingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAssetData.Asset);
@@ -34,30 +34,30 @@ namespace Kanikama.Editor
             UnityBakingPipeline.CreateAssets(handles, setting);
         }
 
-        static List<IBakeTargetHandle> CreateHandles(KanikamaBakeTargetDescriptor bakingDescriptor)
+        static List<IBakeTargetHandle> CreateHandles(KanikamaManager bakingDescriptor)
         {
             var bakeTargets = bakingDescriptor.GetBakeTargets();
-            var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<KanikamaLightSource>(x)).Cast<IBakeTargetHandle>().ToList();
             handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
             return handles;
 
-            IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
+            IEnumerable<IBakeTargetHandle> GetElementHandles(KanikamaLightSourceGroup g)
             {
-                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<KanikamaLightSourceGroup>(g, i));
             }
         }
 
-        static IUnityBakingCommand[] CreateCommands(KanikamaBakeTargetDescriptor bakingDescriptor)
+        static IUnityBakingCommand[] CreateCommands(KanikamaManager bakingDescriptor)
         {
             var commands = new List<IUnityBakingCommand>();
 
-            commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new UnityBakingCommand(new BakeTargetHandle<BakeTarget>(x))));
+            commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new UnityBakingCommand(new BakeTargetHandle<KanikamaLightSource>(x))));
             commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new UnityBakingCommand(h)));
             return commands.ToArray();
 
-            IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
+            IEnumerable<IBakeTargetHandle> GetElementHandles(KanikamaLightSourceGroup g)
             {
-                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<KanikamaLightSourceGroup>(g, i));
             }
         }
     }

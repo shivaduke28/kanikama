@@ -11,7 +11,7 @@ namespace Kanikama.Bakery.Editor.GUI
 {
     internal sealed class KanikamaGIUpdaterBakeryAdapter : KanikamaWindow.IGUIDrawer
     {
-        KanikamaRuntimeGIUpdater giUpdater;
+        KanikamaManager giUpdater;
         SerializedObject serializedObject;
         BakeryBakingSettingAsset bakingSettingAsset;
 
@@ -28,7 +28,7 @@ namespace Kanikama.Bakery.Editor.GUI
 
         void Load()
         {
-            giUpdater = Object.FindObjectOfType<KanikamaRuntimeGIUpdater>();
+            giUpdater = Object.FindObjectOfType<KanikamaManager>();
             if (giUpdater != null)
             {
                 serializedObject = new SerializedObject(giUpdater);
@@ -112,19 +112,19 @@ namespace Kanikama.Bakery.Editor.GUI
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            EditorGUILayout.LabelField($"{nameof(KanikamaRuntimeGIUpdater)} (Bakery)", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{nameof(KanikamaManager)} (Bakery)", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
-                giUpdater = (KanikamaRuntimeGIUpdater) EditorGUILayout.ObjectField("Scene Descriptor", giUpdater, typeof(KanikamaRuntimeGIUpdater), true);
+                giUpdater = (KanikamaManager) EditorGUILayout.ObjectField("Scene Descriptor", giUpdater, typeof(KanikamaManager), true);
 
                 if (giUpdater == null)
                 {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} is not found.", MessageType.Warning);
+                    EditorGUILayout.HelpBox($"{nameof(KanikamaManager)} is not found.", MessageType.Warning);
                 }
-                else if (!giUpdater.Validate())
-                {
-                    EditorGUILayout.HelpBox($"{nameof(KanikamaRuntimeGIUpdater)} has invalid null fields.", MessageType.Error);
-                }
+                // else if (!giUpdater.Validate())
+                // {
+                //     EditorGUILayout.HelpBox($"{nameof(KanikamaManager)} has invalid null fields.", MessageType.Error);
+                // }
                 else if (bakingSettingAsset == null)
                 {
                     EditorGUILayout.HelpBox($"{nameof(BakeryBakingSettingAsset)} is not found.", MessageType.Warning);

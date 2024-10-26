@@ -2,7 +2,9 @@
     "name": "Kanikama.Editor",
     "rootNamespace": "Kanikama",
     "references": [
-        "Kanikama"
+        "Kanikama",
+        "UdonSharp.Runtime",
+        "VRC.Udon.Serialization.OdinSerializer"
     ],
     "includePlatforms": [
         "Editor"
