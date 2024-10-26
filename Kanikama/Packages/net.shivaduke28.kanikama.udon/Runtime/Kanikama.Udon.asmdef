@@ -1,5 +1,6 @@
 {
     "name": "Kanikama.Udon",
+    "rootNamespace": "Kanikama.Udon",
     "references": [
         "UdonSharp.Runtime",
         "VRC.Udon",
