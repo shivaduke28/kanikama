@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine.SceneManagement;
 
-namespace Kanikama.Editor
+namespace Kanikama.Editor.Utility
 {
     public static class GameObjectUtility
     {

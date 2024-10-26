@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace Kanikama.Editor
+namespace Kanikama.Editor.Utility
 {
     public static class GlobalObjectIdUtility
     {

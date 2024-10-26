@@ -4,7 +4,7 @@ using System.Linq;
 using Kanikama.Attributes;
 using UnityEngine;
 
-namespace Kanikama
+namespace Kanikama.Components
 {
     public sealed class KanikamaMonitorGroupHolder : MonoBehaviour
     {

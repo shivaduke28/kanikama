@@ -3,7 +3,7 @@ using Kanikama.Editor;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
-using GameObjectUtility = Kanikama.Editor.GameObjectUtility;
+using GameObjectUtility = Kanikama.Editor.Utility.GameObjectUtility;
 
 namespace Kanikama.Bakery.Editor
 {

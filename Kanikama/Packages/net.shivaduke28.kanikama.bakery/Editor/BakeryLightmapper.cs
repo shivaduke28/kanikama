@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
+using Kanikama.Editor.Utility;
 using UnityEditor;
 
 namespace Kanikama.Bakery.Editor

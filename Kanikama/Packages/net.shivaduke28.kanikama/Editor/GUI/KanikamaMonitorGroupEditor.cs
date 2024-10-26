@@ -12,7 +12,7 @@ namespace Kanikama.Editor.GUI
             var kanikamaMonitorGroup = (KanikamaMonitorGroup) target;
             EditorGUI.BeginDisabledGroup(UnityEngine.Application.isPlaying);
             EditorGUILayout.Space();
-            if (KanikamaGUI.Button("Setup Lights"))
+            if (KanikamaGUI.Button("Setup"))
             {
                 Undo.RecordObject(kanikamaMonitorGroup, "Setup Kanikama Monitor Group");
                 kanikamaMonitorGroup.Setup();

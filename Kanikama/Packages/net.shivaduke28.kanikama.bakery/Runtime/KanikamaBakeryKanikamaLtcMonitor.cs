@@ -2,7 +2,7 @@
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
-namespace Kanikama.Bakery.LTC
+namespace Kanikama.Bakery
 {
     [RequireComponent(typeof(BakeryLightMesh))]
     public sealed class KanikamaBakeryKanikamaLtcMonitor : KanikamaLtcMonitor

@@ -1,6 +1,6 @@
 {
     "name": "Kanikama.Bakery",
-    "rootNamespace": "Kanikama",
+    "rootNamespace": "Kanikama.Bakery",
     "references": [
         "Kanikama",
         "BakeryRuntimeAssembly",

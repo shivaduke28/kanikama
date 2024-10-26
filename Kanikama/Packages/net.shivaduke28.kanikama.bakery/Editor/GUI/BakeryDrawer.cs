@@ -2,30 +2,32 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Components;
+using Kanikama.Editor;
+using Kanikama.Editor.GUI;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEngine;
+using GameObjectUtility = Kanikama.Editor.Utility.GameObjectUtility;
 
-namespace Kanikama.Editor.GUI
+namespace Kanikama.Bakery.Editor.GUI
 {
-    public sealed class UnityBakingDrawer : KanikamaWindow.IGUIDrawer
+    public sealed class BakeryDrawer : KanikamaWindow.IGUIDrawer
     {
         [InitializeOnLoadMethod]
         static void RegisterDrawer()
         {
-            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Baking, () => new UnityBakingDrawer(), 0);
+            KanikamaWindow.AddDrawer(KanikamaWindow.Category.Bakery, () => new BakeryDrawer(), 10);
         }
 
         SceneAsset sceneAsset;
         KanikamaManager kanikamaManager;
-        UnityBakingSettingAsset bakingSettingAsset;
+        SerializedObject serializedObject;
+        BakeryBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
-        SerializedObject serializedObject;
 
 
-        UnityBakingDrawer()
+        BakeryDrawer()
         {
             Load();
         }
@@ -35,16 +37,15 @@ namespace Kanikama.Editor.GUI
             if (!SceneAssetData.TryFindFromActiveScene(out var sceneAssetData))
             {
                 sceneAsset = null;
-                kanikamaManager = null;
                 bakingSettingAsset = null;
+                kanikamaManager = null;
                 return;
             }
 
             sceneAsset = sceneAssetData.Asset;
             kanikamaManager = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             serializedObject = new SerializedObject(kanikamaManager);
-
-            if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
+            if (BakeryBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
                 bakingSettingAsset = asset;
             }
@@ -54,20 +55,16 @@ namespace Kanikama.Editor.GUI
             }
         }
 
+        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
 
         void KanikamaWindow.IGUIDrawer.Draw()
         {
-            EditorGUILayout.LabelField("Unity", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Bakery", EditorStyles.boldLabel);
             using (new EditorGUI.IndentLevelScope())
             {
                 if (isRunning)
                 {
-                    if (KanikamaGUI.Button("Cancel"))
-                    {
-                        cancellationTokenSource.Cancel();
-                        cancellationTokenSource.Dispose();
-                        cancellationTokenSource = null;
-                    }
+                    EditorGUILayout.HelpBox("Pipeline can be canceled from Bakery Progress Bar.", MessageType.Info);
                 }
                 else
                 {
@@ -76,8 +73,6 @@ namespace Kanikama.Editor.GUI
             }
         }
 
-        void KanikamaWindow.IGUIDrawer.OnLoadActiveScene() => Load();
-
         void DrawScene()
         {
             using (new EditorGUI.DisabledGroupScope(true))
@@ -85,14 +80,17 @@ namespace Kanikama.Editor.GUI
                 sceneAsset = (SceneAsset) EditorGUILayout.ObjectField("Scene", sceneAsset, typeof(SceneAsset), false);
             }
 
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (kanikamaManager == null)
             {
                 kanikamaManager = GameObjectUtility.FindObjectOfType<KanikamaManager>();
             }
 
-            kanikamaManager = (KanikamaManager) EditorGUILayout.ObjectField("Kanikama Manager", kanikamaManager, typeof(KanikamaManager), true);
+            kanikamaManager = (KanikamaManager) EditorGUILayout.ObjectField("Scene Descriptor", kanikamaManager, typeof(KanikamaManager), true);
+
             bakingSettingAsset =
-                (UnityBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(UnityBakingSettingAsset), false);
+                (BakeryBakingSettingAsset) EditorGUILayout.ObjectField("Settings", bakingSettingAsset, typeof(BakeryBakingSettingAsset), false);
 
             if (sceneAsset == null)
             {
@@ -102,21 +100,15 @@ namespace Kanikama.Editor.GUI
 
             if (kanikamaManager == null)
             {
-                EditorGUILayout.HelpBox($"{nameof(KanikamaManager)} is not found.", MessageType.Warning);
+                EditorGUILayout.HelpBox("BakingSceneDescriptor is not found.", MessageType.Warning);
                 return;
             }
 
-            // if (!kanikamaManager.Validate())
-            // {
-            //     EditorGUILayout.HelpBox($"{nameof(KanikamaBakeTargetDescriptor)} has invalid null fields.", MessageType.Error);
-            //     return;
-            // }
-
             if (bakingSettingAsset == null)
             {
-                if (KanikamaGUI.Button("Create Settings Asset"))
+                if (KanikamaGUI.Button("Load/Create Settings Asset"))
                 {
-                    bakingSettingAsset = UnityBakingSettingAsset.FindOrCreate(sceneAsset);
+                    bakingSettingAsset = BakeryBakingSettingAsset.FindOrCreate(sceneAsset);
                 }
                 EditorGUILayout.HelpBox("Create Kanikama Settings Asset.", MessageType.Warning);
                 return;
@@ -131,15 +123,31 @@ namespace Kanikama.Editor.GUI
             if (KanikamaGUI.Button("Bake Kanikama") && ValidateAndLoadOnFail())
             {
                 cancellationTokenSource = new CancellationTokenSource();
-                var _ = BakeKanikamaAsync(kanikamaManager, new SceneAssetData(sceneAsset), cancellationTokenSource.Token);
+                var _ = BakeKanikamaAsync(kanikamaManager, bakingSettingAsset.Setting, cancellationTokenSource.Token);
             }
 
             if (KanikamaGUI.Button("Create Assets") && ValidateAndLoadOnFail())
             {
-                UnityBakingPipelineRunner.CreateAssets(kanikamaManager, new SceneAssetData(sceneAsset));
+                BakeryBakingPipelineRunner.CreateAssets(kanikamaManager, new SceneAssetData(sceneAsset));
             }
 
-            if (KanikamaGUI.Button($"Setup by {nameof(UnityBakingSetting)} asset"))
+            EditorGUILayout.Space();
+
+            if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
+            {
+                cancellationTokenSource?.Cancel();
+                cancellationTokenSource?.Dispose();
+                cancellationTokenSource = new CancellationTokenSource();
+                _ = BakeLTCAsync(cancellationTokenSource.Token);
+            }
+
+            if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
+            {
+                BakeryLtcBakingPipeline.CreateAssets(kanikamaManager.GetLtcMonitors(), bakingSettingAsset.Setting);
+            }
+
+            EditorGUILayout.Space();
+            if (KanikamaGUI.Button($"Setup by {nameof(BakeryBakingSettingAsset)} asset"))
             {
                 Setup();
             }
@@ -147,31 +155,14 @@ namespace Kanikama.Editor.GUI
             {
                 SetupReceivers();
             }
-
-            if (KanikamaGUI.Button("Bake LTC") && ValidateAndLoadOnFail())
-            {
-                cancellationTokenSource?.Cancel();
-                cancellationTokenSource?.Dispose();
-                cancellationTokenSource = new CancellationTokenSource();
-                _ = UnityLtcBakingPipeline.BakeAsync(new UnityLtcBakingPipeline.Parameter(
-                    new SceneAssetData(sceneAsset),
-                    bakingSettingAsset.Setting,
-                    kanikamaManager.GetLtcMonitors().ToList()
-                ), cancellationTokenSource.Token);
-            }
-
-            if (KanikamaGUI.Button("Create LTC Assets") && ValidateAndLoadOnFail())
-            {
-                UnityLtcBakingPipeline.CreateAssets(kanikamaManager.GetLtcMonitors().ToList(), bakingSettingAsset.Setting);
-            }
         }
 
-        async Task BakeKanikamaAsync(KanikamaManager bakingDescriptor, SceneAssetData sceneAssetData, CancellationToken cancellationToken)
+        async Task BakeKanikamaAsync(KanikamaManager bakingDescriptor, BakeryBakingSetting setting, CancellationToken cancellationToken)
         {
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.BakeAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeAsync(bakingDescriptor, setting, cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -192,7 +183,32 @@ namespace Kanikama.Editor.GUI
             try
             {
                 isRunning = true;
-                await UnityBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+                await BakeryBakingPipelineRunner.BakeStaticAsync(bakingDescriptor, sceneAssetData, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+            finally
+            {
+                isRunning = false;
+            }
+        }
+
+        async Task BakeLTCAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                isRunning = true;
+                await BakeryLtcBakingPipeline.BakeAsync(new BakeryLtcBakingPipeline.Parameter(
+                    new SceneAssetData(sceneAsset),
+                    bakingSettingAsset.Setting,
+                    kanikamaManager.GetLtcMonitors()
+                ), cancellationToken);
             }
             catch (OperationCanceledException)
             {
@@ -210,8 +226,9 @@ namespace Kanikama.Editor.GUI
 
         bool ValidateAndLoadOnFail()
         {
-            var result = kanikamaManager != null;
-            result = result && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData) && sceneAssetData.Asset == sceneAsset;
+            var result = kanikamaManager != null
+                && SceneAssetData.TryFindFromActiveScene(out var sceneAssetData)
+                && sceneAssetData.Asset == sceneAsset;
 
             if (!result)
             {
@@ -227,15 +244,16 @@ namespace Kanikama.Editor.GUI
                 Debug.LogErrorFormat(KanikamaDebug.Format, "The current active scene is not saved as an asset.");
                 return;
             }
-            if (!UnityBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
+            if (!BakeryBakingSettingAsset.TryFind(sceneAssetData.Asset, out var settingAsset))
             {
-                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(UnityBakingSettingAsset)} is not found.");
+                Debug.LogErrorFormat(KanikamaDebug.Format, $"{nameof(BakeryBakingSettingAsset)} is not found.");
                 return;
             }
-            if (!settingAsset.Setting.AssetStorage.LightmapArrayStorage.TryGet(UnityBakingPipeline.LightmapArrayKey, out var lightmapArrayList)) return;
+            var arrayStorage = settingAsset.Setting.AssetStorage.LightmapArrayStorage;
+            if (!arrayStorage.TryGet(BakeryBakingPipeline.LightmapArrayKey, out var lightmapArrayList)) return;
 
-            var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
-            var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmap.Directional).OrderBy(x => x.Index).ToArray();
+            var lights = lightmapArrayList.Where(x => x.Type == BakeryLightmap.Light).OrderBy(x => x.Index).ToArray();
+            var directionals = lightmapArrayList.Where(x => x.Type == BakeryLightmap.Directional).OrderBy(x => x.Index).ToArray();
 
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             lightmapArrays.arraySize = lights.Length;
@@ -250,7 +268,7 @@ namespace Kanikama.Editor.GUI
                 directionalLightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = directionals[i].Texture;
             }
 
-            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(UnityLtcBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
+            if (settingAsset.Setting.AssetStorage.LightmapStorage.TryGet(BakeryLtcBakingPipeline.LightmapKey, out var ltcVisibilityMapList))
             {
                 var ltcVisibilityMap = serializedObject.FindProperty("ltcVisibilityMaps");
                 ltcVisibilityMap.arraySize = lights.Length;

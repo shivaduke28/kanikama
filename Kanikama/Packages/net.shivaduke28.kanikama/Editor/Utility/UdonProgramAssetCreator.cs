@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Kanikama.Udon.Editor
+namespace Kanikama.Editor.Utility
 {
     internal static class UdonProgramAssetCreator
     {

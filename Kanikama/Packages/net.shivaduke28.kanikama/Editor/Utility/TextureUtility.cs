@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Editor
+namespace Kanikama.Editor.Utility
 {
     public static class TextureUtility
     {

@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEditor;
 
-namespace Kanikama.Editor
+namespace Kanikama.Editor.Utility
 {
     public static class AssetUtility
     {

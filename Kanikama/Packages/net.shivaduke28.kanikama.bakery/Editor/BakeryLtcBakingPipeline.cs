@@ -5,12 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Kanikama.Editor;
+using Kanikama.Editor.Utility;
 using Kanikama.Utility;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Kanikama.Bakery.Editor.LTC
+namespace Kanikama.Bakery.Editor
 {
     public static class BakeryLtcBakingPipeline
     {

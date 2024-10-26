@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Kanikama.Editor.Utility;
 using Kanikama.Utility;
 using UnityEditor;
 using UnityEditor.SceneManagement;

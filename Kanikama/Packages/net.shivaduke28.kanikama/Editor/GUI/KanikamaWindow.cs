@@ -30,19 +30,19 @@ namespace Kanikama.Editor.GUI
 
         public enum Category
         {
-            Baking = 0,
-            Runtime = 1,
+            Unity = 0,
+            Bakery = 1,
             Others = 2,
         }
 
 
-        static readonly Dictionary<Category, List<DrawerFactory>> Factories = new Dictionary<Category, List<DrawerFactory>>();
+        static readonly Dictionary<Category, List<DrawerFactory>> Factories = new();
 
         static readonly GUIContent[] TabToggles =
         {
-            new GUIContent("Baking"),
-            new GUIContent("Runtime"),
-            new GUIContent("Others")
+            new("Unity"),
+            new("Bakery"),
+            new("Others")
         };
 
         public static void AddDrawer(Category category, Func<IGUIDrawer> createFunc, int sortingOrder = 10)
@@ -75,7 +75,7 @@ namespace Kanikama.Editor.GUI
 
             drawers.Clear();
             scrollPositions.Clear();
-            category = Category.Baking;
+            category = Category.Unity;
 
             foreach (var kvp in Factories)
             {
