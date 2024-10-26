@@ -7,7 +7,6 @@ namespace Kanikama.Baking
         void Initialize();
         void TurnOff();
         void TurnOn();
-        bool Includes(Object obj);
         void Clear();
     }
 
@@ -16,7 +15,6 @@ namespace Kanikama.Baking
         public abstract void Initialize();
         public abstract void TurnOff();
         public abstract void TurnOn();
-        public abstract bool Includes(Object obj);
         public abstract void Clear();
     }
 }

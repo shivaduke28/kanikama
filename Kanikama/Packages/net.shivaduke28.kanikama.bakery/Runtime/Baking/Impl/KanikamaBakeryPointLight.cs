@@ -1,6 +1,5 @@
 ﻿using Kanikama.Baking;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Kanikama.Bakery.Baking.Impl
 {
@@ -46,11 +45,6 @@ namespace Kanikama.Bakery.Baking.Impl
             light.color = Color.white;
             light.intensity = 1f;
             light.enabled = true;
-        }
-
-        public override bool Includes(Object obj)
-        {
-            return obj is BakeryPointLight l && l == bakeryLight;
         }
 
         public override void Clear()

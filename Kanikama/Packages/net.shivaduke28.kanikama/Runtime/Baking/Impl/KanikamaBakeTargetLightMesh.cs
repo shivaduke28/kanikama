@@ -1,7 +1,6 @@
 ﻿using Kanikama.Baking.Attributes;
 using Kanikama.Utility;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Kanikama.Baking.Impl
 {
@@ -53,8 +52,6 @@ namespace Kanikama.Baking.Impl
             mat.AddBakedEmissiveFlag();
             SelectionUtility.SetActiveObject(mat);
         }
-
-        public override bool Includes(Object obj) => obj == renderer;
 
         public override void Clear()
         {

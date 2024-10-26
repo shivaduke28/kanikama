@@ -41,11 +41,6 @@ namespace Kanikama.Bakery.Baking.Impl
             light.enabled = true;
         }
 
-        public override bool Includes(Object obj)
-        {
-            return obj is BakeryDirectLight l && l == bakeryLight;
-        }
-
         public override void Clear()
         {
             bakeryLight.color = color;

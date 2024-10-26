@@ -52,11 +52,6 @@ namespace Kanikama.Baking.Impl
                 }
             }
 
-            public bool Includes(Object obj)
-            {
-                return bakeTargets.Any(l => l.Includes(obj));
-            }
-
             public void Clear()
             {
                 foreach (var bakeTarget in bakeTargets)

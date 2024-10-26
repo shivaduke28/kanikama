@@ -32,8 +32,6 @@ namespace Kanikama.Baking.Impl
             light.intensity = 1f;
         }
 
-        public override bool Includes(Object obj) => light == obj;
-
         public override void Clear()
         {
             light.color = color;

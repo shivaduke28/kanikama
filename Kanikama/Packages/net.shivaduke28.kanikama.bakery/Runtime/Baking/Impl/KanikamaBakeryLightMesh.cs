@@ -55,11 +55,6 @@ namespace Kanikama.Bakery.Baking.Impl
             }
         }
 
-        public override bool Includes(Object obj)
-        {
-            return obj is Renderer r && r == renderer || obj is BakeryLightMesh m && m == bakeryLightMesh;
-        }
-
         public override void Clear()
         {
             renderer.enabled = rendererEnable;
