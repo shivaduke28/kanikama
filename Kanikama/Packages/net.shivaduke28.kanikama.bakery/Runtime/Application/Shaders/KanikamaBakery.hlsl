@@ -6,7 +6,7 @@
 #include <UnityCG.cginc>
 #include <HLSLSupport.cginc>
 #include <UnityStandardBRDF.cginc>
-#include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/Kanikama.hlsl"
+#include "Packages/net.shivaduke28.kanikama/Shaders/Kanikama.hlsl"
 
 #if defined(_KANIKAMA_MODE_BAKERY_MONOSH) && defined(BAKERY_MONOSH)
 

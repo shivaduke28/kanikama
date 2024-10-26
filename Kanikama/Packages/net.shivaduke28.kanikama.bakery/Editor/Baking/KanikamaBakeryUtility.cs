@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Kanikama.Editor;
 using Kanikama.Editor.Baking;
 using Kanikama.Utility;
 using UnityEditor;

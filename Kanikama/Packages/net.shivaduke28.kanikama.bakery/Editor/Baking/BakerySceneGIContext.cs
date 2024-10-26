@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kanikama.Editor;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
 using UnityEngine;

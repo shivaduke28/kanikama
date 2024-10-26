@@ -4,7 +4,7 @@
 #include "Assets/Bakery/shader/Bakery.cginc"
 #include "UnityStandardCoreForward.cginc"
 #include "KanikamaBakery.hlsl"
-#include "Packages/net.shivaduke28.kanikama/Runtime/Application/Shaders/KanikamaLTC.hlsl"
+#include "Packages/net.shivaduke28.kanikama/Shaders/KanikamaLTC.hlsl"
 
 half4 KanikamaBakeryFragForwardBase(BakeryVertexOutputForwardBase i) : SV_Target
 {

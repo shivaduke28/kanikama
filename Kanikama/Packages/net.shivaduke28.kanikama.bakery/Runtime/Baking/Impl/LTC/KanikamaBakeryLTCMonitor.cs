@@ -1,4 +1,4 @@
-﻿using Kanikama.Baking.Impl.LTC;
+﻿using Kanikama.Impl.LTC;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;

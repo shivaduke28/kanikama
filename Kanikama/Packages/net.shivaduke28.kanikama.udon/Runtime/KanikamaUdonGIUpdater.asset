@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: KanikamaUdonGIUpdater
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 04549c0560928d24dba8bf2f89039539,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: cbb33ed30d6ff824189964328c9fc83e,
     type: 2}
   udonAssembly: 
   assemblyError: 
@@ -95,7 +95,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 6|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 6|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -161,7 +161,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 11|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 11|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -221,7 +221,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 15|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 15|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -353,7 +353,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 25|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 25|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -419,7 +419,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 30|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 30|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -1022,7 +1022,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 64|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 64|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -1082,7 +1082,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 68|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 68|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -1148,7 +1148,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 73|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 73|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -1208,7 +1208,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 77|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 77|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 
@@ -1268,7 +1268,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 81|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 81|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 

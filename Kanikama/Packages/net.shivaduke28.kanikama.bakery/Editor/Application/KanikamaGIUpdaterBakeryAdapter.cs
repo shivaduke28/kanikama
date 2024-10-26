@@ -1,11 +1,11 @@
 ﻿using System.Linq;
-using Editor.Application;
 using Kanikama.Utility;
 using Kanikama.Editor.Baking;
-using Kanikama.Application.Impl;
 using Kanikama.Bakery.Editor.Baking;
-using Kanikama.Editor.Baking.GUI;
+using Kanikama.Editor;
 using Kanikama.Editor.Baking.LTC;
+using Kanikama.Editor.GUI;
+using Kanikama.Impl;
 using UnityEditor;
 using UnityEngine;
 

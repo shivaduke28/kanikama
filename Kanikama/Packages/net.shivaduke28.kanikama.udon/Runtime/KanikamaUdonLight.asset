@@ -95,7 +95,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 6|Kanikama.Baking.Attributes.NonNullAttribute, Kanikama.Baking
+      Data: 6|Kanikama.Attributes.NonNullAttribute, Kanikama
     - Name: 
       Entry: 8
       Data: 

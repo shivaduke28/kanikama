@@ -1,5 +1,5 @@
 ﻿using Kanikama.Editor.Baking;
-using Kanikama.Editor.Baking.GUI;
+using Kanikama.Editor.GUI;
 using UnityEditor;
 using UnityEngine;
 
