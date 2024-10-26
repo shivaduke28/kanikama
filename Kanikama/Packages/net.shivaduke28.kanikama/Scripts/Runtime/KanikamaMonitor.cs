@@ -2,12 +2,11 @@
 
 namespace Kanikama
 {
-    public abstract class KanikamaMonitorV2 : MonoBehaviour
+    public abstract class KanikamaMonitor : MonoBehaviour
     {
         public abstract KanikamaLightSource GetLightSource(int index);
         public abstract void SetupLights(KanikamaMonitorPartitionType partitionType, KanikamaLightSource prefab);
     }
-
 
     public enum KanikamaMonitorPartitionType
     {

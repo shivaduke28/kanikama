@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Kanikama
 {
     [RequireComponent(typeof(Renderer))]
-    public sealed class KanikamaQuadMonitorV2 : KanikamaMonitorV2
+    public sealed class KanikamaQuadMonitor : KanikamaMonitor
     {
         [SerializeField, NonNull] Renderer monitorRenderer;
         [SerializeField, NonNull] List<KanikamaLightSource> lightSources;

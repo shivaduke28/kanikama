@@ -9,9 +9,9 @@ namespace Kanikama
     public sealed class KanikamaMonitorGroupHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField, NonNull] KanikamaMonitorV2 mainMonitor;
+        [SerializeField, NonNull] KanikamaMonitor mainMonitor;
 
-        [SerializeField, NonNull] KanikamaMonitorV2[] subMonitors;
+        [SerializeField, NonNull] KanikamaMonitor[] subMonitors;
         [SerializeField, NonNull] KanikamaLightSource gridCellPrefab;
         [SerializeField] List<MonitorGridFiber> monitorGridFibers;
 
