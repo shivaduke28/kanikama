@@ -10,7 +10,6 @@ env:
   project_name: "Kanikama"
   package_name0: "net.shivaduke28.kanikama"
   package_name1: "net.shivaduke28.kanikama.bakery"
-  package_name2: "net.shivaduke28.kanikama.udon"
 
 permissions:
   contents: write
@@ -37,12 +36,6 @@ jobs:
         with:
           project_name: ${{ env.project_name }}
           package_name: ${{ env.package_name1 }}
-      - name: "Create zip2"
-        id: "create-zip-2"
-        uses: ./.github/composite/create-zip
-        with:
-          project_name: ${{ env.project_name }}
-          package_name: ${{ env.package_name2 }}
 
       - name: Make release
         uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
@@ -51,4 +44,3 @@ jobs:
           files: |
             ${{ steps.create-zip-0.outputs.zip_file }}
             ${{ steps.create-zip-1.outputs.zip_file }}
-            ${{ steps.create-zip-2.outputs.zip_file }}
