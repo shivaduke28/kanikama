@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Kanikama.Components;
 using Kanikama.Editor;
 
 namespace Kanikama.Bakery.Editor
@@ -46,31 +45,29 @@ namespace Kanikama.Bakery.Editor
 
         static List<IBakeTargetHandle> CreateHandles(KanikamaManager bakingDescriptor)
         {
-            throw new NotSupportedException();
-            // var bakeTargets = bakingDescriptor.GetBakeTargets();
-            // var handles = bakeTargets.Select(x => new BakeTargetHandle<BakeTarget>(x)).Cast<IBakeTargetHandle>().ToList();
-            // handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
-            // return handles;
-            //
-            // IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
-            // {
-            //     return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
-            // }
+            var bakeTargets = bakingDescriptor.GetBakeTargets();
+            var handles = bakeTargets.Select(x => new BakeTargetHandle<KanikamaLightSource>(x)).Cast<IBakeTargetHandle>().ToList();
+            handles.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles));
+            return handles;
+
+            IEnumerable<IBakeTargetHandle> GetElementHandles(KanikamaLightSourceGroup g)
+            {
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<KanikamaLightSourceGroup>(g, i));
+            }
         }
 
         static IBakingCommand[] CreateCommands(KanikamaManager bakingDescriptor)
         {
-            throw new NotSupportedException();
-            // var commands = new List<IBakingCommand>();
-            //
-            // commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new BakingCommand(new BakeTargetHandle<BakeTarget>(x))));
-            // commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new BakingCommand(h)));
-            // return commands.ToArray();
-            //
-            // IEnumerable<IBakeTargetHandle> GetElementHandles(BakeTargetGroup g)
-            // {
-            //     return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<BakeTargetGroup>(g, i));
-            // }
+            var commands = new List<IBakingCommand>();
+
+            commands.AddRange(bakingDescriptor.GetBakeTargets().Select(x => new BakingCommand(new BakeTargetHandle<KanikamaLightSource>(x))));
+            commands.AddRange(bakingDescriptor.GetBakeTargetGroups().SelectMany(GetElementHandles).Select(h => new BakingCommand(h)));
+            return commands.ToArray();
+
+            IEnumerable<IBakeTargetHandle> GetElementHandles(KanikamaLightSourceGroup g)
+            {
+                return g.GetAll().Select((_, i) => new BakeTargetGroupElementHandle<KanikamaLightSourceGroup>(g, i));
+            }
         }
     }
 }

@@ -18,12 +18,6 @@ namespace Kanikama.Editor
             TargetPrefabId = globalObjectId.targetPrefabId;
         }
 
-        public SceneObjectId(ulong targetObjectId, ulong targetPrefabId)
-        {
-            TargetObjectId = targetObjectId;
-            TargetPrefabId = targetPrefabId;
-        }
-
         public bool Equals(SceneObjectId other)
         {
             return TargetObjectId == other.TargetObjectId && TargetPrefabId == other.TargetPrefabId;
