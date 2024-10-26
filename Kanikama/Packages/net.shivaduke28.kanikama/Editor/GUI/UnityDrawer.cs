@@ -23,8 +23,6 @@ namespace Kanikama.Editor.GUI
         UnityBakingSettingAsset bakingSettingAsset;
         bool isRunning;
         CancellationTokenSource cancellationTokenSource;
-        SerializedObject serializedObject;
-
 
         UnityDrawer()
         {
@@ -43,7 +41,6 @@ namespace Kanikama.Editor.GUI
 
             sceneAsset = sceneAssetData.Asset;
             kanikamaManager = GameObjectUtility.FindObjectOfType<KanikamaManager>();
-            serializedObject = new SerializedObject(kanikamaManager);
 
             if (UnityBakingSettingAsset.TryFind(sceneAsset, out var asset))
             {
@@ -236,6 +233,7 @@ namespace Kanikama.Editor.GUI
             var lights = lightmapArrayList.Where(x => x.Type == UnityLightmap.Light).OrderBy(x => x.Index).ToArray();
             var directionals = lightmapArrayList.Where(x => x.Type == UnityLightmap.Directional).OrderBy(x => x.Index).ToArray();
 
+            var serializedObject = new SerializedObject(kanikamaManager);
             var lightmapArrays = serializedObject.FindProperty("lightmapArrays");
             lightmapArrays.arraySize = lights.Length;
             for (var i = 0; i < lights.Length; i++)
@@ -265,6 +263,7 @@ namespace Kanikama.Editor.GUI
         void SetupReceivers()
         {
             Undo.RecordObject(kanikamaManager, "Setup Receivers");
+            var serializedObject = new SerializedObject(kanikamaManager);
             var receivers = serializedObject.FindProperty("receivers");
             var renderers = RendererCollector.CollectKanikamaReceivers();
             receivers.arraySize = renderers.Length;
