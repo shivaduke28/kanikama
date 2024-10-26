@@ -4,10 +4,14 @@
     "references": [
         "BakeryRuntimeAssembly",
         "BakeryEditorAssembly",
+        "VRC.Udon",
+        "VRC.Udon.Serialization.OdinSerializer",
+        "VRC.Udon.Editor",
+        "UdonSharp.Runtime",
+        "UdonSharp.Editor",
         "Kanikama",
-        "Kanikama.Bakery",
         "Kanikama.Editor",
-        "UdonSharp.Runtime"
+        "Kanikama.Bakery"
     ],
     "includePlatforms": [
         "Editor"

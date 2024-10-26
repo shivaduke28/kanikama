@@ -80,7 +80,7 @@ namespace Kanikama.Bakery
         }
 #endif
 
-        void Awake()
+        void Start()
         {
             propertyId = KanikamaShader.PropertyToID(propertyName);
             useMaterialPropertyBlockInternal = useMaterialPropertyBlock;

@@ -432,5 +432,5 @@
 
 
     FallBack "VertexLit"
-    CustomEditor "Kanikama.Bakery.Editor.Application.KanikamaBakeryStandardGUI"
+    CustomEditor "Kanikama.Bakery.Editor.GUI.KanikamaBakeryStandardGUI"
 }
