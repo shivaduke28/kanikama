@@ -77,43 +77,4 @@ namespace Kanikama.Editor
         void IBakeTargetHandle.TurnOn() => GetBakeTarget().TurnOn();
         void IBakeTargetHandle.Clear() => GetBakeTarget().Clear();
     }
-
-    public sealed class BakeTargetGroupHandle<T> : IBakeTargetHandle where T : Object, IBakeTargetGroup
-    {
-        readonly SceneObjectId sceneObjectId;
-        readonly string name;
-        ObjectHandle<T> handle;
-
-        public BakeTargetGroupHandle(T value)
-        {
-            var globalObjectId = GlobalObjectId.GetGlobalObjectIdSlow(value);
-            sceneObjectId = new SceneObjectId(globalObjectId);
-            name = value.name;
-        }
-
-        string IBakeTargetHandle.Id => sceneObjectId.ToString();
-        string IBakeTargetHandle.Name => name;
-
-
-        void IBakeTargetHandle.Initialize(string sceneGuid)
-        {
-            if (GlobalObjectIdHelper.TryParse(sceneGuid, 2, sceneObjectId.TargetObjectId, sceneObjectId.TargetPrefabId, out var globalObjectId))
-            {
-                handle = new ObjectHandle<T>(globalObjectId);
-            }
-            DoForEach(x => x.Initialize());
-        }
-
-        void DoForEach(Action<IBakeTarget> func)
-        {
-            foreach (var bakeTarget in handle.Value.GetAll())
-            {
-                func.Invoke(bakeTarget);
-            }
-        }
-
-        void IBakeTargetHandle.TurnOff() => DoForEach(x => x.TurnOff());
-        void IBakeTargetHandle.TurnOn() => DoForEach(x => x.TurnOn());
-        void IBakeTargetHandle.Clear() => DoForEach(x => x.Clear());
-    }
 }

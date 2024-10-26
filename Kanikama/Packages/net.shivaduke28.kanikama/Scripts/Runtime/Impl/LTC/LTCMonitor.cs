@@ -2,7 +2,7 @@
 
 namespace Kanikama.Impl.LTC
 {
-    public abstract class LTCMonitor : MonoBehaviour, IBakeTarget
+    public abstract class LTCMonitor : MonoBehaviour, IKanikamaBakeTarget
     {
         public abstract void Initialize();
         public abstract void TurnOn();
