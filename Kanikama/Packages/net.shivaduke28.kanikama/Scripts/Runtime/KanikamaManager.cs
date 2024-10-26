@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Kanikama
 {
-    public class KanikamaManager : KanikamaBehaviour
+    [RequireComponent(typeof(Camera))]
+    public sealed class KanikamaManager : KanikamaBehaviour
     {
         [SerializeField, NonNull] KanikamaLightSource[] lightSources;
 

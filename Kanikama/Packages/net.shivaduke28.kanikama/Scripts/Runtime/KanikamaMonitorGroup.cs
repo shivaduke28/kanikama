@@ -1,82 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Kanikama.Attributes;
 using UnityEngine;
 
 namespace Kanikama
 {
+    [RequireComponent(typeof(KanikamaMonitorGroupHolder))]
     public class KanikamaMonitorGroup : KanikamaLightSourceGroup
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [Header("Baking")]
-        [SerializeField, NonNull]
-        KanikamaMonitorV2 mainMonitor;
 
-        [SerializeField, NonNull] KanikamaMonitorV2[] subMonitors;
-        [SerializeField, NonNull] KanikamaLightSource gridCellPrefab;
-        [SerializeField] List<MonitorGridFiber> monitorGridFibers;
+        public override List<IKanikamaBakeTarget> GetAll() => GetComponent<KanikamaMonitorGroupHolder>().GetAll();
 
-        [Serializable]
-        sealed class MonitorGridFiber : IKanikamaBakeTarget
-        {
-            [SerializeField] KanikamaLightSource[] lightSources;
-
-            public MonitorGridFiber(KanikamaLightSource[] lightSources)
-            {
-                this.lightSources = lightSources;
-            }
-
-            public void Initialize()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.Initialize();
-                    bakeTarget.gameObject.SetActive(true);
-                }
-            }
-
-            public void TurnOff()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.TurnOff();
-                }
-            }
-
-            public void TurnOn()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.TurnOn();
-                }
-            }
-
-            public void Clear()
-            {
-                foreach (var bakeTarget in lightSources)
-                {
-                    bakeTarget.gameObject.SetActive(false);
-                    bakeTarget.Clear();
-                }
-            }
-        }
-
-        public override List<IKanikamaBakeTarget> GetAll() => monitorGridFibers.Cast<IKanikamaBakeTarget>().ToList();
-
-        public override IKanikamaBakeTarget Get(int index) => monitorGridFibers[index];
+        public override IKanikamaBakeTarget Get(int index) => GetComponent<KanikamaMonitorGroupHolder>().Get(index);
 
 
         public void Setup()
         {
             // baking
-            if (mainMonitor == null) return;
-            mainMonitor.SetupLights(partitionType, gridCellPrefab);
-            foreach (var monitor in subMonitors)
-            {
-                monitor.SetupLights(partitionType, gridCellPrefab);
-            }
-            SetupMonitorGridFibers();
+            GetComponent<KanikamaMonitorGroupHolder>().Setup(partitionType);
 
             // runtime
             camera.orthographic = true;
@@ -101,26 +42,6 @@ namespace Kanikama
             t.rotation = rotation;
             return bounds;
         }
-
-        void SetupMonitorGridFibers()
-        {
-            if (monitorGridFibers == null)
-            {
-                monitorGridFibers = new List<MonitorGridFiber>();
-            }
-
-            monitorGridFibers.Clear();
-            var part = (int) partitionType;
-            var gridCount = Mathf.FloorToInt(part / 10f) * part % 10;
-            for (var i = 0; i < gridCount; i++)
-            {
-                var gridRenderers = new List<KanikamaLightSource>();
-                gridRenderers.Add(mainMonitor.GetLightSource(i));
-                gridRenderers.AddRange(subMonitors.Select(x => x.GetLightSource(i)));
-                var traversedGrid = new MonitorGridFiber(gridRenderers.ToArray());
-                monitorGridFibers.Add(traversedGrid);
-            }
-        }
 #endif
         [Header("Runtime")]
         [SerializeField, NonNull]
@@ -137,8 +58,7 @@ namespace Kanikama
         public float intensity = 1f;
 
         [ColorUsage(false, true), SerializeField]
-        Color[] colors;
-
+        Color[] colors = new Color[0];
 
         int lightCount;
         int mipmapLevel;

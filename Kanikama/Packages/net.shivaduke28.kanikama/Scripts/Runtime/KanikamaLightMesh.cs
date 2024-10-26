@@ -9,10 +9,17 @@ namespace Kanikama
         [SerializeField] int materialIndex;
         [SerializeField] string propertyName = "_EmissionColor";
 
-#if !COMPILER_UDONSHARP && UNITY_EDITOR
         [SerializeField] bool useStandardShader = true;
         [SerializeField] string gameObjectTag;
 
+        [Header("Runtime")] [SerializeField] Material instance;
+        [SerializeField] bool useMaterialPropertyBlock = true;
+
+        bool useMaterialPropertyBlockInternal;
+        int propertyId;
+        MaterialPropertyBlock block;
+
+#if !COMPILER_UDONSHARP && UNITY_EDITOR
         public override void Initialize()
         {
             var go = gameObject;
@@ -58,14 +65,8 @@ namespace Kanikama
             }
         }
 #endif
-        [Header("Runtime")] [SerializeField] Material instance;
-        [SerializeField] bool useMaterialPropertyBlock = true;
 
-        bool useMaterialPropertyBlockInternal;
-        int propertyId;
-        MaterialPropertyBlock block;
-
-        void Awake()
+        void Start()
         {
             propertyId = KanikamaShader.PropertyToID(propertyName);
             useMaterialPropertyBlockInternal = useMaterialPropertyBlock;
