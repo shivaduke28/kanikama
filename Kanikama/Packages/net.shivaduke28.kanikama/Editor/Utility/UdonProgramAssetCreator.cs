@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿#if UDONSHARP
+using UdonSharp;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,3 +28,4 @@ namespace Kanikama.Editor.Utility
         }
     }
 }
+#endif
