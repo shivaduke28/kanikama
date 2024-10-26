@@ -1,8 +1,6 @@
 {
-  "name": "Kanikama.Bakery.Baking",
+  "name": "Kanikama",
   "references": [
-    "BakeryRuntimeAssembly",
-    "Kanikama.Baking"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
@@ -10,9 +8,7 @@
   "overrideReferences": false,
   "precompiledReferences": [],
   "autoReferenced": false,
-  "defineConstraints": [
-    "BAKERY_INCLUDED"
-  ],
+  "defineConstraints": [],
   "versionDefines": [],
   "noEngineReferences": false
 }

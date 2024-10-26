@@ -1,13 +1,11 @@
 {
-    "name": "Kanikama.Bakery.Editor.Application",
+    "name": "Kanikama.Bakery.Editor",
     "references": [
-        "Kanikama.Application",
-        "Kanikama.Baking",
-        "Kanikama.Editor.Application",
-        "Kanikama.Editor.Baking",
-        "Kanikama.Bakery.Baking",
-        "Kanikama.Bakery.Editor.Baking",
-        "BakeryRuntimeAssembly"
+        "BakeryRuntimeAssembly",
+        "BakeryEditorAssembly",
+        "Kanikama",
+        "Kanikama.Bakery",
+        "Kanikama.Editor"
     ],
     "includePlatforms": [
         "Editor"

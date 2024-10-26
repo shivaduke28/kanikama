@@ -2,12 +2,12 @@
     "name": "Kanikama.GI.Udon.Editor.Bakery",
     "references": [
         "Kanikama.Application",
-        "Kanikama.Baking",
+        "Kanikama",
         "Kanikama.Editor.Application",
-        "Kanikama.Editor.Baking",
+        "Kanikama.Editor",
         "Kanikama.Udon",
-        "Kanikama.Bakery.Baking",
-        "Kanikama.Bakery.Editor.Baking",
+        "Kanikama.Bakery",
+        "Kanikama.Bakery.Editor",
         "UdonSharp.Runtime",
         "UdonSharp.Editor"
     ],
