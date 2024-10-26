@@ -147,7 +147,7 @@ namespace Kanikama
 
         void OnValidate()
         {
-            if (camera != null)
+            if (camera == null)
             {
                 camera = GetComponent<Camera>();
             }
