@@ -117,3 +117,7 @@ Assets/Udon.meta
 /Assets/Settings/BakeryProjectSettings.asset
 /Assets/Settings/BakeryProjectSettings.asset.meta
 /bakery_times.log
+
+# LTCGI
+/Assets/_pi_/
+/Assets/_pi_.meta
