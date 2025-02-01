@@ -240,6 +240,10 @@ namespace Kanikama.Editor.GUI
             {
                 lightmapArrays.GetArrayElementAtIndex(i).objectReferenceValue = lights[i].Texture;
             }
+
+            var sliceCount = serializedObject.FindProperty("sliceCount");
+            sliceCount.intValue = lights.Length > 0 ? lights[0].Texture.depth : 0;
+
             var directionalLightmapArrays = serializedObject.FindProperty("directionalLightmapArrays");
             directionalLightmapArrays.arraySize = directionals.Length;
             for (var i = 0; i < directionals.Length; i++)
