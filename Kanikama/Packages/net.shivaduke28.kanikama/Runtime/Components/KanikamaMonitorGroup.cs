@@ -43,7 +43,6 @@ namespace Kanikama.Components
             return bounds;
         }
 #endif
-        [Header("Runtime")]
         [SerializeField, NonNull]
         Renderer cameraTargetQuad;
 

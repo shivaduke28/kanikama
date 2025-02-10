@@ -30,9 +30,9 @@ namespace Kanikama.Bakery
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         BakeryLightMesh BakeryLightMesh => GetComponent<BakeryLightMesh>();
 
-        void OnValidate()
+        void Reset()
         {
-            if (renderer == null) renderer = GetComponent<Renderer>();
+            renderer = GetComponent<Renderer>();
         }
 
         public override void Initialize()

@@ -15,9 +15,9 @@ namespace Kanikama.Components
         Vector4[] colors;
         int count;
 
-        void OnValidate()
+        void Reset()
         {
-            if (kanikamaManager == null) kanikamaManager = GetComponent<KanikamaManager>();
+            kanikamaManager = GetComponent<KanikamaManager>();
         }
 
         void Start()
