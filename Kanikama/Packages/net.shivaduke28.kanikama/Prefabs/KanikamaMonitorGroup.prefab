@@ -44,7 +44,7 @@ Camera:
   m_GameObject: {fileID: 844353270767998790}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 4
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -130,8 +130,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 541698a1c4d94f96bb6482a934fc191d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMonitor: {fileID: 0}
-  subMonitors: []
+  monitors: []
   gridCellPrefab: {fileID: 8379884094836730924, guid: e7f1301ca7b85854ab726851aed794fe,
     type: 3}
   monitorGridFibers: []
