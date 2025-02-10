@@ -1,7 +1,5 @@
 # KanikamaGI
 
-version 4.0.0
-
 KanikamaGI is a library to update lightmaps at runtime in Unity.
 
 ### Docs
