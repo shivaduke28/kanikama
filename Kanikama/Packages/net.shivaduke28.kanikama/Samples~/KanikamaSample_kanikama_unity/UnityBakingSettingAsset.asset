@@ -23,83 +23,83 @@ MonoBehaviour:
           Key: 1243385397-0
           Values:
           - Type: Directional
-            Texture: {fileID: 2800000, guid: 123e75ab2165181458ca68109f1f5464, type: 3}
+            Texture: {fileID: 2800000, guid: 1b352d3c3062c0641a127c4c94393130, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Directional-0-1243385397-0.png
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 1019b67d20c526f43ab881c00f9f4b19, type: 3}
+            Texture: {fileID: 2800000, guid: b172af12548039f4da4246948d58894b, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-1243385397-0.exr
             Index: 0
         - Name: KanikamaMonitorGroup_0
           Key: 844353271104821952-0_0
           Values:
           - Type: Directional
-            Texture: {fileID: 2800000, guid: 9c5e29de74cce1c448b15a0fec90e50c, type: 3}
+            Texture: {fileID: 2800000, guid: 83d83aba8ba561243b5c21a2fd244acf, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Directional-0-844353271104821952-0_0.png
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: a5628f22696ae6645b48139c0614a3be, type: 3}
+            Texture: {fileID: 2800000, guid: 2ecad23dcb48f044da2ee7e930c56470, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-844353271104821952-0_0.exr
             Index: 0
         - Name: KanikamaMonitorGroup_1
           Key: 844353271104821952-0_1
           Values:
           - Type: Directional
-            Texture: {fileID: 2800000, guid: 3e9fa6440d6a2da42ab4126de7c4ccdf, type: 3}
+            Texture: {fileID: 2800000, guid: 51bae8d87d825e94489cf28deec91b2b, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Directional-0-844353271104821952-0_1.png
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: a9abd0b549192394e9d0412ed54e083f, type: 3}
+            Texture: {fileID: 2800000, guid: f0656c3c7daac6a47adf9b837120b026, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-844353271104821952-0_1.exr
             Index: 0
         - Name: KanikamaMonitorGroup_2
           Key: 844353271104821952-0_2
           Values:
           - Type: Directional
-            Texture: {fileID: 2800000, guid: d71a2cf1a6b6cf74e99a922be7b3396d, type: 3}
+            Texture: {fileID: 2800000, guid: 5e432619cc76884488f645543c992c7e, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Directional-0-844353271104821952-0_2.png
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 6c69990b2e4653b499f0b9aa5866c55e, type: 3}
+            Texture: {fileID: 2800000, guid: c9e043dc0e4861947beac1c09f32fb15, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-844353271104821952-0_2.exr
             Index: 0
         - Name: KanikamaMonitorGroup_3
           Key: 844353271104821952-0_3
           Values:
           - Type: Directional
-            Texture: {fileID: 2800000, guid: 155a1af241b40524fbad379751398534, type: 3}
+            Texture: {fileID: 2800000, guid: bd51011ada494cf498327a9a9081e2bd, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Directional-0-844353271104821952-0_3.png
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 33bb1437761b4504eaaa239b2e0ebdde, type: 3}
+            Texture: {fileID: 2800000, guid: c46af6cf505232d409149fe0e6fdd133, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-844353271104821952-0_3.exr
             Index: 0
         - Name: Monitor1_shadow
           Key: 1838690245-0_shadow
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: f10698d8d48b30c40a79a2e1d0524e2e, type: 3}
+            Texture: {fileID: 2800000, guid: 7e43f4d0a5982084483aec48c63129e1, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-1838690245-0_shadow.exr
             Index: 0
         - Name: Monitor1_ltc
           Key: 1838690245-0_ltc
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 5ee06e6886f24ec4e8ff5849ef8637b6, type: 3}
+            Texture: {fileID: 2800000, guid: e9652667fe1738e47a2291c0ed463045, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-1838690245-0_ltc.exr
             Index: 0
         - Name: Monitor2_shadow
           Key: 1518716180-0_shadow
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 47ff0267d81367640a44db67938ed526, type: 3}
+            Texture: {fileID: 2800000, guid: 30cbee1010e766d4a8cb023484c524ae, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-1518716180-0_shadow.exr
             Index: 0
         - Name: Monitor2_ltc
           Key: 1518716180-0_ltc
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: a0d1102a8db8d484288f954a0c9cace2, type: 3}
+            Texture: {fileID: 2800000, guid: 41ade3e88236f0f4fae455f1c4cf95cc, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama\KanikamaSample_kanikama_unity\Light-0-1518716180-0_ltc.exr
             Index: 0
       lightmapArrayStorage:

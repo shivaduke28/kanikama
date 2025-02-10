@@ -22,99 +22,99 @@ MonoBehaviour:
           Key: 1243385398-0
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 82afe41a74fc5144d8938206f790383f, type: 3}
+            Texture: {fileID: 2800000, guid: 82d17d533a49e7a4c85785d7674785c1, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-1243385398-0.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 90f276299a5c4ec4c82f88835abbedd7, type: 3}
+            Texture: {fileID: 2800000, guid: 6d28a4cad3937bc44b0c612693ecd48c, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-1243385398-0.hdr
             Index: 1
         - Name: KanikamaMonitorGroup_0
           Key: 8818719512527036142-0_0
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 87b2da302652d5349be971c1bf664b42, type: 3}
+            Texture: {fileID: 2800000, guid: ca8fb7135dff58c47a3032ccccf78653, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-8818719512527036142-0_0.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: ba319ea63b49ab04ab0ecf745a333e52, type: 3}
+            Texture: {fileID: 2800000, guid: a087e3b9838c5bf4bbcdfe264d194241, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-8818719512527036142-0_0.hdr
             Index: 1
         - Name: KanikamaMonitorGroup_1
           Key: 8818719512527036142-0_1
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: d70125164a01f1b4b98f8104bfe6427a, type: 3}
+            Texture: {fileID: 2800000, guid: 7eef940ce15f37e44b50e7277fb51fbe, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-8818719512527036142-0_1.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: a25c37ee6e8b80440ae790fc990a41a0, type: 3}
+            Texture: {fileID: 2800000, guid: 4c32cf32995450f4fbd28aaa499288d9, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-8818719512527036142-0_1.hdr
             Index: 1
         - Name: KanikamaMonitorGroup_2
           Key: 8818719512527036142-0_2
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 85d5d0e547ceedb45985925c99164215, type: 3}
+            Texture: {fileID: 2800000, guid: bd53ae89d715e904cbaf23436ff19761, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-8818719512527036142-0_2.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 7ca9eac47094ab24ea55a5d66b127d67, type: 3}
+            Texture: {fileID: 2800000, guid: 5b7c1d45f7be1964ea3031a205825fdc, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-8818719512527036142-0_2.hdr
             Index: 1
         - Name: KanikamaMonitorGroup_3
           Key: 8818719512527036142-0_3
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 210b19cf56a206a47b4cd8c06eb9e1e6, type: 3}
+            Texture: {fileID: 2800000, guid: cb57d465f00bccd4c94b6a045d4a8099, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-8818719512527036142-0_3.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: a93dd845ca1e26c498d8181d5c6c36ab, type: 3}
+            Texture: {fileID: 2800000, guid: 28c81c96b7feef24b845cd25e6bf1c15, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-8818719512527036142-0_3.hdr
             Index: 1
         - Name: Monitor1_shadow
           Key: 1838690248-0_shadow
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 0df936d7e92f5c64baf4531ee56f34c8, type: 3}
+            Texture: {fileID: 2800000, guid: 8dba5d554dabd8140a8d48a766e29a76, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-1838690248-0_shadow.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: fe212e1db01c8ef4cb57e8caa236749b, type: 3}
+            Texture: {fileID: 2800000, guid: 3a20c6ffbb3526942a49bd8ad6336723, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-1838690248-0_shadow.hdr
             Index: 1
         - Name: Monitor1_ltc
           Key: 1838690248-0_ltc
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: eb8be284a2d660d40948fc38db41f582, type: 3}
+            Texture: {fileID: 2800000, guid: d92b04383b06ec74d85b0ae9ee84aa94, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-1838690248-0_ltc.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 35516b76155982a4482aecc4d97dd16a, type: 3}
+            Texture: {fileID: 2800000, guid: 36719f688688e3b46b244d7583449f7a, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-1838690248-0_ltc.hdr
             Index: 1
         - Name: Monitor2_shadow
           Key: 1518716183-0_shadow
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: d49fa375d29b67746942a2df901e84e1, type: 3}
+            Texture: {fileID: 2800000, guid: e01bd6ef3afa54c498e85596dfb8beca, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-1518716183-0_shadow.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: 5c0d5b62c93d24441a8e0797187fd36e, type: 3}
+            Texture: {fileID: 2800000, guid: a6c9898d6575509499095ef355adce69, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-1518716183-0_shadow.hdr
             Index: 1
         - Name: Monitor2_ltc
           Key: 1518716183-0_ltc
           Values:
           - Type: Light
-            Texture: {fileID: 2800000, guid: 00914ee49708f6547a349ec60d597d8d, type: 3}
+            Texture: {fileID: 2800000, guid: f407db9d3c775394ca9a498db627a836, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-0-1518716183-0_ltc.hdr
             Index: 0
           - Type: Light
-            Texture: {fileID: 2800000, guid: a5d08562ef3958345909e8ca4cdeb407, type: 3}
+            Texture: {fileID: 2800000, guid: 44904dad6c1c7bc479339c53ffbbb7ad, type: 3}
             Path: Assets\Samples\net.shivaduke28.kanikama.bakery\KanikamaBakerySample_kanikama_bakery\Light-1-1518716183-0_ltc.hdr
             Index: 1
       lightmapArrayStorage:

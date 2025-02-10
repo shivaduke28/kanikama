@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Kanikama.Components
 {
+    [RequireComponent(typeof(Renderer))]
     public class KanikamaUnityLightMesh : KanikamaLightSource
     {
         [Header("Baking")] [SerializeField] new Renderer renderer;
@@ -10,9 +11,9 @@ namespace Kanikama.Components
         [SerializeField] string propertyName = "_EmissionColor";
 
         [SerializeField] bool useStandardShader = true;
-        [SerializeField] string gameObjectTag;
+        [SerializeField, HideInInspector] string gameObjectTag;
 
-        [Header("Runtime")] [SerializeField] Material instance;
+        [Header("Runtime")] [SerializeField, HideInInspector] Material instance;
         [SerializeField] bool useMaterialPropertyBlock = true;
 
         bool useMaterialPropertyBlockInternal;
@@ -101,12 +102,9 @@ namespace Kanikama.Components
             }
         }
 
-        void OnValidate()
+        void Reset()
         {
-            if (renderer == null)
-            {
-                renderer = GetComponent<Renderer>();
-            }
+            renderer = GetComponent<Renderer>();
         }
     }
 }

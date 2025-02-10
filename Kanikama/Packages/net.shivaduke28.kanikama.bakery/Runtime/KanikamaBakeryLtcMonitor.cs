@@ -8,9 +8,9 @@ namespace Kanikama.Bakery
     {
         [SerializeField] new Renderer renderer;
 
-        void OnValidate()
+        void Reset()
         {
-            if (renderer == null) renderer = GetComponent<Renderer>();
+            renderer = GetComponent<Renderer>();
         }
 
 #if !COMPILER_UDONSHARP && UNITY_EDITOR

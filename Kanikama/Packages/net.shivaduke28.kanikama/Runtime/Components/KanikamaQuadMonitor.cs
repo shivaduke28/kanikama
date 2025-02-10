@@ -14,12 +14,9 @@ namespace Kanikama.Components
 
         public override KanikamaLightSource GetLightSource(int index) => lightSources[index];
 
-        void OnValidate()
+        void Reset()
         {
-            if (monitorRenderer == null)
-            {
-                monitorRenderer = GetComponent<Renderer>();
-            }
+            monitorRenderer = GetComponent<Renderer>();
         }
 
         Bounds GetUnRotatedBounds()

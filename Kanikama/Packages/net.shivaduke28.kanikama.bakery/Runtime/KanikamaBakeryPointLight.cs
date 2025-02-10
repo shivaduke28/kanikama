@@ -13,9 +13,9 @@ namespace Kanikama.Bakery
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
         BakeryPointLight BakeryLight => GetComponent<BakeryPointLight>();
 
-        void OnValidate()
+        void Reset()
         {
-            if (light == null) light = GetComponent<Light>();
+            light = GetComponent<Light>();
         }
 
         public override void Initialize()

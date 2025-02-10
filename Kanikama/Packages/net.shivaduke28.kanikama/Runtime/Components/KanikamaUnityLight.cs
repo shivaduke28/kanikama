@@ -3,15 +3,16 @@ using UnityEngine;
 
 namespace Kanikama.Components
 {
+    [RequireComponent(typeof(Light))]
     public class KanikamaUnityLight : KanikamaLightSource
     {
         [SerializeField, NonNull] new Light light;
         [SerializeField, HideInInspector] Color color;
         [SerializeField, HideInInspector] float intensity;
 
-        void OnValidate()
+        void Reset()
         {
-            if (light == null) light = GetComponent<Light>();
+            light = GetComponent<Light>();
         }
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
 

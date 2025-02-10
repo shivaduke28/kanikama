@@ -9,9 +9,7 @@ namespace Kanikama.Components
     public sealed class KanikamaMonitorGroupHolder : MonoBehaviour
     {
 #if !COMPILER_UDONSHARP && UNITY_EDITOR
-        [SerializeField, NonNull] KanikamaMonitor mainMonitor;
-
-        [SerializeField, NonNull] KanikamaMonitor[] subMonitors;
+        [SerializeField, NonNull] KanikamaMonitor[] monitors;
         [SerializeField, NonNull] KanikamaLightSource gridCellPrefab;
         [SerializeField] List<MonitorGridFiber> monitorGridFibers;
 
@@ -68,9 +66,7 @@ namespace Kanikama.Components
         public void Setup(KanikamaMonitorPartitionType partitionType)
         {
             // baking
-            if (mainMonitor == null) return;
-            mainMonitor.SetupLights(partitionType, gridCellPrefab);
-            foreach (var monitor in subMonitors)
+            foreach (var monitor in monitors)
             {
                 monitor.SetupLights(partitionType, gridCellPrefab);
             }
@@ -90,8 +86,7 @@ namespace Kanikama.Components
             for (var i = 0; i < gridCount; i++)
             {
                 var gridRenderers = new List<KanikamaLightSource>();
-                gridRenderers.Add(mainMonitor.GetLightSource(i));
-                gridRenderers.AddRange(subMonitors.Select(x => x.GetLightSource(i)));
+                gridRenderers.AddRange(monitors.Select(x => x.GetLightSource(i)));
                 var traversedGrid = new MonitorGridFiber(gridRenderers.ToArray());
                 monitorGridFibers.Add(traversedGrid);
             }
