@@ -765,7 +765,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &385943117
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -1010,7 +1010,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &514946594
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -1474,7 +1474,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1225444149
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2500,7 +2500,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 2.6615725, y: 1.4972}
   m_BounceIntensity: 1
@@ -2619,7 +2619,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1921105385
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2839,7 +2839,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &1974440668
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -2979,7 +2979,7 @@ MeshRenderer:
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &2040421061
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -3182,24 +3182,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 541698a1c4d94f96bb6482a934fc191d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainMonitor: {fileID: 1838690243}
-  subMonitors:
-  - {fileID: 1518716178}
+  monitors: []
   gridCellPrefab: {fileID: 8379884094836730924, guid: e7f1301ca7b85854ab726851aed794fe,
     type: 3}
   monitorGridFibers:
-  - lightSources:
-    - {fileID: 385943115}
-    - {fileID: 1974440666}
-  - lightSources:
-    - {fileID: 514946592}
-    - {fileID: 2040421059}
-  - lightSources:
-    - {fileID: 359822906}
-    - {fileID: 1225444147}
-  - lightSources:
-    - {fileID: 180252424}
-    - {fileID: 1921105383}
+  - lightSources: []
+  - lightSources: []
+  - lightSources: []
+  - lightSources: []
 --- !u!4 &5884279617618907124
 Transform:
   m_ObjectHideFlags: 0
